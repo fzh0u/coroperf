@@ -6,7 +6,7 @@ CONTRIBUTION_KINDS = (
     "scheduling_contention", "cost_attribution",
 )
 CASE_LANGUAGES = ("Python", "Go", "Rust", "Java", "C++", "C#", "JavaScript / TypeScript", "Kotlin", "Scala", "Dart")
-FIX_STATES = ("verified", "merged", "proposed", "guidance", "workaround", "local")
+FIX_STATES = ("verified", "merged", "proposed", "guidance", "workaround", "local", "unconfirmed")
 
 LABELS = {
     "atlas": ("Coroutine Evidence Atlas", "协程证据图谱"),
@@ -44,6 +44,10 @@ LABELS = {
     "fix_short_workaround": ("Workaround tested", "替代方案已验证"),
     "fix_short_local": ("Local patch tested", "本地补丁已测试"),
     "fix_short_unconfirmed": ("Fix unconfirmed", "修复待核实"),
+    "pull_open": ("PR open", "PR 开放"),
+    "pull_closed": ("PR closed", "PR 已关闭"),
+    "pull_merged": ("PR merged", "PR 已合并"),
+    "pull_unconfirmed": ("PR status unconfirmed", "PR 状态待核实"),
     "case_language": ("Case language", "案例语言"),
     "language_coverage": ("Languages covered", "覆盖语言"),
     "language_issues": ("{count} issues", "{count} 个案例"),

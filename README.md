@@ -24,8 +24,8 @@ python3 -m http.server 8000
 - `zh-cn/` mirrors the index, research notes, and evidence pages in Simplified Chinese. Function names, paths to public upstream reports, and evidence labels from the graph retain their original spelling.
 - `data/focus.json` lists the reviewed cases, their reported issue types, primary diagnostic contributions, exact creation/observation pairs, and what each join establishes.
 - `data/cases.json` contains the exported findings, stacks, and graph edges in the public snapshot.
-- `data/upstream-status.json` records the GitHub tracker state at the last check.
-- `data/case-classification.csv` is a generated bilingual export of the paper taxonomy, evidence scope, and GitHub and repair status for each case.
+- `data/upstream-status.json` records issue and linked repair PR states at the last check.
+- `data/case-classification.csv` exports the bilingual paper taxonomy, evidence scope, repair evidence, and linked GitHub issue and PR states.
 
 To update the snapshot from the original research workspace, run the export command first. For a text edit, update the case data, the site copy in `scripts/copy_text.py`, or the research notes fragments, then rebuild. The scripts use Python 3.10 or newer and its standard library. Chinese case findings come from the study's Chinese records. Most Chinese index headlines use the leading observation from the same record.
 

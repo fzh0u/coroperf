@@ -8,6 +8,11 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>SGLang #17021 · Which work delayed the ready receiver?</h3>
+      <p>Two tokenizer stacks join to separate launchers. Both run after the real receiver Future is ready. Moving the same work to threads changes the median ready-to-resume interval from 32.6 to 0.050 ms in the CPU fixture.</p>
+      <a href="evidence/sgl-project--sglang--17021.html#call-stack">Compare the receiver and both tokenizer joins</a>
+    </div>
+    <div class="research-entry">
       <h3>vLLM #54101 · Which benchmark requests waited before HTTP timing?</h3>
       <p>Matching the Task joins the semaphore wait and HTTP entry to each request. In the capped fixture, the merged metrics show about 287 ms of queueing and 389 ms of queue-inclusive latency. The endpoint timer still reports about 102 ms.</p>
       <a href="evidence/vllm-project--vllm--54101.html#call-stack">Compare both requests across the queue</a>

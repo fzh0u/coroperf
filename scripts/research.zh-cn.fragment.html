@@ -8,6 +8,11 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>SGLang #17021 · 哪些工作推迟了已就绪的接收任务？</h3>
+      <p>两个分词执行栈分别接回各自的入口。它们都在实际接收 Future 就绪后运行。CPU 实验将相同工作移到工作线程，从就绪到恢复的中位数从 32.6 降到 0.050 毫秒。</p>
+      <a href="evidence/sgl-project--sglang--17021.html#call-stack">查看接收任务和两条分词拼接栈</a>
+    </div>
+    <div class="research-entry">
       <h3>vLLM #54101 · 哪些请求在 HTTP 计时前已经排队？</h3>
       <p>实际 Task 把 semaphore 等待与 HTTP 入口拼回同一请求。并发限制为 1 时，合并修复新增约 287 毫秒的排队计时，含排队延迟约 389 毫秒，原端到端指标仍约 102 毫秒。</p>
       <a href="evidence/vllm-project--vllm--54101.html#call-stack">比较两个请求的等待和发送栈</a>

@@ -222,6 +222,15 @@ def contribution(case, language):
     return case["contribution_zh"] if language == "zh-CN" else case["contribution"]
 
 
+def fix_description(case, text, label_prefix):
+    state = (case["fix"] or {}).get("state", "unconfirmed")
+    label = text[label_prefix + state]
+    pull = case.get("fix_pr_status")
+    if pull and (state, pull) != ("merged", "merged"):
+        label += " · " + text["pull_" + pull]
+    return label
+
+
 def case_page(case, language):
     text = COPY[language]
     title = case_title(case, language)
@@ -242,7 +251,7 @@ def case_page(case, language):
     fix = case["fix"] or {}
     if case["upstream_reference"] and case["upstream_reference"] not in {case["url"], fix.get("url")}:
         source = f'<a href="{escape(case["upstream_reference"])}">{text["followup"]}</a>'
-    fix_label = text["fix_" + fix.get("state", "unconfirmed")]
+    fix_label = fix_description(case, text, "fix_")
     if fix.get("url"):
         fix_label = f'<a href="{escape(fix["url"])}">{fix_label} ↗</a>'
     data = case["findings_zh"] if language == "zh-CN" else case["findings"]
@@ -294,7 +303,7 @@ def table_row(case, text, language):
     category = case["contribution_kind"]
     state = case["tracker_status"]
     fix = case["fix"] or {}
-    fix_text = text["fix_short_" + fix.get("state", "unconfirmed")]
+    fix_text = fix_description(case, text, "fix_short_")
     if fix.get("url"):
         fix_label = f'<a class="fix-label" href="{escape(fix["url"])}">{fix_text}</a>'
     else:
@@ -483,14 +492,14 @@ def write_classification(snapshot):
         writer = csv.writer(output, lineterminator="\n")
         writer.writerow(("issue", "issue_url", "language", "contribution_key", "contribution_en",
                          "contribution_zh", "reported_issue_type", "reproduction", "diagnosis",
-                         "github_status", "fix_evidence", "fix_url", "status_checked_at"))
+                         "github_status", "fix_evidence", "fix_url", "fix_pr_status", "status_checked_at"))
         for case in snapshot["cases"]:
             tag = case["contribution_kind"]
             fix = case["fix"] or {}
             writer.writerow((case["reference"], case["url"], case["language"], tag, COPY["en"][tag],
                              COPY["zh-CN"][tag], case["kind"], case["reproduction"], case["diagnosis"],
                              case["tracker_status"], fix.get("state", "unconfirmed"), fix.get("url", ""),
-                             snapshot["tracker_checked_at"]))
+                             case.get("fix_pr_status", ""), snapshot["tracker_checked_at"]))
 
 
 if __name__ == "__main__":
@@ -501,6 +510,10 @@ if __name__ == "__main__":
         entry = tracker["issues"].get(case["id"], {})
         state = entry.get("status")
         case["tracker_status"] = state if entry.get("url") == case["url"] and state in TRACKER_STATES else "unconfirmed"
+        fix_url = (case["fix"] or {}).get("url")
+        pull = tracker.get("pull_requests", {}).get(fix_url)
+        if pull in {"open", "closed", "merged", "unconfirmed"}:
+            case["fix_pr_status"] = pull
     write_classification(snapshot)
     for language in COPY:
         build(snapshot, language)
