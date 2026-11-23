@@ -43,9 +43,10 @@
         <h1>流清理改写异常栈后，找回真正失败的读取</h1>
         <div class="case-links"><a href="https://github.com/python/cpython/issues/156278">上游报告 ↗</a></div>
         <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>异常、取消与任务生命周期</dd></div>
           <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
-          <div><dt>上游状态</dt><dd>开放</dd></div>
-          <div><dt>上游修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>GitHub 状态</dt><dd>开放</dd></div>
+          <div><dt>上游修复证据</dt><dd><a href="https://github.com/python/cpython/pull/156286">候选修复已做本地对照 ↗</a></dd></div>
           <div><dt>案例语言</dt><dd>Python</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
@@ -111,7 +112,7 @@
       </section>
       <section class="findings" aria-labelledby="findings-title">
         <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
-        <dl><div><dt>本地复现结果</dt><dd>两条 loopback TCP 连接分别使不同的读取失败，错误文本相同。两个 Task 结束后的异常栈都变成 session → wait_closed → socket 接收。调试创建栈还能显示发起者，Task.get_stack() 和带局部变量的最终 traceback 都缺失真正失败的读取。省略第二次 await 后，两条读取栈均保留。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>CoroPerf 的文件范围异常探针在清理前保存 _wait_for_data 的首次抛出现场，并用同一 Task 的标识接回创建栈。页面中，记录 5 → 19 找回 launch_profile 的 readexactly，记录 10 → 13 找回 launch_inventory 的 readuntil。随后同一批 Task 的记录 22 和 16 分别出现 wait_closed。核验独立核对返回 Task 的协程对象、两次捕获时间和清理时重复抛出的同一异常对象。</dd></div><div><dt>适用范围与局限</dt><dd>在 Linux 上用 CPython 3.12.4 和 3.14.3 运行原单连接程序和受控的双连接实验。3.14.3 的实时调用图能显示仍在等待的读取，拼接保留的是故障结束后需要的历史信息。两种启动顺序和两种读取分配共 16 条首次抛出拼接均通过核对。</dd></div></dl>
+        <dl><div><dt>本地复现结果</dt><dd>两条 loopback TCP 连接分别使不同的读取失败，错误文本相同。两个 Task 结束后的异常栈都变成 session → wait_closed → socket 接收。调试创建栈还能显示发起者，Task.get_stack() 和带局部变量的最终 traceback 都缺失真正失败的读取。省略第二次 await 后，两条读取栈均保留。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>CoroPerf 的文件范围异常探针在清理前保存 _wait_for_data 的首次抛出现场，并用同一 Task 的标识接回创建栈。页面中，记录 5 → 19 找回 launch_profile 的 readexactly，记录 10 → 13 找回 launch_inventory 的 readuntil。随后同一批 Task 的记录 22 和 16 分别出现 wait_closed。核验独立核对返回 Task 的协程对象、两次捕获时间和清理时重复抛出的同一异常对象。</dd></div><div><dt>适用范围与局限</dt><dd>回环实验使用 CPython 3.12.4 和 3.14.3。仍开放的 PR 在本地对照中保留了两种原始读取栈，但浅拷贝使关闭异常丢失 cause、context 和原有 traceback。本地后续补丁在两种已测试的拷贝路径上都保留这些属性和异常备注，并让读取异常与关闭异常保持独立。</dd></div></dl>
       </section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>

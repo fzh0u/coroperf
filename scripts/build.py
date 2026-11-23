@@ -2,12 +2,13 @@
 """Build both versions of the static atlas from the public snapshot."""
 
 from collections import Counter
+import csv
 from datetime import datetime
 from html import escape
 import json
 from pathlib import Path
 
-from copy_text import CASE_LANGUAGES, COPY, FEATURES, ISSUE_KINDS
+from copy_text import CASE_LANGUAGES, CONTRIBUTION_KINDS, COPY, FEATURES, ISSUE_KINDS
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -257,6 +258,7 @@ def case_page(case, language):
         <h1>{escape(title)}</h1>
         <div class="case-links"><a href="{escape(case["url"])}">{text["upstream"]}</a>{source}</div>
         <dl class="case-status">
+          <div><dt>{text["contribution_kind"]}</dt><dd>{text[case["contribution_kind"]]}</dd></div>
           <div><dt>{text["issue_kind"]}</dt><dd>{text[case["kind"]]}</dd></div>
           <div><dt>{text["tracker_status"]}</dt><dd>{text["tracker_" + case["tracker_status"]]}</dd></div>
           <div><dt>{text["fix_status"]}</dt><dd>{fix_label}</dd></div>
@@ -289,23 +291,46 @@ def featured_card(case, label, headline):
 
 
 def table_row(case, text, language):
-    scope = escape(case["reproduction"])
+    category = case["contribution_kind"]
     state = case["tracker_status"]
+    fix = case["fix"]
+    if fix:
+        fix_label = f'<a class="fix-label" href="{escape(fix["url"])}">{text["fix_short_" + fix["state"]]}</a>'
+    else:
+        fix_label = f'<span class="fix-label">{text["fix_short_unconfirmed"]}</span>'
     other_language = "en" if language == "zh-CN" else "zh-CN"
     return f"""
-      <tr data-scope="{scope}" data-kind="{escape(case["kind"])}" data-tracker-status="{state}" data-case-language="{escape(case["language"])}" data-title-alt="{escape(case_title(case, other_language))}">
-        <th scope="row"><a href="evidence/{escape(case["id"])}.html"><span>{escape(case["reference"])}</span>{escape(case_title(case, language))}</a><small class="case-kind">{text[case["kind"]]} · {escape(case["language"])} · {text["tracker_" + state]}</small></th>
-        <td>{escape(contribution(case, language))}</td><td>{text[case["reproduction"]]}</td>
+      <tr class="issue-row" data-scope="{escape(case["reproduction"])}" data-kind="{case["kind"]}" data-contribution="{category}" data-tracker-status="{state}" data-title-alt="{escape(case_title(case, other_language))}">
+        <th scope="row"><a href="evidence/{escape(case["id"])}.html"><span>{escape(case["reference"])}</span>{escape(case_title(case, language))}</a></th>
+        <td class="row-contribution"><strong>{text[category]}</strong><small class="case-kind">{text[case["kind"]]}</small></td>
+        <td class="row-status"><a class="state-pill state-{state}" href="{escape(case["url"])}">{text["tracker_" + state]}</a>{fix_label}</td>
       </tr>"""
 
 
-def outcomes(cases, text):
-    totals = Counter(case["kind"] for case in cases)
-    direct = Counter(case["kind"] for case in cases if case["diagnosis"] == "Direct")
+def table_group(name, cases, text, language):
+    heading = text["language_issues"].format(count=len(cases))
+    ordered = sorted(cases, key=lambda case: TRACKER_STATES.index(case["tracker_status"]))
+    rows = "".join(table_row(case, text, language) for case in ordered)
+    return f"""
+    <tbody class="language-group" data-language="{escape(name)}">
+      <tr class="language-heading"><th colspan="3" scope="rowgroup">{escape(name)}
+        <span data-language-count data-format="{text["language_issues"]}">{heading}</span>
+      </th></tr>{rows}
+    </tbody>"""
+
+
+def outcomes(cases, text, csv_path):
+    tags = Counter(case["contribution_kind"] for case in cases)
+    direct = Counter(case["contribution_kind"] for case in cases if case["diagnosis"] == "Direct")
+    classified = "".join(
+        f'<tr><th scope="row">{text[key]}<small>{text[key + "_detail"]}</small></th>'
+        f'<td>{tags[key]}</td><td>{direct[key]}</td></tr>' for key in CONTRIBUTION_KINDS
+    )
+    reported = Counter(case["kind"] for case in cases)
     by_scope = Counter((case["reproduction"], case["diagnosis"]) for case in cases)
     kinds = "".join(
         f'<tr><th scope="row">{text[kind]}<small>{text[kind + "_detail"]}</small></th>'
-        f'<td>{totals[kind]}</td><td>{direct[kind]}</td></tr>' for kind in ISSUE_KINDS
+        f'<td>{reported[kind]}</td></tr>' for kind in ISSUE_KINDS
     )
     evidence = "".join(
         f'<tr><th scope="row">{text[scope]}</th><td>{by_scope[scope, "Direct"]}</td>'
@@ -313,12 +338,19 @@ def outcomes(cases, text):
     )
     return f"""
     <section class="wrap block" id="outcomes" aria-labelledby="outcomes-title">
-      <div class="section-head"><h2 id="outcomes-title">{text["outcomes"]}</h2></div>
+      <div class="section-head"><h2 id="outcomes-title">{text["outcomes"]}</h2><a href="{csv_path}" download>{text["case_csv"]}</a></div>
       <p class="section-copy">{text["outcomes_scope"]}</p>
       <div class="table-wrap summary-table">
-        <table aria-labelledby="outcomes-title"><thead><tr><th scope="col">{text["issue_kind"]}</th><th scope="col">{text["case_count"]}</th><th scope="col">{text["direct_diagnosis"]}</th></tr></thead>
-        <tbody>{kinds}</tbody></table>
+        <table aria-labelledby="outcomes-title"><thead><tr><th scope="col">{text["contribution_kind"]}</th><th scope="col">{text["case_count"]}</th><th scope="col">{text["direct_diagnosis"]}</th></tr></thead>
+        <tbody>{classified}</tbody></table>
       </div>
+      <details class="extra">
+        <summary id="reported-breakdown">{text["reported_breakdown"]}</summary>
+        <div class="table-wrap summary-table">
+          <table aria-labelledby="reported-breakdown"><thead><tr><th scope="col">{text["issue_kind"]}</th><th scope="col">{text["case_count"]}</th></tr></thead>
+          <tbody>{kinds}</tbody></table>
+        </div>
+      </details>
       <details class="extra">
         <summary id="evidence-matrix">{text["evidence_matrix"]}</summary>
         <p class="section-copy">{text["evidence_matrix_help"]}</p>
@@ -340,18 +372,22 @@ def index_page(snapshot, language):
     leaf = next(frame["function"] for frame in example["observation"]["frames"] if frame["function"] == "A..ctor")
     selected = "".join(featured_card(by_id[identifier], *feature)
                        for identifier, feature in zip(FEATURED, FEATURES[language]))
+    groups = {name: [] for name in CASE_LANGUAGES}
+    for case in cases:
+        groups[case["language"]].append(case)
+    groups = {name: rows for name, rows in groups.items() if rows}
     stats = [
         (len(cases), "stat_pages"),
         (len(joins), "stat_observations"),
         (sum(len(join["ancestors"]) + 1 for join in joins), "stat_joins"),
+        (len(groups), "language_coverage"),
     ]
     numbers = "".join(f"<div><dd>{count:,}</dd><dt>{text[key]}</dt></div>" for count, key in stats)
-    language_counts = Counter(case["language"] for case in cases)
-    coverage = "".join(f'<div><dt>{escape(name)}</dt><dd>{language_counts[name]}</dd></div>'
-                       for name in CASE_LANGUAGES if name in language_counts)
-    language_options = "".join(f'<option>{escape(name)}</option>' for name in CASE_LANGUAGES if name in language_counts)
+    language_options = "".join(f'<option value="{escape(name)}">{escape(name)} ({len(rows)})</option>'
+                               for name, rows in groups.items())
     options = "".join(f'<option value="{key}">{text[key]}</option>' for key in SCOPES)
     issue_types = "".join(f'<option value="{key}">{text[key]}</option>' for key in ISSUE_KINDS)
+    contribution_types = "".join(f'<option value="{key}">{text[key]}</option>' for key in CONTRIBUTION_KINDS)
     tracker_states = "".join(f'<option value="{state}">{text["tracker_" + state]}</option>' for state in TRACKER_STATES)
     tracker_counts = Counter(case["tracker_status"] for case in cases)
     tracker_summary = text["tracker_summary"].format(opened=tracker_counts["open"], closed=tracker_counts["closed"])
@@ -359,16 +395,15 @@ def index_page(snapshot, language):
         tracker_summary += " · " + text["tracker_unconfirmed_count"].format(count=tracker_counts["unconfirmed"])
     checked_at = snapshot["tracker_checked_at"]
     checked = text["tracker_checked"].format(time=datetime.fromisoformat(checked_at).strftime("%Y-%m-%d %H:%M UTC"))
-    rows = "".join(table_row(case, text, language) for case in cases)
-    data = "../data/cases.json" if language == "zh-CN" else "data/cases.json"
-    status_data = "../data/upstream-status.json" if language == "zh-CN" else "data/upstream-status.json"
+    rows = "".join(table_group(name, items, text, language) for name, items in groups.items())
+    data = "../data/" if language == "zh-CN" else "data/"
     body = f"""
     <section class="wrap hero" aria-labelledby="hero-title">
       <div>
         <p class="eyebrow">{text["atlas"]}</p>
         <h1 id="hero-title">{text["hero_a"]}<br>{text["hero_b"]} <em>{text["hero_em"]}</em></h1>
         <p class="hero-copy">{text["hero_copy"]}</p>
-        <div class="actions"><a class="button" href="#issues">{text["browse"]}</a><a href="research.html">{text["read_research"]}</a></div>
+        <div class="actions"><a class="button" href="#issues">{text["browse"]}</a><a href="#outcomes">{text["outcomes"]}</a></div>
       </div>
       <figure class="specimen">
         <figcaption><span>{text["specimen"]}</span><a href="evidence/dotnet--runtime--60764.html#join-1-point-1">dotnet/runtime #60764 ↗</a></figcaption>
@@ -383,30 +418,29 @@ def index_page(snapshot, language):
     <section class="wrap block" aria-labelledby="coverage">
       <div class="section-head"><h2 id="coverage">{text["coverage"]}</h2><span class="small">{text["snapshot"]} · <time>{escape(snapshot["corpus_date"])}</time></span></div>
       <dl class="stats">{numbers}</dl>
-      <h3 id="language-coverage">{text["language_coverage"]}</h3>
-      <dl class="language-counts">{coverage}</dl>
     </section>
-    {outcomes(cases, text)}
+    <section class="wrap block" id="issues" aria-labelledby="issues-title">
+      <div class="section-head"><h2 id="issues-title">{text["issues"]}</h2><a href="{data}cases.json" download>{text["download"]}</a></div>
+      <p class="section-copy">{text["index_copy"]}</p>
+      <p class="tracker-summary" id="upstream-status"><strong>{tracker_summary}</strong><time datetime="{escape(checked_at)}">{checked}</time><a href="{data}upstream-status.json" download>{text["tracker_data"]}</a></p>
+      <div class="filters" hidden>
+        <div><label for="query">{text["search"]}</label><input type="search" id="query" placeholder="{text["placeholder"]}"></div>
+        <div><label for="case-language">{text["case_language"]}</label><select id="case-language"><option value="">{text["any_case_language"]}</option>{language_options}</select></div>
+        <div><label for="tracker-status">{text["tracker_status"]}</label><select id="tracker-status"><option value="">{text["any_tracker_status"]}</option>{tracker_states}</select></div>
+        <div><label for="contribution">{text["contribution_kind"]}</label><select id="contribution"><option value="">{text["any_contribution"]}</option>{contribution_types}</select></div>
+        <div><label for="kind">{text["issue_kind"]}</label><select id="kind"><option value="">{text["any_issue_kind"]}</option>{issue_types}</select></div>
+        <div><label for="scope">{text["reproduction"]}</label><select id="scope"><option value="">{text["any_scope"]}</option>{options}</select></div>
+      </div>
+      <p class="results-count" id="results-count" role="status" data-format="{text["filtered_result"]}" data-empty="{text["no_result"]}" data-all="{text["result"].format(total=len(cases))}">{text["result"].format(total=len(cases))}</p>
+      <div class="table-wrap">
+        <table class="issue-table" id="case-rows" aria-labelledby="issues-title"><thead><tr><th scope="col">{text["issue"]}</th><th scope="col">{text["contribution_kind"]}</th><th scope="col" class="table-state">{text["tracker_status"]}<small>{text["fix_status"]}</small></th></tr></thead>
+        {rows}</table>
+      </div>
+    </section>
+    {outcomes(cases, text, data + "case-classification.csv")}
     <section class="wrap block" aria-labelledby="selected">
       <div class="section-head"><h2 id="selected">{text["selected"]}</h2></div>
       <div class="features">{selected}</div>
-    </section>
-    <section class="wrap block" id="issues" aria-labelledby="issues-title">
-      <div class="section-head"><h2 id="issues-title">{text["issues"]}</h2><a href="{data}" download>{text["download"]}</a></div>
-      <p class="section-copy">{text["index_copy"]}</p>
-      <p class="tracker-summary" id="upstream-status"><strong>{tracker_summary}</strong><time datetime="{escape(checked_at)}">{checked}</time><a href="{status_data}" download>{text["tracker_data"]}</a></p>
-      <div class="filters" hidden>
-        <div><label for="query">{text["search"]}</label><input type="search" id="query" placeholder="{text["placeholder"]}"></div>
-        <div><label for="kind">{text["issue_kind"]}</label><select id="kind"><option value="">{text["any_issue_kind"]}</option>{issue_types}</select></div>
-        <div><label for="case-language">{text["case_language"]}</label><select id="case-language"><option value="">{text["any_case_language"]}</option>{language_options}</select></div>
-        <div><label for="tracker-status">{text["tracker_status"]}</label><select id="tracker-status"><option value="">{text["any_tracker_status"]}</option>{tracker_states}</select></div>
-        <div><label for="scope">{text["reproduction"]}</label><select id="scope"><option value="">{text["any_scope"]}</option>{options}</select></div>
-      </div>
-      <p class="results-count" id="results-count" role="status" data-format="{text["filtered_result"]}" data-empty="{text["no_result"]}">{text["result"].format(total=len(cases))}</p>
-      <div class="table-wrap">
-        <table><thead><tr><th scope="col">{text["issue"]}</th><th scope="col">{text["why_join"]}</th><th scope="col">{text["reproduction"]}</th></tr></thead>
-        <tbody id="case-rows">{rows}</tbody></table>
-      </div>
     </section>
     <section class="method" id="method" aria-labelledby="method-title">
       <div class="wrap">
@@ -443,6 +477,21 @@ def build(snapshot, language):
     )
 
 
+def write_classification(snapshot):
+    with (ROOT / "data" / "case-classification.csv").open("w", encoding="utf-8-sig", newline="") as output:
+        writer = csv.writer(output, lineterminator="\n")
+        writer.writerow(("issue", "issue_url", "language", "contribution_key", "contribution_en",
+                         "contribution_zh", "reported_issue_type", "reproduction", "diagnosis",
+                         "github_status", "fix_evidence", "fix_url", "status_checked_at"))
+        for case in snapshot["cases"]:
+            tag = case["contribution_kind"]
+            fix = case["fix"] or {}
+            writer.writerow((case["reference"], case["url"], case["language"], tag, COPY["en"][tag],
+                             COPY["zh-CN"][tag], case["kind"], case["reproduction"], case["diagnosis"],
+                             case["tracker_status"], fix.get("state", "unconfirmed"), fix.get("url", ""),
+                             snapshot["tracker_checked_at"]))
+
+
 if __name__ == "__main__":
     snapshot = json.loads((ROOT / "data" / "cases.json").read_text(encoding="utf-8"))
     tracker = json.loads((ROOT / "data" / "upstream-status.json").read_text(encoding="utf-8"))
@@ -451,5 +500,6 @@ if __name__ == "__main__":
         entry = tracker["issues"].get(case["id"], {})
         state = entry.get("status")
         case["tracker_status"] = state if entry.get("url") == case["url"] and state in TRACKER_STATES else "unconfirmed"
+    write_classification(snapshot)
     for language in COPY:
         build(snapshot, language)

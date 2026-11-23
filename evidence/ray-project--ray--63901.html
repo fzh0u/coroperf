@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which Ray Serve completion request launched each prompt producer?">
+  <title>ray-project/ray #63901 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/ray-project--ray--63901.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="ray-project--ray--63901.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/ray-project--ray--63901.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #63901</p>
+        <h1>Which Ray Serve completion request launched each prompt producer?</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/63901">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Request and result handoffs</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd><a href="https://github.com/ray-project/ray/pull/64094">Proposed fix tested locally ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The live Task and frame connect each prompt&#x27;s enqueue stack to the completion request, even when different requests stream the same prompts.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 6</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_streaming.py:225</span></li><li><code>main</code><span>check_streaming.py:221</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>Runner.run</code><span>runners.py:127</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:706</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:677</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:2046</span></li><li><code>Handle._run</code><span>events.py:94</span></li><li><code>SGLangServer.completions.&lt;locals&gt;.producer</code><span>proposal.py:414</span></li><li><code>Queue.put</code><span>queues.py:154</span></li></ol></section>
+          <p class="small trace-note">Frames from record 6 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>6 → 3</code></a><a href="#join-1-point-1">Join point 1 <code>3 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-6"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_streaming.py:225</span></li><li><code>main</code><span>check_streaming.py:221</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>Runner.run</code><span>runners.py:127</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:706</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:677</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:2046</span></li><li><code>Handle._run</code><span>events.py:94</span></li><li><code>SGLangServer.completions.&lt;locals&gt;.producer</code><span>proposal.py:414</span></li><li><code>Queue.put</code><span>queues.py:154</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-1-record-6">Record 6</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 3 → 6</code></p>
+        </aside><section class="stack " id="join-1-record-3"><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_streaming.py:225</span></li><li><code>main</code><span>check_streaming.py:221</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>Runner.run</code><span>runners.py:127</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:706</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:677</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:2046</span></li><li><code>Handle._run</code><span>events.py:94</span></li><li><code>collect</code><span>check_streaming.py:61</span></li><li><code>SGLangServer.completions</code><span>proposal.py:424</span></li><li><code>create_task</code><span>tasks.py:395</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-3">Record 3</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 3 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_streaming.py:225</span></li><li><code>main</code><span>check_streaming.py:221</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>Runner.run</code><span>runners.py:127</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:706</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:677</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:2046</span></li><li><code>Handle._run</code><span>events.py:94</span></li><li><code>run</code><span>check_streaming.py:204</span></li><li><code>wait_for</code><span>tasks.py:488</span></li><li><code>Probe.trace</code><span>check_streaming.py:155</span></li><li><code>Probe.trace.&lt;locals&gt;.launch_inventory</code><span>check_streaming.py:145</span></li><li><code>create_task</code><span>tasks.py:395</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 7</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_streaming.py:225</span></li><li><code>main</code><span>check_streaming.py:221</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>Runner.run</code><span>runners.py:127</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:706</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:677</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:2046</span></li><li><code>Handle._run</code><span>events.py:94</span></li><li><code>SGLangServer.completions.&lt;locals&gt;.producer</code><span>proposal.py:414</span></li><li><code>Queue.put</code><span>queues.py:154</span></li></ol></section>
+          <p class="small trace-note">Frames from record 7 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>7 → 4</code></a><a href="#join-2-point-1">Join point 1 <code>4 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-7"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 7</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_streaming.py:225</span></li><li><code>main</code><span>check_streaming.py:221</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>Runner.run</code><span>runners.py:127</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:706</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:677</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:2046</span></li><li><code>Handle._run</code><span>events.py:94</span></li><li><code>SGLangServer.completions.&lt;locals&gt;.producer</code><span>proposal.py:414</span></li><li><code>Queue.put</code><span>queues.py:154</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-2-record-7">Record 7</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 4 → 7</code></p>
+        </aside><section class="stack " id="join-2-record-4"><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_streaming.py:225</span></li><li><code>main</code><span>check_streaming.py:221</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>Runner.run</code><span>runners.py:127</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:706</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:677</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:2046</span></li><li><code>Handle._run</code><span>events.py:94</span></li><li><code>collect</code><span>check_streaming.py:61</span></li><li><code>SGLangServer.completions</code><span>proposal.py:424</span></li><li><code>create_task</code><span>tasks.py:395</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-4">Record 4</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 4 → 1</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_streaming.py:225</span></li><li><code>main</code><span>check_streaming.py:221</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>Runner.run</code><span>runners.py:127</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:706</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:677</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:2046</span></li><li><code>Handle._run</code><span>events.py:94</span></li><li><code>run</code><span>check_streaming.py:204</span></li><li><code>wait_for</code><span>tasks.py:488</span></li><li><code>Probe.trace</code><span>check_streaming.py:155</span></li><li><code>Probe.trace.&lt;locals&gt;.launch_profile</code><span>check_streaming.py:148</span></li><li><code>create_task</code><span>tasks.py:395</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In the checked Ray streaming branch, the second prompt starts after the first finishes. With the open proposal both prompts start before the first finishes, and the faster prompt can deliver the first chunk. For one two-prompt batch the CPU fixture takes a median 115 ms on stock and 77 ms on the proposal. The prompt indices, text deltas and finish reasons are preserved.</dd></div><div><dt>What CoroPerf showed</dt><dd>Producer enqueue stacks have identical frames. The exact active Task, coroutine and coroutine frame link the selected enqueue records 6 and 7 to producer creations 3 and 4. Following the creating Task connects them to separate request creations 0 and 1. The actual queued tuple links each producer to the request that emits its SSE chunk, even when the two requests use the same prompts in reverse order.</dd></div><div><dt>Scope and limits</dt><dd>This runs the real Ray streaming methods and SSE formatting with deterministic asynchronous engine responses on CPU. The timings quantify the reproduced serialization and overlap in this fixture. Two runs verify eight producer-to-request joins and sixteen delivered queue objects. The checked master revision still has the serial branch. The issue and PR remain open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

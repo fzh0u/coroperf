@@ -43,9 +43,10 @@
         <h1>Recovering the read that failed before stream cleanup rewrote its traceback</h1>
         <div class="case-links"><a href="https://github.com/python/cpython/issues/156278">Upstream report ↗</a></div>
         <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Failure and task lifecycle</dd></div>
           <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
-          <div><dt>Upstream status</dt><dd>Open</dd></div>
-          <div><dt>Upstream fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd><a href="https://github.com/python/cpython/pull/156286">Proposed fix tested locally ↗</a></dd></div>
           <div><dt>Case language</dt><dd>Python</dd></div>
           <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
           <div><dt>Diagnosis</dt><dd>Direct</dd></div>
@@ -111,7 +112,7 @@
       </section>
       <section class="findings" aria-labelledby="findings-title">
         <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
-        <dl><div><dt>Local observation</dt><dd>Two loopback TCP resets fail different reads with identical error text. Both Tasks finish with the same traceback through session → wait_closed → socket receive. Debug creation stacks retain the launchers. Neither completed Task.get_stack() nor the formatted traceback, including locals, retains the failed read. Omitting the second await leaves both original read frames visible.</dd></div><div><dt>What CoroPerf showed</dt><dd>The file-scoped exception probe saves the first raise in _wait_for_data before cleanup, under the same Task identity recorded at creation. In the displayed run, record 5 → 19 identifies launch_profile and readexactly. Record 10 → 13 identifies launch_inventory and readuntil. Later records 22 and 16 show wait_closed for those same Tasks. The verifier checks the returned Task&#x27;s coroutine object, the two catch times, and reuse of the exact exception object during cleanup.</dd></div><div><dt>Scope and limits</dt><dd>The reported one-connection program and a controlled two-connection extension run on Linux with CPython 3.12.4 and 3.14.3. The 3.14.3 live call graph shows the read while it is pending. The joins preserve that information for post-failure diagnosis. All 16 first-raise joins pass with both launch orders and both read assignments.</dd></div></dl>
+        <dl><div><dt>Local observation</dt><dd>Two loopback TCP resets fail different reads with identical error text. Both Tasks finish with the same traceback through session → wait_closed → socket receive. Debug creation stacks retain the launchers. Neither completed Task.get_stack() nor the formatted traceback, including locals, retains the failed read. Omitting the second await leaves both original read frames visible.</dd></div><div><dt>What CoroPerf showed</dt><dd>The file-scoped exception probe saves the first raise in _wait_for_data before cleanup, under the same Task identity recorded at creation. In the displayed run, record 5 → 19 identifies launch_profile and readexactly. Record 10 → 13 identifies launch_inventory and readuntil. Later records 22 and 16 show wait_closed for those same Tasks. The verifier checks the returned Task&#x27;s coroutine object, the two catch times, and reuse of the exact exception object during cleanup.</dd></div><div><dt>Scope and limits</dt><dd>The loopback replays run on CPython 3.12.4 and 3.14.3. The open PR restores both first-read stacks in local tests of its close-waiter branch. Its shallow copy drops cause, context and the original traceback from the close exception. A local follow-up preserves those attributes and notes for both tested cloning paths, while keeping the read and close exceptions separate.</dd></div></dl>
       </section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>

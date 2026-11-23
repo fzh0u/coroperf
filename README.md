@@ -18,13 +18,14 @@ From the repository root, run the following command and open [the local preview]
 python3 -m http.server 8000
 ```
 
-- `index.html` summarizes the issue types, diagnosis counts, language coverage, and upstream status. The index supports search and filters for issue type, case language, upstream status, and reproduction scope.
+- `index.html` groups the cases by language in one table. Each row shows its GitHub state, repair evidence, and primary CoroPerf contribution. Search and filters cover language, GitHub state, contribution, reported issue type, and reproduction scope.
 - `evidence/` contains the static issue pages.
 - `research.html` summarizes representative error, scheduling, and native attribution cases.
 - `zh-cn/` mirrors the index, research notes, and evidence pages in Simplified Chinese. Function names, paths to public upstream reports, and evidence labels from the graph retain their original spelling.
-- `data/focus.json` lists the reviewed cases, their primary issue types, exact creation/observation pairs, and what each join establishes.
+- `data/focus.json` lists the reviewed cases, their reported issue types, primary diagnostic contributions, exact creation/observation pairs, and what each join establishes.
 - `data/cases.json` contains the exported findings, stacks, and graph edges in the public snapshot.
 - `data/upstream-status.json` records the GitHub tracker state at the last check.
+- `data/case-classification.csv` is a generated bilingual export of the paper taxonomy, evidence scope, and GitHub and repair status for each case.
 
 To update the snapshot from the original research workspace, run the export command first. For a text edit, update the case data, the site copy in `scripts/copy_text.py`, or the research notes fragments, then rebuild. The scripts use Python 3.10 or newer and its standard library. Chinese case findings come from the study's Chinese records. Most Chinese index headlines use the leading observation from the same record.
 
@@ -42,6 +43,7 @@ Refresh the GitHub snapshot when checking tracker status. The page build uses th
 - The connected view starts at the execution stack and follows the joins back to creation. A join point links to the two captured record IDs and names the graph edge or identity check. The instance label uses the first record ID for that instance in the capture.
 - Fix evidence is listed separately from the issue's GitHub status. The evidence page can link to a tested repair, a merged change, a proposal or application workaround tested locally, or an upstream documentation update.
 - Each selected join supplies missing caller context or attributes the observed behavior to its initiating task or request. The original physical stack remains next to its connected view.
+- Assign one diagnostic contribution from the main fact established by the selected join. Record caller recovery, request and result handoffs, failure and task lifecycle, scheduling and contention, or performance cost attribution.
 - Count each previously reported issue once by its main symptom or diagnostic question. Use `functional` for functional failures and correctness issues, `performance` for observed performance problems, `profiling` for CPU or wait-time attribution, and `debugging` for recovering missing diagnostic context.
 - To add an issue, record its primary type, diagnostic contribution, and reviewed record IDs in `data/focus.json`. The exporter checks that each pair is a valid instance join before it can enter the catalog.
 

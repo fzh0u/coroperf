@@ -8,6 +8,11 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>Ray Serve #63901 · Which requests launched the prompt producers?</h3>
+      <p>The proposal overlaps prompts in a streaming SGLang completion. The actual producer Task and queue tuple recover the requesting coroutine even when two requests stream the same prompts.</p>
+      <a href="evidence/ray-project--ray--63901.html#call-stack">Compare the producer-to-request joins ↗</a>
+    </div>
+    <div class="research-entry">
       <h3>SGLang #29163 · Which prompts used the slow tokenizer in a shared batch?</h3>
       <p>Four requests share one executor item and the same physical stack. The actual input object and result Future connect each worker observation to its request. In a CPU component test, the unmerged proposal reduces median batch time from 141 to 43 ms.</p>
       <a href="evidence/sgl-project--sglang--29163.html#call-stack">Compare two requests inside the same batch ↗</a>

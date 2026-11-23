@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import re
 
-from copy_text import CASE_LANGUAGES, FIX_STATES, ISSUE_KINDS
+from copy_text import CASE_LANGUAGES, CONTRIBUTION_KINDS, FIX_STATES, ISSUE_KINDS
 
 
 HERE = Path(__file__).resolve().parents[1]
@@ -41,6 +41,31 @@ CHINESE_HEADLINES = {
     "dotnet--runtime--60764": "Foo 恢复后，物理调用栈里找不到 Main",
     "drogonframework--drogon--2331": "Drogon 在数据库事件循环上执行同步 SQL，导致请求超时",
     "tokio-rs--tokio--6315": "Tokio 的 LIFO 槽位保留了一个没有及时轮询的任务",
+    "pgjdbc--pgjdbc--1951": "Hibernate 等待 PostgreSQL 时，被钉住的虚拟线程属于哪个请求？",
+    "python--cpython--91048": "睡眠中的 asyncio Task 是谁创建的，又被谁等待？",
+    "python--cpython--88831": "哪个任务还在等待 Future 时就被垃圾回收了？",
+    "aio-libs--async-lru--528": "缓存协程的实时调用栈缺失原始调用者",
+    "fastapi--fastapi--709": "停机时哪个 WebSocket 请求仍在等待订阅？",
+    "sqlalchemy--sqlalchemy--8145": "连接清理被取消后，哪次请求留下了未归还的连接？",
+    "grpc--grpc-kotlin--299": "相同的 gRPC 状态异常分别来自哪个 Kotlin 调用者？",
+    "kotlin--kotlinx.coroutines--2327": "Kotlin 的 Future 桥接丢失了失败请求的调用者",
+    "kotlin--kotlinx.coroutines--2604": "delay 恢复后的异常栈缺少 secondCall",
+    "python-trio--trio--285": "两个 socket 读取栈相同时，哪个 Trio 子任务被取消？",
+    "huggingface--huggingface_hub--2521": "哪个未迭代的推理流触发了警告？",
+    "automattic--mongoose--15317": "Mongoose 校验异常栈缺少应用的 save 调用",
+    "axios--axios--2387": "相同的 Axios 错误来自哪两个请求入口？",
+    "knex--knex--2500": "await Knex 查询后，异常栈缺少应用调用行",
+    "sequelize--sequelize--12044": "Sequelize 的重复键异常栈丢失 create 调用点",
+    "sidorares--node-mysql2--530": "相同的 mysql2 查询错误分别由哪个入口触发？",
+    "sindresorhus--got--2277": "触发 Got 连接超时的是哪个下载调用？",
+    "typeorm--typeorm--11499": "TypeORM 的 SQL Server 错误栈止于查询执行器",
+    "omnilib--aiosqlite--87": "upsert 返回的 lastrowid 属于哪个并发调用？",
+    "tortoise--tortoise-orm--2060": "并发 update_or_create 返回了另一个调用者的值",
+    "microsoft--playwright--40141": "嵌套 Playwright 步骤的异常栈缺少外层方法",
+    "knex--knex--2419": "Knex 的 await 与 catch 给出不同的查询栈",
+    "knex--knex--4531": "未定义的绑定让 Knex 错误栈缺少查询调用点",
+    "typeorm--typeorm--11271": "MySQL 重复键异常栈遗漏 TypeORM 插入调用者",
+    "magicstack--asyncpg--1149": "游标预取让已到达的行迟迟无法交给调用者",
 }
 
 
@@ -268,6 +293,9 @@ def main():
         kind = review.get("kind")
         if kind not in ISSUE_KINDS:
             raise ValueError(f"{identifier}: expected a reviewed issue type")
+        contribution_kind = review.get("contribution_kind")
+        if contribution_kind not in CONTRIBUTION_KINDS:
+            raise ValueError(f"{identifier}: expected a reviewed diagnostic contribution")
         language = review.get("language")
         if language not in CASE_LANGUAGES:
             raise ValueError(f"{identifier}: expected a reviewed case language")
@@ -305,6 +333,7 @@ def main():
             "url": item["url"],
             "upstream_reference": upstream_reference,
             "kind": kind,
+            "contribution_kind": contribution_kind,
             "language": language,
             "fix": fix,
             "reproduction": evidence["reproduction"],

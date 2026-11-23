@@ -45,6 +45,11 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>Ray Serve #63901 · 哪些请求创建了这些 prompt 生成协程？</h3>
+      <p>候选修复让同一 SGLang 请求中的 prompt 重叠执行。通过实际 Task 和队列元组，即使两个请求的 prompt 相同，也能分别找回生成协程所属的请求。</p>
+      <a href="evidence/ray-project--ray--63901.html#call-stack">比较生成协程接回请求的两条拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
       <h3>SGLang #29163 · 同一批次里，哪些请求走了慢速分词？</h3>
       <p>四个请求共用一个线程池工作项，物理栈也相同。通过实际输入对象和结果 Future，可以把每次观测接回各自的请求。CPU 组件对照中，未合并的候选补丁将整批中位耗时从 141 毫秒降至 43 毫秒。</p>
       <a href="evidence/sgl-project--sglang--29163.html#call-stack">比较同一批次内的两条请求栈 ↗</a>
