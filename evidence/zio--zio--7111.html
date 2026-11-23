@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A ZIO map failure loses the application line that called Nil.head">
+  <title>zio/zio #7111 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">zio/zio #7111</p>
+        <h1>A ZIO map failure loses the application line that called Nil.head</h1>
+        <div class="case-links"><a href="https://github.com/zio/zio/issues/7111">Upstream report ↗</a><a href="https://github.com/zio/zio/commit/edd4bba454ae5dc347dfa2ac88c72625db5789ab">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>scala.collection.immutable.Nil$.head(List.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · method-boundary</span></div><ol class="frames"><li><code>zio.internal.ZScheduler$$anon$3.run(ZScheduler.scala:415)</code></li><li><code>zio.internal.FiberRuntime.run(FiberRuntime.scala:134)</code></li><li><code>zio.internal.FiberRuntime.drainQueueOnCurrentThread(FiberRuntime.scala:217)</code></li><li><code>zio.internal.FiberRuntime.evaluateMessageWhileSuspended(FiberRuntime.scala:447)</code></li><li><code>zio.internal.FiberRuntime.evaluateEffect(FiberRuntime.scala:324)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:931)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:889)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:931)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:905)</code></li><li><code>zio.internal.FiberRuntime.initiateAsync(FiberRuntime.scala:615)</code></li><li><code>zio.ZIOCompanionVersionSpecific.$anonfun$asyncInterrupt$2(ZIOCompanionVersionSpecific.scala:51)</code></li><li><code>zio.ZIO$.$anonfun$asyncInterruptUnsafe$1(ZIO.scala:2631)</code></li><li><code>zio.Unsafe$.unsafeCompat(Unsafe.scala:36)</code></li><li><code>zio.ZIO$.$anonfun$asyncInterruptUnsafe$2(ZIO.scala:2631)</code></li><li><code>zio.Runtime.$anonfun$run$3(Runtime.scala:53)</code></li><li><code>zio.Runtime$UnsafeAPIV1.fork(Runtime.scala:107)</code></li><li><code>zio.Runtime$UnsafeAPIV1.fork(Runtime.scala:154)</code></li><li><code>zio.internal.FiberRuntime.start(FiberRuntime.scala:1223)</code></li><li><code>zio.internal.FiberRuntime.evaluateEffect(FiberRuntime.scala:324)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:822)</code></li><li><code>zio.ZIO.$anonfun$map$1(ZIO.scala:927)</code></li><li><code>Main$.$anonfun$run$2(Main.scala:4)</code></li><li><code>scala.collection.immutable.Nil$.head(List.scala)</code></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>zio.Cause$.die(Cause.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · method-boundary</span></div><ol class="frames"><li><code>zio.internal.ZScheduler$$anon$3.run(ZScheduler.scala:415)</code></li><li><code>zio.internal.FiberRuntime.run(FiberRuntime.scala:134)</code></li><li><code>zio.internal.FiberRuntime.drainQueueOnCurrentThread(FiberRuntime.scala:217)</code></li><li><code>zio.internal.FiberRuntime.evaluateMessageWhileSuspended(FiberRuntime.scala:447)</code></li><li><code>zio.internal.FiberRuntime.evaluateEffect(FiberRuntime.scala:324)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:931)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:889)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:931)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:905)</code></li><li><code>zio.internal.FiberRuntime.initiateAsync(FiberRuntime.scala:615)</code></li><li><code>zio.ZIOCompanionVersionSpecific.$anonfun$asyncInterrupt$2(ZIOCompanionVersionSpecific.scala:51)</code></li><li><code>zio.ZIO$.$anonfun$asyncInterruptUnsafe$1(ZIO.scala:2631)</code></li><li><code>zio.Unsafe$.unsafeCompat(Unsafe.scala:36)</code></li><li><code>zio.ZIO$.$anonfun$asyncInterruptUnsafe$2(ZIO.scala:2631)</code></li><li><code>zio.Runtime.$anonfun$run$3(Runtime.scala:53)</code></li><li><code>zio.Runtime$UnsafeAPIV1.fork(Runtime.scala:107)</code></li><li><code>zio.Runtime$UnsafeAPIV1.fork(Runtime.scala:154)</code></li><li><code>zio.internal.FiberRuntime.start(FiberRuntime.scala:1223)</code></li><li><code>zio.internal.FiberRuntime.evaluateEffect(FiberRuntime.scala:324)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:1107)</code></li><li><code>zio.Cause$.die(Cause.scala)</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original ZIO 2.0.0 example failed in Nil.head, but its printed trace omitted the map call at Main.scala:4.</dd></div><div><dt>What CoroPerf showed</dt><dd>The affected capture showed line 4 calling Nil.head and the path into Cause.die. The upstream fix retained lastTrace when FiberRuntime.runLoop handled the unexpected exception.</dd></div><div><dt>Scope and limits</dt><dd>Versions 2.0.1 and 2.0.2 were also replayed. Patch-release differences alone do not isolate one PR’s contribution.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

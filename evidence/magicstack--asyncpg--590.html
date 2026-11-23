@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Reading an enum array changes later scalar enum handling">
+  <title>magicstack/asyncpg #590 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">magicstack/asyncpg #590</p>
+        <h1>Reading an enum array changes later scalar enum handling</h1>
+        <div class="case-links"><a href="https://github.com/MagicStack/asyncpg/issues/590">Upstream report ↗</a><a href="https://github.com/MagicStack/asyncpg/issues/590#issuecomment-734448850">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 58</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:70</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:672</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 58 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:70</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>main</code><span>workload.py:55</span></li><li><code>fetchval</code><span>connection.py:441</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 58 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:70</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>main</code><span>workload.py:55</span></li><li><code>fetchval</code><span>connection.py:441</span></li></ol></section>
+          <p class="small trace-note">The frames on record 58 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 66</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:70</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:672</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 66 · scoped exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:70</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>main</code><span>workload.py:58</span></li><li><code>fetch</code><span>connection.py:420</span></li><li><code>_execute</code><span>connection.py:1402</span></li><li><code>__execute</code><span>connection.py:1411</span></li><li><code>_do_execute</code><span>connection.py:1433</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 66 · scoped exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:70</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>main</code><span>workload.py:58</span></li><li><code>fetch</code><span>connection.py:420</span></li><li><code>_execute</code><span>connection.py:1402</span></li><li><code>__execute</code><span>connection.py:1411</span></li><li><code>_do_execute</code><span>connection.py:1433</span></li></ol></section>
+          <p class="small trace-note">The frames on record 66 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:70</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:672</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · task snapshot</span></div><ol class="frames"><li><code>main</code><span>workload.py:17</span></li><li><code>connect</code><span>connection.py:1668</span></li><li><code>_connect</code><span>connect_utils.py:651</span></li><li><code>_connect_addr</code><span>connect_utils.py:620</span></li><li><code>wait_for</code><span>tasks.py:481</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · task snapshot</span></div><ol class="frames"><li><code>main</code><span>workload.py:17</span></li><li><code>connect</code><span>connection.py:1668</span></li><li><code>_connect</code><span>connect_utils.py:651</span></li><li><code>_connect_addr</code><span>connect_utils.py:620</span></li><li><code>wait_for</code><span>tasks.py:481</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Reading the array first returned strings, the next scalar came back as the plain string paper, and querying row 2 with Choice.paper raised DataError.</dd></div><div><dt>What CoroPerf showed</dt><dd>The array codec was built with CODEC_C/BINARY in the affected release and CODEC_PY/TEXT after the fix, pinpointing the format selection during codec construction.</dd></div><div><dt>Scope and limits</dt><dd>The local PostgreSQL 10.23 baseline used Python 3.7.6. The GDB and asyncio evidence came from separate processes.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

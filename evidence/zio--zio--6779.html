@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A typed ZIO failure logs the stream endpoint instead of the parser line">
+  <title>zio/zio #6779 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">zio/zio #6779</p>
+        <h1>A typed ZIO failure logs the stream endpoint instead of the parser line</h1>
+        <div class="case-links"><a href="https://github.com/zio/zio/issues/6779">Upstream report ↗</a><a href="https://github.com/zio/zio/issues/6779#issuecomment-2614559829">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 1 · sample<code>Orders$.quantity(Orders.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · method-entry</span></div><ol class="frames"><li><code>java.base/java.lang.Thread.run(Thread.java:1583)</code></li><li><code>java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)</code></li><li><code>java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)</code></li><li><code>zio.internal.FiberContext.run(FiberContext.scala:111)</code></li><li><code>zio.internal.FiberContext.runUntil(FiberContext.scala:410)</code></li><li><code>zio.ZIO$.$anonfun$isFatalWith$1(ZIO.scala:3571)</code></li><li><code>zio.ZIO$.$anonfun$attempt$1(ZIO.scala:2603)</code></li><li><code>zio.ZIO$.liftedTree1$1(ZIO.scala:2603)</code></li><li><code>scala.runtime.java8.JFunction0$mcI$sp.apply(JFunction0$mcI$sp.scala:17)</code></li><li><code>Orders$.$anonfun$checked$2(Orders.scala:17)</code></li><li><code>Orders$.quantity(Orders.scala)</code></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>zio.Cause.unifyFail$1(Cause.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · method-entry</span></div><ol class="frames"><li><code>zio.internal.ZScheduler$$anon$3.run(ZScheduler.scala:415)</code></li><li><code>zio.internal.FiberContext.run(FiberContext.scala:111)</code></li><li><code>zio.internal.FiberContext.runUntil(FiberContext.scala:462)</code></li><li><code>zio.internal.FiberContext.unsafeLog(FiberContext.scala:891)</code></li><li><code>scala.collection.immutable.Set$Set1.foreach(Set.scala:177)</code></li><li><code>zio.internal.FiberContext.$anonfun$unsafeLog$2(FiberContext.scala:892)</code></li><li><code>zio.ZLogger$$anon$3.apply(ZLogger.scala:65)</code></li><li><code>zio.ZLogger$$anon$3.apply(ZLogger.scala:77)</code></li><li><code>zio.ZLogger$$anon$4.apply(ZLogger.scala:92)</code></li><li><code>zio.ZLogger$$anonfun$1.apply(ZLogger.scala:122)</code></li><li><code>zio.ZLogger$$anonfun$1.apply(ZLogger.scala:122)</code></li><li><code>zio.ZLogger$.zio$ZLogger$$$anonfun$default$1(ZLogger.scala:143)</code></li><li><code>zio.Cause.prettyPrint(Cause.scala:361)</code></li><li><code>scala.collection.immutable.Set$Set1.map(Set.scala:165)</code></li><li><code>scala.collection.StrictOptimizedIterableOps.map$(StrictOptimizedIterableOps.scala:87)</code></li><li><code>scala.collection.StrictOptimizedIterableOps.map(StrictOptimizedIterableOps.scala:100)</code></li><li><code>zio.Cause.$anonfun$prettyPrint$3(Cause.scala:361)</code></li><li><code>zio.Cause.renderCause$1(Cause.scala:354)</code></li><li><code>zio.Cause.unified(Cause.scala:524)</code></li><li><code>zio.Cause.loop$4(Cause.scala:517)</code></li><li><code>zio.Cause.unifyFail$1(Cause.scala)</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On 2.0.0-RC6, a CSV quantity error at line 10 logged only runDrain at line 23 as a typed failure, while orDie and a throw from map showed the parser line.</dd></div><div><dt>What CoroPerf showed</dt><dd>The formatter took Cause.unifyFail, which rendered only the fiber stack. UnifyDie included the Throwable stack, and changing the terminal operation to runCollect moved the lone location to line 27.</dd></div><div><dt>Scope and limits</dt><dd>The report supplied no version, code, input or stack. This reproduces the logging symptom in a local component without establishing the reporter’s cause.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

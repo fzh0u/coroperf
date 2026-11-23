@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Main disappears from the physical stack after Foo resumes">
+  <title>dotnet/runtime #60764 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dotnet/runtime #60764</p>
+        <h1>Main disappears from the physical stack after Foo resumes</h1>
+        <div class="case-links"><a href="https://github.com/dotnet/runtime/issues/60764">Upstream report ↗</a><a href="https://github.com/dotnet/runtime/issues/60764#issuecomment-952335531">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 6</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0 · diagnostic</span></div><ol class="frames"><li><code>Program.Main</code><span>Program.cs:11</span></li><li><code>Program.Foo</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start</code></li><li><code>System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start</code></li><li><code>Program.Foo [MoveNext]</code></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · diagnostic</span></div><ol class="frames"><li><code>System.Threading.PortableThreadPool+WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.TimerQueue.FireNextTimers</code></li><li><code>System.Threading.TimerQueueTimer.Fire</code></li><li><code>System.Threading.Tasks.Task+DelayPromise.CompleteTimedOut</code></li><li><code>System.Threading.Tasks.Task.TrySetResult</code></li><li><code>System.Threading.Tasks.Task.RunContinuations</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Threading.ExecutionContext.RunInternal</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.ExecutionContextCallback</code></li><li><code>Program.Foo [MoveNext]</code><span>Program.cs:17</span></li><li><code>A..ctor</code><span>Program.cs:25</span></li><li><code>System.Console.WriteLine</code></li><li><code>System.IO.TextWriter+SyncTextWriter.WriteLine</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · diagnostic</span></div><ol class="frames"><li><code>System.Threading.PortableThreadPool+WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.TimerQueue.FireNextTimers</code></li><li><code>System.Threading.TimerQueueTimer.Fire</code></li><li><code>System.Threading.Tasks.Task+DelayPromise.CompleteTimedOut</code></li><li><code>System.Threading.Tasks.Task.TrySetResult</code></li><li><code>System.Threading.Tasks.Task.RunContinuations</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Threading.ExecutionContext.RunInternal</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.ExecutionContextCallback</code></li><li><code>Program.Foo [MoveNext]</code><span>Program.cs:17</span></li><li><code>A..ctor</code><span>Program.cs:25</span></li><li><code>System.Console.WriteLine</code></li><li><code>System.IO.TextWriter+SyncTextWriter.WriteLine</code></li></ol></section>
+          <p class="small trace-note">The frames on record 6 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Other observation in the same capture · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0 · diagnostic</span></div><ol class="frames"><li><code>Program.Main</code><span>Program.cs:11</span></li><li><code>Program.Foo</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start</code></li><li><code>System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start</code></li><li><code>Program.Foo [MoveNext]</code></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic</span></div><ol class="frames"><li><code>Program.Main</code><span>Program.cs:11</span></li><li><code>Program.Foo</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start</code></li><li><code>System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start</code></li><li><code>Program.Foo [MoveNext]</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic</span></div><ol class="frames"><li><code>Program.Main</code><span>Program.cs:11</span></li><li><code>Program.Foo</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start</code></li><li><code>System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start</code></li><li><code>Program.Foo [MoveNext]</code></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0 · diagnostic</span></div><ol class="frames"><li><code>Program.Main</code><span>Program.cs:11</span></li><li><code>Program.Foo</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start</code></li><li><code>System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start</code></li><li><code>Program.Foo [MoveNext]</code></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · diagnostic</span></div><ol class="frames"><li><code>System.Threading.PortableThreadPool+WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.TimerQueue.FireNextTimers</code></li><li><code>System.Threading.TimerQueueTimer.Fire</code></li><li><code>System.Threading.Tasks.Task+DelayPromise.CompleteTimedOut</code></li><li><code>System.Threading.Tasks.Task.TrySetResult</code></li><li><code>System.Threading.Tasks.Task.RunContinuations</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Threading.ExecutionContext.RunInternal</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.ExecutionContextCallback</code></li><li><code>Program.Foo [MoveNext]</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · diagnostic</span></div><ol class="frames"><li><code>System.Threading.PortableThreadPool+WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.TimerQueue.FireNextTimers</code></li><li><code>System.Threading.TimerQueueTimer.Fire</code></li><li><code>System.Threading.Tasks.Task+DelayPromise.CompleteTimedOut</code></li><li><code>System.Threading.Tasks.Task.TrySetResult</code></li><li><code>System.Threading.Tasks.Task.RunContinuations</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Threading.ExecutionContext.RunInternal</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.ExecutionContextCallback</code></li><li><code>Program.Foo [MoveNext]</code></li></ol></section>
+          <p class="small trace-note">The frames on record 5 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In the original .NET program, a stack captured inside A’s constructor after Foo resumed no longer showed Main.</dd></div><div><dt>What CoroPerf showed</dt><dd>Comparing the original and instrumented assemblies, the async state-machine identity linked A’s constructor diagnostic to the call in Main that created Foo.</dd></div><div><dt>Scope and limits</dt><dd>The trace identifies the origin of this invocation only.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

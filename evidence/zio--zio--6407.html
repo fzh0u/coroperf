@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="ZIO prints an interruption message without a fiber number">
+  <title>zio/zio #6407 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">zio/zio #6407</p>
+        <h1>ZIO prints an interruption message without a fiber number</h1>
+        <div class="case-links"><a href="https://github.com/zio/zio/issues/6407">Upstream report ↗</a><a href="https://github.com/zio/zio/issues/6407#issuecomment-1062708539">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 2 · sample<code>zio.FiberId.threadName(FiberId.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · method-boundary</span></div><ol class="frames"><li><code>zio.internal.ZScheduler$$anon$1.run(ZScheduler.scala:151)</code></li><li><code>zio.internal.FiberContext.run(FiberContext.scala:115)</code></li><li><code>zio.internal.FiberContext.runUntil(FiberContext.scala:478)</code></li><li><code>zio.internal.FiberContext.unsafeLog(FiberContext.scala:847)</code></li><li><code>scala.collection.immutable.Set$Set1.foreach(Set.scala:177)</code></li><li><code>zio.internal.FiberContext.$anonfun$unsafeForEachLogger$1$adapted(FiberContext.scala:847)</code></li><li><code>zio.internal.FiberContext.$anonfun$unsafeForEachLogger$1(FiberContext.scala:847)</code></li><li><code>zio.internal.FiberContext.$anonfun$unsafeLog$2$adapted(FiberContext.scala:875)</code></li><li><code>zio.internal.FiberContext.$anonfun$unsafeLog$2(FiberContext.scala:876)</code></li><li><code>zio.ZLogger$$anon$3.apply(ZLogger.scala:65)</code></li><li><code>zio.ZLogger$$anon$3.apply(ZLogger.scala:77)</code></li><li><code>zio.ZLogger$$anon$4.apply(ZLogger.scala:92)</code></li><li><code>zio.ZLogger$$anon$2.apply(ZLogger.scala:57)</code></li><li><code>zio.ZLogger$$anonfun$2.apply(ZLogger.scala:188)</code></li><li><code>zio.ZLogger$$anonfun$2.apply(ZLogger.scala:188)</code></li><li><code>zio.ZLogger$.zio$ZLogger$$$anonfun$defaultString$1(ZLogger.scala:204)</code></li><li><code>zio.ZLogger$$anon$2.$anonfun$apply$1(ZLogger.scala:57)</code></li><li><code>zio.ZLogger$.$anonfun$defaultCause$1(ZLogger.scala:264)</code></li><li><code>zio.Cause.prettyPrint(Cause.scala:384)</code></li><li><code>scala.collection.immutable.Set$Set2.map(Set.scala:192)</code></li><li><code>scala.collection.StrictOptimizedIterableOps.map$(StrictOptimizedIterableOps.scala:87)</code></li><li><code>scala.collection.StrictOptimizedIterableOps.map(StrictOptimizedIterableOps.scala:100)</code></li><li><code>zio.Cause.$anonfun$prettyPrint$3(Cause.scala:384)</code></li><li><code>zio.Cause.renderCause$1(Cause.scala:377)</code></li><li><code>zio.Cause.unified(Cause.scala:537)</code></li><li><code>zio.Cause.loop$4(Cause.scala:533)</code></li><li><code>zio.Cause.unifyInterrupt$1(Cause.scala:518)</code></li><li><code>zio.FiberId$None$.threadName(FiberId.scala:81)</code></li><li><code>zio.FiberId.threadName$(FiberId.scala:58)</code></li><li><code>zio.FiberId.threadName(FiberId.scala)</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The RC2 parallel-failure example printed zio-fiber- with no numeric suffix in the interruption message.</dd></div><div><dt>What CoroPerf showed</dt><dd>unifyInterrupt had the actual interrupt.fiberId but called threadName on FiberId.None, producing the incomplete name addressed by the upstream fix.</dd></div><div><dt>Scope and limits</dt><dd>The reporter’s MainApp and a 2.0.0 control were rerun, with the formatter’s input inspected directly.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

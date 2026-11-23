@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A read-only rqlite query printed the previous write count">
+  <title>rqlite/rqlite #257 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">rqlite/rqlite #257</p>
+        <h1>A read-only rqlite query printed the previous write count</h1>
+        <div class="case-links"><a href="https://github.com/rqlite/rqlite/issues/257">Upstream report ↗</a><a href="https://github.com/rqlite/rqlite/pull/2265">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>main.main.func1</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:283</span></li><li><code>main.main</code><span>main.go:86</span></li><li><code>github.com/mkideal/cli.Run</code><span>cli.go:15</span></li><li><code>github.com/mkideal/cli.RunWithArgs</code><span>cli.go:30</span></li><li><code>github.com/mkideal/cli.(*Command).Run</code><span>command.go:176</span></li><li><code>github.com/mkideal/cli.(*Command).RunWith</code><span>command.go:219</span></li><li><code>main.main.func1</code><span>main.go:291</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>main.executeWithClient</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:283</span></li><li><code>main.main</code><span>main.go:86</span></li><li><code>github.com/mkideal/cli.Run</code><span>cli.go:15</span></li><li><code>github.com/mkideal/cli.RunWithArgs</code><span>cli.go:30</span></li><li><code>github.com/mkideal/cli.(*Command).Run</code><span>command.go:176</span></li><li><code>github.com/mkideal/cli.(*Command).RunWith</code><span>command.go:219</span></li><li><code>main.main.func1</code><span>main.go:291</span></li><li><code>main.executeWithClient</code><span>execute.go:81</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>main.executeWithClient</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:283</span></li><li><code>main.main</code><span>main.go:86</span></li><li><code>github.com/mkideal/cli.Run</code><span>cli.go:15</span></li><li><code>github.com/mkideal/cli.RunWithArgs</code><span>cli.go:30</span></li><li><code>github.com/mkideal/cli.(*Command).Run</code><span>command.go:176</span></li><li><code>github.com/mkideal/cli.(*Command).RunWith</code><span>command.go:219</span></li><li><code>main.main.func1</code><span>main.go:291</span></li><li><code>main.executeWithClient</code><span>execute.go:123</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>main.executeWithClient</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:283</span></li><li><code>main.main</code><span>main.go:86</span></li><li><code>github.com/mkideal/cli.Run</code><span>cli.go:15</span></li><li><code>github.com/mkideal/cli.RunWithArgs</code><span>cli.go:30</span></li><li><code>github.com/mkideal/cli.(*Command).Run</code><span>command.go:176</span></li><li><code>github.com/mkideal/cli.(*Command).RunWith</code><span>command.go:219</span></li><li><code>main.main.func1</code><span>main.go:291</span></li><li><code>main.executeWithClient</code><span>execute.go:132</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The maintainer’s common table expression should return one row containing x = 1. The v8.43.3 shell printed 3, 0 or 2 affected rows, depending on the preceding write. Across three voters we found all three reads in the replicated log. The v8.43.4 shell returned the expected row each time and the reads added no entries. Switching only the client changed the outcome on either server release.</dd></div><div><dt>What CoroPerf showed</dt><dd>Four Go stack samples follow the shell from its WITH dispatch into executeWithClient, through the actual endpoint and into the affected-row display. The older CLI sent the read to /db/execute. Its response contained the same change count that SQLite retained after the preceding write. The repaired requestWithClient selected the table display using the columns and values returned by /db/request. A recursive read of eight Chinook employees showed the same routing difference. A recursive INSERT committed all eight employees on both releases.</dd></div><div><dt>Scope and limits</dt><dd>The 2017 report omitted the version. The stock v3.9.2 CLI has the same source tree as the shell on the reporting date. On its matching daemon it printed one affected row for both a one-row result and an empty result. The later maintainer report and fix supply the SQL for the three-node comparison. The main comparison uses adjacent 2025 releases, with official client binaries, a local three-voter cluster and a separate line-preserving stack observation build. The stack samples track synchronous work on the CLI main goroutine.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

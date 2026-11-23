@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Beam rejects duplicated() on a deferred Series">
+  <title>apache/beam #40814 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">apache/beam #40814</p>
+        <h1>Beam rejects duplicated() on a deferred Series</h1>
+        <div class="case-links"><a href="https://github.com/apache/beam/issues/40814">Upstream report ↗</a><a href="https://github.com/apache/beam/pull/40846">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>duplicated</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>job.py:70</span></li><li><code>run</code><span>job.py:45</span></li><li><code>wrapper</code><span>frame_base.py:530</span></li><li><code>wrapper</code><span>frame_base.py:702</span></li><li><code>wrapper</code><span>frame_base.py:466</span></li><li><code>duplicated</code><span>frames.py:1972</span></li><li><code>wrapper</code><span>frame_base.py:530</span></li><li><code>wrapper</code><span>frame_base.py:702</span></li><li><code>wrapper</code><span>frame_base.py:466</span></li><li><code>duplicated</code><span>frames.py:2848</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>__getitem__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>job.py:70</span></li><li><code>run</code><span>job.py:45</span></li><li><code>wrapper</code><span>frame_base.py:530</span></li><li><code>wrapper</code><span>frame_base.py:702</span></li><li><code>wrapper</code><span>frame_base.py:466</span></li><li><code>duplicated</code><span>frames.py:1972</span></li><li><code>__getitem__</code><span>frames.py:1356</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On Beam 2.77.0 and 2.78.0, duplicated() on the named Series [1, 2, 1] raised WontImplementError for keep=False and keep=&#x27;any&#x27;, while the DataFrame control succeeded.</dd></div><div><dt>What CoroPerf showed</dt><dd>The aggregation already returned a Boolean mask. Removing the extra column lookup and restoring the name yielded [true, false, true] for keep=False across three partitions.</dd></div><div><dt>Scope and limits</dt><dd>The failure occurred during driver-side planning. The successful control used the merged production module.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

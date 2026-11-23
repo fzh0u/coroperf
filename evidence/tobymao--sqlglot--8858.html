@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Casting a timestamp to a date made the optimizer drop matching rows">
+  <title>tobymao/sqlglot #8858 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">tobymao/sqlglot #8858</p>
+        <h1>Casting a timestamp to a date made the optimizer drop matching rows</h1>
+        <div class="case-links"><a href="https://github.com/tobymao/sqlglot/issues/8858">Upstream report ↗</a><a href="https://github.com/tobymao/sqlglot/pull/8859">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>_is_joined_on_all_unique_outputs</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:119</span></li><li><code>main</code><span>workload.py:71</span></li><li><code>measured</code><span>workload.py:52</span></li><li><code>&lt;lambda&gt;</code><span>workload.py:71</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:286</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>report.py:18</span></li><li><code>optimize</code><span>optimizer.py:115</span></li><li><code>eliminate_joins</code><span>eliminate_joins.py:49</span></li><li><code>_should_eliminate_join</code><span>eliminate_joins.py:62</span></li><li><code>_is_joined_on_all_unique_outputs</code><span>eliminate_joins.py:88</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_should_eliminate_join</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:119</span></li><li><code>main</code><span>workload.py:71</span></li><li><code>measured</code><span>workload.py:52</span></li><li><code>&lt;lambda&gt;</code><span>workload.py:71</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:286</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>report.py:18</span></li><li><code>optimize</code><span>optimizer.py:115</span></li><li><code>eliminate_joins</code><span>eliminate_joins.py:49</span></li><li><code>_should_eliminate_join</code><span>eliminate_joins.py:58</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>eliminate_joins</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:119</span></li><li><code>main</code><span>workload.py:71</span></li><li><code>measured</code><span>workload.py:52</span></li><li><code>&lt;lambda&gt;</code><span>workload.py:71</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:286</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>report.py:18</span></li><li><code>optimize</code><span>optimizer.py:115</span></li><li><code>eliminate_joins</code><span>eliminate_joins.py:53</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>_is_joined_on_all_unique_outputs</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:119</span></li><li><code>main</code><span>workload.py:94</span></li><li><code>measured</code><span>workload.py:52</span></li><li><code>&lt;lambda&gt;</code><span>workload.py:94</span></li><li><code>optimize</code><span>optimizer.py:115</span></li><li><code>eliminate_joins</code><span>eliminate_joins.py:49</span></li><li><code>_should_eliminate_join</code><span>eliminate_joins.py:62</span></li><li><code>_is_joined_on_all_unique_outputs</code><span>eliminate_joins.py:88</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On the reporter’s DuckDB example, two distinct timestamps fell on October 30. The original query returned October 30 twice and October 31 once. The reported commit and the parent of the fix returned October 30 only once after optimization. The fix and release v30.28.0 preserved all three rows.</dd></div><div><dt>What CoroPerf showed</dt><dd>The recorded stack leads from eliminate_joins through _should_eliminate_join to _is_joined_on_all_unique_outputs. A Cast node reported the name of the timestamp column. The affected check accepted that name as proof of uniqueness and authorized removing the join. The fixed check requires a Column node. With the same flight data, the fixed query preserved all 39 matches on February 28. Joining directly on an already unique date remained safe in every build.</dd></div><div><dt>Scope and limits</dt><dd>The additional calendar workload uses 2,000 public flight records, 1,920 distinct minute-level timestamps and one added day with no flights. Each result was checked against an independent per-day timestamp count. All four builds ran on CPython 3.12.4 and DuckDB 2.0.0. The optimizer runs synchronously. The function stacks were imported from CPython return events, with local values and SQL results recorded separately.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

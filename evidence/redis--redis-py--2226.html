@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="The Redis client dropped the cursor for the next stream page">
+  <title>redis/redis-py #2226 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">redis/redis-py #2226</p>
+        <h1>The Redis client dropped the cursor for the next stream page</h1>
+        <div class="case-links"><a href="https://github.com/redis/redis-py/issues/2226">Upstream report ↗</a><a href="https://github.com/redis/redis-py/pull/2252">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 3</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:147</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>run</code><span>workload.py:121</span></li><li><code>scan</code><span>workload.py:51</span></li><li><code>StreamCommands.xautoclaim</code><span>core.py:3460</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:147</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>run</code><span>workload.py:121</span></li><li><code>scan</code><span>workload.py:54</span></li><li><code>Redis.execute_command</code><span>client.py:476</span></li><li><code>Retry.call_with_retry</code><span>retry.py:51</span></li><li><code>Redis._send_command_parse_response</code><span>client.py:455</span></li><li><code>Redis.parse_response</code><span>client.py:502</span></li><li><code>parse_xautoclaim</code><span>client.py:313</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:147</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>run</code><span>workload.py:121</span></li><li><code>scan</code><span>workload.py:54</span></li><li><code>Redis.execute_command</code><span>client.py:476</span></li><li><code>Retry.call_with_retry</code><span>retry.py:51</span></li><li><code>Redis._send_command_parse_response</code><span>client.py:455</span></li><li><code>Redis.parse_response</code><span>client.py:502</span></li><li><code>parse_xautoclaim</code><span>client.py:313</span></li></ol></section>
+          <p class="small trace-note">The frames on record 3 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 1</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:147</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>run</code><span>workload.py:121</span></li><li><code>scan</code><span>workload.py:51</span></li><li><code>StreamCommands.xautoclaim</code><span>core.py:3460</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:147</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>run</code><span>workload.py:121</span></li><li><code>scan</code><span>workload.py:54</span></li><li><code>Redis.execute_command</code><span>client.py:476</span></li><li><code>Retry.call_with_retry</code><span>retry.py:51</span></li><li><code>Redis._send_command_parse_response</code><span>client.py:455</span></li><li><code>Redis.parse_response</code><span>client.py:502</span></li><li><code>parse_xautoclaim</code><span>client.py:313</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:147</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>run</code><span>workload.py:121</span></li><li><code>scan</code><span>workload.py:54</span></li><li><code>Redis.execute_command</code><span>client.py:476</span></li><li><code>Retry.call_with_retry</code><span>retry.py:51</span></li><li><code>Redis._send_command_parse_response</code><span>client.py:455</span></li><li><code>Redis.parse_response</code><span>client.py:502</span></li><li><code>parse_xautoclaim</code><span>client.py:313</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:147</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>run</code><span>workload.py:121</span></li><li><code>scan</code><span>workload.py:51</span></li><li><code>StreamCommands.xautoclaim</code><span>core.py:3460</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:147</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>run</code><span>workload.py:121</span></li><li><code>scan</code><span>workload.py:54</span></li><li><code>Redis.execute_command</code><span>client.py:476</span></li><li><code>Retry.call_with_retry</code><span>retry.py:51</span></li><li><code>Redis._send_command_parse_response</code><span>client.py:455</span></li><li><code>Redis.parse_response</code><span>client.py:502</span></li><li><code>parse_xautoclaim</code><span>client.py:313</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:147</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>run</code><span>workload.py:121</span></li><li><code>scan</code><span>workload.py:54</span></li><li><code>Redis.execute_command</code><span>client.py:476</span></li><li><code>Retry.call_with_retry</code><span>retry.py:51</span></li><li><code>Redis._send_command_parse_response</code><span>client.py:455</span></li><li><code>Redis.parse_response</code><span>client.py:502</span></li><li><code>parse_xautoclaim</code><span>client.py:313</span></li></ol></section>
+          <p class="small trace-note">The frames on record 5 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The Redis server returned [&quot;21-0&quot;, [], []] on the first page of a 412-entry pending list. redis-py 4.3.3 returned [] to the application, leaving it without the next position. All 108 eligible invoices remained with the original consumer. On 4.3.4 the application reached the terminal cursor after 56 calls. Independent ownership checks found all 108 invoices with the replacement consumer.</dd></div><div><dt>What CoroPerf showed</dt><dd>The recorded RESP2 bytes contain the cursor before the result reaches the callback. In the asyncio client, StreamCommands.xautoclaim created the Redis.execute_command coroutine whose execution stack reaches Redis.parse_response and parse_xautoclaim. The old callback returned element 1 alone. The fixed callback formats the entries in that element and returns all three elements. Replacing only this callback on 4.3.3 recovered the 108 invoices and the three IDs removed from the stream.</dd></div><div><dt>Scope and limits</dt><dd>The reporter described the iterative operation. This workload supplies the stream entries, idle times and consumer groups, using the reported Redis and redis-py versions on Linux. The measurements cover normal full-entry calls. A separate JUSTID control returned only the message IDs on both releases.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

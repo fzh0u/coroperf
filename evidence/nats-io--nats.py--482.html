@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Three NATS consumers share one outstanding delivery limit">
+  <title>nats-io/nats.py #482 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">nats-io/nats.py #482</p>
+        <h1>Three NATS consumers share one outstanding delivery limit</h1>
+        <div class="case-links"><a href="https://github.com/nats-io/nats.py/issues/482">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 29</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:89</span></li><li><code>run_until_complete</code><span>base_events.py:628</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 11</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:89</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>consumer.py:68</span></li><li><code>subscribe</code><span>client.py:308</span></li><li><code>subscribe_bind</code><span>client.py:342</span></li><li><code>subscribe</code><span>client.py:914</span></li><li><code>_start</code><span>subscription.py:214</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 29 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:90</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_wait_for_msgs</code><span>subscription.py:311</span></li><li><code>task_cb</code><span>consumer.py:30</span></li><li><code>time_consuming_task</code><span>consumer.py:24</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 29 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:90</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_wait_for_msgs</code><span>subscription.py:311</span></li><li><code>task_cb</code><span>consumer.py:30</span></li><li><code>time_consuming_task</code><span>consumer.py:24</span></li></ol></section>
+          <p class="small trace-note">The frames on record 29 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Other observation in the same capture · observation 13</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:89</span></li><li><code>run_until_complete</code><span>base_events.py:628</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:89</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>consumer.py:49</span></li><li><code>connect</code><span>__init__.py:44</span></li><li><code>connect</code><span>client.py:476</span></li><li><code>_process_connect_init</code><span>client.py:1978</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 13 · task snapshot</span></div><ol class="frames"><li><code>_read_loop</code><span>client.py:2067</span></li><li><code>read</code><span>transport.py:171</span></li><li><code>read</code><span>streams.py:669</span></li><li><code>_wait_for_data</code><span>streams.py:501</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 13 · task snapshot</span></div><ol class="frames"><li><code>_read_loop</code><span>client.py:2067</span></li><li><code>read</code><span>transport.py:171</span></li><li><code>read</code><span>streams.py:669</span></li><li><code>_wait_for_data</code><span>streams.py:501</span></li></ol></section>
+          <p class="small trace-note">The frames on record 13 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 14</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:89</span></li><li><code>run_until_complete</code><span>base_events.py:628</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 10</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:89</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>consumer.py:60</span></li><li><code>add_stream</code><span>manager.py:93</span></li><li><code>_api_request</code><span>manager.py:361</span></li><li><code>request</code><span>client.py:976</span></li><li><code>_request_new_style</code><span>client.py:995</span></li><li><code>_init_request_sub</code><span>client.py:940</span></li><li><code>subscribe</code><span>client.py:914</span></li><li><code>_start</code><span>subscription.py:214</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 14 · task snapshot</span></div><ol class="frames"><li><code>_wait_for_msgs</code><span>subscription.py:306</span></li><li><code>get</code><span>queues.py:159</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 14 · task snapshot</span></div><ol class="frames"><li><code>_wait_for_msgs</code><span>subscription.py:306</span></li><li><code>get</code><span>queues.py:159</span></li></ol></section>
+          <p class="small trace-note">The frames on record 14 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 90 · sample<code>time_consuming_task</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 90 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:90</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_wait_for_msgs</code><span>subscription.py:311</span></li><li><code>task_cb</code><span>consumer.py:30</span></li><li><code>time_consuming_task</code><span>consumer.py:24</span></li></ol></section></details><details class="extra" ><summary>Record 101 · sample<code>time_consuming_task</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 101 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:90</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_wait_for_msgs</code><span>subscription.py:311</span></li><li><code>task_cb</code><span>consumer.py:30</span></li><li><code>time_consuming_task</code><span>consumer.py:24</span></li></ol></section></details><details class="extra" ><summary>Record 112 · sample<code>time_consuming_task</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 112 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:90</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_wait_for_msgs</code><span>subscription.py:311</span></li><li><code>task_cb</code><span>consumer.py:30</span></li><li><code>time_consuming_task</code><span>consumer.py:24</span></li></ol></section></details><details class="extra" ><summary>Record 123 · sample<code>time_consuming_task</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 123 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>program.py:56</span></li><li><code>worker</code><span>program.py:48</span></li><li><code>&lt;module&gt;</code><span>consumer.py:90</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_wait_for_msgs</code><span>subscription.py:311</span></li><li><code>task_cb</code><span>consumer.py:30</span></li><li><code>time_consuming_task</code><span>consumer.py:24</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With 20 jobs and 50-second callbacks, three processes peaked at one unacknowledged message and finished in about 1,001 seconds. Raising max_ack_pending to 3 gave a peak of three and about 601 seconds.</dd></div><div><dt>What CoroPerf showed</dt><dd>All three subscriptions shared one durable consumer: async sleep alone left them taking turns at limit 1, while limit 3 allowed overlapping callbacks even with blocking sleep.</dd></div><div><dt>Scope and limits</dt><dd>The broker supplied the pending counts. The report omitted versions, and a separate short-callback run measured overlap.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

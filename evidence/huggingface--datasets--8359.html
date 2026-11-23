@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Resuming a filtered IterableDataset skips part of an Arrow table">
+  <title>huggingface/datasets #8359 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">huggingface/datasets #8359</p>
+        <h1>Resuming a filtered IterableDataset skips part of an Arrow table</h1>
+        <div class="case-links"><a href="https://github.com/huggingface/datasets/issues/8359">Upstream report ↗</a><a href="https://github.com/huggingface/datasets/pull/8360">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>_iter_arrow</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:73</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:291</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>report_8359.py:7</span></li><li><code>&lt;listcomp&gt;</code><span>report_8359.py:7</span></li><li><code>__iter__</code><span>iterable_dataset.py:2840</span></li><li><code>__iter__</code><span>iterable_dataset.py:2383</span></li><li><code>__iter__</code><span>iterable_dataset.py:1428</span></li><li><code>_iter</code><span>iterable_dataset.py:1848</span></li><li><code>_iter</code><span>iterable_dataset.py:1625</span></li><li><code>iter_outputs</code><span>iterable_dataset.py:1606</span></li><li><code>iter_inputs</code><span>iterable_dataset.py:1477</span></li><li><code>__iter__</code><span>iterable_dataset.py:2373</span></li><li><code>_iter_arrow</code><span>iterable_dataset.py:2398</span></li><li><code>_iter_arrow</code><span>iterable_dataset.py:425</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>__iter__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:73</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:291</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>report_8359.py:7</span></li><li><code>&lt;listcomp&gt;</code><span>report_8359.py:7</span></li><li><code>__iter__</code><span>iterable_dataset.py:2840</span></li><li><code>__iter__</code><span>iterable_dataset.py:2383</span></li><li><code>__iter__</code><span>iterable_dataset.py:1428</span></li><li><code>_iter</code><span>iterable_dataset.py:1848</span></li><li><code>_iter</code><span>iterable_dataset.py:1625</span></li><li><code>iter_outputs</code><span>iterable_dataset.py:1606</span></li><li><code>iter_inputs</code><span>iterable_dataset.py:1477</span></li><li><code>__iter__</code><span>iterable_dataset.py:2376</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>state_dict</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:73</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:291</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>report_8359.py:8</span></li><li><code>state_dict</code><span>iterable_dataset.py:2611</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>load_state_dict</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:73</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:291</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>report_8359.py:11</span></li><li><code>load_state_dict</code><span>iterable_dataset.py:2613</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Checkpointing after 1,500 rows on the reported commit yielded 9,500 of 10,000 rows in total, missing IDs 1500–1999. The fix and 5.0.1 returned all 10,000.</dd></div><div><dt>What CoroPerf showed</dt><dd>Prefetch had advanced the source cursor to 2000. The fix saved the second table’s start at 1000 and its 500 delivered rows, so iteration resumed at ID 1500.</dd></div><div><dt>Scope and limits</dt><dd>The replay covers synchronous filter iteration. A separately reported map issue shared the table-prefetch mechanism.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

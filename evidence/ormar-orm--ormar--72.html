@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A five-record ormar page returned only two parents">
+  <title>ormar-orm/ormar #72 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ormar-orm/ormar #72</p>
+        <h1>A five-record ormar page returned only two parents</h1>
+        <div class="case-links"><a href="https://github.com/ormar-orm/ormar/issues/72">Upstream report ↗</a><a href="https://github.com/ormar-orm/ormar/commit/c8aad2385cfdcafa75240b5c11b23336cb39350e">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li><li><code>QuerySet.all</code><span>queryset.py:381</span></li><li><code>QuerySet.build_select_expression</code><span>queryset.py:138</span></li><li><code>Query.build_select_expression</code><span>query.py:116</span></li><li><code>Query._apply_expression_modifiers</code><span>query.py:130</span></li><li><code>LimitQuery.apply</code><span>limit_query.py:13</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li><li><code>QuerySet.all</code><span>queryset.py:381</span></li><li><code>QuerySet.build_select_expression</code><span>queryset.py:138</span></li><li><code>Query.build_select_expression</code><span>query.py:116</span></li><li><code>Query._apply_expression_modifiers</code><span>query.py:130</span></li><li><code>LimitQuery.apply</code><span>limit_query.py:13</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li><li><code>QuerySet.all</code><span>queryset.py:381</span></li><li><code>QuerySet.build_select_expression</code><span>queryset.py:138</span></li><li><code>Query.build_select_expression</code><span>query.py:121</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li><li><code>QuerySet.all</code><span>queryset.py:381</span></li><li><code>QuerySet.build_select_expression</code><span>queryset.py:138</span></li><li><code>Query.build_select_expression</code><span>query.py:121</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li><li><code>QuerySet.all</code><span>queryset.py:383</span></li><li><code>QuerySet._process_query_result_rows</code><span>queryset.py:81</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li><li><code>QuerySet.all</code><span>queryset.py:383</span></li><li><code>QuerySet._process_query_result_rows</code><span>queryset.py:81</span></li></ol></section>
+          <p class="small trace-note">The frames on record 3 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 4 · sample<code>ModelTableProxy.merge_instances_list</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li><li><code>QuerySet.all</code><span>queryset.py:383</span></li><li><code>QuerySet._process_query_result_rows</code><span>queryset.py:92</span></li><li><code>ModelTableProxy.merge_instances_list</code><span>modelproxy.py:352</span></li></ol></section></details><details class="extra" ><summary>Record 5 · sample<code>QuerySet.all</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:228</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:634</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:601</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1905</span></li><li><code>Handle._run</code><span>events.py:80</span></li><li><code>execute</code><span>workload.py:167</span></li><li><code>test_list_primary_models_with_keywords_and_limit</code><span>posted.py:108</span></li><li><code>QuerySet.all</code><span>queryset.py:387</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The posted query asks for five parent models with their keywords. In 0.7.5 the five database rows belong to parents 1, 1, 2, 2 and 2. ormar returned two parents. The fixed query fetched eight joined rows and returned five parents with their keywords. The original pytest suite passed all 21 cases on 0.8.0. In a second dataset of seven Chinook playlists, the old second page still contained TV Shows from the first page. The fixed second page contained three classical playlists.</dd></div><div><dt>What CoroPerf showed</dt><dd>At the await expression in the posted test, CPython exposed the unstarted QuerySet.all coroutine and its creation frame. The same coroutine was running when LimitQuery.apply added a limit to an expression that already contained both joins. SQLite executed that statement, and the recorded input to merge_instances_list contained only two distinct parent IDs. The fixing commit called LimitQuery.apply inside a parent-only subquery and then joined its rows. The new opt-in raw-row limit reproduced the former first-page behavior.</dd></div><div><dt>Scope and limits</dt><dd>The reporter did not specify a version or provide the database bootstrap module. We supplied a private SQLite database and tested the release available on the reporting date as well as 0.7.5. On 0.7.3 the single-loop harness also encountered relation bookkeeping and child hydration differences. The primary capture uses 0.7.5. The playlist dataset retains all memberships in the seven selected playlists, with the title field widened to fit the original track names.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Window ranks reuse the first window’s NULL ordering">
+  <title>duckdb/duckdb #8315 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">duckdb/duckdb #8315</p>
+        <h1>Window ranks reuse the first window’s NULL ordering</h1>
+        <div class="case-links"><a href="https://github.com/duckdb/duckdb/issues/8315">Upstream report ↗</a><a href="https://github.com/duckdb/duckdb/issues/8315#issuecomment-1644950382">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 1 · sample<code>duckdb::BoundWindowExpression::KeysAreCompatible(duckdb::BoundWindowExpression const&amp;) const</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>pybind11::cpp_function::dispatcher(_object*, _object*, _object*)</code></li><li><code>pybind11::cpp_function::initialize&lt;pybind11::cpp_function::initialize&lt;pybind11::list, duckdb::DuckDBPyRelation, , pybind11::name, pybind11::is_method, pybind11::sibling, char [47]&gt;(pybind11::list (duckdb::DuckDBPyRelation::*)(), pybind11::name const&amp;, pybind11::is_method const&amp;, pybind11::sibling const&amp;, char const (&amp;) [47])::{lambda(duckdb::DuckDBPyRelation*)#1}, pybind11::list, duckdb::DuckDBPyRelation*, pybind11::name, pybind11::is_method, pybind11::sibling, char [47]&gt;(pybind11::cpp_function::initialize&lt;pybind11::list, duckdb::DuckDBPyRelation, , pybind11::name, pybind11::is_method, pybind11::sibling, char [47]&gt;(pybind11::list (duckdb::DuckDBPyRelation::*)(), pybind11::name const&amp;, pybind11::is_method const&amp;, pybind11::sibling const&amp;, char const (&amp;) [47])::{lambda(duckdb::DuckDBPyRelation*)#1}&amp;&amp;, pybind11::list (*)(duckdb::DuckDBPyRelation*), pybind11::name const&amp;, pybind11::is_method const&amp;, pybind11::sibling const&amp;, char const (&amp;) [47])::{lambda(pybind11::detail::function_call&amp;)#3}::_FUN(pybind11::detail::function_call&amp;)</code></li><li><code>duckdb::DuckDBPyRelation::FetchAll()</code></li><li><code>duckdb::DuckDBPyRelation::ExecuteOrThrow(bool)</code></li><li><code>duckdb::DuckDBPyRelation::ExecuteInternal(bool)</code></li><li><code>duckdb::PyExecuteRelation(std::shared_ptr&lt;duckdb::Relation&gt; const&amp;, bool)</code></li><li><code>duckdb::ClientContext::PendingQuery(std::shared_ptr&lt;duckdb::Relation&gt; const&amp;, bool)</code></li><li><code>duckdb::ClientContext::PendingQueryInternal(duckdb::ClientContextLock&amp;, std::shared_ptr&lt;duckdb::Relation&gt; const&amp;, bool)</code></li><li><code>duckdb::ClientContext::PendingQueryInternal(duckdb::ClientContextLock&amp;, duckdb::unique_ptr&lt;duckdb::SQLStatement, std::default_delete&lt;duckdb::SQLStatement&gt;, true&gt;, duckdb::PendingQueryParameters, bool)</code></li><li><code>duckdb::ClientContext::PendingStatementOrPreparedStatementInternal(duckdb::ClientContextLock&amp;, std::string const&amp;, duckdb::unique_ptr&lt;duckdb::SQLStatement, std::default_delete&lt;duckdb::SQLStatement&gt;, true&gt;, std::shared_ptr&lt;duckdb::PreparedStatementData&gt;&amp;, duckdb::PendingQueryParameters)</code></li><li><code>duckdb::ClientContext::PendingStatementOrPreparedStatement(duckdb::ClientContextLock&amp;, std::string const&amp;, duckdb::unique_ptr&lt;duckdb::SQLStatement, std::default_delete&lt;duckdb::SQLStatement&gt;, true&gt;, std::shared_ptr&lt;duckdb::PreparedStatementData&gt;&amp;, duckdb::PendingQueryParameters)</code></li><li><code>duckdb::ClientContext::PendingStatementInternal(duckdb::ClientContextLock&amp;, std::string const&amp;, duckdb::unique_ptr&lt;duckdb::SQLStatement, std::default_delete&lt;duckdb::SQLStatement&gt;, true&gt;, duckdb::PendingQueryParameters)</code></li><li><code>duckdb::ClientContext::CreatePreparedStatement(duckdb::ClientContextLock&amp;, std::string const&amp;, duckdb::unique_ptr&lt;duckdb::SQLStatement, std::default_delete&lt;duckdb::SQLStatement&gt;, true&gt;, duckdb::vector&lt;duckdb::Value, true&gt;*)</code></li><li><code>duckdb::PhysicalPlanGenerator::CreatePlan(duckdb::unique_ptr&lt;duckdb::LogicalOperator, std::default_delete&lt;duckdb::LogicalOperator&gt;, true&gt;)</code></li><li><code>duckdb::PhysicalPlanGenerator::CreatePlan(duckdb::LogicalOperator&amp;)</code></li><li><code>duckdb::PhysicalPlanGenerator::CreatePlan(duckdb::LogicalOrder&amp;)</code></li><li><code>duckdb::PhysicalPlanGenerator::CreatePlan(duckdb::LogicalOperator&amp;)</code></li><li><code>duckdb::PhysicalPlanGenerator::CreatePlan(duckdb::LogicalProjection&amp;)</code></li><li><code>duckdb::PhysicalPlanGenerator::CreatePlan(duckdb::LogicalOperator&amp;)</code></li><li><code>duckdb::PhysicalPlanGenerator::CreatePlan(duckdb::LogicalWindow&amp;)</code></li><li><code>duckdb::BoundWindowExpression::KeysAreCompatible(duckdb::BoundWindowExpression const&amp;) const</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>For three ones and a NULL, both ranks followed the first window’s NULL ordering. Swapping the windows reversed both, and all 11 second-column ranks were wrong in a separate two-partition case.</dd></div><div><dt>What CoroPerf showed</dt><dd>The old comparison ignored null_order and EXPLAIN showed one WINDOW. The fix compared NULL placement, produced two WINDOW operators and restored the ranks.</dd></div><div><dt>Scope and limits</dt><dd>The real engine ran on Linux x86-64 rather than the reported macOS ARM system. The captured stacks were synchronous.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

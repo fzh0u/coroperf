@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Synchronous SQL on Drogon’s database loop times out the profile request">
+  <title>drogonframework/drogon #2331 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">drogonframework/drogon #2331</p>
+        <h1>Synchronous SQL on Drogon’s database loop times out the profile request</h1>
+        <div class="case-links"><a href="https://github.com/drogonframework/drogon/issues/2331">Upstream report ↗</a><a href="https://github.com/drogonframework/drogon/issues/2331#issuecomment-2947786770">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 158</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 75</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 87</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>profile_entry</code></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 105</span></div><ol class="frames"><li><code>shared_lookup</code></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 158 · stopped-native-thread</span></div><ol class="frames"><li><code>[unknown]</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 158 · stopped-native-thread</span></div><ol class="frames"><li><code>[unknown]</code></li></ol></section>
+          <p class="small trace-note">The frames on record 158 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Other observation in the same capture · observation 81</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 75</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 81 · selected-native-boundary</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 81 · selected-native-boundary</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li></ol></section>
+          <p class="small trace-note">The frames on record 81 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 94</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 75</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 87</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>profile_entry</code></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 94 · selected-native-boundary</span></div><ol class="frames"><li><code>profile_request</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 94 · selected-native-boundary</span></div><ol class="frames"><li><code>profile_request</code></li></ol></section>
+          <p class="small trace-note">The frames on record 94 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>A PostgreSQL-backed HTTP request timed out when the profile path ran synchronous SQL on Drogon’s database event loop.</dd></div><div><dt>What CoroPerf showed</dt><dd>The blocked stack and the shared coroutine’s creation record pointed to profile_entry, and moving execution to a different loop allowed the request to finish.</dd></div><div><dt>Scope and limits</dt><dd>The Drogon 1.9.9 app recreated the reported mechanism. The original ORM project was unavailable.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Dart’s browser error stack omits two awaiting callers">
+  <title>dart-lang/sdk #50336 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dart-lang/sdk #50336</p>
+        <h1>Dart’s browser error stack omits two awaiting callers</h1>
+        <div class="case-links"><a href="https://github.com/dart-lang/sdk/issues/50336">Upstream report ↗</a><a href="https://github.com/dart-lang/sdk/issues/50336#issuecomment-1296374873">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>throw_</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code></li><li><code>requirejs</code><span>require.js:1797</span></li><li><code>localRequire</code><span>require.js:1449</span></li><li><code>req.nextTick</code><span>require.js:1815</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:1460</span></li><li><code>init</code><span>require.js:788</span></li><li><code>enable</code><span>require.js:1113</span></li><li><code>each</code><span>require.js:59</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:134</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:1161</span></li><li><code>enable</code><span>require.js:1557</span></li><li><code>enable</code><span>require.js:1176</span></li><li><code>check</code><span>require.js:856</span></li><li><code>fetch</code><span>require.js:824</span></li><li><code>load</code><span>require.js:834</span></li><li><code>load</code><span>require.js:1685</span></li><li><code>req.load</code><span>require.js:1899</span></li><li><code>req.createNode</code><span>require.js:1878</span></li><li><code>onScriptLoad</code><span>require.js:1717</span></li><li><code>completeLoad</code><span>require.js:1590</span></li><li><code>callGetModule</code><span>require.js:1203</span></li><li><code>init</code><span>require.js:788</span></li><li><code>enable</code><span>require.js:1113</span></li><li><code>each</code><span>require.js:59</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:134</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:1161</span></li><li><code>enable</code><span>require.js:1557</span></li><li><code>enable</code><span>require.js:1176</span></li><li><code>check</code><span>require.js:856</span></li><li><code>fetch</code><span>require.js:824</span></li><li><code>load</code><span>require.js:834</span></li><li><code>load</code><span>require.js:1685</span></li><li><code>req.load</code><span>require.js:1899</span></li><li><code>req.createNode</code><span>require.js:1878</span></li><li><code>onScriptLoad</code><span>require.js:1717</span></li><li><code>completeLoad</code><span>require.js:1590</span></li><li><code>callGetModule</code><span>require.js:1203</span></li><li><code>init</code><span>require.js:788</span></li><li><code>enable</code><span>require.js:1176</span></li><li><code>check</code><span>require.js:938</span></li><li><code>emit</code><span>require.js:1188</span></li><li><code>each</code><span>require.js:59</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:1189</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:134</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:1139</span></li><li><code>check</code><span>require.js:938</span></li><li><code>emit</code><span>require.js:1188</span></li><li><code>each</code><span>require.js:59</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:1189</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:134</span></li><li><code>&lt;anonymous&gt;</code><span>require.js:1139</span></li><li><code>check</code><span>require.js:883</span></li><li><code>execCb</code><span>require.js:1696</span></li><li><code>&lt;anonymous&gt;</code></li><li><code>main</code><span>app.js:24</span></li><li><code>_async</code><span>dart_sdk.js:37996</span></li><li><code>runBody</code><span>dart_sdk.js:37965</span></li><li><code>main</code><span>app.js:25</span></li><li><code>delayed</code><span>dart_sdk.js:32255</span></li><li><code>new</code><span>dart_sdk.js:36661</span></li><li><code>createTimer</code><span>dart_sdk.js:37832</span></li><li><code>_createTimer</code><span>dart_sdk.js:36693</span></li><li><code>_isolate_helper.TimerImpl.new</code><span>dart_sdk.js:23320</span></li><li><code>internalCallback</code><span>dart_sdk.js:23315</span></li><li><code>&lt;anonymous&gt;</code><span>dart_sdk.js:32257</span></li><li><code>[_complete]</code><span>dart_sdk.js:33182</span></li><li><code>_propagateToListeners</code><span>dart_sdk.js:33361</span></li><li><code>handleValueCallback</code><span>dart_sdk.js:33323</span></li><li><code>handleValue</code><span>dart_sdk.js:32728</span></li><li><code>runUnary</code><span>dart_sdk.js:37801</span></li><li><code>&lt;anonymous&gt;</code><span>dart_sdk.js:37945</span></li><li><code>main</code><span>app.js:26</span></li><li><code>test1</code><span>app.js:30</span></li><li><code>_async</code><span>dart_sdk.js:37996</span></li><li><code>runBody</code><span>dart_sdk.js:37965</span></li><li><code>test1</code><span>app.js:31</span></li><li><code>delayed</code><span>dart_sdk.js:32255</span></li><li><code>new</code><span>dart_sdk.js:36661</span></li><li><code>createTimer</code><span>dart_sdk.js:37832</span></li><li><code>_createTimer</code><span>dart_sdk.js:36693</span></li><li><code>_isolate_helper.TimerImpl.new</code><span>dart_sdk.js:23320</span></li><li><code>internalCallback</code><span>dart_sdk.js:23315</span></li><li><code>&lt;anonymous&gt;</code><span>dart_sdk.js:32257</span></li><li><code>[_complete]</code><span>dart_sdk.js:33182</span></li><li><code>_propagateToListeners</code><span>dart_sdk.js:33361</span></li><li><code>handleValueCallback</code><span>dart_sdk.js:33323</span></li><li><code>handleValue</code><span>dart_sdk.js:32728</span></li><li><code>runUnary</code><span>dart_sdk.js:37801</span></li><li><code>&lt;anonymous&gt;</code><span>dart_sdk.js:37945</span></li><li><code>test1</code><span>app.js:32</span></li><li><code>test2</code><span>app.js:36</span></li><li><code>_async</code><span>dart_sdk.js:37996</span></li><li><code>runBody</code><span>dart_sdk.js:37965</span></li><li><code>test2</code><span>app.js:37</span></li><li><code>delayed</code><span>dart_sdk.js:32255</span></li><li><code>new</code><span>dart_sdk.js:36661</span></li><li><code>createTimer</code><span>dart_sdk.js:37832</span></li><li><code>_createTimer</code><span>dart_sdk.js:36693</span></li><li><code>_isolate_helper.TimerImpl.new</code><span>dart_sdk.js:23320</span></li><li><code>internalCallback</code><span>dart_sdk.js:23315</span></li><li><code>&lt;anonymous&gt;</code><span>dart_sdk.js:32257</span></li><li><code>[_complete]</code><span>dart_sdk.js:33182</span></li><li><code>_propagateToListeners</code><span>dart_sdk.js:33361</span></li><li><code>handleValueCallback</code><span>dart_sdk.js:33323</span></li><li><code>handleValue</code><span>dart_sdk.js:32728</span></li><li><code>runUnary</code><span>dart_sdk.js:37801</span></li><li><code>&lt;anonymous&gt;</code><span>dart_sdk.js:37945</span></li><li><code>test2</code><span>app.js:38</span></li><li><code>throw_</code><span>dart_sdk.js:4993</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In the browser, the DDC-compiled program’s error stack omitted test1 and main even though each awaited the next call.</dd></div><div><dt>What CoroPerf showed</dt><dd>At the same Chromium exception pause, the debugger’s async parent stack recovered both callers, and ordinary page output and the Dart VM showed different caller coverage.</dd></div><div><dt>Scope and limits</dt><dd>The run used cached DDC 2.18.2 output and explicitly enabled browser debugging.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

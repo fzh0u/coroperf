@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Streamz consumed the first generator item and delivered none">
+  <title>python-streamz/streamz #462 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">python-streamz/streamz #462</p>
+        <h1>Streamz consumed the first generator item and delivered none</h1>
+        <div class="case-links"><a href="https://github.com/python-streamz/streamz/issues/462">Upstream report ↗</a><a href="https://github.com/python-streamz/streamz/pull/463">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 11</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:128</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_run_callback</code><span>ioloop.py:749</span></li><li><code>wrapper</code><span>functools.py:889</span></li><li><code>convert_yielded</code><span>gen.py:874</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:128</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>sources.py:788</span></li><li><code>_emit</code><span>core.py:449</span></li><li><code>update</code><span>core.py:715</span></li><li><code>_emit</code><span>core.py:449</span></li><li><code>update</code><span>core.py:1632</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:128</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>sources.py:788</span></li><li><code>_emit</code><span>core.py:449</span></li><li><code>update</code><span>core.py:715</span></li><li><code>_emit</code><span>core.py:449</span></li><li><code>update</code><span>core.py:1632</span></li></ol></section>
+          <p class="small trace-note">The frames on record 11 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:128</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:628</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:128</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>compare</code><span>workload.py:105</span></li><li><code>start</code><span>sources.py:59</span></li><li><code>add_callback</code><span>asyncio.py:237</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:128</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>compare</code><span>workload.py:105</span></li><li><code>start</code><span>sources.py:59</span></li><li><code>add_callback</code><span>asyncio.py:237</span></li></ol></section>
+          <p class="small trace-note">The frames on record 4 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 17</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 9</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:128</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_run_callback</code><span>ioloop.py:749</span></li><li><code>wrapper</code><span>functools.py:889</span></li><li><code>convert_yielded</code><span>gen.py:874</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:128</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>sources.py:788</span></li><li><code>_emit</code><span>core.py:449</span></li><li><code>update</code><span>core.py:715</span></li><li><code>_emit</code><span>core.py:449</span></li><li><code>update</code><span>core.py:1640</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:128</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>sources.py:788</span></li><li><code>_emit</code><span>core.py:449</span></li><li><code>update</code><span>core.py:715</span></li><li><code>_emit</code><span>core.py:449</span></li><li><code>update</code><span>core.py:1640</span></li></ol></section>
+          <p class="small trace-note">The frames on record 17 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 1 · sample<code>update</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:124</span></li><li><code>posted</code><span>workload.py:66</span></li><li><code>&lt;module&gt;</code><span>posted.py:5</span></li><li><code>emit</code><span>core.py:483</span></li><li><code>_emit</code><span>core.py:449</span></li><li><code>update</code><span>core.py:1632</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>A generator containing the integers 0 through 9 produced no downstream values on 0.6.4. After the exception, 1 through 9 were still in the generator. The merged fix and 0.6.5 delivered all ten. In a separate SQLite pipeline, each fixed input path delivered all 344 Palmer Penguins records in the expected order.</dd></div><div><dt>What CoroPerf showed</dt><dd>The exception stack stopped at flatten.update after it read item 0. The next expression called len(x) to decide whether this was the last item. A generator has no length. A SQLite cursor reached the same line while a list of the identical rows passed. The fix reads one item ahead to identify the last one. In one- and three-record batches, the fixed generator path attached the year marker to the last record of each batch.</dd></div><div><dt>Scope and limits</dt><dd>The posted program uses a synchronous Stream. The task-origin evidence comes from a separate pipeline using the built-in asynchronous from_iterable source. Source.start registered its run callback. Tornado scheduled the task that later reached flatten.update. The capture identified the generator, cursor and list source tasks separately. The reporter’s traceback identified Python 3.10 and did not specify a Streamz release.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

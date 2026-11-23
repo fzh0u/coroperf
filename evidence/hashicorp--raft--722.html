@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Raft reports configuration index zero after bootstrap">
+  <title>hashicorp/raft #722 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">hashicorp/raft #722</p>
+        <h1>Raft reports configuration index zero after bootstrap</h1>
+        <div class="case-links"><a href="https://github.com/hashicorp/raft/issues/722">Upstream report ↗</a><a href="https://github.com/hashicorp/raft/issues/722#issuecomment-5873295238">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0 · go runtime create</span></div><ol class="frames"><li><code>main.main</code><span>peer.go:196</span></li><li><code>github.com/hashicorp/raft.NewRaft</code><span>api.go:641</span></li><li><code>github.com/hashicorp/raft.(*raftState).goFunc</code><span>state.go:147</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · go runtime userlog</span></div><ol class="frames"><li><code>github.com/hashicorp/raft.(*raftState).goFunc.func1</code><span>state.go:149</span></li><li><code>github.com/hashicorp/raft.(*Raft).run</code><span>raft.go:153</span></li><li><code>github.com/hashicorp/raft.(*Raft).runLeader</code><span>raft.go:576</span></li><li><code>github.com/hashicorp/raft.(*Raft).leaderLoop</code><span>raft.go:900</span></li><li><code>github.com/hashicorp/raft.(*Raft).appendConfigurationEntry</code><span>raft.go:1238</span></li><li><code>github.com/hashicorp/raft.(*Raft).setLatestConfiguration</code><span>raft.go:2244</span></li><li><code>github.com/hashicorp/raft.observeConfiguration</code><span>api.go:1350</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · go runtime userlog</span></div><ol class="frames"><li><code>github.com/hashicorp/raft.(*raftState).goFunc.func1</code><span>state.go:149</span></li><li><code>github.com/hashicorp/raft.(*Raft).run</code><span>raft.go:153</span></li><li><code>github.com/hashicorp/raft.(*Raft).runLeader</code><span>raft.go:576</span></li><li><code>github.com/hashicorp/raft.(*Raft).leaderLoop</code><span>raft.go:900</span></li><li><code>github.com/hashicorp/raft.(*Raft).appendConfigurationEntry</code><span>raft.go:1238</span></li><li><code>github.com/hashicorp/raft.(*Raft).setLatestConfiguration</code><span>raft.go:2244</span></li><li><code>github.com/hashicorp/raft.observeConfiguration</code><span>api.go:1350</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 2 · sample<code>github.com/hashicorp/raft.observeConfiguration</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · go runtime userlog</span></div><ol class="frames"><li><code>main.main</code><span>peer.go:219</span></li><li><code>main.readConfiguration</code><span>peer.go:89</span></li><li><code>github.com/hashicorp/raft.(*Raft).GetConfiguration</code><span>api.go:954</span></li><li><code>github.com/hashicorp/raft.observeConfiguration</code><span>api.go:1350</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>github.com/hashicorp/raft.observeConfiguration</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · go runtime userlog</span></div><ol class="frames"><li><code>main.main</code><span>peer.go:219</span></li><li><code>main.readConfiguration</code><span>peer.go:91</span></li><li><code>github.com/hashicorp/raft.(*configurationsFuture).Index</code><span>future.go:269</span></li><li><code>github.com/hashicorp/raft.observeConfiguration</code><span>api.go:1350</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The single-node test read 0 instead of 1 twice on both v1.8.0 and the PR parent, and a three-voter cluster also reported 0 after election and normal writes.</dd></div><div><dt>What CoroPerf showed</dt><dd>Disk, callback, snapshot, and cache evidence distinguished the membership index from ordinary log indexes, while storing membership and its index together made both proposed-fix runs pass.</dd></div><div><dt>Scope and limits</dt><dd>PR #723 was still a proposal. The Linux TCP/Bolt run supplements the macOS in-memory example. Only the local leader’s publication goroutine had creation evidence.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

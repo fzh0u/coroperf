@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="An instrumented Spring/MySQL request stalls on the affected JDK">
+  <title>open-telemetry/opentelemetry-java-instrumentation #10181 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">open-telemetry/opentelemetry-java-instrumentation #10181</p>
+        <h1>An instrumented Spring/MySQL request stalls on the affected JDK</h1>
+        <div class="case-links"><a href="https://github.com/open-telemetry/opentelemetry-java-instrumentation/issues/10181">Upstream report ↗</a><a href="https://github.com/open-telemetry/opentelemetry-java-instrumentation/issues/10181#issuecomment-2110042277">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record snapshot-virtual-receiver · sample<code>java.lang.VirtualThread$VThreadContinuation.onPinned</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record snapshot-virtual-receiver · stopped-postmortem</span></div><ol class="frames"><li><code>org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction</code></li><li><code>org.springframework.transaction.interceptor.TransactionAspectSupport.createTransactionIfNecessary</code></li><li><code>org.springframework.transaction.support.AbstractPlatformTransactionManager.getTransaction</code></li><li><code>org.springframework.transaction.support.AbstractPlatformTransactionManager.startTransaction</code></li><li><code>org.springframework.orm.jpa.JpaTransactionManager.doBegin</code></li><li><code>org.springframework.orm.jpa.vendor.HibernateJpaDialect.beginTransaction</code></li><li><code>org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.getPhysicalConnection</code></li><li><code>org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl.acquireConnectionIfNeeded</code></li><li><code>org.hibernate.internal.NonContextualJdbcConnectionAccess.obtainConnection</code></li><li><code>org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection</code></li><li><code>com.zaxxer.hikari.HikariDataSource.getConnection</code></li><li><code>com.zaxxer.hikari.pool.HikariPool.getConnection</code></li><li><code>com.zaxxer.hikari.pool.HikariPool.getConnection</code></li><li><code>com.zaxxer.hikari.pool.PoolBase.isConnectionDead</code></li><li><code>com.mysql.cj.jdbc.ConnectionImpl.isValid</code></li><li><code>com.mysql.cj.jdbc.ConnectionImpl.pingInternal</code></li><li><code>com.mysql.cj.NativeSession.ping</code></li><li><code>com.mysql.cj.protocol.a.NativeProtocol.sendCommand</code></li><li><code>com.mysql.cj.protocol.a.NativeProtocol.sendCommand</code></li><li><code>com.mysql.cj.protocol.a.NativeProtocol.checkErrorMessage</code></li><li><code>com.mysql.cj.protocol.a.NativeProtocol.readMessage</code></li><li><code>com.mysql.cj.protocol.a.MultiPacketReader.readHeader</code></li><li><code>com.mysql.cj.protocol.a.MultiPacketReader.readHeader</code></li><li><code>com.mysql.cj.protocol.a.TimeTrackingPacketReader.readHeader</code></li><li><code>com.mysql.cj.protocol.a.TimeTrackingPacketReader.readHeader</code></li><li><code>com.mysql.cj.protocol.a.SimplePacketReader.readHeader</code></li><li><code>com.mysql.cj.protocol.a.SimplePacketReader.readHeader</code></li><li><code>com.mysql.cj.protocol.a.SimplePacketReader.readHeaderLocal</code></li><li><code>com.mysql.cj.protocol.FullReadInputStream.readFully</code></li><li><code>java.io.FilterInputStream.read</code></li><li><code>sun.security.ssl.SSLSocketImpl$AppInputStream.read</code></li><li><code>sun.security.ssl.SSLSocketImpl.readApplicationRecord</code></li><li><code>sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket</code></li><li><code>sun.security.ssl.SSLSocketInputRecord.readHeader</code></li><li><code>sun.security.ssl.SSLSocketInputRecord.read</code></li><li><code>java.net.Socket$SocketInputStream.read</code></li><li><code>sun.nio.ch.NioSocketImpl$1.read</code></li><li><code>sun.nio.ch.NioSocketImpl.read</code></li><li><code>sun.nio.ch.NioSocketImpl.implRead</code></li><li><code>sun.nio.ch.NioSocketImpl.timedRead</code></li><li><code>sun.nio.ch.NioSocketImpl.park</code></li><li><code>sun.nio.ch.Poller.poll</code></li><li><code>sun.nio.ch.Poller.poll</code></li><li><code>sun.nio.ch.Poller.pollIndirect</code></li><li><code>sun.nio.ch.Poller.registerAsync</code></li><li><code>java.util.concurrent.ConcurrentHashMap.putIfAbsent</code></li><li><code>java.util.concurrent.ConcurrentHashMap.putVal</code></li><li><code>java.util.concurrent.ConcurrentHashMap.initTable</code></li><li><code>java.lang.Thread.yield</code></li><li><code>java.lang.VirtualThread.tryYield</code></li><li><code>java.lang.VirtualThread.yieldContinuation</code></li><li><code>jdk.internal.vm.Continuation.yield</code></li><li><code>jdk.internal.vm.Continuation.yield0</code></li><li><code>jdk.internal.vm.Continuation.onPinned0</code></li><li><code>java.lang.VirtualThread$VThreadContinuation.onPinned</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original Spring/JPA, MySQL and OpenTelemetry application stalled on the affected JDK and returned HTTP 200 on the fixed JDK.</dd></div><div><dt>What CoroPerf showed</dt><dd>A core dump linked the MySQL read to the virtual thread’s onPinned path and a native thread in transition, while uninstrumented HTTP requests independently confirmed the stall.</dd></div><div><dt>Scope and limits</dt><dd>Identifying the VM transition required a HotSpot core dump and Serviceability Agent inspection.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

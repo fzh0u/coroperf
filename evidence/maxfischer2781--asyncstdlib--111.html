@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="asyncstdlib.heapq.merge reverses the source order of equal keys">
+  <title>maxfischer2781/asyncstdlib #111 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">maxfischer2781/asyncstdlib #111</p>
+        <h1>asyncstdlib.heapq.merge reverses the source order of equal keys</h1>
+        <div class="case-links"><a href="https://github.com/maxfischer2781/asyncstdlib/issues/111">Upstream report ↗</a><a href="https://github.com/maxfischer2781/asyncstdlib/issues/111#issuecomment-1698094815">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 2</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>issue-111.py:15</span></li><li><code>merge</code><span>heapq.py:157</span></li><li><code>__lt__</code><span>heapq.py:100</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>issue-111.py:15</span></li><li><code>merge</code><span>heapq.py:157</span></li><li><code>__lt__</code><span>heapq.py:100</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 1</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>issue-111.py:15</span></li><li><code>merge</code><span>heapq.py:157</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>issue-111.py:15</span></li><li><code>merge</code><span>heapq.py:157</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>issue-111.py:16</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>issue-111.py:16</span></li></ol></section>
+          <p class="small trace-note">The frames on record 4 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 3 · sample<code>merge</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>issue-111.py:15</span></li><li><code>merge</code><span>heapq.py:162</span></li></ol></section></details><details class="extra" ><summary>Record 8 · sample<code>__lt__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 8 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>issue-111.py:18</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>issue-111.py:15</span></li><li><code>merge</code><span>heapq.py:164</span></li><li><code>__lt__</code><span>heapq.py:100</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The example yielded uvw, abc, xyz, def, while the stable standard-library merge yielded abc, uvw, def, xyz.</dd></div><div><dt>What CoroPerf showed</dt><dd>Distinct heap wrappers inherited identity-based equality, so equal keys never reached the tuple’s source-order tiebreaker. Changing only equality produced the expected order and matched the observed comparisons.</dd></div><div><dt>Scope and limits</dt><dd>The report did not pin versions. Python probes captured the comparisons around the C tuple operation, and Task attribution covers the merge’s main Task.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

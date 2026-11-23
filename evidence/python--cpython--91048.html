@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Recovering the creator and the current waiter of a sleeping asyncio task">
+  <title>python/cpython #91048 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">python/cpython #91048</p>
+        <h1>Recovering the creator and the current waiter of a sleeping asyncio task</h1>
+        <div class="case-links"><a href="https://github.com/python/cpython/issues/91048">Upstream report ↗</a><a href="https://github.com/python/cpython/issues/91048#issuecomment-1093945861">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 15</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:96</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:109</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:96</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:127</span></li><li><code>run_until_complete</code><span>base_events.py:706</span></li><li><code>run_forever</code><span>base_events.py:677</span></li><li><code>_run_once</code><span>base_events.py:2046</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>f1</code><span>posted.py:2</span></li><li><code>f2</code><span>posted.py:5</span></li><li><code>ensure_future</code><span>tasks.py:732</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 15 · task snapshot</span></div><ol class="frames"><li><code>f3</code><span>posted.py:8</span></li><li><code>f4</code><span>posted.py:11</span></li><li><code>sleep</code><span>tasks.py:702</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 15 · task snapshot</span></div><ol class="frames"><li><code>f3</code><span>posted.py:8</span></li><li><code>f4</code><span>posted.py:11</span></li><li><code>sleep</code><span>tasks.py:702</span></li></ol></section>
+          <p class="small trace-note">The frames on record 15 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Other observation in the same capture · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:96</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:109</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · task snapshot</span></div><ol class="frames"><li><code>f1</code><span>posted.py:2</span></li><li><code>f2</code><span>posted.py:5</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · task snapshot</span></div><ol class="frames"><li><code>f1</code><span>posted.py:2</span></li><li><code>f2</code><span>posted.py:5</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The four functions in the upstream example returned 42 after a ten-second wait on CPython 3.12.4 and 3.14.3. At entry to f4, the physical stack included f4 and f3. The parent task was waiting in f2. In a second experiment, two consumers awaited each other’s submitted tasks. Both children ran the same code and returned 42.</dd></div><div><dt>What CoroPerf showed</dt><dd>coroPerf matched two suspended samples of each child to its creation by task generation and coroutine object. In the original example the creation points to f2, where ensure_future schedules f3. In the crossed experiment, from_west created the child that read_east awaited. The other child had the reverse pairing. CPython 3.14 independently reported each current waiter and its frames.</dd></div><div><dt>Scope and limits</dt><dd>The issue requests an async call graph. The crossed-task experiment is a local control. Current waiting relationships came from CPython’s task waiter pointers and, on 3.14, asyncio.capture_call_graph. The coroPerf creation records identify who scheduled each task.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

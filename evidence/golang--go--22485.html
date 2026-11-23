@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Go’s CommandContext can keep waiting for an inherited pipe">
+  <title>golang/go #22485 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">golang/go #22485</p>
+        <h1>Go’s CommandContext can keep waiting for an inherited pipe</h1>
+        <div class="case-links"><a href="https://github.com/golang/go/issues/22485">Upstream report ↗</a><a href="https://github.com/golang/go/issues/18874#issuecomment-277272067">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Observation selected in the issue review · observation 17</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>main.submitImport</code><span>pair.go:29</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 11</span></div><ol class="frames"><li><code>os/exec.(*Cmd).Start</code><span>exec.go:732</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · runtime goroutine dump</span></div><ol class="frames"><li><code>os/exec.(*Cmd).Start.func2</code><span>exec.go:733</span></li><li><code>os/exec.(*Cmd).writerDescriptor.func1</code><span>exec.go:580</span></li><li><code>io.Copy</code><span>io.go:388</span></li><li><code>io.copyBuffer</code><span>io.go:411</span></li><li><code>os.(*File).WriteTo</code><span>file.go:253</span></li><li><code>os.genericWriteTo</code><span>file.go:275</span></li><li><code>io.Copy</code><span>io.go:388</span></li><li><code>io.copyBuffer</code><span>io.go:415</span></li><li><code>bytes.(*Buffer).ReadFrom</code><span>buffer.go:211</span></li><li><code>os.(*File).Read</code><span>file.go:124</span></li><li><code>os.(*File).read</code><span>file_posix.go:29</span></li><li><code>internal/poll.(*FD).Read</code><span>fd_unix.go:165</span></li><li><code>internal/poll.(*pollDesc).waitRead</code><span>fd_poll_runtime.go:89</span></li><li><code>internal/poll.(*pollDesc).wait</code><span>fd_poll_runtime.go:84</span></li><li><code>internal/poll.runtime_pollWait</code><span>netpoll.go:351</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · runtime goroutine dump</span></div><ol class="frames"><li><code>os/exec.(*Cmd).Start.func2</code><span>exec.go:733</span></li><li><code>os/exec.(*Cmd).writerDescriptor.func1</code><span>exec.go:580</span></li><li><code>io.Copy</code><span>io.go:388</span></li><li><code>io.copyBuffer</code><span>io.go:411</span></li><li><code>os.(*File).WriteTo</code><span>file.go:253</span></li><li><code>os.genericWriteTo</code><span>file.go:275</span></li><li><code>io.Copy</code><span>io.go:388</span></li><li><code>io.copyBuffer</code><span>io.go:415</span></li><li><code>bytes.(*Buffer).ReadFrom</code><span>buffer.go:211</span></li><li><code>os.(*File).Read</code><span>file.go:124</span></li><li><code>os.(*File).read</code><span>file_posix.go:29</span></li><li><code>internal/poll.(*FD).Read</code><span>fd_unix.go:165</span></li><li><code>internal/poll.(*pollDesc).waitRead</code><span>fd_poll_runtime.go:89</span></li><li><code>internal/poll.(*pollDesc).wait</code><span>fd_poll_runtime.go:84</span></li><li><code>internal/poll.runtime_pollWait</code><span>netpoll.go:351</span></li></ol></section>
+          <p class="small trace-note">The frames on record 17 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 16</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>main.submitImport</code><span>pair.go:29</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 16 · runtime goroutine dump</span></div><ol class="frames"><li><code>main.runRequest</code><span>pair.go:49</span></li><li><code>os/exec.(*Cmd).CombinedOutput</code><span>exec.go:1021</span></li><li><code>os/exec.(*Cmd).Run</code><span>exec.go:610</span></li><li><code>os/exec.(*Cmd).Wait</code><span>exec.go:924</span></li><li><code>os/exec.(*Cmd).awaitGoroutines</code><span>exec.go:957</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 16 · runtime goroutine dump</span></div><ol class="frames"><li><code>main.runRequest</code><span>pair.go:49</span></li><li><code>os/exec.(*Cmd).CombinedOutput</code><span>exec.go:1021</span></li><li><code>os/exec.(*Cmd).Run</code><span>exec.go:610</span></li><li><code>os/exec.(*Cmd).Wait</code><span>exec.go:924</span></li><li><code>os/exec.(*Cmd).awaitGoroutines</code><span>exec.go:957</span></li></ol></section>
+          <p class="small trace-note">The frames on record 16 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>main.submitImport</code><span>pair.go:29</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · runtime goroutine dump</span></div><ol class="frames"><li><code>main.runRequest</code><span>pair.go:49</span></li><li><code>os/exec.(*Cmd).CombinedOutput</code><span>exec.go:1021</span></li><li><code>os/exec.(*Cmd).Run</code><span>exec.go:610</span></li><li><code>os/exec.(*Cmd).Wait</code><span>exec.go:906</span></li><li><code>os.(*Process).Wait</code><span>exec.go:358</span></li><li><code>os.(*Process).wait</code><span>exec_unix.go:27</span></li><li><code>os.(*Process).pidfdWait</code><span>pidfd_linux.go:92</span></li><li><code>syscall.Syscall6</code><span>syscall_linux.go:95</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · runtime goroutine dump</span></div><ol class="frames"><li><code>main.runRequest</code><span>pair.go:49</span></li><li><code>os/exec.(*Cmd).CombinedOutput</code><span>exec.go:1021</span></li><li><code>os/exec.(*Cmd).Run</code><span>exec.go:610</span></li><li><code>os/exec.(*Cmd).Wait</code><span>exec.go:906</span></li><li><code>os.(*Process).Wait</code><span>exec.go:358</span></li><li><code>os.(*Process).wait</code><span>exec_unix.go:27</span></li><li><code>os.(*Process).pidfdWait</code><span>pidfd_linux.go:92</span></li><li><code>syscall.Syscall6</code><span>syscall_linux.go:95</span></li></ol></section>
+          <p class="small trace-note">The frames on record 4 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Both historical builds took about 5 seconds to return from the original program. In a paired diagnostic run, setting WaitDelay reduced the wait from 903 ms to 271 ms.</dd></div><div><dt>What CoroPerf showed</dt><dd>The Go dump separated the parent waiting for copying to finish from the writerDescriptor copy goroutine. An independent /proc check showed that a descendant still held the pipe’s write end.</dd></div><div><dt>Scope and limits</dt><dd>The graph comes from the paired Go 1.23 diagnostic program. The two original runs and the descriptor evidence were recorded separately.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

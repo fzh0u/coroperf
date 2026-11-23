@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="HTTPX included the query string in the ASGI raw path">
+  <title>encode/httpx #2810 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">encode/httpx #2810</p>
+        <h1>HTTPX included the query string in the ASGI raw path</h1>
+        <div class="case-links"><a href="https://github.com/encode/httpx/issues/2810">Upstream report ↗</a><a href="https://github.com/encode/httpx/pull/2999">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 14</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 10</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>server.py:58</span></li><li><code>run</code><span>server.py:61</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>_read_ready</code><span>selector_events.py:956</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1013</span></li><li><code>data_received</code><span>h11_impl.py:182</span></li><li><code>handle_events</code><span>h11_impl.py:255</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 14 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>server.py:58</span></li><li><code>run</code><span>server.py:61</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run_asgi</code><span>h11_impl.py:408</span></li><li><code>__call__</code><span>proxy_headers.py:84</span></li><li><code>application</code><span>server.py:42</span></li><li><code>get</code><span>_client.py:1786</span></li><li><code>request</code><span>_client.py:1559</span></li><li><code>send</code><span>_client.py:1646</span></li><li><code>_send_handling_auth</code><span>_client.py:1674</span></li><li><code>_send_handling_redirects</code><span>_client.py:1711</span></li><li><code>_send_single_request</code><span>_client.py:1748</span></li><li><code>handle_async_request</code><span>asgi.py:162</span></li><li><code>recorded_echo</code><span>server.py:33</span></li><li><code>echo_raw_path</code><span>test_asgi.py:27</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 14 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>server.py:58</span></li><li><code>run</code><span>server.py:61</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run_asgi</code><span>h11_impl.py:408</span></li><li><code>__call__</code><span>proxy_headers.py:84</span></li><li><code>application</code><span>server.py:42</span></li><li><code>get</code><span>_client.py:1786</span></li><li><code>request</code><span>_client.py:1559</span></li><li><code>send</code><span>_client.py:1646</span></li><li><code>_send_handling_auth</code><span>_client.py:1674</span></li><li><code>_send_handling_redirects</code><span>_client.py:1711</span></li><li><code>_send_single_request</code><span>_client.py:1748</span></li><li><code>handle_async_request</code><span>asgi.py:162</span></li><li><code>recorded_echo</code><span>server.py:33</span></li><li><code>echo_raw_path</code><span>test_asgi.py:27</span></li></ol></section>
+          <p class="small trace-note">The frames on record 14 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Other observation in the same capture · observation 12</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 10</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>server.py:58</span></li><li><code>run</code><span>server.py:61</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>_read_ready</code><span>selector_events.py:956</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1013</span></li><li><code>data_received</code><span>h11_impl.py:182</span></li><li><code>handle_events</code><span>h11_impl.py:255</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 12 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>server.py:58</span></li><li><code>run</code><span>server.py:61</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run_asgi</code><span>h11_impl.py:406</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 12 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>server.py:58</span></li><li><code>run</code><span>server.py:61</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run_asgi</code><span>h11_impl.py:406</span></li></ol></section>
+          <p class="small trace-note">The frames on record 12 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 13</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 10</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>server.py:58</span></li><li><code>run</code><span>server.py:61</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>_read_ready</code><span>selector_events.py:956</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1013</span></li><li><code>data_received</code><span>h11_impl.py:182</span></li><li><code>handle_events</code><span>h11_impl.py:255</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 13 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>server.py:58</span></li><li><code>run</code><span>server.py:61</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run_asgi</code><span>h11_impl.py:408</span></li><li><code>__call__</code><span>proxy_headers.py:84</span></li><li><code>application</code><span>server.py:42</span></li><li><code>get</code><span>_client.py:1786</span></li><li><code>request</code><span>_client.py:1559</span></li><li><code>send</code><span>_client.py:1646</span></li><li><code>_send_handling_auth</code><span>_client.py:1674</span></li><li><code>_send_handling_redirects</code><span>_client.py:1711</span></li><li><code>_send_single_request</code><span>_client.py:1748</span></li><li><code>handle_async_request</code><span>asgi.py:91</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 13 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>server.py:58</span></li><li><code>run</code><span>server.py:61</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run_asgi</code><span>h11_impl.py:408</span></li><li><code>__call__</code><span>proxy_headers.py:84</span></li><li><code>application</code><span>server.py:42</span></li><li><code>get</code><span>_client.py:1786</span></li><li><code>request</code><span>_client.py:1559</span></li><li><code>send</code><span>_client.py:1646</span></li><li><code>_send_handling_auth</code><span>_client.py:1674</span></li><li><code>_send_handling_redirects</code><span>_client.py:1711</span></li><li><code>_send_single_request</code><span>_client.py:1748</span></li><li><code>handle_async_request</code><span>asgi.py:91</span></li></ol></section>
+          <p class="small trace-note">The frames on record 13 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>For GET /path?query, the upstream echo application returned {&quot;raw_path&quot;: &quot;/path?query&quot;} on both the HTTPX revision cited in the report and the parent of the fix. The fixed revision and the direct Uvicorn control returned {&quot;raw_path&quot;: &quot;/path&quot;}. All 72 loopback exchanges returned HTTP 200. The 16 incorrect bodies came from query-bearing requests relayed through affected HTTPX code. Each build returned identical response bytes with and without instrumentation.</dd></div><div><dt>What CoroPerf showed</dt><dd>The client kept the query in URL.raw_path. The affected ASGI transport copied those bytes into the application scope, which already exposed the query separately as query_string. The fix splits the request target at its first literal question mark. The encoded question mark (%3F) therefore stays in the path. In the parent relay capture, segment 10 records Uvicorn creating a request Task, segment 14 observes that same Task in the upstream echo function with HTTPX on its stack, and segment 18 records its normal exit.</dd></div><div><dt>Scope and limits</dt><dd>The reporter identified a difference between HTTPX and Uvicorn. The concrete request and echo function come from the upstream fix’s regression test. That test calls the application in process. The TCP relay, additional targets and Task identity evidence come from the local controls. The tables cover the single batch identified as the primary run.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

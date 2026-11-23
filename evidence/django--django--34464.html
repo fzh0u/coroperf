@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Counting ten hourly groups returned zero in Django">
+  <title>django/django #34464 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">django/django #34464</p>
+        <h1>Counting ten hourly groups returned zero in Django</h1>
+        <div class="case-links"><a href="https://code.djangoproject.com/ticket/34464">Upstream report ↗</a><a href="https://github.com/django/django/commit/9daf8b4109c3e133eb57349bb44d73cc60c5773c">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 1 · sample<code>set_annotation_mask</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · diagnostic</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:72</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>reporter.py:21</span></li><li><code>count</code><span>query.py:608</span></li><li><code>get_count</code><span>query.py:536</span></li><li><code>get_aggregation</code><span>query.py:458</span></li><li><code>set_annotation_mask</code><span>query.py:2346</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>as_sql</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · diagnostic</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:72</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>reporter.py:21</span></li><li><code>count</code><span>query.py:608</span></li><li><code>get_count</code><span>query.py:536</span></li><li><code>get_aggregation</code><span>query.py:522</span></li><li><code>execute_sql</code><span>compiler.py:1547</span></li><li><code>as_sql</code><span>compiler.py:2082</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>get_aggregation</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · diagnostic</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:72</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>reporter.py:21</span></li><li><code>count</code><span>query.py:608</span></li><li><code>get_count</code><span>query.py:536</span></li><li><code>get_aggregation</code><span>query.py:529</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter inserted five rows in each of ten hours. On PostgreSQL 14.13, Django 4.2 and the fix parent returned zero from QuerySet.count(). Materializing the same queryset yielded ten groups. The fix and Django 4.2.1 returned ten through both paths.</dd></div><div><dt>What CoroPerf showed</dt><dd>Query.get_aggregation dropped the hour annotation from the selected columns of the counting subquery. The affected compiler included the primary key in the grouping. PostgreSQL then rejected all 50 singleton groups at the five-row threshold. The fix kept the hour annotation, and all ten hourly groups passed. The function trace identifies the compiler path and the executed query plan shows its effect.</dd></div><div><dt>Scope and limits</dt><dd>The original ORM query runs synchronously. The replay used UTC and supplied the timedelta import missing from the report. Each revision ran against two fresh databases without instrumentation. On a second fixture with uneven group sizes, affected builds disagreed with direct SQL on 28 of 32 threshold checks. Both fixed builds matched on all 32.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

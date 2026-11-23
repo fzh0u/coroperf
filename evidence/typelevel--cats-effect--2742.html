@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A second timeout points to the first timeout’s source line">
+  <title>typelevel/cats-effect #2742 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">typelevel/cats-effect #2742</p>
+        <h1>A second timeout points to the first timeout’s source line</h1>
+        <div class="case-links"><a href="https://github.com/typelevel/cats-effect/issues/2742">Upstream report ↗</a><a href="https://github.com/typelevel/cats-effect/issues/2742#issuecomment-1537691893">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 5 · sample<code>cats.effect.tracing.TracingPlatform.calculateTracingEvent(TracingPlatform.scala:34)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5 · method-boundary</span></div><ol class="frames"><li><code>main.main(test.scala:7)</code></li><li><code>test$package$.main(test.scala:8)</code></li><li><code>cats.effect.IO.timeout(IO.scala:735)</code></li><li><code>cats.effect.kernel.GenTemporal$.handleDuration(GenTemporal.scala:293)</code></li><li><code>cats.effect.IO.timeout$$anonfun$2(IO.scala:735)</code></li><li><code>cats.effect.IO.timeoutTo(IO.scala:767)</code></li><li><code>cats.effect.IO.timeoutTo(IO.scala:762)</code></li><li><code>cats.effect.kernel.GenTemporal$.handleDuration(GenTemporal.scala:293)</code></li><li><code>cats.effect.IO.timeoutTo$$anonfun$2(IO.scala:762)</code></li><li><code>cats.effect.IO.flatMap(IO.scala:429)</code></li><li><code>cats.effect.tracing.TracingPlatform.calculateTracingEvent(TracingPlatform.scala:34)</code></li></ol></section></details><details class="extra" ><summary>Record 10 · sample<code>cats.effect.tracing.TracingPlatform.calculateTracingEvent(TracingPlatform.scala:34)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 10 · method-boundary</span></div><ol class="frames"><li><code>main.main(test.scala:7)</code></li><li><code>test$package$.main(test.scala:9)</code></li><li><code>cats.effect.IO.timeout(IO.scala:735)</code></li><li><code>cats.effect.kernel.GenTemporal$.handleDuration(GenTemporal.scala:293)</code></li><li><code>cats.effect.IO.timeout$$anonfun$2(IO.scala:735)</code></li><li><code>cats.effect.IO.timeoutTo(IO.scala:767)</code></li><li><code>cats.effect.IO.timeoutTo(IO.scala:762)</code></li><li><code>cats.effect.kernel.GenTemporal$.handleDuration(GenTemporal.scala:293)</code></li><li><code>cats.effect.IO.timeoutTo$$anonfun$2(IO.scala:762)</code></li><li><code>cats.effect.IO.flatMap(IO.scala:429)</code></li><li><code>cats.effect.tracing.TracingPlatform.calculateTracingEvent(TracingPlatform.scala:34)</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With cached tracing, the one-second timeout on line 9 was reported at line 8.</dd></div><div><dt>What CoroPerf showed</dt><dd>Both calls reused the same trace record because their internal flatMap shared a cache key, matching the upstream explanation.</dd></div><div><dt>Scope and limits</dt><dd>The replay compared cached and full tracing on the final upstream two-timeout example in 3.5.0-RC5.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

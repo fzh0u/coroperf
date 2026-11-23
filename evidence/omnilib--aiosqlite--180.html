@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Setting row_factory on an aiosqlite cursor still returns a tuple">
+  <title>omnilib/aiosqlite #180 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">omnilib/aiosqlite #180</p>
+        <h1>Setting row_factory on an aiosqlite cursor still returns a tuple</h1>
+        <div class="case-links"><a href="https://github.com/omnilib/aiosqlite/issues/180">Upstream report ↗</a><a href="https://github.com/omnilib/aiosqlite/pull/229">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 38</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:625</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 25</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>controls.py:36</span></li><li><code>read_pair</code><span>controls.py:24</span></li><li><code>gather</code><span>tasks.py:783</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 38 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>fetchone</code><span>cursor.py:54</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 38 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>fetchone</code><span>cursor.py:54</span></li></ol></section>
+          <p class="small trace-note">The frames on record 38 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 28</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:625</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 25</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>controls.py:36</span></li><li><code>read_pair</code><span>controls.py:24</span></li><li><code>gather</code><span>tasks.py:783</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 28 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>fetchone</code><span>cursor.py:54</span></li><li><code>_execute</code><span>cursor.py:31</span></li><li><code>_execute</code><span>core.py:119</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 28 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>fetchone</code><span>cursor.py:54</span></li><li><code>_execute</code><span>cursor.py:31</span></li><li><code>_execute</code><span>core.py:119</span></li></ol></section>
+          <p class="small trace-note">The frames on record 28 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 1</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:625</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>controls.py:32</span></li><li><code>__aenter__</code><span>context.py:41</span></li><li><code>cursor</code><span>core.py:158</span></li><li><code>_execute</code><span>core.py:119</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:48</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run</code><span>controls.py:32</span></li><li><code>__aenter__</code><span>context.py:41</span></li><li><code>cursor</code><span>core.py:158</span></li><li><code>_execute</code><span>core.py:119</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The three original SELECT 1 examples returned Row, Row and tuple on both 0.17.0 and 0.18.0; the fix and 0.19.0 returned Row when requested on either connection or cursor.</dd></div><div><dt>What CoroPerf showed</dt><dd>The old wrapper held the setting while the worker’s sqlite3.Cursor still had row_factory=None, and object identity confirmed that the same tuple passed through the Future to the caller.</dd></div><div><dt>Scope and limits</dt><dd>The report gave no version or platform. Task creation evidence came only from an additional two-cursor control.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

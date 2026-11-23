@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="DDC loses an error from an async generator">
+  <title>dart-lang/sdk #29847 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dart-lang/sdk #29847</p>
+        <h1>DDC loses an error from an async generator</h1>
+        <div class="case-links"><a href="https://github.com/dart-lang/sdk/issues/29847">Upstream report ↗</a><a href="https://github.com/dart-lang/sdk/issues/29847#issuecomment-436817496">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>throwError</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>processImmediate</code><span>timers.js:714</span></li><li><code>tryOnImmediate</code><span>timers.js:743</span></li><li><code>runCallback</code><span>timers.js:781</span></li><li><code>internalCallback</code><span>dart_sdk.js:21051</span></li><li><code>async._startMicrotaskLoop</code><span>dart_sdk.js:20947</span></li><li><code>async._microtaskLoop</code><span>dart_sdk.js:20940</span></li><li><code>(anonymous function).scheduleMicrotask.dart.fn</code><span>dart_sdk.js:20656</span></li><li><code>[_completeError]</code><span>dart_sdk.js:20622</span></li><li><code>_propagateToListeners</code><span>dart_sdk.js:20760</span></li><li><code>handleError</code><span>dart_sdk.js:20737</span></li><li><code>handleError</code><span>dart_sdk.js:20263</span></li><li><code>&lt;anonymous&gt;</code><span>dart_sdk.js:24421</span></li><li><code>onError</code><span>dart_sdk.js:3468</span></li><li><code>throwError</code><span>dart_sdk.js:3492</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>addError</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>processImmediate</code><span>timers.js:714</span></li><li><code>tryOnImmediate</code><span>timers.js:743</span></li><li><code>runCallback</code><span>timers.js:781</span></li><li><code>internalCallback</code><span>dart_sdk.js:21051</span></li><li><code>async._startMicrotaskLoop</code><span>dart_sdk.js:20947</span></li><li><code>async._microtaskLoop</code><span>dart_sdk.js:20940</span></li><li><code>(anonymous function).scheduleMicrotask.dart.fn</code><span>dart_sdk.js:20656</span></li><li><code>[_completeError]</code><span>dart_sdk.js:20622</span></li><li><code>_propagateToListeners</code><span>dart_sdk.js:20760</span></li><li><code>handleError</code><span>dart_sdk.js:20737</span></li><li><code>handleError</code><span>dart_sdk.js:20263</span></li><li><code>&lt;anonymous&gt;</code><span>dart_sdk.js:24421</span></li><li><code>onError</code><span>dart_sdk.js:3468</span></li><li><code>throwError</code><span>dart_sdk.js:3492</span></li><li><code>addError</code><span>dart_sdk.js:3502</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>onCancel</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>processImmediate</code><span>timers.js:714</span></li><li><code>tryOnImmediate</code><span>timers.js:743</span></li><li><code>runCallback</code><span>timers.js:781</span></li><li><code>internalCallback</code><span>dart_sdk.js:21051</span></li><li><code>async._startMicrotaskLoop</code><span>dart_sdk.js:20947</span></li><li><code>async._microtaskLoop</code><span>dart_sdk.js:20940</span></li><li><code>async.scheduleMicrotask.dart.fn</code><span>dart_sdk.js:21871</span></li><li><code>handleNext</code><span>dart_sdk.js:22066</span></li><li><code>perform</code><span>dart_sdk.js:22010</span></li><li><code>[_sendError]</code><span>dart_sdk.js:19019</span></li><li><code>[_cancel]</code><span>dart_sdk.js:18932</span></li><li><code>[_onCancel]</code><span>dart_sdk.js:19173</span></li><li><code>[_recordCancel]</code><span>dart_sdk.js:21497</span></li><li><code>onCancel</code><span>dart_sdk.js:3413</span></li><li><code>onCancel</code><span>dart_sdk.js:3422</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>onCancel</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>processImmediate</code><span>timers.js:714</span></li><li><code>tryOnImmediate</code><span>timers.js:743</span></li><li><code>runCallback</code><span>timers.js:781</span></li><li><code>internalCallback</code><span>dart_sdk.js:21051</span></li><li><code>async._startMicrotaskLoop</code><span>dart_sdk.js:20947</span></li><li><code>async._microtaskLoop</code><span>dart_sdk.js:20940</span></li><li><code>async.scheduleMicrotask.dart.fn</code><span>dart_sdk.js:21871</span></li><li><code>handleNext</code><span>dart_sdk.js:22066</span></li><li><code>perform</code><span>dart_sdk.js:22010</span></li><li><code>[_sendError]</code><span>dart_sdk.js:19019</span></li><li><code>[_cancel]</code><span>dart_sdk.js:18932</span></li><li><code>[_onCancel]</code><span>dart_sdk.js:19173</span></li><li><code>[_recordCancel]</code><span>dart_sdk.js:21497</span></li><li><code>onCancel</code><span>dart_sdk.js:3413</span></li><li><code>onCancel</code><span>dart_sdk.js:3426</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>DDC 1.24.0 failed to deliver the async* error to its caller while an independent timer kept running, while ordinary async and DDC 2.2.0 async* delivered it.</dd></div><div><dt>What CoroPerf showed</dt><dd>The Node 8 debugger observed onError, throwError and addError, followed by the cancellation callback.</dd></div><div><dt>Scope and limits</dt><dd>The replay used compiled output from the original example. Cancellation and error delivery were separate breakpoint observations.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

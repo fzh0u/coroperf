@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="CronTrigger scheduled its first run before the start time">
+  <title>agronholm/apscheduler #1061 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">agronholm/apscheduler #1061</p>
+        <h1>CronTrigger scheduled its first run before the start time</h1>
+        <div class="case-links"><a href="https://github.com/agronholm/apscheduler/issues/1061">Upstream report ↗</a><a href="https://github.com/agronholm/apscheduler/pull/1062">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>get_value</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:85</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>main</code><span>workload.py:73</span></li><li><code>add_schedule</code><span>async_.py:561</span></li><li><code>next</code><span>__init__.py:223</span></li><li><code>get_value</code><span>fields.py:81</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_set_field_value</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:85</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>main</code><span>workload.py:73</span></li><li><code>add_schedule</code><span>async_.py:561</span></li><li><code>next</code><span>__init__.py:234</span></li><li><code>_set_field_value</code><span>__init__.py:210</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>get_value</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:85</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>main</code><span>workload.py:73</span></li><li><code>add_schedule</code><span>async_.py:561</span></li><li><code>next</code><span>__init__.py:223</span></li><li><code>get_value</code><span>fields.py:81</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>next</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:85</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:636</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1909</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>main</code><span>workload.py:73</span></li><li><code>add_schedule</code><span>async_.py:561</span></li><li><code>next</code><span>__init__.py:250</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The start was 11:16 in the trigger’s time zone, but the old scheduler chose 11:00, 16 minutes early, while the fix chose 11:20.</dd></div><div><dt>What CoroPerf showed</dt><dd>CronTrigger.next read the hour as 10 in the source zone and applied the target zone only when setting the field. Converting first yields the correct five-minute boundary.</dd></div><div><dt>Scope and limits</dt><dd>Fixed-offset and named-zone tests checked the stored schedule and cursor, without waiting for the historical job to run.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

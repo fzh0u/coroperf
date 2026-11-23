@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Pausing a Flutter startup wait yields no Dart frames">
+  <title>dart-lang/sdk #55561 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dart-lang/sdk #55561</p>
+        <h1>Pausing a Flutter startup wait yields no Dart frames</h1>
+        <div class="case-links"><a href="https://github.com/dart-lang/sdk/issues/55561">Upstream report ↗</a><a href="https://github.com/dart-lang/sdk/issues/55561#issuecomment-3925765797">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Insufficient</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 2 · sample<code>waitAlpha</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>_RawReceivePort._handleMessage</code><span>isolate_patch.dart:184</span></li><li><code>_delayEntrypointInvocation.&lt;anonymous closure&gt;</code><span>isolate_patch.dart:297</span></li><li><code>_runMain.&lt;anonymous closure&gt;</code><span>hooks.dart:301</span></li><li><code>main</code><span>main.dart:29</span></li><li><code>waitAlpha</code><span>main.dart:11</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>waitBeta</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>_RawReceivePort._handleMessage</code><span>isolate_patch.dart:184</span></li><li><code>_delayEntrypointInvocation.&lt;anonymous closure&gt;</code><span>isolate_patch.dart:297</span></li><li><code>_runMain.&lt;anonymous closure&gt;</code><span>hooks.dart:301</span></li><li><code>main</code><span>main.dart:29</span></li><li><code>waitBeta</code><span>main.dart:16</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On Android API 34, the reporter’s Kotlin Activity reached the controlled Dart main, but manual pauses showed zero frames with either one or two Futures waiting.</dd></div><div><dt>What CoroPerf showed</dt><dd>Registration logs linked waitAlpha and waitBeta to main. Releasing A left B pending, and releasing B allowed the first frame to render.</dd></div><div><dt>Scope and limits</dt><dd>Only part of the Dart app was public. The reported intermittent startup failure lacked the main-entry log seen here, so its blocking point remains unknown.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

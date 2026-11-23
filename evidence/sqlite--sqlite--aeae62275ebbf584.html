@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="SQLite counts two rows in a UNION ALL subquery that returns three">
+  <title>sqlite/sqlite #aeae62275ebbf584 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">sqlite/sqlite #aeae62275ebbf584</p>
+        <h1>SQLite counts two rows in a UNION ALL subquery that returns three</h1>
+        <div class="case-links"><a href="https://sqlite.org/forum/forumpost/aeae62275ebbf584903a37cd65e3fd17affba12000db2d56ce7688eb505cebd8">Upstream report ↗</a><a href="https://sqlite.org/src/info/c84d5602ac9bfb4f12c3cf62033af616e51913c26877d1a0761363a625295f53">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>disableUnusedSubqueryResultColumns</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>main</code><span>shell.c:28450</span></li><li><code>process_input</code><span>shell.c:27503</span></li><li><code>runOneSqlLine</code><span>shell.c:27337</span></li><li><code>shell_exec</code><span>shell.c:20129</span></li><li><code>sqlite3_prepare_v2</code><span>sqlite3.c:140384</span></li><li><code>sqlite3LockAndPrepare</code><span>sqlite3.c:140298</span></li><li><code>sqlite3Prepare</code><span>sqlite3.c:140223</span></li><li><code>sqlite3RunParser</code><span>sqlite3.c:175944</span></li><li><code>sqlite3Parser</code><span>sqlite3.c:174644</span></li><li><code>yy_reduce</code><span>sqlite3.c:173227</span></li><li><code>sqlite3Select</code><span>sqlite3.c:148031</span></li><li><code>disableUnusedSubqueryResultColumns</code><span>sqlite3.c:145810</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>sqlite3Select</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>main</code><span>shell.c:28450</span></li><li><code>process_input</code><span>shell.c:27503</span></li><li><code>runOneSqlLine</code><span>shell.c:27337</span></li><li><code>shell_exec</code><span>shell.c:20129</span></li><li><code>sqlite3_prepare_v2</code><span>sqlite3.c:140384</span></li><li><code>sqlite3LockAndPrepare</code><span>sqlite3.c:140298</span></li><li><code>sqlite3Prepare</code><span>sqlite3.c:140223</span></li><li><code>sqlite3RunParser</code><span>sqlite3.c:175944</span></li><li><code>sqlite3Parser</code><span>sqlite3.c:174644</span></li><li><code>yy_reduce</code><span>sqlite3.c:173227</span></li><li><code>sqlite3Select</code><span>sqlite3.c:148043</span></li></ol></section></details><details class="extra" ><summary>Record 4 · sample<code>sqlite3VdbeExec</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4 · native runtime stack</span></div><ol class="frames"><li><code>main</code><span>shell.c:28450</span></li><li><code>process_input</code><span>shell.c:27503</span></li><li><code>runOneSqlLine</code><span>shell.c:27337</span></li><li><code>shell_exec</code><span>shell.c:20214</span></li><li><code>exec_prepared_stmt</code><span>shell.c:19903</span></li><li><code>sqlite3_step</code><span>sqlite3.c:90038</span></li><li><code>sqlite3Step</code><span>sqlite3.c:89977</span></li><li><code>sqlite3VdbeExec</code><span>sqlite3.c:97123</span></li></ol></section></details><details class="extra" ><summary>Record 6 · sample<code>sqlite3VdbeExec</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 6 · native runtime stack</span></div><ol class="frames"><li><code>main</code><span>shell.c:28450</span></li><li><code>process_input</code><span>shell.c:27503</span></li><li><code>runOneSqlLine</code><span>shell.c:27337</span></li><li><code>shell_exec</code><span>shell.c:20214</span></li><li><code>exec_prepared_stmt</code><span>shell.c:19903</span></li><li><code>sqlite3_step</code><span>sqlite3.c:90038</span></li><li><code>sqlite3Step</code><span>sqlite3.c:89977</span></li><li><code>sqlite3VdbeExec</code><span>sqlite3.c:93527</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter inserted a and b into the left table and c into the right. SELECT DISTINCT on the left followed by UNION ALL returned a, b and c on all six builds. An outer COUNT(1) returned 2 on SQLite 3.42.0, 3.43.0 and the fix parent. The fixing commit restored the count to 3. Disabling the unused-column optimization on the parent also restored it to 3.</dd></div><div><dt>What CoroPerf showed</dt><dd>In the parent trace, the planner treated the projected values as unused because the outer query counted a constant. It replaced both branches’ column reads with NULL, even though the left branch needed its values for DISTINCT. The duplicate check accepted the first NULL and discarded the second. Only one left row and the right row reached the counter. The fix checked each branch for DISTINCT and preserved the column reads. The debugger then saw two distinct keys, a and b, and three calls to the counter.</dd></div><div><dt>Scope and limits</dt><dd>The native trace follows one prepared COUNT(1) statement through compilation and execution on a single thread. It establishes no application coroutine origin. Both adjacent development builds identify themselves as SQLite 3.44.0, so the table labels them by Fossil check-in. The independent PostgreSQL 14.13 replay added the derived-table alias that version requires.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

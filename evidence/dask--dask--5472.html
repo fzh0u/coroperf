@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Dask reverses contraction axes when calculating tensordot chunks">
+  <title>dask/dask #5472 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dask/dask #5472</p>
+        <h1>Dask reverses contraction axes when calculating tensordot chunks</h1>
+        <div class="case-links"><a href="https://github.com/dask/dask/issues/5472">Upstream report ↗</a><a href="https://github.com/dask/dask/pull/5975">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>blockwise</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:143</span></li><li><code>run</code><span>workload.py:106</span></li><li><code>run_case</code><span>workload.py:93</span></li><li><code>posted</code><span>workload.py:100</span></li><li><code>&lt;module&gt;</code><span>reporter.py:10</span></li><li><code>tensordot</code><span>routines.py:270</span></li><li><code>blockwise</code><span>blockwise.py:12</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>normalize_chunks</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:143</span></li><li><code>run</code><span>workload.py:106</span></li><li><code>run_case</code><span>workload.py:93</span></li><li><code>posted</code><span>workload.py:100</span></li><li><code>&lt;module&gt;</code><span>reporter.py:10</span></li><li><code>tensordot</code><span>routines.py:270</span></li><li><code>blockwise</code><span>blockwise.py:145</span></li><li><code>unify_chunks</code><span>core.py:3160</span></li><li><code>rechunk</code><span>core.py:2162</span></li><li><code>rechunk</code><span>rechunk.py:229</span></li><li><code>normalize_chunks</code><span>core.py:2468</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>_tensordot</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:143</span></li><li><code>run</code><span>workload.py:124</span></li><li><code>run_case</code><span>workload.py:93</span></li><li><code>&lt;lambda&gt;</code><span>workload.py:124</span></li><li><code>compute</code><span>base.py:165</span></li><li><code>compute</code><span>base.py:436</span></li><li><code>get_sync</code><span>local.py:527</span></li><li><code>get_async</code><span>local.py:494</span></li><li><code>fire_task</code><span>local.py:466</span></li><li><code>apply_sync</code><span>local.py:516</span></li><li><code>execute_task</code><span>local.py:222</span></li><li><code>_execute_task</code><span>core.py:119</span></li><li><code>__call__</code><span>optimization.py:1054</span></li><li><code>get</code><span>core.py:149</span></li><li><code>_execute_task</code><span>core.py:119</span></li><li><code>apply</code><span>utils.py:29</span></li><li><code>_tensordot</code><span>routines.py:206</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>_tensordot</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:143</span></li><li><code>run</code><span>workload.py:124</span></li><li><code>run_case</code><span>workload.py:93</span></li><li><code>&lt;lambda&gt;</code><span>workload.py:124</span></li><li><code>compute</code><span>base.py:165</span></li><li><code>compute</code><span>base.py:436</span></li><li><code>get_sync</code><span>local.py:527</span></li><li><code>get_async</code><span>local.py:494</span></li><li><code>fire_task</code><span>local.py:466</span></li><li><code>apply_sync</code><span>local.py:516</span></li><li><code>execute_task</code><span>local.py:222</span></li><li><code>_execute_task</code><span>core.py:119</span></li><li><code>__call__</code><span>optimization.py:1054</span></li><li><code>get</code><span>core.py:149</span></li><li><code>_execute_task</code><span>core.py:119</span></li><li><code>apply</code><span>utils.py:29</span></li><li><code>_tensordot</code><span>routines.py:206</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reported 4×5 input produced chunks ((5,), (5,)) and a ValueError before the fix, while afterward it returned 20, matching NumPy.</dd></div><div><dt>What CoroPerf showed</dt><dd>The old path expanded axes=2 as (1,0) on the left and (0,1) on the right, while correcting the order also changed a square control’s sum from 69 to 70.</dd></div><div><dt>Scope and limits</dt><dd>The reporter did not pin Dask. Tests covered 2.5.2 and the commits around the merge. The block-product control used synchronous scheduling.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

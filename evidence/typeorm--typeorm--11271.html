@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="MySQL’s duplicate-key error loses the TypeORM insert caller">
+  <title>typeorm/typeorm #11271 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">typeorm/typeorm #11271</p>
+        <h1>MySQL’s duplicate-key error loses the TypeORM insert caller</h1>
+        <div class="case-links"><a href="https://github.com/typeorm/typeorm/issues/11271">Upstream report ↗</a><a href="https://github.com/typeorm/typeorm/pull/12056">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 2</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues:103</span></li><li><code>&lt;anonymous&gt;</code><span>runnable.js:371</span></li><li><code>done</code><span>runnable.js:310</span></li><li><code>cbHookRun</code><span>runner.js:592</span></li><li><code>next</code><span>runner.js:527</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:644</span></li><li><code>next</code><span>runner.js:634</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:842</span></li><li><code>Runner.runTest</code><span>runner.js:719</span></li><li><code>Test.Runnable.run</code><span>runnable.js:354</span></li><li><code>callFn</code><span>runnable.js:366</span></li><li><code>Context.&lt;anonymous&gt;</code><span>error-stack-trace.test.ts:45</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>error-stack-trace.test.ts:61</span></li><li><code>myNamedFunction1234</code><span>error-stack-trace.test.ts:46</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic</span></div><ol class="frames"><li><code>Pipe.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>Pipe.onStreamRead</code><span>stream_base_commons:189</span></li><li><code>Socket.Readable.push</code><span>readable:392</span></li><li><code>readableAddChunkPushByteMode</code><span>readable:512</span></li><li><code>addChunk</code><span>readable:561</span></li><li><code>Socket.emit</code><span>node:events:519</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:109</span></li><li><code>PacketParser.executeStart</code><span>packet_parser.js:75</span></li><li><code>PacketParser.onPacket</code><span>connection.js:102</span></li><li><code>PoolConnection.handlePacket</code><span>connection.js:552</span></li><li><code>Query.execute</code><span>command.js:36</span></li><li><code>Query.onResult</code><span>MysqlQueryRunner.ts:262</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic</span></div><ol class="frames"><li><code>Pipe.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>Pipe.onStreamRead</code><span>stream_base_commons:189</span></li><li><code>Socket.Readable.push</code><span>readable:392</span></li><li><code>readableAddChunkPushByteMode</code><span>readable:512</span></li><li><code>addChunk</code><span>readable:561</span></li><li><code>Socket.emit</code><span>node:events:519</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:109</span></li><li><code>PacketParser.executeStart</code><span>packet_parser.js:75</span></li><li><code>PacketParser.onPacket</code><span>connection.js:102</span></li><li><code>PoolConnection.handlePacket</code><span>connection.js:552</span></li><li><code>Query.execute</code><span>command.js:36</span></li><li><code>Query.onResult</code><span>MysqlQueryRunner.ts:262</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>When MySQL rejected a second insert with the same primary key, the old QueryFailedError stack began at Query.onResult and omitted myNamedFunction1234.</dd></div><div><dt>What CoroPerf showed</dt><dd>The upstream regression linked the error to the named function’s returned promise, and throwing from query’s catch restored InsertQueryBuilder.execute and the second insert’s call site. The sampled stack is the rejected Promise’s saved error stack, read in Chai’s callback. The callback’s execution ID is separate from the Promise ID.</dd></div><div><dt>Scope and limits</dt><dd>The public regression used a duplicate key. Both builds returned 1062/23000 and retained the original row; promise identity was verified for the test function.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Raft commit indexes arrived as strings in the rqlite status API">
+  <title>rqlite/rqlite #763 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">rqlite/rqlite #763</p>
+        <h1>Raft commit indexes arrived as strings in the rqlite status API</h1>
+        <div class="case-links"><a href="https://github.com/rqlite/rqlite/issues/763">Upstream report ↗</a><a href="https://github.com/rqlite/rqlite/pull/762">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>github.com/rqlite/rqlite/store.(*Store).Stats</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · diagnostic</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>net/http.(*conn).serve</code><span>server.go:2092</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3210</span></li><li><code>github.com/rqlite/rqlite/http.(*Service).ServeHTTP</code><span>service.go:262</span></li><li><code>github.com/rqlite/rqlite/http.(*Service).handleStatus</code><span>service.go:517</span></li><li><code>github.com/rqlite/rqlite/store.(*Store).Stats</code><span>store.go:515</span></li></ol></section></details><details class="extra" ><summary>Record 9 · sample<code>github.com/rqlite/rqlite/store.(*Store).Stats</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 9 · diagnostic</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>net/http.(*conn).serve</code><span>server.go:2092</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3210</span></li><li><code>github.com/rqlite/rqlite/http.(*Service).ServeHTTP</code><span>service.go:262</span></li><li><code>github.com/rqlite/rqlite/http.(*Service).handleStatus</code><span>service.go:517</span></li><li><code>github.com/rqlite/rqlite/store.(*Store).Stats</code><span>store.go:515</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Three healthy nodes committed writes and reported indexes 9 and 12. The affected status endpoint returned both as JSON strings. Taking their maximum with jq returned &quot;9&quot;. With the upstream fix it returned the number 12. Across 24 responses per build, the parent sent all 216 selected numeric field values as strings. The fixed build sent all 216 as numbers.</dd></div><div><dt>What CoroPerf showed</dt><dd>The Go stack linked the status handler to Store.Stats. The returned Raft map already held the strings seen in the HTTP response. The fix converted numeric entries before JSON encoding. We independently decoded each node’s durable log and replayed the SQL. The on-disk snapshot at index 32 contained the same 24 rows on all three nodes.</dd></div><div><dt>Scope and limits</dt><dd>The report describes the field type and provides no reproduction script. The replay used the upstream command examples and the exact parent and fix revisions. The three-node workload, snapshot threshold of 32 and jq check are local controls. The recorded call stacks identify the status path. A goroutine creation site was not established.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

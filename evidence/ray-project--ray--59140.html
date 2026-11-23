@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="The reported cold model-load delay did not recur locally">
+  <title>ray-project/ray #59140 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #59140</p>
+        <h1>The reported cold model-load delay did not recur locally</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/59140">Upstream report ↗</a><a href="https://github.com/ray-project/ray/issues/59140#issuecomment-6224483001">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Attempted, symptom unconfirmed</dd></div>
+          <div><dt>Diagnosis</dt><dd>Insufficient</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 3 · sample<code>get_model</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1015</span></li><li><code>_bootstrap_inner</code><span>threading.py:1044</span></li><li><code>run</code><span>threading.py:995</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:2643</span></li><li><code>call_user_method</code><span>replica.py:3339</span></li><li><code>_call_func_or_gen</code><span>replica.py:2835</span></li><li><code>__call__</code><span>main.py:25</span></li><li><code>predict</code><span>main.py:21</span></li><li><code>_multiplex_wrapper</code><span>api.py:892</span></li><li><code>load_model</code><span>multiplex.py:221</span></li><li><code>get_model</code><span>main.py:16</span></li></ol></section></details><details class="extra" ><summary>Record 17 · sample<code>get_model</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 17 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1015</span></li><li><code>_bootstrap_inner</code><span>threading.py:1044</span></li><li><code>run</code><span>threading.py:995</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:2643</span></li><li><code>call_user_method</code><span>replica.py:3339</span></li><li><code>_call_func_or_gen</code><span>replica.py:2835</span></li><li><code>__call__</code><span>main.py:25</span></li><li><code>predict</code><span>main.py:21</span></li><li><code>_multiplex_wrapper</code><span>api.py:892</span></li><li><code>load_model</code><span>multiplex.py:221</span></li><li><code>get_model</code><span>main.py:16</span></li></ol></section></details><details class="extra" ><summary>Record 27 · sample<code>get_model</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 27 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1015</span></li><li><code>_bootstrap_inner</code><span>threading.py:1044</span></li><li><code>run</code><span>threading.py:995</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:2643</span></li><li><code>call_user_method</code><span>replica.py:3339</span></li><li><code>_call_func_or_gen</code><span>replica.py:2835</span></li><li><code>__call__</code><span>main.py:25</span></li><li><code>predict</code><span>main.py:21</span></li><li><code>_multiplex_wrapper</code><span>api.py:892</span></li><li><code>load_model</code><span>multiplex.py:221</span></li><li><code>get_model</code><span>main.py:16</span></li></ol></section></details><details class="extra" ><summary>Record 41 · sample<code>get_model</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 41 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1015</span></li><li><code>_bootstrap_inner</code><span>threading.py:1044</span></li><li><code>run</code><span>threading.py:995</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:2643</span></li><li><code>call_user_method</code><span>replica.py:3339</span></li><li><code>_call_func_or_gen</code><span>replica.py:2835</span></li><li><code>__call__</code><span>main.py:25</span></li><li><code>predict</code><span>main.py:21</span></li><li><code>_multiplex_wrapper</code><span>api.py:892</span></li><li><code>load_model</code><span>multiplex.py:221</span></li><li><code>get_model</code><span>main.py:16</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With the author’s Serve app and an empty OS page cache, the first requests took 54.4 and 56.7 ms, and Serve logged 8.0 and 7.8 ms for loading versus 9,543.2 ms in the report.</dd></div><div><dt>What CoroPerf showed</dt><dd>The replica task read the file through predict → load_model → get_model, reusing it for the same model ID and evicting it for a new ID; prewarming the file or visiting Swagger first did not reproduce the delay.</dd></div><div><dt>Scope and limits</dt><dd>The public attachment reads ONNX bytes on local Linux storage. Docker Desktop shared-mount performance and the private MLflow model remain unknown.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

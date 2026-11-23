@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Cause.prettyPrint omits the fiber ID and source location">
+  <title>zio/zio #5955 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">zio/zio #5955</p>
+        <h1>Cause.prettyPrint omits the fiber ID and source location</h1>
+        <div class="case-links"><a href="https://github.com/zio/zio/issues/5955">Upstream report ↗</a><a href="https://github.com/zio/zio/commit/7c2b7b886022586dc210bfe84a5056c1bc26d124">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 5 · sample<code>zio.Cause.unifyFail$1(Cause.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5 · method-boundary</span></div><ol class="frames"><li><code>zio.internal.ZScheduler$$anon$1.run(ZScheduler.scala:151)</code></li><li><code>zio.internal.FiberContext.run(FiberContext.scala:233)</code></li><li><code>zio.internal.FiberContext.runUntil(FiberContext.scala:384)</code></li><li><code>zio.internal.FiberContext.nextInstr(FiberContext.scala:918)</code></li><li><code>zio.ZIO$TracedCont$$anon$29.apply(ZIO.scala:6123)</code></li><li><code>zio.ZIO$TracedCont$$anon$29.apply(ZIO.scala:6125)</code></li><li><code>zio.StackTracesSpec$.$anonfun$matchPrettyPrintCause$2(StackTracesSpec.scala:126)</code></li><li><code>zio.StackTracesSpec$.show(StackTracesSpec.scala:112)</code></li><li><code>zio.Cause.prettyPrint(Cause.scala:353)</code></li><li><code>scala.collection.immutable.Set$Set1.map(Set.scala:156)</code></li><li><code>scala.collection.StrictOptimizedIterableOps.map$(StrictOptimizedIterableOps.scala:86)</code></li><li><code>scala.collection.StrictOptimizedIterableOps.map(StrictOptimizedIterableOps.scala:99)</code></li><li><code>zio.Cause.$anonfun$prettyPrint$3(Cause.scala:353)</code></li><li><code>zio.Cause.renderCause$1(Cause.scala:346)</code></li><li><code>zio.Cause.unify$1(Cause.scala:334)</code></li><li><code>zio.Cause.loop$2(Cause.scala:327)</code></li><li><code>zio.Cause.unifyFail$1(Cause.scala)</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The affected Cause.prettyPrint printed an exception without a fiber ID or source location even though the original test passed.</dd></div><div><dt>What CoroPerf showed</dt><dd>The old unifyFail received FiberId.None and an empty Chunk, while the fix retrieved the fiber ID and stack from each failure node.</dd></div><div><dt>Scope and limits</dt><dd>Both classpaths came from the same historical tree, with the pre-fix Cause.class substituted for comparison.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

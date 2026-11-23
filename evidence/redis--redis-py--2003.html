@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Why did a Redis Cluster scan return one of nineteen keys?">
+  <title>redis/redis-py #2003 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">redis/redis-py #2003</p>
+        <h1>Why did a Redis Cluster scan return one of nineteen keys?</h1>
+        <div class="case-links"><a href="https://github.com/redis/redis-py/issues/2003">Upstream report ↗</a><a href="https://github.com/redis/redis-py/pull/2054">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 1 · sample<code>redis.cluster._determine_nodes</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · diagnostic stacktrace</span></div><ol class="frames"><li><code>__main__.&lt;module&gt;</code><span>client.py:325</span></li><li><code>__main__.main</code><span>client.py:315</span></li><li><code>__main__.measure</code><span>client.py:145</span></li><li><code>__main__.enumerate_keys</code><span>client.py:113</span></li><li><code>redis.commands.core.scan_iter</code><span>core.py:2826</span></li><li><code>redis.commands.core.scan</code><span>core.py:2801</span></li><li><code>redis.cluster.execute_command</code><span>cluster.py:1069</span></li><li><code>redis.cluster._determine_nodes</code><span>cluster.py:890</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>redis.cluster.parse_scan_result</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · diagnostic stacktrace</span></div><ol class="frames"><li><code>__main__.&lt;module&gt;</code><span>client.py:325</span></li><li><code>__main__.main</code><span>client.py:315</span></li><li><code>__main__.measure</code><span>client.py:145</span></li><li><code>__main__.enumerate_keys</code><span>client.py:113</span></li><li><code>redis.commands.core.scan_iter</code><span>core.py:2826</span></li><li><code>redis.commands.core.scan</code><span>core.py:2801</span></li><li><code>redis.cluster.execute_command</code><span>cluster.py:1079</span></li><li><code>redis.cluster._process_result</code><span>cluster.py:1234</span></li><li><code>redis.cluster.parse_scan_result</code><span>cluster.py:57</span></li></ol></section></details><details class="extra" ><summary>Record 14 · sample<code>redis.commands.core.scan_iter</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 14 · diagnostic stacktrace</span></div><ol class="frames"><li><code>__main__.&lt;module&gt;</code><span>client.py:325</span></li><li><code>__main__.main</code><span>client.py:315</span></li><li><code>__main__.measure</code><span>client.py:145</span></li><li><code>__main__.enumerate_keys</code><span>client.py:112</span></li><li><code>redis.commands.core.scan_iter</code><span>core.py:2825</span></li></ol></section></details><details class="extra" ><summary>Record 15 · sample<code>redis.cluster._execute_command</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 15 · diagnostic stacktrace</span></div><ol class="frames"><li><code>__main__.&lt;module&gt;</code><span>client.py:325</span></li><li><code>__main__.main</code><span>client.py:315</span></li><li><code>__main__.measure</code><span>client.py:145</span></li><li><code>__main__.enumerate_keys</code><span>client.py:112</span></li><li><code>redis.commands.core.scan_iter</code><span>core.py:2826</span></li><li><code>redis.commands.core.scan</code><span>core.py:2801</span></li><li><code>redis.cluster.execute_command</code><span>cluster.py:1077</span></li><li><code>redis.cluster._execute_command</code><span>cluster.py:1209</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Redis-py 4.1.2 returned one key from a six-node cluster with 1, 13 and 5 keys on its three primaries. The servers recorded one SCAN on the first primary. Version 4.2.0 contacted all three primaries and returned all nineteen. On the fourteen binary keys published in the follow-up, Redis returned 10 keys and cursor 5 on its first page. The affected client reported cursor zero. The fixed iterator read all fourteen.</dd></div><div><dt>What CoroPerf showed</dt><dd>The affected call stack enters _determine_nodes, which selects the default node. A second issue appears even with explicit primary targets. In parse_scan_result the input contains real per-node cursors, but the return statement substitutes zero and scan_iter stops. With COUNT 1 the three primaries supplied 3 keys in their first pages. The intermediate upstream commit preserved the cursor map, then the generic iterator submitted the entire map as a scalar and raised DataError. Continuing separately on each node produced all nineteen keys. The merged fix performs that loop inside the cluster iterator.</dd></div><div><dt>Scope and limits</dt><dd>The nineteen-key test preserves the published distribution and the one key the author disclosed. The independent fourteen-key test uses every published key byte. The server chooses its own per-process hash seed, so opaque cursor values and page boundaries can change between runs. Released wheels and the adjacent upstream source revisions were checked against a real Redis 6.2.6 cluster. The client path is a synchronous generator.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

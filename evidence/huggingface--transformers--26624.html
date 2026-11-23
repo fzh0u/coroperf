@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Beam scores include prompt tokens in the length denominator">
+  <title>huggingface/transformers #26624 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">huggingface/transformers #26624</p>
+        <h1>Beam scores include prompt tokens in the length denominator</h1>
+        <div class="case-links"><a href="https://github.com/huggingface/transformers/issues/26624">Upstream report ↗</a><a href="https://github.com/huggingface/transformers/pull/27351">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>forward</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reporter_local.py:24</span></li><li><code>decorate_context</code><span>_contextlib.py:115</span></li><li><code>generate</code><span>utils.py:1681</span></li><li><code>beam_search</code><span>utils.py:3020</span></li><li><code>_call_impl</code><span>module.py:1501</span></li><li><code>forward</code><span>modeling_gpt2.py:1115</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>add</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reporter_local.py:24</span></li><li><code>decorate_context</code><span>_contextlib.py:115</span></li><li><code>generate</code><span>utils.py:1681</span></li><li><code>beam_search</code><span>utils.py:3105</span></li><li><code>finalize</code><span>beam_search.py:343</span></li><li><code>add</code><span>beam_search.py:946</span></li></ol></section></details><details class="extra" ><summary>Record 6 · sample<code>finalize</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 6 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reporter_local.py:24</span></li><li><code>decorate_context</code><span>_contextlib.py:115</span></li><li><code>generate</code><span>utils.py:1681</span></li><li><code>beam_search</code><span>utils.py:3105</span></li><li><code>finalize</code><span>beam_search.py:401</span></li></ol></section></details><details class="extra" ><summary>Record 8 · sample<code>forward</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 8 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reporter_local.py:24</span></li><li><code>decorate_context</code><span>_contextlib.py:115</span></li><li><code>generate</code><span>utils.py:1681</span></li><li><code>beam_search</code><span>utils.py:3020</span></li><li><code>_call_impl</code><span>module.py:1501</span></li><li><code>forward</code><span>modeling_gpt2.py:1115</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>For GPT-2 prompts of 4 and 413 tokens, the old code divided each one-token generation’s log probability by 5 and 414. A three-token control used 8 instead of 3.</dd></div><div><dt>What CoroPerf showed</dt><dd>With identical weights and returned tokens, the merged change normalized by generated length, correcting all five candidate scores for each prompt and the three-token control.</dd></div><div><dt>Scope and limits</dt><dd>The replay used CPU instead of CUDA and evaluated returned scores. Early EOS and ranking across different completion lengths were not tested.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

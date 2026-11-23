@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Batched Ray Serve requests can select the wrong multiplexed model">
+  <title>ray-project/ray #56633 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #56633</p>
+        <h1>Batched Ray Serve requests can select the wrong multiplexed model</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/56633">Upstream report ↗</a><a href="https://github.com/ray-project/ray/commit/1599fb7ceb4a74acfc4a60c9936a553acb048cde">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 106</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 53</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>callback</code><span>tasks.py:928</span></li><li><code>ensure_future</code><span>tasks.py:659</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 55</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>batch_wrapper</code><span>batching.py:704</span></li><li><code>enqueue_request</code><span>batching.py:690</span></li><li><code>queue</code><span>batching.py:415</span></li><li><code>__init__</code><span>batching.py:145</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 101</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>_process_batches</code><span>batching.py:312</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 106 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>_process_batch</code><span>batching.py:353</span></li><li><code>_assign_func_results</code><span>batching.py:299</span></li><li><code>batched</code><span>multiplexing_issue.py:18</span></li><li><code>get_multiplexed_model_id</code><span>api.py:895</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 106 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>_process_batch</code><span>batching.py:353</span></li><li><code>_assign_func_results</code><span>batching.py:299</span></li><li><code>batched</code><span>multiplexing_issue.py:18</span></li><li><code>get_multiplexed_model_id</code><span>api.py:895</span></li></ol></section>
+          <p class="small trace-note">The frames on record 106 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>callback</code><span>tasks.py:928</span></li><li><code>ensure_future</code><span>tasks.py:659</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>non_batched</code><span>multiplexing_issue.py:28</span></li><li><code>get_multiplexed_model_id</code><span>api.py:895</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>non_batched</code><span>multiplexing_issue.py:28</span></li><li><code>get_multiplexed_model_id</code><span>api.py:895</span></li></ol></section>
+          <p class="small trace-note">The frames on record 6 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 35</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 31</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>callback</code><span>tasks.py:928</span></li><li><code>ensure_future</code><span>tasks.py:659</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 35 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>non_batched</code><span>multiplexing_issue.py:28</span></li><li><code>get_multiplexed_model_id</code><span>api.py:895</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 35 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>non_batched</code><span>multiplexing_issue.py:28</span></li><li><code>get_multiplexed_model_id</code><span>api.py:895</span></li></ol></section>
+          <p class="small trace-note">The frames on record 35 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 53 · create<code>_ensure_future</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 53</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>callback</code><span>tasks.py:928</span></li><li><code>ensure_future</code><span>tasks.py:659</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section></details><details class="extra" ><summary>Record 55 · create<code>__init__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 55</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>batch_wrapper</code><span>batching.py:704</span></li><li><code>enqueue_request</code><span>batching.py:690</span></li><li><code>queue</code><span>batching.py:415</span></li><li><code>__init__</code><span>batching.py:145</span></li></ol></section></details><details class="extra" ><summary>Record 56 · sample<code>put</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 56 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>batch_wrapper</code><span>batching.py:704</span></li><li><code>enqueue_request</code><span>batching.py:693</span></li><li><code>put</code><span>batching.py:172</span></li></ol></section></details><details class="extra" ><summary>Record 63 · create<code>create_task</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 63</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>_process_batches</code><span>batching.py:312</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In each request order, three of six batched requests returned the wrong model while ordinary calls stayed correct. The fixed version answered all 12 batched requests correctly.</dd></div><div><dt>What CoroPerf showed</dt><dd>Reversing the first request reversed the wrong answer. The fix carried each model ID into the queue and split the batch so each processing task read its own ID.</dd></div><div><dt>Scope and limits</dt><dd>The reported deployments used strings as model objects. Graphs cover the model replica. Sequential request logs link it to clients and other actors.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

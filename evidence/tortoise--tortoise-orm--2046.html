@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which book does first() return when a subclass inherits its ordering?">
+  <title>tortoise/tortoise-orm #2046 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">tortoise/tortoise-orm #2046</p>
+        <h1>Which book does first() return when a subclass inherits its ordering?</h1>
+        <div class="case-links"><a href="https://github.com/tortoise/tortoise-orm/issues/2046">Upstream report ↗</a><a href="https://github.com/tortoise/tortoise-orm/pull/2236">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 7</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:156</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:132</span></li><li><code>QuerySet.__await__</code><span>queryset.py:1294</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 7 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:156</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:132</span></li><li><code>QuerySet._execute</code><span>queryset.py:1319</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 7 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:156</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:132</span></li><li><code>QuerySet._execute</code><span>queryset.py:1319</span></li></ol></section>
+          <p class="small trace-note">The frames on record 7 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:156</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:132</span></li><li><code>QuerySet.__await__</code><span>queryset.py:1294</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:156</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:132</span></li><li><code>QuerySet._execute</code><span>queryset.py:1301</span></li><li><code>BaseExecutor.execute_select</code><span>executor.py:117</span></li><li><code>translate_exceptions.&lt;locals&gt;.translate_exceptions_</code><span>client.py:42</span></li><li><code>SqliteClient.execute_query</code><span>client.py:152</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:156</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:132</span></li><li><code>QuerySet._execute</code><span>queryset.py:1301</span></li><li><code>BaseExecutor.execute_select</code><span>executor.py:117</span></li><li><code>translate_exceptions.&lt;locals&gt;.translate_exceptions_</code><span>client.py:42</span></li><li><code>SqliteClient.execute_query</code><span>client.py:152</span></li></ol></section>
+          <p class="small trace-note">The frames on record 6 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 1 · sample<code>ModelMeta.__new__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:156</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:116</span></li><li><code>&lt;module&gt;</code><span>posted.py:11</span></li><li><code>ModelMeta.__new__</code><span>models.py:542</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>ModelMeta.__new__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:156</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:116</span></li><li><code>&lt;module&gt;</code><span>posted.py:11</span></li><li><code>ModelMeta.__new__</code><span>models.py:561</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>AwaitableQuery.resolve_ordering</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:156</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:132</span></li><li><code>QuerySet.__await__</code><span>queryset.py:1293</span></li><li><code>QuerySet._make_query</code><span>queryset.py:1259</span></li><li><code>AwaitableQuery.resolve_ordering</code><span>queryset.py:221</span></li></ol></section></details><details class="extra" ><summary>Record 5 · sample<code>QuerySet._execute</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:156</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:132</span></li><li><code>QuerySet._execute</code><span>queryset.py:1300</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The abstract base model requests newest-first order. Its Book subclass specifies the table name. On the three posted books, Tortoise ORM 1.1.8 and the immediate fix parent returned IDs 1, 2, 3. first() selected the oldest book, ID 1. The fixing commit and 1.1.9 returned IDs 3, 2, 1 and selected ID 3. Sorting the original timestamps in Python and reading the saved SQLite files with explicit descending order both put ID 3 first.</dd></div><div><dt>What CoroPerf showed</dt><dd>The metaclass samples show the base model’s descending ordering and the child’s empty ordering in the affected build. The query resolver used that same child metadata object, and SQLite received a SELECT without ORDER BY. The fix copies the base ordering when the child omits it. With the repaired metadata, the resolver emitted ORDER BY on created_at descending. Explicit ordering worked on every build.
+
+On the affected wheel, segment 4 records the unstarted QuerySet._execute coroutine created by QuerySet.__await__ at queryset.py line 1294. Segment 6 includes its pinned frame while the SQLite client returns the three IDs. At segment 7 that same instance returns the list received by the public caller. Segments 1–3 sample the earlier synchronous decision that determined the order.</dd></div><div><dt>Scope and limits</dt><dd>The issue supplied the model definitions and three rows without identifying a database engine or release. This replay uses SQLite, preserves the timestamp strings and awaits the two posted query alternatives separately. The sequence of an unordered SQL query depends on the database and plan. The coroutine match covers query execution on the event-loop thread.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

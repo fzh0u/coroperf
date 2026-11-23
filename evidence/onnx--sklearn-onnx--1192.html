@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="How did a float32 threshold change six tree decisions?">
+  <title>onnx/sklearn-onnx #1192 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">onnx/sklearn-onnx #1192</p>
+        <h1>How did a float32 threshold change six tree decisions?</h1>
+        <div class="case-links"><a href="https://github.com/onnx/sklearn-onnx/issues/1192">Upstream report ↗</a><a href="https://github.com/onnx/sklearn-onnx/pull/1227">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>add_node</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>export.py:40</span></li><li><code>export</code><span>export.py:26</span></li><li><code>to_onnx</code><span>convert.py:312</span></li><li><code>convert_sklearn</code><span>convert.py:211</span></li><li><code>convert_topology</code><span>_topology.py:1671</span></li><li><code>Topology.convert_operators</code><span>_topology.py:1348</span></li><li><code>Topology.call_converter</code><span>_topology.py:1131</span></li><li><code>RegisteredConverter.__call__</code><span>_registration.py:26</span></li><li><code>convert_sklearn_random_forest_regressor_converter</code><span>random_forest.py:491</span></li><li><code>add_tree_to_attribute_pairs_hist_gradient_boosting</code><span>tree_ensemble.py:255</span></li><li><code>add_node</code><span>tree_ensemble.py:147</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>ModelComponentContainer.add_node</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>export.py:40</span></li><li><code>export</code><span>export.py:26</span></li><li><code>to_onnx</code><span>convert.py:312</span></li><li><code>convert_sklearn</code><span>convert.py:211</span></li><li><code>convert_topology</code><span>_topology.py:1671</span></li><li><code>Topology.convert_operators</code><span>_topology.py:1348</span></li><li><code>Topology.call_converter</code><span>_topology.py:1131</span></li><li><code>RegisteredConverter.__call__</code><span>_registration.py:26</span></li><li><code>convert_sklearn_random_forest_regressor_converter</code><span>random_forest.py:525</span></li><li><code>ModelComponentContainer.add_node</code><span>_container.py:620</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>Session.run</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>serve.py:74</span></li><li><code>serve</code><span>serve.py:52</span></li><li><code>Session.run</code><span>onnxruntime_inference_collection.py:273</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The same fitted regressor predicted 3.452764 kW for a household meter record. Its ONNX export predicted 2.885078 kW. In total, 13 of 4,032 held-out records differed from scikit-learn by more than 0.001 kW. The tensor entering the ensemble matched the original preprocessing output on every row.</dd></div><div><dt>What CoroPerf showed</dt><dd>At tree 4, node 40, the converter received a threshold of 1166882752. The ONNX node stored 1166882816, exactly equal to this record’s float32 input. That moved the record to the lower leaf. Six trees changed leaves. Changing one split at a time reproduced each tree’s predicted contribution. Editing all six together restored the output to 3.452763796 kW.</dd></div><div><dt>Scope and limits</dt><dd>The report identified the pipeline stages but supplied no training set or model. We fitted that architecture on UCI household and bike records plus a four-input boundary case. The household model uses calendar seconds as a float32 feature. Error here means a difference from the original model. The upstream 50-row regression test passed on both revisions. The measured paths run synchronously.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

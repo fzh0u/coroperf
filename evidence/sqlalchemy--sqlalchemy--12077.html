@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="An asyncpg backend survives cancellation after its pool entry is invalidated">
+  <title>sqlalchemy/sqlalchemy #12077 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">sqlalchemy/sqlalchemy #12077</p>
+        <h1>An asyncpg backend survives cancellation after its pool entry is invalidated</h1>
+        <div class="case-links"><a href="https://github.com/sqlalchemy/sqlalchemy/issues/12077">Upstream report ↗</a><a href="https://github.com/sqlalchemy/sqlalchemy/commit/2f6ca6554ddd725849dd6b2d32bf495391087bec">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 25</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>sa_workload.py:43</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>group</code><span>sa_workload.py:35</span></li><li><code>start_soon</code><span>_asyncio.py:861</span></li><li><code>_spawn</code><span>_asyncio.py:844</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 25 · scoped exception</span></div><ol class="frames"><li><code>__exit__</code><span>util.py:162</span></li><li><code>rollback:2:&lt;string&gt;</code></li><li><code>_go</code><span>state_changes.py:139</span></li><li><code>rollback</code><span>session.py:1360</span></li><li><code>rollback</code><span>base.py:2610</span></li><li><code>_do_rollback</code><span>base.py:2729</span></li><li><code>_close_impl</code><span>base.py:2712</span></li><li><code>_connection_rollback_impl</code><span>base.py:2704</span></li><li><code>_rollback_impl</code><span>base.py:1129</span></li><li><code>_handle_dbapi_exception</code><span>base.py:2368</span></li><li><code>invalidate</code><span>base.py:751</span></li><li><code>invalidate</code><span>base.py:1474</span></li><li><code>invalidate</code><span>base.py:816</span></li><li><code>__close</code><span>base.py:883</span></li><li><code>_close_connection</code><span>base.py:374</span></li><li><code>do_terminate</code><span>asyncpg.py:1117</span></li><li><code>terminate</code><span>asyncpg.py:895</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 25 · scoped exception</span></div><ol class="frames"><li><code>__exit__</code><span>util.py:162</span></li><li><code>rollback:2:&lt;string&gt;</code></li><li><code>_go</code><span>state_changes.py:139</span></li><li><code>rollback</code><span>session.py:1360</span></li><li><code>rollback</code><span>base.py:2610</span></li><li><code>_do_rollback</code><span>base.py:2729</span></li><li><code>_close_impl</code><span>base.py:2712</span></li><li><code>_connection_rollback_impl</code><span>base.py:2704</span></li><li><code>_rollback_impl</code><span>base.py:1129</span></li><li><code>_handle_dbapi_exception</code><span>base.py:2368</span></li><li><code>invalidate</code><span>base.py:751</span></li><li><code>invalidate</code><span>base.py:1474</span></li><li><code>invalidate</code><span>base.py:816</span></li><li><code>__close</code><span>base.py:883</span></li><li><code>_close_connection</code><span>base.py:374</span></li><li><code>do_terminate</code><span>asyncpg.py:1117</span></li><li><code>terminate</code><span>asyncpg.py:895</span></li></ol></section>
+          <p class="small trace-note">The frames on record 25 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 18</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>sa_workload.py:43</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>group</code><span>sa_workload.py:35</span></li><li><code>start_soon</code><span>_asyncio.py:861</span></li><li><code>_spawn</code><span>_asyncio.py:844</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 18 · scoped exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>query_in_transaction</code><span>sa_workload.py:27</span></li><li><code>__aexit__</code><span>session.py:1876</span></li><li><code>greenlet_spawn</code><span>_concurrency_py3k.py:196</span></li><li><code>_rollback_and_discard</code><span>asyncpg.py:845</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 18 · scoped exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>query_in_transaction</code><span>sa_workload.py:27</span></li><li><code>__aexit__</code><span>session.py:1876</span></li><li><code>greenlet_spawn</code><span>_concurrency_py3k.py:196</span></li><li><code>_rollback_and_discard</code><span>asyncpg.py:845</span></li></ol></section>
+          <p class="small trace-note">The frames on record 18 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 26</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>sa_workload.py:43</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>sa_workload.py:58</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>group</code><span>sa_workload.py:35</span></li><li><code>start_soon</code><span>_asyncio.py:861</span></li><li><code>_spawn</code><span>_asyncio.py:844</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 26 · semantic boundary</span></div><ol class="frames"><li><code>__exit__</code><span>util.py:162</span></li><li><code>rollback:2:&lt;string&gt;</code></li><li><code>_go</code><span>state_changes.py:139</span></li><li><code>rollback</code><span>session.py:1360</span></li><li><code>rollback</code><span>base.py:2610</span></li><li><code>_do_rollback</code><span>base.py:2729</span></li><li><code>_close_impl</code><span>base.py:2712</span></li><li><code>_connection_rollback_impl</code><span>base.py:2704</span></li><li><code>_rollback_impl</code><span>base.py:1129</span></li><li><code>_handle_dbapi_exception</code><span>base.py:2368</span></li><li><code>invalidate</code><span>base.py:751</span></li><li><code>invalidate</code><span>base.py:1474</span></li><li><code>invalidate</code><span>base.py:816</span></li><li><code>__close</code><span>base.py:883</span></li><li><code>_close_connection</code><span>base.py:374</span></li><li><code>do_terminate</code><span>asyncpg.py:1117</span></li><li><code>terminate</code><span>asyncpg.py:907</span></li><li><code>terminate</code><span>connection.py:1512</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 26 · semantic boundary</span></div><ol class="frames"><li><code>__exit__</code><span>util.py:162</span></li><li><code>rollback:2:&lt;string&gt;</code></li><li><code>_go</code><span>state_changes.py:139</span></li><li><code>rollback</code><span>session.py:1360</span></li><li><code>rollback</code><span>base.py:2610</span></li><li><code>_do_rollback</code><span>base.py:2729</span></li><li><code>_close_impl</code><span>base.py:2712</span></li><li><code>_connection_rollback_impl</code><span>base.py:2704</span></li><li><code>_rollback_impl</code><span>base.py:1129</span></li><li><code>_handle_dbapi_exception</code><span>base.py:2368</span></li><li><code>invalidate</code><span>base.py:751</span></li><li><code>invalidate</code><span>base.py:1474</span></li><li><code>invalidate</code><span>base.py:816</span></li><li><code>__close</code><span>base.py:883</span></li><li><code>_close_connection</code><span>base.py:374</span></li><li><code>do_terminate</code><span>asyncpg.py:1117</span></li><li><code>terminate</code><span>asyncpg.py:907</span></li><li><code>terminate</code><span>connection.py:1512</span></li></ol></section>
+          <p class="small trace-note">The frames on record 26 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>After AnyIO cancelled a transaction task, the pool reported zero checked-out connections, yet the original PostgreSQL backend was still alive after a new connection opened and dispose() completed.</dd></div><div><dt>What CoroPerf showed</dt><dd>The hard-close stack reached driver cleanup that could itself be cancelled. Shielding close in 2.0.38 removed the old PID by context exit, while asyncio.TaskGroup on 2.0.36 allowed normal reuse and disposal.</dd></div><div><dt>Scope and limits</dt><dd>Each local process cancelled once, with an independent observer connection. The final PID check establishes liveness only at that instant.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

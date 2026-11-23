@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="TypeORM’s SQL Server error stack starts in the query runner">
+  <title>typeorm/typeorm #11499 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">typeorm/typeorm #11499</p>
+        <h1>TypeORM’s SQL Server error stack starts in the query runner</h1>
+        <div class="case-links"><a href="https://github.com/typeorm/typeorm/issues/11499">Upstream report ↗</a><a href="https://github.com/typeorm/typeorm/pull/12056">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:37</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>two-requests.cjs:37</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:11</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · outer async function rethrow</span></div><ol class="frames"><li><code>async main</code><span>two-requests.cjs:39</span></li><li><code>async Promise.allSettled (index 0)</code></li><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:13</span></li><li><code>promiseResolveHook</code><span>async_hooks:364</span></li><li><code>emitHook</code><span>async_hooks:235</span></li><li><code>AsyncHook.promiseResolve</code><span>observe.cjs:19</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · outer async function rethrow</span></div><ol class="frames"><li><code>async main</code><span>two-requests.cjs:39</span></li><li><code>async Promise.allSettled (index 0)</code></li><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:13</span></li><li><code>promiseResolveHook</code><span>async_hooks:364</span></li><li><code>emitHook</code><span>async_hooks:235</span></li><li><code>AsyncHook.promiseResolve</code><span>observe.cjs:19</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:37</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>two-requests.cjs:37</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:12</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · running await continuation</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:39</span></li><li><code>async Promise.allSettled (index 0)</code></li><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:13</span></li><li><code>logFailure</code><span>two-requests.cjs:9</span></li><li><code>console.observedError [as error]</code><span>observe.cjs:37</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · running await continuation</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:39</span></li><li><code>async Promise.allSettled (index 0)</code></li><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:13</span></li><li><code>logFailure</code><span>two-requests.cjs:9</span></li><li><code>console.observedError [as error]</code><span>observe.cjs:37</span></li></ol></section>
+          <p class="small trace-note">The frames on record 3 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:37</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>two-requests.cjs:37</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:12</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · native exception stack</span></div><ol class="frames"><li><code>endReadableNT</code><span>readable:1696</span></li><li><code>Readable.emit</code><span>node:events:519</span></li><li><code>Readable.&lt;anonymous&gt;</code><span>token-stream-parser.js:25</span></li><li><code>Parser.emit</code><span>node:events:519</span></li><li><code>Object.onceWrapper</code><span>node:events:633</span></li><li><code>Parser.onEndOfMessage</code><span>connection.js:2653</span></li><li><code>Request.callback</code><span>request.js:239</span></li><li><code>Request.userCallback</code><span>request.js:492</span></li><li><code>&lt;anonymous&gt;</code><span>request.js:440</span></li><li><code>&lt;anonymous&gt;</code><span>SqlServerQueryRunner.js:204</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · native exception stack</span></div><ol class="frames"><li><code>endReadableNT</code><span>readable:1696</span></li><li><code>Readable.emit</code><span>node:events:519</span></li><li><code>Readable.&lt;anonymous&gt;</code><span>token-stream-parser.js:25</span></li><li><code>Parser.emit</code><span>node:events:519</span></li><li><code>Object.onceWrapper</code><span>node:events:633</span></li><li><code>Parser.onEndOfMessage</code><span>connection.js:2653</span></li><li><code>Request.callback</code><span>request.js:239</span></li><li><code>Request.userCallback</code><span>request.js:492</span></li><li><code>&lt;anonymous&gt;</code><span>request.js:440</span></li><li><code>&lt;anonymous&gt;</code><span>SqlServerQueryRunner.js:204</span></li></ol></section>
+          <p class="small trace-note">The frames on record 4 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 5 · create<code>Object.refreshCatalog [as refresh]</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:37</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>two-requests.cjs:37</span></li><li><code>Object.refreshCatalog [as refresh]</code><span>two-requests.cjs:15</span></li></ol></section></details><details class="extra" ><summary>Record 6 · sample<code>AsyncHook.promiseResolve</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 6 · outer async function rethrow</span></div><ol class="frames"><li><code>async main</code><span>two-requests.cjs:39</span></li><li><code>async Promise.allSettled (index 1)</code></li><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Object.refreshCatalog [as refresh]</code><span>two-requests.cjs:17</span></li><li><code>promiseResolveHook</code><span>async_hooks:364</span></li><li><code>emitHook</code><span>async_hooks:235</span></li><li><code>AsyncHook.promiseResolve</code><span>observe.cjs:19</span></li></ol></section></details><details class="extra" ><summary>Record 7 · create<code>Object.refreshCatalog [as refresh]</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 7</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:37</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>two-requests.cjs:37</span></li><li><code>Object.refreshCatalog [as refresh]</code><span>two-requests.cjs:16</span></li></ol></section></details><details class="extra" ><summary>Record 8 · sample<code>console.observedError [as error]</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 8 · running await continuation</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:39</span></li><li><code>async Promise.allSettled (index 1)</code></li><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Object.refreshCatalog [as refresh]</code><span>two-requests.cjs:17</span></li><li><code>logFailure</code><span>two-requests.cjs:9</span></li><li><code>console.observedError [as error]</code><span>observe.cjs:37</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On TypeORM 0.3.24, a NULL for a required integer column returned SQL Server error 515 (EREQUEST) with a stack starting at SqlServerQueryRunner.js:204. A valid write was independently read back.</dd></div><div><dt>What CoroPerf showed</dt><dd>Promise identities connected each runner.query rejection and its await continuation to the originating importOrders or refreshCatalog call, even though both used the same SQL and produced the same error.</dd></div><div><dt>Scope and limits</dt><dd>The reporter’s Nest app and schema were unavailable. Two local callers exercised the reported versions, driver, query pattern and constraint. The intervals use V8’s Promise init and settlement notifications on the same Node clock. A second hook captured the rethrow stack during the settlement notification.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

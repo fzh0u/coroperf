@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="An etcd progress notification can overtake watch history">
+  <title>etcd-io/etcd #15220 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">etcd-io/etcd #15220</p>
+        <h1>An etcd progress notification can overtake watch history</h1>
+        <div class="case-links"><a href="https://github.com/etcd-io/etcd/issues/15220">Upstream report ↗</a><a href="https://github.com/etcd-io/etcd/pull/15237">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 108</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 90</span></div><ol class="frames"><li><code>google.golang.org/grpc.(*Server).serveStreams.func1.2</code><span>server.go:965</span></li><li><code>google.golang.org/grpc.(*Server).handleStream</code><span>server.go:1717</span></li><li><code>google.golang.org/grpc.(*Server).processStreamingRPC</code><span>server.go:1636</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.Server.ChainStreamServer.func7</code><span>chain.go:58</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.Server.ChainStreamServer.func7.1.1</code><span>chain.go:49</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.newStreamInterceptor.func1</code><span>interceptor.go:259</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.Server.ChainStreamServer.func7.1.1</code><span>chain.go:49</span></li><li><code>github.com/grpc-ecosystem/go-grpc-prometheus.init.(*ServerMetrics).StreamServerInterceptor.func4</code><span>server_metrics.go:121</span></li><li><code>go.etcd.io/etcd/api/v3/etcdserverpb._Watch_Watch_Handler</code><span>rpc.pb.go:6794</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*watchServer).Watch</code><span>observed-parent.go:182</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 108 · Go runtime trace UserLog</span></div><ol class="frames"><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*watchServer).Watch.func1</code><span>observed-parent.go:183</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).sendLoop</code><span>observed-parent.go:481</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).observeWatch</code><span>observed-parent.go:622</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 108 · Go runtime trace UserLog</span></div><ol class="frames"><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*watchServer).Watch.func1</code><span>observed-parent.go:183</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).sendLoop</code><span>observed-parent.go:481</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).observeWatch</code><span>observed-parent.go:622</span></li></ol></section>
+          <p class="small trace-note">The frames on record 108 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 105</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 91</span></div><ol class="frames"><li><code>google.golang.org/grpc.(*Server).serveStreams.func1.2</code><span>server.go:965</span></li><li><code>google.golang.org/grpc.(*Server).handleStream</code><span>server.go:1717</span></li><li><code>google.golang.org/grpc.(*Server).processStreamingRPC</code><span>server.go:1636</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.Server.ChainStreamServer.func7</code><span>chain.go:58</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.Server.ChainStreamServer.func7.1.1</code><span>chain.go:49</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.newStreamInterceptor.func1</code><span>interceptor.go:259</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.Server.ChainStreamServer.func7.1.1</code><span>chain.go:49</span></li><li><code>github.com/grpc-ecosystem/go-grpc-prometheus.init.(*ServerMetrics).StreamServerInterceptor.func4</code><span>server_metrics.go:121</span></li><li><code>go.etcd.io/etcd/api/v3/etcdserverpb._Watch_Watch_Handler</code><span>rpc.pb.go:6794</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*watchServer).Watch</code><span>observed-parent.go:192</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 105 · Go runtime trace UserLog</span></div><ol class="frames"><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*watchServer).Watch.func2</code><span>observed-parent.go:193</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).recvLoop</code><span>observed-parent.go:365</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 105 · Go runtime trace UserLog</span></div><ol class="frames"><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*watchServer).Watch.func2</code><span>observed-parent.go:193</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).recvLoop</code><span>observed-parent.go:365</span></li></ol></section>
+          <p class="small trace-note">The frames on record 105 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>google.golang.org/grpc.(*Server).serveStreams.func1.2</code><span>server.go:965</span></li><li><code>google.golang.org/grpc.(*Server).handleStream</code><span>server.go:1717</span></li><li><code>google.golang.org/grpc.(*Server).processStreamingRPC</code><span>server.go:1636</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.Server.ChainStreamServer.func7</code><span>chain.go:58</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.Server.ChainStreamServer.func7.1.1</code><span>chain.go:49</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.newStreamInterceptor.func1</code><span>interceptor.go:259</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.Server.ChainStreamServer.func7.1.1</code><span>chain.go:49</span></li><li><code>github.com/grpc-ecosystem/go-grpc-prometheus.init.(*ServerMetrics).StreamServerInterceptor.func4</code><span>server_metrics.go:121</span></li><li><code>go.etcd.io/etcd/api/v3/etcdserverpb._Watch_Watch_Handler</code><span>rpc.pb.go:6794</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*watchServer).Watch</code><span>observed-parent.go:192</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · Go runtime trace UserLog</span></div><ol class="frames"><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*watchServer).Watch.func2</code><span>observed-parent.go:193</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).recvLoop</code><span>observed-parent.go:259</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · Go runtime trace UserLog</span></div><ol class="frames"><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*watchServer).Watch.func2</code><span>observed-parent.go:193</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).recvLoop</code><span>observed-parent.go:259</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 109 · sample<code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).observeWatch</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 109 · Go runtime trace UserLog</span></div><ol class="frames"><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*watchServer).Watch.func1</code><span>observed-parent.go:183</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).sendLoop</code><span>observed-parent.go:453</span></li><li><code>go.etcd.io/etcd/server/v3/etcdserver/api/v3rpc.(*serverWatchStream).observeWatch</code><span>observed-parent.go:622</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Across 16 of 16 trials on the reported build and the fix’s parent, an immediate progress notification preceded 24 committed updates. Resuming at that checkpoint delivered a newer write first.</dd></div><div><dt>What CoroPerf showed</dt><dd>The send goroutine delivered control revision 97 before an MVCC event at revision 87 on the same stream. The fix routed progress through MVCC so lagging watches could defer it.</dd></div><div><dt>Scope and limits</dt><dd>Event revisions were checked separately from response headers, which can match. The production client’s incident trace was unavailable.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

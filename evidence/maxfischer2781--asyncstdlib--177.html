@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A nested async tee skips records when its parent advances">
+  <title>maxfischer2781/asyncstdlib #177 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">maxfischer2781/asyncstdlib #177</p>
+        <h1>A nested async tee skips records when its parent advances</h1>
+        <div class="case-links"><a href="https://github.com/maxfischer2781/asyncstdlib/issues/177">Upstream report ↗</a><a href="https://github.com/maxfischer2781/asyncstdlib/pull/182">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>Tee.__init__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:58</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:287</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>posted.py:12</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:678</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:645</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1999</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>&lt;module&gt;</code><span>posted.py:10</span></li><li><code>Tee.__init__</code><span>itertools.py:448</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>infinite_counter</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:58</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:287</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>posted.py:12</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:678</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:645</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1999</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>&lt;module&gt;</code><span>posted.py:13</span></li><li><code>tee_peer</code><span>itertools.py:375</span></li><li><code>infinite_counter</code><span>posted.py:7</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>Tee.__init__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:58</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:287</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>posted.py:12</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:678</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:645</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1999</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>&lt;module&gt;</code><span>posted.py:16</span></li><li><code>Tee.__init__</code><span>itertools.py:448</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>Tee.__init__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:58</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:287</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>posted.py:12</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:678</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:645</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1999</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>&lt;module&gt;</code><span>posted.py:24</span></li><li><code>Tee.__init__</code><span>itertools.py:448</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Two branches created at different positions returned 6, 7, 8 and 9 on 3.13.1 and the fix parent. The fixed commit, 3.13.2 and the synchronous itertools reference returned 1, 4, 2 and 5. Three of ten file-backed controls lost records on the old builds.</dd></div><div><dt>What CoroPerf showed</dt><dd>On the old build, advancing either child entered tee_peer twice and fetched a new source value. The child had its own buffer and wrapped its parent. On the fixed build, each child inherited the buffer position at its fork, and all four reads were served without another source read.</dd></div><div><dt>Scope and limits</dt><dd>The report runs on a single top-level async execution. The evidence identifies iterators and their buffers. All eleven selected upstream tests passed on all four builds; the original reproduction and independent file controls distinguish the faulty behavior.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

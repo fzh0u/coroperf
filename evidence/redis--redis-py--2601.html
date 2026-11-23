@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A pipelined vector search returned raw replies instead of document objects">
+  <title>redis/redis-py #2601 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">redis/redis-py #2601</p>
+        <h1>A pipelined vector search returned raw replies instead of document objects</h1>
+        <div class="case-links"><a href="https://github.com/redis/redis-py/issues/2601">Upstream report ↗</a><a href="https://github.com/redis/redis-py/pull/4025">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 1 · sample<code>_parse_search</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observed.py:78</span></li><li><code>observe</code><span>observed.py:71</span></li><li><code>test_all</code><span>posted.py:22</span></li><li><code>search</code><span>commands.py:559</span></li><li><code>_parse_results</code><span>commands.py:84</span></li><li><code>_parse_search</code><span>commands.py:91</span></li></ol></section></details><details class="extra" ><summary>Record 6 · sample<code>_execute_transaction</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 6 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observed.py:78</span></li><li><code>observe</code><span>observed.py:71</span></li><li><code>test_all</code><span>posted.py:25</span></li><li><code>execute</code><span>client.py:2051</span></li><li><code>call_with_retry</code><span>retry.py:120</span></li><li><code>&lt;lambda&gt;</code><span>client.py:2052</span></li><li><code>_execute_transaction</code><span>client.py:1926</span></li></ol></section></details><details class="extra" ><summary>Record 9 · sample<code>_execute_transaction</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 9 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observed.py:78</span></li><li><code>observe</code><span>observed.py:71</span></li><li><code>test_all</code><span>posted.py:28</span></li><li><code>execute</code><span>client.py:2051</span></li><li><code>call_with_retry</code><span>retry.py:120</span></li><li><code>&lt;lambda&gt;</code><span>client.py:2052</span></li><li><code>_execute_transaction</code><span>client.py:1926</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The same search returned neighbors a and b on every path. In redis-py 4.5.1 and the parent of the fix, direct search returned a Result with two documents. Both pipelines returned a raw array. All 99 ordinary pipelined reads in the reporter’s program returned their expected values.</dd></div><div><dt>What CoroPerf showed</dt><dd>The captured FT.SEARCH replies contained identical IDs and distances on all three paths within each run. The parent transaction stacks showed that neither pipeline had a response callback for FT.SEARCH. The fixing commit registered the callback on the search module’s pipeline and that instance entered the document parser. The generic pipeline still returned an array. On 8.1.0 the search module pipeline produced Result objects with unified responses enabled for either tested protocol.</dd></div><div><dt>Scope and limits</dt><dd>The reporter gave no client or server version. We chose 4.5.1 from the month before the report and ran all clients against Redis Stack 7.2.0-v18. The original script used a synchronous client and an HNSW index. A separate FLAT index checked 120 searches over 150 Iris records against independently calculated distances.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

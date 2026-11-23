@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="scikit-learn awarded a perfect F1 score to two swapped predictions">
+  <title>scikit-learn/scikit-learn #26965 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">scikit-learn/scikit-learn #26965</p>
+        <h1>scikit-learn awarded a perfect F1 score to two swapped predictions</h1>
+        <div class="case-links"><a href="https://github.com/scikit-learn/scikit-learn/issues/26965">Upstream report ↗</a><a href="https://github.com/scikit-learn/scikit-learn/pull/27577">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>precision_recall_fscore_support</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:97</span></li><li><code>run</code><span>workload.py:66</span></li><li><code>&lt;module&gt;</code><span>original.py:3</span></li><li><code>wrapper</code><span>_param_validation.py:213</span></li><li><code>f1_score</code><span>_classification.py:1257</span></li><li><code>wrapper</code><span>_param_validation.py:186</span></li><li><code>fbeta_score</code><span>_classification.py:1440</span></li><li><code>wrapper</code><span>_param_validation.py:186</span></li><li><code>precision_recall_fscore_support</code><span>_classification.py:1560</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>precision_recall_fscore_support</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:97</span></li><li><code>run</code><span>workload.py:66</span></li><li><code>&lt;module&gt;</code><span>original.py:3</span></li><li><code>wrapper</code><span>_param_validation.py:213</span></li><li><code>f1_score</code><span>_classification.py:1257</span></li><li><code>wrapper</code><span>_param_validation.py:186</span></li><li><code>fbeta_score</code><span>_classification.py:1440</span></li><li><code>wrapper</code><span>_param_validation.py:186</span></li><li><code>precision_recall_fscore_support</code><span>_classification.py:1804</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>precision_recall_fscore_support</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:97</span></li><li><code>run</code><span>workload.py:66</span></li><li><code>&lt;module&gt;</code><span>original.py:3</span></li><li><code>wrapper</code><span>_param_validation.py:213</span></li><li><code>f1_score</code><span>_classification.py:1257</span></li><li><code>wrapper</code><span>_param_validation.py:186</span></li><li><code>fbeta_score</code><span>_classification.py:1440</span></li><li><code>wrapper</code><span>_param_validation.py:186</span></li><li><code>precision_recall_fscore_support</code><span>_classification.py:1809</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>precision_recall_fscore_support</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:97</span></li><li><code>run</code><span>workload.py:66</span></li><li><code>&lt;module&gt;</code><span>original.py:3</span></li><li><code>wrapper</code><span>_param_validation.py:213</span></li><li><code>f1_score</code><span>_classification.py:1257</span></li><li><code>wrapper</code><span>_param_validation.py:186</span></li><li><code>fbeta_score</code><span>_classification.py:1440</span></li><li><code>wrapper</code><span>_param_validation.py:186</span></li><li><code>precision_recall_fscore_support</code><span>_classification.py:1823</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The two reported labels were 0 and 1. Predicting 1 and 0 missed both. With zero_division=1, scikit-learn 1.3.0 and the fix parent returned F1 = 1.0. Version 1.2.2 and the fixed commit returned 0.0. All builds agreed on the other three reported examples, including the genuinely undefined all-negative case.</dd></div><div><dt>What CoroPerf showed</dt><dd>The live Python stack reached precision_recall_fscore_support through f1_score and fbeta_score. It recorded zero true positives, one predicted positive and one actual positive. The parent&#x27;s intermediate denominator, precision plus recall, was zero, so it selected the configured fallback of one. The fixed implementation used the count denominator of two and returned zero.</dd></div><div><dt>Scope and limits</dt><dd>The report supplied four label arrays. The Iris predictions are a separate control using the same train/test split on six builds or runs. The nearest-centroid model scored 0.906629 macro-F1 on all 75 held-out flowers. The error-only comparison selects the 7 misclassified flowers from that holdout. The physical stack capture covers synchronous scoring of the first reported input.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

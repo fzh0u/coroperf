@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="An etcd range page returns the correct keys and the wrong count">
+  <title>etcd-io/etcd #6145 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">etcd-io/etcd #6145</p>
+        <h1>An etcd range page returns the correct keys and the wrong count</h1>
+        <div class="case-links"><a href="https://github.com/etcd-io/etcd/issues/6145">Upstream report ↗</a><a href="https://github.com/etcd-io/etcd/pull/6152">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 2</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).run</code><span>server.go:552</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/pkg/schedule.NewFIFOScheduler</code><span>schedule.go:71</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · semantic boundary</span></div><ol class="frames"><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/pkg/schedule.(*fifo).run</code><span>schedule.go:160</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).run.func2</code><span>server.go:604</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyAll</code><span>server.go:625</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntries</code><span>server.go:764</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).apply</code><span>server.go:1046</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntryNormal</code><span>server.go:1113</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*authApplierV3).Apply</code><span>apply_auth.go:55</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*applierV3backend).Apply</code><span>apply.go:103</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*authApplierV3).Range</code><span>apply_auth.go:78</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*applierV3backend).Range</code><span>apply.go:283</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/mvcc.(*store).Range</code><span>kvstore.go:155</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/mvcc.(*store).rangeKeys</code><span>kvstore.go:502</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · semantic boundary</span></div><ol class="frames"><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/pkg/schedule.(*fifo).run</code><span>schedule.go:160</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).run.func2</code><span>server.go:604</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyAll</code><span>server.go:625</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntries</code><span>server.go:764</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).apply</code><span>server.go:1046</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntryNormal</code><span>server.go:1113</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*authApplierV3).Apply</code><span>apply_auth.go:55</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*applierV3backend).Apply</code><span>apply.go:103</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*authApplierV3).Range</code><span>apply_auth.go:78</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*applierV3backend).Range</code><span>apply.go:283</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/mvcc.(*store).Range</code><span>kvstore.go:155</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/mvcc.(*store).rangeKeys</code><span>kvstore.go:502</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 1</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).run</code><span>server.go:552</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/pkg/schedule.NewFIFOScheduler</code><span>schedule.go:71</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/pkg/schedule.(*fifo).run</code><span>schedule.go:160</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).run.func2</code><span>server.go:604</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyAll</code><span>server.go:625</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntries</code><span>server.go:764</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).apply</code><span>server.go:1046</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntryNormal</code><span>server.go:1112</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/pkg/schedule.(*fifo).run</code><span>schedule.go:160</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).run.func2</code><span>server.go:604</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyAll</code><span>server.go:625</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntries</code><span>server.go:764</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).apply</code><span>server.go:1046</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntryNormal</code><span>server.go:1112</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).run</code><span>server.go:552</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/pkg/schedule.NewFIFOScheduler</code><span>schedule.go:71</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · semantic boundary</span></div><ol class="frames"><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/pkg/schedule.(*fifo).run</code><span>schedule.go:160</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).run.func2</code><span>server.go:604</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyAll</code><span>server.go:625</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntries</code><span>server.go:764</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).apply</code><span>server.go:1046</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntryNormal</code><span>server.go:1113</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*authApplierV3).Apply</code><span>apply_auth.go:55</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*applierV3backend).Apply</code><span>apply.go:103</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*authApplierV3).Range</code><span>apply_auth.go:78</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*applierV3backend).Range</code><span>apply.go:324</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · semantic boundary</span></div><ol class="frames"><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/pkg/schedule.(*fifo).run</code><span>schedule.go:160</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).run.func2</code><span>server.go:604</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyAll</code><span>server.go:625</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntries</code><span>server.go:764</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).apply</code><span>server.go:1046</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*EtcdServer).applyEntryNormal</code><span>server.go:1113</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*authApplierV3).Apply</code><span>apply_auth.go:55</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*applierV3backend).Apply</code><span>apply.go:103</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*authApplierV3).Range</code><span>apply_auth.go:78</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdserver.(*applierV3backend).Range</code><span>apply.go:324</span></li></ol></section>
+          <p class="small trace-note">The frames on record 3 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The posted etcdctl range query requested two keys from key1 up to the exclusive bound key5. Each of three servers returned key1 and key2. The affected response reported three matches although four keys matched. The fixed response reported four. Across the four clusters, 12 of 26 affected reads and none of 26 fixed reads reported a wrong total.</dd></div><div><dt>What CoroPerf showed</dt><dd>The trace links the FIFO scheduler’s creation of the Raft apply worker to rangeKeys handling this committed request. The index found four matches. To decide whether another page existed, the range read fetched three values. The affected result used that fetch length for its total. The fixed result used the index count while still fetching only three values. The retained WALs identify the requests and revisions on all three replicas.</dd></div><div><dt>Scope and limits</dt><dd>The report did not specify a revision or cluster topology. The local clusters used the first parent and the merged fix. Native goroutine traces cover the first node of each observed cluster. Stock runs independently verified the visible command output.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

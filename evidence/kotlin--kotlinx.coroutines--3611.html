@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Optimized Android builds lose the coroutine await site">
+  <title>kotlin/kotlinx.coroutines #3611 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">kotlin/kotlinx.coroutines #3611</p>
+        <h1>Optimized Android builds lose the coroutine await site</h1>
+        <div class="case-links"><a href="https://github.com/Kotlin/kotlinx.coroutines/issues/3611">Upstream report ↗</a><a href="https://github.com/Kotlin/kotlinx.coroutines/issues/3611#issuecomment-1532722156">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 2 · sample<code>audit.followup.Cases$load$2$worker$1.invokeSuspend</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · ART Throwable.getStackTrace</span></div><ol class="frames"><li><code>audit.followup.Cases$run$1.invokeSuspend</code><span>Production.kt:10</span></li><li><code>audit.followup.Cases$run$1$1.invokeSuspend</code><span>Production.kt:10</span></li><li><code>audit.followup.Cases.load</code><span>Production.kt:13</span></li><li><code>audit.followup.Cases$load$2.invokeSuspend</code><span>Production.kt:27</span></li><li><code></code></li><li><code>audit.followup.Cases$load$2$worker$1.invokeSuspend</code><span>Production.kt:23</span></li></ol></section></details><details class="extra" ><summary>Record 19 · sample<code>kotlinx.coroutines.DeferredCoroutine.await</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 19 · ART method entry</span></div><ol class="frames"><li><code>com.android.internal.os.ZygoteInit.main</code><span>ZygoteInit.java</span></li><li><code>com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run</code><span>RuntimeInit.java</span></li><li><code>java.lang.reflect.Method.invoke</code><span>Method.java</span></li><li><code>android.app.ActivityThread.main</code><span>ActivityThread.java</span></li><li><code>android.os.Looper.loop</code><span>Looper.java</span></li><li><code>android.os.Looper.loopOnce</code><span>Looper.java</span></li><li><code>android.os.Handler.dispatchMessage</code><span>Handler.java</span></li><li><code>android.os.Handler.handleCallback</code><span>Handler.java</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt</span></li><li><code>audit.followup.Cases$run$1$1.invokeSuspend</code><span>Production.kt</span></li><li><code>audit.followup.Cases.access$load</code><span>Production.kt</span></li><li><code>audit.followup.Cases.load</code><span>Production.kt</span></li><li><code>kotlinx.coroutines.SupervisorKt.supervisorScope</code><span>Supervisor.kt</span></li><li><code>kotlinx.coroutines.intrinsics.UndispatchedKt.startUndispatchedOrReturn</code><span>Undispatched.kt</span></li><li><code>audit.followup.Cases$load$2.invoke</code><span>Production.kt</span></li><li><code>audit.followup.Cases$load$2.invoke</code><span>Production.kt</span></li><li><code>audit.followup.Cases$load$2.invokeSuspend</code><span>Production.kt</span></li><li><code>kotlinx.coroutines.DeferredCoroutine.await</code><span>Builders.common.kt</span></li></ol></section></details><details class="extra" ><summary>Record 34 · sample<code>dalvik.system.VMStack.getThreadStackTrace</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 34 · ART Thread.getStackTrace</span></div><ol class="frames"><li><code>com.android.internal.os.ZygoteInit.main</code><span>ZygoteInit.java:1003</span></li><li><code>com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run</code><span>RuntimeInit.java:548</span></li><li><code>java.lang.reflect.Method.invoke</code></li><li><code>android.app.ActivityThread.main</code><span>ActivityThread.java:7839</span></li><li><code>android.os.Looper.loop</code><span>Looper.java:288</span></li><li><code>android.os.Looper.loopOnce</code><span>Looper.java:201</span></li><li><code>android.os.Handler.dispatchMessage</code><span>Handler.java:99</span></li><li><code>android.os.Handler.handleCallback</code><span>Handler.java:938</span></li><li><code>n.H.run</code><span>Unknown Source:109</span></li><li><code>f.a.c</code><span>Unknown Source:8</span></li><li><code>a.d.h</code><span>Unknown Source:36</span></li><li><code>a.f.a</code><span>Unknown Source:71</span></li><li><code>n.A.y</code><span>Unknown Source:3</span></li><li><code>a.c.b</code><span>Unknown Source:12</span></li><li><code>a.c.h</code><span>Unknown Source:79</span></li><li><code>java.lang.Thread.getStackTrace</code><span>Thread.java:1724</span></li><li><code>dalvik.system.VMStack.getThreadStackTrace</code></li></ol></section></details><details class="extra" ><summary>Record 35 · sample<code>dalvik.system.VMStack.getThreadStackTrace</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 35 · ART Thread.getStackTrace</span></div><ol class="frames"><li><code>kotlinx.coroutines.scheduling.a.run</code><span>Unknown Source:76</span></li><li><code>kotlinx.coroutines.scheduling.k.run</code><span>Unknown Source:2</span></li><li><code>kotlinx.coroutines.internal.e.run</code><span>Unknown Source:12</span></li><li><code>n.H.run</code><span>Unknown Source:109</span></li><li><code>f.a.c</code><span>Unknown Source:8</span></li><li><code>a.b.h</code><span>Unknown Source:109</span></li><li><code>java.lang.Thread.getStackTrace</code><span>Thread.java:1724</span></li><li><code>dalvik.system.VMStack.getThreadStackTrace</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The D8 debug build showed worker.await() at line 27, while the optimized build retained only the I/O-side throw and scheduling frames.</dd></div><div><dt>What CoroPerf showed</dt><dd>With debugging on, line 27 returned only when both the forced-false getter rules were removed and continuation metadata and label fields were preserved.</dd></div><div><dt>Scope and limits</dt><dd>This feature request supplied no production APK or rules. The local Android test establishes the behavior of that configuration.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

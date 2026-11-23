@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Why did a decimal equality scan miss a row in an Iceberg table?">
+  <title>apache/iceberg-python #3522 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">apache/iceberg-python #3522</p>
+        <h1>Why did a decimal equality scan miss a row in an Iceberg table?</h1>
+        <div class="case-links"><a href="https://github.com/apache/iceberg-python/issues/3522">Upstream report ↗</a><a href="https://github.com/apache/iceberg-python/pull/3746">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 1 · sample<code>transform</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:144</span></li><li><code>main</code><span>worker.py:119</span></li><li><code>&lt;module&gt;</code><span>reporter.py:6</span></li><li><code>transform</code><span>transforms.py:388</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>decimal_to_unscaled</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:144</span></li><li><code>main</code><span>worker.py:119</span></li><li><code>&lt;module&gt;</code><span>reporter.py:6</span></li><li><code>&lt;lambda&gt;</code><span>transforms.py:388</span></li><li><code>hash_func</code><span>transforms.py:370</span></li><li><code>decimal_to_bytes</code><span>decimal.py:77</span></li><li><code>decimal_to_unscaled</code><span>decimal.py:34</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>bytes_required</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:144</span></li><li><code>main</code><span>worker.py:119</span></li><li><code>&lt;module&gt;</code><span>reporter.py:6</span></li><li><code>&lt;lambda&gt;</code><span>transforms.py:388</span></li><li><code>hash_func</code><span>transforms.py:370</span></li><li><code>decimal_to_bytes</code><span>decimal.py:79</span></li><li><code>bytes_required</code><span>decimal.py:61</span></li></ol></section></details><details class="extra" ><summary>Record 4 · sample<code>decimal_to_bytes</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:144</span></li><li><code>main</code><span>worker.py:119</span></li><li><code>&lt;module&gt;</code><span>reporter.py:6</span></li><li><code>&lt;lambda&gt;</code><span>transforms.py:388</span></li><li><code>hash_func</code><span>transforms.py:370</span></li><li><code>decimal_to_bytes</code><span>decimal.py:80</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>PyIceberg 0.11.1 put Decimal(&#x27;-1.28&#x27;) in bucket 12 when the reporter called the 16-bucket transform. Apache Iceberg Java 1.9.2 returned 13. So did PyIceberg 0.12.0. The immediate parent and landed commit of PR #3746 reproduced the same difference. The first table shows the exact input bytes and signed hash on each build. All four Python builds agreed with Java on ten neighboring and ordinary values. The earlier scalar implementation differed at three signed-byte boundaries.
+
+A table scan made the discrepancy visible in returned rows. PyIceberg 0.12.0 wrote six decimal amounts to six Parquet files in one snapshot. Every reader returned all six rows in an unfiltered scan. With an equality filter for -1.28, 0.11.1 selected zero files even though row 1 was present in bucket 13. For -327.68 it also selected zero files, leaving out row 3 in bucket 3. The corrected readers selected one file for each filter and returned the corresponding row. The other four equality filters agreed on all readers. The second table gives row IDs read directly from Parquet, alongside the file plans and query results.</dd></div><div><dt>What CoroPerf showed</dt><dd>At scale two, -1.28 has unscaled value -128. Its shortest signed big-endian representation is the single byte 80 (hex). The earlier width calculation used the magnitude’s bit length and allowed another sign bit. It serialized -128 as ff80. Both byte strings represent -128, but the bucket transform hashes the actual bytes. The corresponding native MurmurHash3 results were 1817059852 and 267099677, which select buckets 12 and 13. For negative integers the landed code adds one before measuring bit length. It also removes the extra ff from -327.68, changing bucket 8 to 3, and from -83886.08, changing bucket 11 to 13.
+
+In each release graph, reporter segments 3 and 4 record bytes_required and the bytes returned by decimal_to_bytes. At segment 6 GDB read those same bytes at the same address on entry to murmurhash3_x86_32. Segment 7 records its output word. Segments 9 and 10 record the Python hash and final bucket. The plain interpreter printed the same bucket. In the separate table run, sampled plan_files calls showed the same byte widths and encodings as BucketTransform.project derived the partition predicate. The wrong predicate excluded the matching file before any row in it could be returned.</dd></div><div><dt>Scope and limits</dt><dd>The June 17 report gives no PyIceberg version. Its two fenced snippets are archived verbatim. The runnable copies remove fence indentation, join the split -1.28 literal and rejoin a wrapped comment in the length example. The Java control calls the released Apache Iceberg bucket transform and BucketUtil on BigDecimal values. The table experiment uses one 0.12.0 writer, one local SQLite catalog and the same catalog, manifests and six data files for all four readers. Its conclusions apply to reads of that snapshot.
+
+The Arrow batch transform takes a separate native path. For -1.28, the 0.11.1 environment with pyiceberg-core 0.8.0 returned bucket 4 on that path. Both source builds used pyiceberg-core 0.10.1 and returned 13 on the batch path, while their Python scalar buckets differed. The measured PR change is in the Python scalar width calculation. The captures follow synchronous scalar calls and record zero coroutine origins.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

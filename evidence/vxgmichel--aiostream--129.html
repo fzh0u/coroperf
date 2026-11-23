@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="aiostream flatmap checked a coroutine before awaiting it">
+  <title>vxgmichel/aiostream #129 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">vxgmichel/aiostream #129</p>
+        <h1>aiostream flatmap checked a coroutine before awaiting it</h1>
+        <div class="case-links"><a href="https://github.com/vxgmichel/aiostream/issues/129">Upstream report ↗</a><a href="https://github.com/vxgmichel/aiostream/pull/143">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>smap</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:78</span></li><li><code>observe</code><span>observe.py:67</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:294</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>reporter.py:48</span></li><li><code>run</code><span>runners.py:196</span></li><li><code>run</code><span>runners.py:119</span></li><li><code>run_until_complete</code><span>base_events.py:713</span></li><li><code>run_forever</code><span>base_events.py:684</span></li><li><code>_run_once</code><span>base_events.py:2061</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>smap</code><span>combine.py:144</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>base_combine</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:78</span></li><li><code>observe</code><span>observe.py:67</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:294</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>reporter.py:48</span></li><li><code>run</code><span>runners.py:196</span></li><li><code>run</code><span>runners.py:119</span></li><li><code>run_until_complete</code><span>base_events.py:713</span></li><li><code>run_forever</code><span>base_events.py:684</span></li><li><code>_run_once</code><span>base_events.py:2061</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>main</code><span>reporter.py:39</span></li><li><code>smap</code><span>combine.py:143</span></li><li><code>zip</code><span>combine.py:78</span></li><li><code>base_combine</code><span>advanced.py:99</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>base_combine</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:78</span></li><li><code>observe</code><span>observe.py:67</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:294</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>reporter.py:48</span></li><li><code>run</code><span>runners.py:196</span></li><li><code>run</code><span>runners.py:119</span></li><li><code>run_until_complete</code><span>base_events.py:713</span></li><li><code>run_forever</code><span>base_events.py:684</span></li><li><code>_run_once</code><span>base_events.py:2061</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>main</code><span>reporter.py:39</span></li><li><code>smap</code><span>combine.py:143</span></li><li><code>zip</code><span>combine.py:78</span></li><li><code>base_combine</code><span>advanced.py:99</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>_warn_unawaited_coroutine</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:78</span></li><li><code>observe</code><span>observe.py:71</span></li><li><code>_warn_unawaited_coroutine</code><span>observe.py:42</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On aiostream 0.6.4 and the fix parent, the original example hit AssertionError on the first batch and consumed zero items. The merged fix and 0.7.2 delivered all 25 values in order in every stock and traced run.</dd></div><div><dt>What CoroPerf showed</dt><dd>smap created the async_processor coroutine and yielded it to base_combine. The failing assertion and native warning identify the same object and frame in CORO_CREATED state. The fixed path awaited the callback and iterated its return value. CoroPerf also found the smap allocation stack with its transparent --capture-unawaited mode on every affected run of the unchanged example. The fixed runs had no such warning.</dd></div><div><dt>Scope and limits</dt><dd>The reporter had already identified the assertion in the issue description. The archive includes the full local stacks. The extended origin count includes this never-started object. Timings use three prepared local processes per build and include process startup.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Ray Serve swapped two features in a batched prediction">
+  <title>ray-project/ray #67404 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #67404</p>
+        <h1>Ray Serve swapped two features in a batched prediction</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/67404">Upstream report ↗</a><a href="https://github.com/ray-project/ray/pull/67405">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_sub_batches</code><span>batching.py:540</span></li><li><code>create_task</code><span>tasks.py:414</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:586</span></li><li><code>_batch_args_kwargs</code><span>batching.py:119</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:586</span></li><li><code>_batch_args_kwargs</code><span>batching.py:119</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 13</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 12</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_sub_batches</code><span>batching.py:540</span></li><li><code>create_task</code><span>tasks.py:414</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 13</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:586</span></li><li><code>_batch_args_kwargs</code><span>batching.py:119</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 13</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:586</span></li><li><code>_batch_args_kwargs</code><span>batching.py:119</span></li></ol></section>
+          <p class="small trace-note">The frames on record 13 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_sub_batches</code><span>batching.py:540</span></li><li><code>create_task</code><span>tasks.py:414</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:586</span></li><li><code>_batch_args_kwargs</code><span>batching.py:119</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:586</span></li><li><code>_batch_args_kwargs</code><span>batching.py:119</span></li></ol></section>
+          <p class="small trace-note">The frames on record 3 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The second caller sent a=2 and b=20. The completed deployment handle returned a=20 and b=2 on the reported nightly. In a two-feature Iris classifier, mixed keyword order reversed 30 of 60 held-out feature pairs and changed 16 predicted species. Accuracy fell from 56 to 44 correct. Two independent runs agreed, with profiling on and off.</dd></div><div><dt>What CoroPerf showed</dt><dd>The create stack reaches _BatchQueue._process_sub_batches as it starts an asyncio task. The execution stack reaches _batch_args_kwargs inside the same live _process_batch_inner coroutine. The recorded inputs were [a, 1, b, 10] and [b, 20, a, 2]. The merge took the keys from the first request and grouped values by position, yielding a=[1, 20] and b=[10, 2]. The observer matched the task, coroutine and executing parent frame for all 95 batches per traced actor. With the proposed change, both requests reached the merge in declaration order.</dd></div><div><dt>Scope and limits</dt><dd>The reporter used Windows. These runs used Linux x86-64, the same nightly commit and CPython 3.13.4. The comparison substituted the batching module from proposed PR #67405. The classifier exercises two named features from the UCI Iris dataset. Its correctly bound baseline classified 56 of 60 flowers correctly.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

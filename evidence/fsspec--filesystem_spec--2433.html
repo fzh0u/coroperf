@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="An async fsspec download treats a file-like destination as a path">
+  <title>fsspec/filesystem_spec #2433 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">fsspec/filesystem_spec #2433</p>
+        <h1>An async fsspec download treats a file-like destination as a path</h1>
+        <div class="case-links"><a href="https://github.com/fsspec/filesystem_spec/issues/2433">Upstream report ↗</a><a href="https://github.com/fsspec/filesystem_spec/pull/2435">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>report-2433.py:11</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>report-2433.py:11</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>report-2433.py:8</span></li><li><code>_get_file</code><span>reference.py:866</span></li><li><code>open</code><span>core.py:512</span></li><li><code>open_files</code><span>core.py:299</span></li><li><code>get_fs_token_paths</code><span>core.py:676</span></li><li><code>_un_chain</code><span>core.py:361</span></li><li><code>split_protocol</code><span>core.py:577</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>report-2433.py:11</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>report-2433.py:8</span></li><li><code>_get_file</code><span>reference.py:866</span></li><li><code>open</code><span>core.py:512</span></li><li><code>open_files</code><span>core.py:299</span></li><li><code>get_fs_token_paths</code><span>core.py:676</span></li><li><code>_un_chain</code><span>core.py:361</span></li><li><code>split_protocol</code><span>core.py:577</span></li></ol></section>
+          <p class="small trace-note">The frames on record 4 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 1</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>report-2433.py:11</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>report-2433.py:11</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>report-2433.py:8</span></li><li><code>_get_file</code><span>reference.py:862</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>report-2433.py:11</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>report-2433.py:8</span></li><li><code>_get_file</code><span>reference.py:862</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>report-2433.py:11</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>report-2433.py:11</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>report-2433.py:8</span></li><li><code>_get_file</code><span>reference.py:865</span></li><li><code>_cat_file</code><span>reference.py:839</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>report-2433.py:11</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>report-2433.py:8</span></li><li><code>_get_file</code><span>reference.py:865</span></li><li><code>_cat_file</code><span>reference.py:839</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 3 · sample<code>open</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>report-2433.py:11</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>report-2433.py:8</span></li><li><code>_get_file</code><span>reference.py:866</span></li><li><code>open</code><span>core.py:443</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original BytesIO example failed twice after reading all four bytes, while with proposed change #2435, the stream stayed open and the caller could read back “data”.</dd></div><div><dt>What CoroPerf showed</dt><dd>Task and object identities linked the successful read to split_protocol calling startswith on the destination, while both HTTP range responses in the control contained the correct bytes.</dd></div><div><dt>Scope and limits</dt><dd>The report used one task with inline data. Concurrent callers and the loopback HTTP server were local controls.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

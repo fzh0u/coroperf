@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="An ordered consumer reports zero pending before delivering an unseen key">
+  <title>nats-io/nats-server #8912 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">nats-io/nats-server #8912</p>
+        <h1>An ordered consumer reports zero pending before delivering an unseen key</h1>
+        <div class="case-links"><a href="https://github.com/nats-io/nats-server/issues/8912">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>github.com/nats-io/nats-server/v2/server.(*Server).startGoRoutine.func1</code><span>server.go:4143</span></li><li><code>github.com/nats-io/nats-server/v2/server.(*Server).processJSAPIRoutedRequests</code><span>jetstream_api.go:1087</span></li><li><code>github.com/nats-io/nats-server/v2/server.(*Server).processJSAPIRoutedRequests.func1</code><span>jetstream_api.go:1065</span></li><li><code>github.com/nats-io/nats-server/v2/server.(*Server).jsConsumerCreateRequest</code><span>jetstream_api.go:5277</span></li><li><code>github.com/nats-io/nats-server/v2/server.(*stream).addConsumerWithAction</code><span>consumer.go:1036</span></li><li><code>github.com/nats-io/nats-server/v2/server.(*stream).addConsumerWithAssignment</code><span>consumer.go:1044</span></li><li><code>github.com/nats-io/nats-server/v2/server.(*stream).addConsumerWithAssignmentAndMode</code><span>consumer.go:1493</span></li><li><code>github.com/nats-io/nats-server/v2/server.(*consumer).setLeader</code><span>consumer.go:1923</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>github.com/nats-io/nats-server/v2/server.(*consumer).setLeader.func2</code><span>consumer.go:1925</span></li><li><code>github.com/nats-io/nats-server/v2/server.(*consumer).loopAndGatherMsgs</code><span>consumer.go:5511</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>github.com/nats-io/nats-server/v2/server.(*consumer).setLeader.func2</code><span>consumer.go:1925</span></li><li><code>github.com/nats-io/nats-server/v2/server.(*consumer).loopAndGatherMsgs</code><span>consumer.go:5511</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>All 200 subjects remained in file storage, yet 49 of 300 reads saw pending=0 before receiving a previously unseen key.</dd></div><div><dt>What CoroPerf showed</dt><dd>Matching the consumer’s wire ACK to loopAndGatherMsgs showed a cached count of −1 while delivering sequence 2976 of 2978. The new key followed at revision 2977.</dd></div><div><dt>Scope and limits</dt><dd>The replay used a single 2.15.1 server with 50 keys being updated. Upstream was still discussing the precision guarantee, and no server fix was verified.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

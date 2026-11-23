@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A UNION selecting only an annotation returns integers instead of booleans">
+  <title>django/django #28900 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">django/django #28900</p>
+        <h1>A UNION selecting only an annotation returns integers instead of booleans</h1>
+        <div class="case-links"><a href="https://code.djangoproject.com/ticket/28900">Upstream report ↗</a><a href="https://code.djangoproject.com/ticket/28900#comment:23">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 120 · sample<code>get_combinator_sql</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 120 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>runtests.py:788</span></li><li><code>django_tests</code><span>runtests.py:426</span></li><li><code>run_tests</code><span>runner.py:1073</span></li><li><code>run_suite</code><span>runner.py:1000</span></li><li><code>run</code><span>runner.py:240</span></li><li><code>__call__</code><span>suite.py:84</span></li><li><code>run</code><span>suite.py:122</span></li><li><code>__call__</code><span>testcases.py:317</span></li><li><code>_setup_and_call</code><span>testcases.py:369</span></li><li><code>__call__</code><span>case.py:690</span></li><li><code>run</code><span>case.py:634</span></li><li><code>_callTestMethod</code><span>case.py:589</span></li><li><code>test_union_values_subquery</code><span>tests.py:1385</span></li><li><code>__iter__</code><span>query.py:381</span></li><li><code>_fetch_all</code><span>query.py:1909</span></li><li><code>__iter__</code><span>query.py:268</span></li><li><code>results_iter</code><span>compiler.py:1535</span></li><li><code>execute_sql</code><span>compiler.py:1571</span></li><li><code>as_sql</code><span>compiler.py:772</span></li><li><code>get_combinator_sql</code><span>compiler.py:570</span></li></ol></section></details><details class="extra" ><summary>Record 121 · sample<code>get_select</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 121 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>runtests.py:788</span></li><li><code>django_tests</code><span>runtests.py:426</span></li><li><code>run_tests</code><span>runner.py:1073</span></li><li><code>run_suite</code><span>runner.py:1000</span></li><li><code>run</code><span>runner.py:240</span></li><li><code>__call__</code><span>suite.py:84</span></li><li><code>run</code><span>suite.py:122</span></li><li><code>__call__</code><span>testcases.py:317</span></li><li><code>_setup_and_call</code><span>testcases.py:369</span></li><li><code>__call__</code><span>case.py:690</span></li><li><code>run</code><span>case.py:634</span></li><li><code>_callTestMethod</code><span>case.py:589</span></li><li><code>test_union_values_subquery</code><span>tests.py:1385</span></li><li><code>__iter__</code><span>query.py:381</span></li><li><code>_fetch_all</code><span>query.py:1909</span></li><li><code>__iter__</code><span>query.py:268</span></li><li><code>results_iter</code><span>compiler.py:1535</span></li><li><code>execute_sql</code><span>compiler.py:1571</span></li><li><code>as_sql</code><span>compiler.py:772</span></li><li><code>get_combinator_sql</code><span>compiler.py:608</span></li><li><code>as_sql</code><span>compiler.py:757</span></li><li><code>pre_sql_setup</code><span>compiler.py:84</span></li><li><code>setup_query</code><span>compiler.py:73</span></li><li><code>get_select</code><span>compiler.py:229</span></li></ol></section></details><details class="extra" ><summary>Record 122 · sample<code>get_default_columns</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 122 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>runtests.py:788</span></li><li><code>django_tests</code><span>runtests.py:426</span></li><li><code>run_tests</code><span>runner.py:1073</span></li><li><code>run_suite</code><span>runner.py:1000</span></li><li><code>run</code><span>runner.py:240</span></li><li><code>__call__</code><span>suite.py:84</span></li><li><code>run</code><span>suite.py:122</span></li><li><code>__call__</code><span>testcases.py:317</span></li><li><code>_setup_and_call</code><span>testcases.py:369</span></li><li><code>__call__</code><span>case.py:690</span></li><li><code>run</code><span>case.py:634</span></li><li><code>_callTestMethod</code><span>case.py:589</span></li><li><code>test_union_values_subquery</code><span>tests.py:1385</span></li><li><code>__iter__</code><span>query.py:381</span></li><li><code>_fetch_all</code><span>query.py:1909</span></li><li><code>__iter__</code><span>query.py:268</span></li><li><code>results_iter</code><span>compiler.py:1535</span></li><li><code>execute_sql</code><span>compiler.py:1571</span></li><li><code>as_sql</code><span>compiler.py:772</span></li><li><code>get_combinator_sql</code><span>compiler.py:608</span></li><li><code>as_sql</code><span>compiler.py:757</span></li><li><code>pre_sql_setup</code><span>compiler.py:84</span></li><li><code>setup_query</code><span>compiler.py:73</span></li><li><code>get_select</code><span>compiler.py:253</span></li><li><code>get_default_columns</code><span>compiler.py:973</span></li></ol></section></details><details class="extra" ><summary>Record 127 · sample<code>get_select</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 127 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>runtests.py:788</span></li><li><code>django_tests</code><span>runtests.py:426</span></li><li><code>run_tests</code><span>runner.py:1073</span></li><li><code>run_suite</code><span>runner.py:1000</span></li><li><code>run</code><span>runner.py:240</span></li><li><code>__call__</code><span>suite.py:84</span></li><li><code>run</code><span>suite.py:122</span></li><li><code>__call__</code><span>testcases.py:317</span></li><li><code>_setup_and_call</code><span>testcases.py:369</span></li><li><code>__call__</code><span>case.py:690</span></li><li><code>run</code><span>case.py:634</span></li><li><code>_callTestMethod</code><span>case.py:589</span></li><li><code>test_union_values_subquery</code><span>tests.py:1385</span></li><li><code>__iter__</code><span>query.py:381</span></li><li><code>_fetch_all</code><span>query.py:1909</span></li><li><code>__iter__</code><span>query.py:268</span></li><li><code>results_iter</code><span>compiler.py:1535</span></li><li><code>execute_sql</code><span>compiler.py:1571</span></li><li><code>as_sql</code><span>compiler.py:772</span></li><li><code>get_combinator_sql</code><span>compiler.py:608</span></li><li><code>as_sql</code><span>compiler.py:757</span></li><li><code>pre_sql_setup</code><span>compiler.py:84</span></li><li><code>setup_query</code><span>compiler.py:73</span></li><li><code>get_select</code><span>compiler.py:229</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On two independent PostgreSQL clusters, the upstream test returned [1, 1, 2, 2, 3, 4, 4] on the fix parent and [False, True] after the fix.</dd></div><div><dt>What CoroPerf showed</dt><dd>Selecting only the outer annotation left values_select empty, so UNION deduplicated full five-column rows. The fix passed is_creator to both branches, and projecting it inside each old branch also returned the two booleans.</dd></div><div><dt>Scope and limits</dt><dd>Synchronous PostgreSQL regression test with the original OuterRef(pk). No async Task identity was recorded.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

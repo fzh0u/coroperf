@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A perfect classifier received a macro accuracy of two thirds">
+  <title>lightning-ai/torchmetrics #1691 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">lightning-ai/torchmetrics #1691</p>
+        <h1>A perfect classifier received a macro accuracy of two thirds</h1>
+        <div class="case-links"><a href="https://github.com/Lightning-AI/torchmetrics/issues/1691">Upstream report ↗</a><a href="https://github.com/Lightning-AI/torchmetrics/pull/1821">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>_multiclass_stat_scores_update</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:119</span></li><li><code>run</code><span>workload.py:83</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>posted.py:14</span></li><li><code>_call_impl</code><span>module.py:1190</span></li><li><code>forward</code><span>metric.py:236</span></li><li><code>_forward_reduce_state_update</code><span>metric.py:302</span></li><li><code>wrapped_func</code><span>metric.py:390</span></li><li><code>update</code><span>stat_scores.py:319</span></li><li><code>_multiclass_stat_scores_update</code><span>stat_scores.py:419</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_accuracy_reduce</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:119</span></li><li><code>run</code><span>workload.py:83</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>posted.py:14</span></li><li><code>_call_impl</code><span>module.py:1190</span></li><li><code>forward</code><span>metric.py:236</span></li><li><code>_forward_reduce_state_update</code><span>metric.py:303</span></li><li><code>wrapped_func</code><span>metric.py:532</span></li><li><code>compute</code><span>accuracy.py:205</span></li><li><code>_accuracy_reduce</code><span>accuracy.py:83</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter’s predictions matched all six targets. After excluding target class 0, TorchMetrics 0.11.4 reported a macro accuracy of 0.6667. The fixed implementation returned 1. On held-out Iris measurements, the two retained species had recalls of 0.90 and 1.00. The affected metric reported 0.6333 and the fix returned their mean of 0.95.</dd></div><div><dt>What CoroPerf showed</dt><dd>The confusion matrix and per-class counts were already correct when they reached _accuracy_reduce. The affected average gave equal weight to three classes, including an absent class with a score of zero. The fix gave zero weight to the class with no true positives, false positives or false negatives. The predictions and the other two scores stayed the same.</dd></div><div><dt>Scope and limits</dt><dd>A nearest-centroid classifier trained on 120 public Iris measurements produced the 30 held-out predictions. A separate calculation checked every prediction, and a scikit-learn reference checked the scores. The same results held in one batch and four interleaved batches. When a retained example was predicted as an excluded target class, that class still had a false positive and remained in the macro average. Evaluation ran synchronously on CPU.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

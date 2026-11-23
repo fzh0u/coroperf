@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Mongoose validation errors lose the application’s save call">
+  <title>automattic/mongoose #15317 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">automattic/mongoose #15317</p>
+        <h1>Mongoose validation errors lose the application’s save call</h1>
+        <div class="case-links"><a href="https://github.com/Automattic/mongoose/issues/15317">Upstream report ↗</a><a href="https://github.com/Automattic/mongoose/commit/f4840bbbf7e81107e5a34cdfe964b7eab22bb12e">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Observation selected in the issue review · observation 124</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 70</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>run_main_module:33</span></li><li><code>Module.executeUserEntryPoint [as runMain]</code><span>run_main:154</span></li><li><code>wrapModuleLoad</code><span>loader:244</span></li><li><code>TracingChannel.traceSync</code><span>node:diagnostics_channel:322</span></li><li><code>Module._load</code><span>loader:1299</span></li><li><code>Module.load</code><span>loader:1480</span></li><li><code>Object..js</code><span>loader:1893</span></li><li><code>Module._compile</code><span>loader:1760</span></li><li><code>Object.&lt;anonymous&gt;</code><span>app.cjs:25</span></li><li><code>runDemo</code><span>app.cjs:22</span></li><li><code>Promise.catch (&lt;anonymous&gt;)</code></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 124 · diagnostic</span></div><ol class="frames"><li><code>process.processTicksAndRejections</code><span>task_queues:85</span></li><li><code>&lt;anonymous&gt;</code><span>schemaType.js:1407</span></li><li><code>&lt;anonymous&gt;</code><span>document.js:3090</span></li><li><code>Document.invalidate</code><span>document.js:3329</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 124 · diagnostic</span></div><ol class="frames"><li><code>process.processTicksAndRejections</code><span>task_queues:85</span></li><li><code>&lt;anonymous&gt;</code><span>schemaType.js:1407</span></li><li><code>&lt;anonymous&gt;</code><span>document.js:3090</span></li><li><code>Document.invalidate</code><span>document.js:3329</span></li></ol></section>
+          <p class="small trace-note">The frames on record 124 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Other observation in the same capture · observation 127</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 70</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>run_main_module:33</span></li><li><code>Module.executeUserEntryPoint [as runMain]</code><span>run_main:154</span></li><li><code>wrapModuleLoad</code><span>loader:244</span></li><li><code>TracingChannel.traceSync</code><span>node:diagnostics_channel:322</span></li><li><code>Module._load</code><span>loader:1299</span></li><li><code>Module.load</code><span>loader:1480</span></li><li><code>Object..js</code><span>loader:1893</span></li><li><code>Module._compile</code><span>loader:1760</span></li><li><code>Object.&lt;anonymous&gt;</code><span>app.cjs:25</span></li><li><code>runDemo</code><span>app.cjs:22</span></li><li><code>Promise.catch (&lt;anonymous&gt;)</code></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 127 · semantic boundary</span></div><ol class="frames"><li><code>process.processTicksAndRejections</code><span>task_queues:85</span></li><li><code>&lt;anonymous&gt;</code><span>schemaType.js:1407</span></li><li><code>&lt;anonymous&gt;</code><span>document.js:3090</span></li><li><code>Document.invalidate</code><span>document.js:3329</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 127 · semantic boundary</span></div><ol class="frames"><li><code>process.processTicksAndRejections</code><span>task_queues:85</span></li><li><code>&lt;anonymous&gt;</code><span>schemaType.js:1407</span></li><li><code>&lt;anonymous&gt;</code><span>document.js:3090</span></li><li><code>Document.invalidate</code><span>document.js:3329</span></li></ol></section>
+          <p class="small trace-note">The frames on record 127 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 65 · create<code>model.validate</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 65</span></div><ol class="frames"><li><code>Object..js</code><span>loader:1893</span></li><li><code>Module._compile</code><span>loader:1760</span></li><li><code>Object.&lt;anonymous&gt;</code><span>app.cjs:25</span></li><li><code>runDemo</code><span>app.cjs:22</span></li><li><code>model.save</code><span>model.js:639</span></li><li><code>new Promise (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>model.js:640</span></li><li><code>model.$__save</code><span>index.js:502</span></li><li><code>Kareem.wrap</code><span>index.js:368</span></li><li><code>Kareem.execPre</code><span>index.js:122</span></li><li><code>next</code><span>index.js:93</span></li><li><code>callMiddlewareFunction</code><span>index.js:628</span></li><li><code>model.validateBeforeSave</code><span>validateBeforeSave.js:35</span></li><li><code>model.validate</code><span>document.js:2619</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original ValidationError on 8.12.1 omitted runDemo’s doc.save line, while 9.0.0 retained it and passed all 15 upstream stack assertions versus 3 on the older version.</dd></div><div><dt>What CoroPerf showed</dt><dd>The creation stack connected runDemo line 22 to validation through model.save and its pre-save hooks, although the error itself had only four frames and began at Document.invalidate.</dd></div><div><dt>Scope and limits</dt><dd>The old printer could already show the caller. Tests used a separate database and a 20-frame limit. The version comparison spans multiple changes.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

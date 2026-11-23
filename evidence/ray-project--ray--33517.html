@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Ray Data returns all 100 rows while its progress bar stops at 10%">
+  <title>ray-project/ray #33517 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #33517</p>
+        <h1>Ray Data returns all 100 rows while its progress bar stops at 10%</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/33517">Upstream report ↗</a><a href="https://github.com/ray-project/ray/pull/36679">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>__init__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>original_observed.py:9</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>posted.py:75</span></li><li><code>iter_batches</code><span>dataset.py:2845</span></li><li><code>execute_to_iterator</code><span>plan.py:479</span></li><li><code>execute</code><span>plan.py:539</span></li><li><code>execute_to_legacy_block_list</code><span>legacy_compat.py:84</span></li><li><code>execute</code><span>bulk_executor.py:82</span></li><li><code>execute_recursive</code><span>bulk_executor.py:63</span></li><li><code>_naive_run_until_complete</code><span>bulk_executor.py:100</span></li><li><code>__init__</code><span>progress_bar.py:52</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>update</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>original_observed.py:9</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>posted.py:75</span></li><li><code>iter_batches</code><span>dataset.py:2845</span></li><li><code>execute_to_iterator</code><span>plan.py:479</span></li><li><code>execute</code><span>plan.py:539</span></li><li><code>execute_to_legacy_block_list</code><span>legacy_compat.py:84</span></li><li><code>execute</code><span>bulk_executor.py:82</span></li><li><code>execute_recursive</code><span>bulk_executor.py:63</span></li><li><code>_naive_run_until_complete</code><span>bulk_executor.py:109</span></li><li><code>update</code><span>progress_bar.py:93</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>close</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>original_observed.py:9</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>posted.py:75</span></li><li><code>iter_batches</code><span>dataset.py:2845</span></li><li><code>execute_to_iterator</code><span>plan.py:479</span></li><li><code>execute</code><span>plan.py:539</span></li><li><code>execute_to_legacy_block_list</code><span>legacy_compat.py:84</span></li><li><code>execute</code><span>bulk_executor.py:82</span></li><li><code>execute_recursive</code><span>bulk_executor.py:63</span></li><li><code>_naive_run_until_complete</code><span>bulk_executor.py:114</span></li><li><code>close</code><span>progress_bar.py:97</span></li><li><code>close</code><span>std.py:1262</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original Ray 2.3.0 driver created 100 one-row blocks and mapped them in batches of ten. It printed all integers from 100 through 199. The final terminal line still read 10/100. The same result appeared with and without the stack observer.</dd></div><div><dt>What CoroPerf showed</dt><dd>The bulk executor initialized the bar from the estimated output count of 100. It advanced the bar once per output bundle and emitted ten bundles. Samples at initialization, the last increment and the underlying display’s close operation identify the same bar. With the upstream change, the final display used the completed bundle count. The seven-row control showed 15/15, and one row per batch showed 100/100 on both builds.</dd></div><div><dt>Scope and limits</dt><dd>Ray 2.6.0 rejects the original Python list blocks. The cross-version control carries the same indices in Arrow tables and compares every returned value. The isolated commit comparison loads the two Python modules changed by the fix on the 2.6.0 runtime. The measured stack belongs to the synchronous driver.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

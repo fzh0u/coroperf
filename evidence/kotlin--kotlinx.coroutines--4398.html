@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Stack recovery misses a suspend API’s await site">
+  <title>kotlin/kotlinx.coroutines #4398 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">kotlin/kotlinx.coroutines #4398</p>
+        <h1>Stack recovery misses a suspend API’s await site</h1>
+        <div class="case-links"><a href="https://github.com/Kotlin/kotlinx.coroutines/issues/4398">Upstream report ↗</a><a href="https://github.com/Kotlin/kotlinx.coroutines/issues/4398#issuecomment-2757651679">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 3</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>ExampleKt.main</code><span>Example.kt</span></li><li><code>ExampleKt.main</code><span>Example.kt:25</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:48</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:69</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:95</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:277</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:104</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>ExampleKt$main$1.invokeSuspend</code><span>Example.kt:27</span></li><li><code>PublicApiImplementation.awaitAsynchronousWorkInMainThread</code><span>Example.kt:14</span></li><li><code>kotlinx.coroutines.BuildersKt.async$default</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async$default</code><span>Builders.common.kt:78</span></li><li><code>kotlinx.coroutines.BuildersKt.async</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async</code><span>Builders.common.kt:86</span></li><li><code>kotlinx.coroutines.DeferredCoroutine.&lt;init&gt;</code><span>Builders.common.kt:95</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:34</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · live method stack</span></div><ol class="frames"><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run</code><span>CoroutineScheduler.kt:702</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker</code><span>CoroutineScheduler.kt:715</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask</code><span>CoroutineScheduler.kt:811</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely</code><span>CoroutineScheduler.kt:584</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:104</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>PublicApiImplementation$awaitAsynchronousWorkInMainThread$task$1.invokeSuspend</code><span>Example.kt:15</span></li><li><code>PublicApiImplementation.access$asynchronousWork</code><span>Example.kt:3</span></li><li><code>PublicApiImplementation.asynchronousWork</code><span>Example.kt:10</span></li><li><code>PublicApiImplementation.doWork</code><span>Example.kt</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · live method stack</span></div><ol class="frames"><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run</code><span>CoroutineScheduler.kt:702</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker</code><span>CoroutineScheduler.kt:715</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask</code><span>CoroutineScheduler.kt:811</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely</code><span>CoroutineScheduler.kt:584</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:104</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>PublicApiImplementation$awaitAsynchronousWorkInMainThread$task$1.invokeSuspend</code><span>Example.kt:15</span></li><li><code>PublicApiImplementation.access$asynchronousWork</code><span>Example.kt:3</span></li><li><code>PublicApiImplementation.asynchronousWork</code><span>Example.kt:10</span></li><li><code>PublicApiImplementation.doWork</code><span>Example.kt</span></li></ol></section>
+          <p class="small trace-note">The frames on record 3 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>ExampleKt.main</code><span>Example.kt</span></li><li><code>ExampleKt.main</code><span>Example.kt:25</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:48</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:67</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.&lt;init&gt;</code><span>Builders.kt:76</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:34</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · live method stack</span></div><ol class="frames"><li><code>ExampleKt.main</code><span>Example.kt</span></li><li><code>ExampleKt.main</code><span>Example.kt:25</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:48</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:69</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:95</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:277</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:104</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>ExampleKt$main$1.invokeSuspend</code><span>Example.kt:27</span></li><li><code>PublicApiImplementation.awaitAsynchronousWorkInMainThread</code><span>Example.kt:18</span></li><li><code>kotlinx.coroutines.DeferredCoroutine.await</code><span>Builders.common.kt</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · live method stack</span></div><ol class="frames"><li><code>ExampleKt.main</code><span>Example.kt</span></li><li><code>ExampleKt.main</code><span>Example.kt:25</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:48</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:69</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:95</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:277</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:104</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>ExampleKt$main$1.invokeSuspend</code><span>Example.kt:27</span></li><li><code>PublicApiImplementation.awaitAsynchronousWorkInMainThread</code><span>Example.kt:18</span></li><li><code>kotlinx.coroutines.DeferredCoroutine.await</code><span>Builders.common.kt</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>ExampleKt.main</code><span>Example.kt</span></li><li><code>ExampleKt.main</code><span>Example.kt:25</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:48</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:69</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:95</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:277</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:104</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>ExampleKt$main$1.invokeSuspend</code><span>Example.kt:27</span></li><li><code>PublicApiImplementation.awaitAsynchronousWorkInMainThread</code><span>Example.kt:14</span></li><li><code>kotlinx.coroutines.BuildersKt.async$default</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async$default</code><span>Builders.common.kt:78</span></li><li><code>kotlinx.coroutines.BuildersKt.async</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async</code><span>Builders.common.kt:86</span></li><li><code>kotlinx.coroutines.DeferredCoroutine.&lt;init&gt;</code><span>Builders.common.kt:95</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:34</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · throwable at job completion</span></div><ol class="frames"><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run</code><span>CoroutineScheduler.kt:702</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker</code><span>CoroutineScheduler.kt:715</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask</code><span>CoroutineScheduler.kt:811</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely</code><span>CoroutineScheduler.kt:584</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:104</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>PublicApiImplementation$awaitAsynchronousWorkInMainThread$task$1.invokeSuspend</code><span>Example.kt:15</span></li><li><code>PublicApiImplementation.access$asynchronousWork</code><span>Example.kt:3</span></li><li><code>PublicApiImplementation.asynchronousWork</code><span>Example.kt:10</span></li><li><code>PublicApiImplementation.doWork</code><span>Example.kt:6</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · throwable at job completion</span></div><ol class="frames"><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run</code><span>CoroutineScheduler.kt:702</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker</code><span>CoroutineScheduler.kt:715</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask</code><span>CoroutineScheduler.kt:811</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely</code><span>CoroutineScheduler.kt:584</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:104</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>PublicApiImplementation$awaitAsynchronousWorkInMainThread$task$1.invokeSuspend</code><span>Example.kt:15</span></li><li><code>PublicApiImplementation.access$asynchronousWork</code><span>Example.kt:3</span></li><li><code>PublicApiImplementation.asynchronousWork</code><span>Example.kt:10</span></li><li><code>PublicApiImplementation.doWork</code><span>Example.kt:6</span></li></ol></section>
+          <p class="small trace-note">The frames on record 4 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With assertions and debug off, the maintainer’s JVM example showed doWork at line 6 and the worker at line 15, but omitted the API await at line 18 and runBlocking at line 27.</dd></div><div><dt>What CoroPerf showed</dt><dd>The worker belonged to the API singleton’s Job while runBlocking awaited it. Adding code after await produced an API state machine, allowing debug recovery to show line 18.</dd></div><div><dt>Scope and limits</dt><dd>The reporter’s Android snippet omitted two functions, and no original APK or mapping was available. Job ownership was verified in the maintainer’s JVM example.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

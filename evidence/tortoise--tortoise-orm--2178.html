@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A directory page returned two distinct users and a total of three">
+  <title>tortoise/tortoise-orm #2178 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">tortoise/tortoise-orm #2178</p>
+        <h1>A directory page returned two distinct users and a total of three</h1>
+        <div class="case-links"><a href="https://github.com/tortoise/tortoise-orm/issues/2178">Upstream report ↗</a><a href="https://github.com/tortoise/tortoise-orm/issues/2178#issuecomment-4311027429">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 130</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 74</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>connection_made</code><span>streams.py:261</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 130 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>handle_request</code><span>workload.py:52</span></li><li><code>lookup</code><span>workload.py:44</span></li><li><code>reported_page</code><span>posted.py:14</span></li><li><code>_execute</code><span>queryset.py:1493</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 130 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>handle_request</code><span>workload.py:52</span></li><li><code>lookup</code><span>workload.py:44</span></li><li><code>reported_page</code><span>posted.py:14</span></li><li><code>_execute</code><span>queryset.py:1493</span></li></ol></section>
+          <p class="small trace-note">The frames on record 130 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 104</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 74</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>connection_made</code><span>streams.py:261</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 104 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>handle_request</code><span>workload.py:52</span></li><li><code>lookup</code><span>workload.py:44</span></li><li><code>reported_page</code><span>posted.py:14</span></li><li><code>count</code><span>queryset.py:773</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 104 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>handle_request</code><span>workload.py:52</span></li><li><code>lookup</code><span>workload.py:44</span></li><li><code>reported_page</code><span>posted.py:14</span></li><li><code>count</code><span>queryset.py:773</span></li></ol></section>
+          <p class="small trace-note">The frames on record 104 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 106</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 74</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>connection_made</code><span>streams.py:261</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 106 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>handle_request</code><span>workload.py:52</span></li><li><code>lookup</code><span>workload.py:44</span></li><li><code>reported_page</code><span>posted.py:14</span></li><li><code>__await__</code><span>queryset.py:1483</span></li><li><code>_make_query</code><span>queryset.py:1477</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 106 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>handle_request</code><span>workload.py:52</span></li><li><code>lookup</code><span>workload.py:44</span></li><li><code>reported_page</code><span>posted.py:14</span></li><li><code>__await__</code><span>queryset.py:1483</span></li><li><code>_make_query</code><span>queryset.py:1477</span></li></ol></section>
+          <p class="small trace-note">The frames on record 106 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 129 · sample<code>execute_query</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 129 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>handle_request</code><span>workload.py:52</span></li><li><code>lookup</code><span>workload.py:44</span></li><li><code>reported_page</code><span>posted.py:14</span></li><li><code>_execute</code><span>queryset.py:1487</span></li><li><code>_translate_exceptions</code><span>client.py:33</span></li><li><code>_translate_exceptions</code><span>client.py:89</span></li><li><code>execute_query</code><span>client.py:131</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter’s query returned users 101 and 102 on Tortoise ORM 0.25.3, but reported a total of three. One user matched both selected roles. The fix and release 1.1.9 returned the same two users and a total of two.</dd></div><div><dt>What CoroPerf showed</dt><dd>QuerySet.count received a distinct queryset. In the affected build the new CountQuery lacked its distinct flag, and PostgreSQL executed COUNT(*) over the joined role rows. The fix passed the flag through and counted distinct user IDs. Replaying the logged statements with one role membership removed, restored and then added to the second user moved the old count from 3 to 2 to 3 to 4. The fixed count stayed at 2.</dd></div><div><dt>Scope and limits</dt><dd>The report supplied the query body, Python version, ORM version and driver. The local run supplied the missing models and records. The creation stack belongs to a request in our asyncio Unix-socket service. The same query was also run directly on PostgreSQL. The upstream regression used SQLite.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

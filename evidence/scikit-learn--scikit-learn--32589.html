@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="OneHotEncoder discarded the low-frequency feature for an unseen category">
+  <title>scikit-learn/scikit-learn #32589 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">scikit-learn/scikit-learn #32589</p>
+        <h1>OneHotEncoder discarded the low-frequency feature for an unseen category</h1>
+        <div class="case-links"><a href="https://github.com/scikit-learn/scikit-learn/issues/32589">Upstream report ↗</a><a href="https://github.com/scikit-learn/scikit-learn/pull/32592">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>_map_infrequent_categories</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:92</span></li><li><code>posted</code><span>workload.py:43</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>posted.py:22</span></li><li><code>wrapped</code><span>_set_output.py:316</span></li><li><code>transform</code><span>_encoders.py:1043</span></li><li><code>_transform</code><span>_encoders.py:255</span></li><li><code>_map_infrequent_categories</code><span>_encoders.py:406</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_map_infrequent_categories</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:92</span></li><li><code>posted</code><span>workload.py:43</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>posted.py:22</span></li><li><code>wrapped</code><span>_set_output.py:316</span></li><li><code>transform</code><span>_encoders.py:1043</span></li><li><code>_transform</code><span>_encoders.py:255</span></li><li><code>_map_infrequent_categories</code><span>_encoders.py:446</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>_map_infrequent_categories</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:92</span></li><li><code>posted</code><span>workload.py:43</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>posted.py:32</span></li><li><code>wrapped</code><span>_set_output.py:316</span></li><li><code>transform</code><span>_encoders.py:1043</span></li><li><code>_transform</code><span>_encoders.py:255</span></li><li><code>_map_infrequent_categories</code><span>_encoders.py:406</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>_map_infrequent_categories</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:92</span></li><li><code>posted</code><span>workload.py:43</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>posted.py:32</span></li><li><code>wrapped</code><span>_set_output.py:316</span></li><li><code>transform</code><span>_encoders.py:1043</span></li><li><code>_transform</code><span>_encoders.py:255</span></li><li><code>_map_infrequent_categories</code><span>_encoders.py:446</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On scikit-learn 1.7.2 the reporter’s unseen building type, casino, encoded as [0, 0] under warn. The same encoder settings with infrequent_if_exist returned [0, 1]. Both modes returned [0, 1] on 1.8.0.</dd></div><div><dt>What CoroPerf showed</dt><dd>At the call to _map_infrequent_categories, the caller had already selected the effective policy infrequent_if_exist. With the instance policy still set to warn, the old function assigned code 2 and left the row masked out. The fix kept that code and marked it valid. With a fitted linear model on separate CSV data, that single feature changed the prediction for an unseen building use from 10 to 38.</dd></div><div><dt>Scope and limits</dt><dd>The local Linux run matched the report’s CPython 3.13.3 and numerical package versions. The reporter used Windows. The parent and fix comparisons used their exact encoder module on the same 1.8.0 wheel. The CSV rates are controlled inputs. This synchronous path has no coroutine origin.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A MongoDB write error loses its application call site">
+  <title>automattic/mongoose #3692 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">automattic/mongoose #3692</p>
+        <h1>A MongoDB write error loses its application call site</h1>
+        <div class="case-links"><a href="https://github.com/Automattic/mongoose/issues/3692">Upstream report ↗</a><a href="https://github.com/Automattic/mongoose/issues/3692#issuecomment-166133871">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Observation selected in the issue review · observation 5</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>TCP.onread</code><span>net.js:523</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:110</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:146</span></li><li><code>Socket.emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:262</span></li><li><code>null.messageHandler</code><span>server.js:249</span></li><li><code>Callbacks.emit</code><span>server.js:95</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:778</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:409</span></li><li><code>emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>g</code><span>events.js:260</span></li><li><code>connectHandler</code><span>server.js:279</span></li><li><code>&lt;anonymous&gt;</code><span>db.js:229</span></li><li><code>&lt;anonymous&gt;</code><span>connection.js:60</span></li><li><code>&lt;anonymous&gt;</code><span>connection.js:457</span></li><li><code>NativeConnection.Connection.onOpen</code><span>connection.js:498</span></li><li><code>open</code><span>connection.js:488</span></li><li><code>ready</code><span>app.js:42</span></li><li><code>writeFromImport</code><span>app.js:11</span></li><li><code>NativeCollection.observedInsert [as insert]</code><span>probe.js:74</span></li><li><code>NativeCollection.(anonymous function) [as insert]</code><span>collection.js:136</span></li><li><code>Collection.insert</code><span>collection.js:766</span></li><li><code>Collection.insertMany</code><span>collection.js:483</span></li><li><code>bulkWrite</code><span>collection.js:592</span></li><li><code>UnorderedBulkOperation.execute</code><span>unordered.js:515</span></li><li><code>executeBatches</code><span>unordered.js:457</span></li><li><code>executeBatch</code><span>unordered.js:436</span></li><li><code>Server.insert</code><span>server.js:324</span></li><li><code>Server.insert</code><span>server.js:962</span></li><li><code>WireProtocol.insert</code><span>3_2_support.js:68</span></li><li><code>executeWrite</code><span>3_2_support.js:60</span></li><li><code>Server.command</code><span>server.js:843</span></li><li><code>executeSingleOperation</code><span>server.js:769</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · semantic boundary</span></div><ol class="frames"><li><code>TCP.onread</code><span>net.js:523</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:110</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:146</span></li><li><code>Socket.emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:262</span></li><li><code>null.messageHandler</code><span>server.js:249</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · semantic boundary</span></div><ol class="frames"><li><code>TCP.onread</code><span>net.js:523</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:110</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:146</span></li><li><code>Socket.emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:262</span></li><li><code>null.messageHandler</code><span>server.js:249</span></li></ol></section>
+          <p class="small trace-note">The frames on record 5 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>TCP.onread</code><span>net.js:523</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:110</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:146</span></li><li><code>Socket.emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:262</span></li><li><code>null.messageHandler</code><span>server.js:249</span></li><li><code>Callbacks.emit</code><span>server.js:95</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:778</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:409</span></li><li><code>emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>g</code><span>events.js:260</span></li><li><code>connectHandler</code><span>server.js:279</span></li><li><code>&lt;anonymous&gt;</code><span>db.js:229</span></li><li><code>&lt;anonymous&gt;</code><span>connection.js:60</span></li><li><code>&lt;anonymous&gt;</code><span>connection.js:457</span></li><li><code>NativeConnection.Connection.onOpen</code><span>connection.js:498</span></li><li><code>open</code><span>connection.js:488</span></li><li><code>ready</code><span>app.js:42</span></li><li><code>writeFromImport</code><span>app.js:11</span></li><li><code>NativeCollection.observedInsert [as insert]</code><span>probe.js:74</span></li><li><code>NativeCollection.(anonymous function) [as insert]</code><span>collection.js:136</span></li><li><code>Collection.insert</code><span>collection.js:766</span></li><li><code>Collection.insertMany</code><span>collection.js:483</span></li><li><code>bulkWrite</code><span>collection.js:592</span></li><li><code>UnorderedBulkOperation.execute</code><span>unordered.js:515</span></li><li><code>executeBatches</code><span>unordered.js:457</span></li><li><code>executeBatch</code><span>unordered.js:436</span></li><li><code>Server.insert</code><span>server.js:324</span></li><li><code>Server.insert</code><span>server.js:962</span></li><li><code>WireProtocol.insert</code><span>3_2_support.js:68</span></li><li><code>executeWrite</code><span>3_2_support.js:60</span></li><li><code>Server.command</code><span>server.js:843</span></li><li><code>executeSingleOperation</code><span>server.js:769</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · diagnostic</span></div><ol class="frames"><li><code>TCP.onread</code><span>net.js:523</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:110</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:146</span></li><li><code>Socket.emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:262</span></li><li><code>null.messageHandler</code><span>server.js:249</span></li><li><code>observedDispatch [as emit]</code><span>probe.js:64</span></li><li><code>Callbacks.emit</code><span>server.js:95</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:778</span></li><li><code>resultHandler</code><span>unordered.js:416</span></li><li><code>&lt;anonymous&gt;</code><span>unordered.js:469</span></li><li><code>&lt;anonymous&gt;</code><span>collection.js:597</span></li><li><code>toError</code><span>utils.js:114</span></li><li><code>Function.MongoError.create</code><span>error.js:31</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · diagnostic</span></div><ol class="frames"><li><code>TCP.onread</code><span>net.js:523</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:110</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:146</span></li><li><code>Socket.emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:262</span></li><li><code>null.messageHandler</code><span>server.js:249</span></li><li><code>observedDispatch [as emit]</code><span>probe.js:64</span></li><li><code>Callbacks.emit</code><span>server.js:95</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:778</span></li><li><code>resultHandler</code><span>unordered.js:416</span></li><li><code>&lt;anonymous&gt;</code><span>unordered.js:469</span></li><li><code>&lt;anonymous&gt;</code><span>collection.js:597</span></li><li><code>toError</code><span>utils.js:114</span></li><li><code>Function.MongoError.create</code><span>error.js:31</span></li></ol></section>
+          <p class="small trace-note">The frames on record 6 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>TCP.onread</code><span>net.js:523</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:110</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:146</span></li><li><code>Socket.emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:262</span></li><li><code>null.messageHandler</code><span>server.js:249</span></li><li><code>Callbacks.emit</code><span>server.js:95</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:778</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:409</span></li><li><code>emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>g</code><span>events.js:260</span></li><li><code>connectHandler</code><span>server.js:279</span></li><li><code>&lt;anonymous&gt;</code><span>db.js:229</span></li><li><code>&lt;anonymous&gt;</code><span>connection.js:60</span></li><li><code>&lt;anonymous&gt;</code><span>connection.js:457</span></li><li><code>NativeConnection.Connection.onOpen</code><span>connection.js:498</span></li><li><code>open</code><span>connection.js:488</span></li><li><code>ready</code><span>app.js:41</span></li><li><code>writeFromForm</code><span>app.js:8</span></li><li><code>NativeCollection.observedInsert [as insert]</code><span>probe.js:74</span></li><li><code>NativeCollection.(anonymous function) [as insert]</code><span>collection.js:136</span></li><li><code>Collection.insert</code><span>collection.js:766</span></li><li><code>Collection.insertMany</code><span>collection.js:483</span></li><li><code>bulkWrite</code><span>collection.js:592</span></li><li><code>UnorderedBulkOperation.execute</code><span>unordered.js:515</span></li><li><code>executeBatches</code><span>unordered.js:457</span></li><li><code>executeBatch</code><span>unordered.js:436</span></li><li><code>Server.insert</code><span>server.js:324</span></li><li><code>Server.insert</code><span>server.js:962</span></li><li><code>WireProtocol.insert</code><span>3_2_support.js:68</span></li><li><code>executeWrite</code><span>3_2_support.js:60</span></li><li><code>Server.command</code><span>server.js:843</span></li><li><code>executeSingleOperation</code><span>server.js:769</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · semantic boundary</span></div><ol class="frames"><li><code>TCP.onread</code><span>net.js:523</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:110</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:146</span></li><li><code>Socket.emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:297</span></li><li><code>null.messageHandler</code><span>server.js:249</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · semantic boundary</span></div><ol class="frames"><li><code>TCP.onread</code><span>net.js:523</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:110</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:146</span></li><li><code>Socket.emit</code><span>events.js:169</span></li><li><code>emitOne</code><span>events.js:77</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:297</span></li><li><code>null.messageHandler</code><span>server.js:249</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>An uninstrumented local duplicate-key write showed only driver and receive frames, matching the report’s 14 file positions in order on two historical Node versions.</dd></div><div><dt>What CoroPerf showed</dt><dd>Moving the conflict to the other write moved the error reply from request 1 to request 2. Wire IDs and callback identity traced the latter to writeFromImport at line 11.</dd></div><div><dt>Scope and limits</dt><dd>The report omitted the operation, error code and caller. Per-request attribution required local protocol and queue probes. The generic agent saw only the shared socket.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

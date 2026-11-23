@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Piccolo rounds large SQLite integers when reading them">
+  <title>piccolo-orm/piccolo #1127 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">piccolo-orm/piccolo #1127</p>
+        <h1>Piccolo rounds large SQLite integers when reading them</h1>
+        <div class="case-links"><a href="https://github.com/piccolo-orm/piccolo/issues/1127">Upstream report ↗</a><a href="https://github.com/piccolo-orm/piccolo/issues/1127#issuecomment-2509746879">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 428</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 12</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 297</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>read_ids</code><span>controls.py:34</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 428 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>select.py:96</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 428 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>select.py:96</span></li></ol></section>
+          <p class="small trace-note">The frames on record 428 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 357</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 12</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 297</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>read_ids</code><span>controls.py:34</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 357 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>select.py:88</span></li><li><code>run</code><span>select.py:666</span></li><li><code>run</code><span>base.py:192</span></li><li><code>_run</code><span>base.py:174</span></li><li><code>run_querystring</code><span>sqlite.py:782</span></li><li><code>_run_in_new_connection</code><span>sqlite.py:725</span></li><li><code>fetchall</code><span>cursor.py:76</span></li><li><code>_execute</code><span>cursor.py:40</span></li><li><code>_execute</code><span>core.py:132</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 357 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>select.py:88</span></li><li><code>run</code><span>select.py:666</span></li><li><code>run</code><span>base.py:192</span></li><li><code>_run</code><span>base.py:174</span></li><li><code>run_querystring</code><span>sqlite.py:782</span></li><li><code>_run_in_new_connection</code><span>sqlite.py:725</span></li><li><code>fetchall</code><span>cursor.py:76</span></li><li><code>_execute</code><span>cursor.py:40</span></li><li><code>_execute</code><span>core.py:132</span></li></ol></section>
+          <p class="small trace-note">The frames on record 357 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 392</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 12</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 297</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>read_ids</code><span>controls.py:34</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 392 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>select.py:88</span></li><li><code>run</code><span>select.py:666</span></li><li><code>run</code><span>base.py:192</span></li><li><code>_run</code><span>base.py:174</span></li><li><code>run_querystring</code><span>sqlite.py:782</span></li><li><code>_run_in_new_connection</code><span>sqlite.py:725</span></li><li><code>fetchall</code><span>cursor.py:76</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 392 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>controls.py:45</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>select.py:88</span></li><li><code>run</code><span>select.py:666</span></li><li><code>run</code><span>base.py:192</span></li><li><code>_run</code><span>base.py:174</span></li><li><code>run_querystring</code><span>sqlite.py:782</span></li><li><code>_run_in_new_connection</code><span>sqlite.py:725</span></li><li><code>fetchall</code><span>cursor.py:76</span></li></ol></section>
+          <p class="small trace-note">The frames on record 392 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 377 · sample<code>convert_int_out</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 377 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>core.py:115</span></li><li><code>wrapper</code><span>sqlite.py:156</span></li><li><code>convert_int_out</code><span>sqlite.py:178</span></li></ol></section></details><details class="extra" ><summary>Record 381 · sample<code>convert_int_out</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 381 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>core.py:115</span></li><li><code>wrapper</code><span>sqlite.py:156</span></li><li><code>convert_int_out</code><span>sqlite.py:178</span></li></ol></section></details><details class="extra" ><summary>Record 385 · sample<code>convert_int_out</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 385 · semantic boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>core.py:115</span></li><li><code>wrapper</code><span>sqlite.py:156</span></li><li><code>convert_int_out</code><span>sqlite.py:178</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>After writing 625757527765811240, Piccolo 1.22.0 read 625757527765811200 from all three fields, while native aiosqlite returned the original integer each time.</dd></div><div><dt>What CoroPerf showed</dt><dd>The old int(float(value)) conversion collapsed two adjacent stored integers into one result, losing 40 and 41 respectively. Int(Decimal(value)) preserved both in either submission order.</dd></div><div><dt>Scope and limits</dt><dd>The replay ran on Linux. The original reads were sequential. Task origins were verified only for the separately scheduled control reads.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

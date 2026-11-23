@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Idle KRaft controllers report five seconds of queue time">
+  <title>apache/kafka #KAFKA-14178 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">apache/kafka #KAFKA-14178</p>
+        <h1>Idle KRaft controllers report five seconds of queue time</h1>
+        <div class="case-links"><a href="https://issues.apache.org/jira/browse/KAFKA-14178">Upstream report ↗</a><a href="https://issues.apache.org/jira/browse/KAFKA-14178?focusedCommentId=17619146&amp;page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-17619146">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>org.apache.kafka.queue.KafkaEventQueue.&lt;init&gt;</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · jvm platform thread start call</span></div><ol class="frames"><li><code>kafka.Kafka.main</code><span>Kafka.scala</span></li><li><code>kafka.Kafka$.main</code><span>Kafka.scala:109</span></li><li><code>kafka.server.KafkaRaftServer.startup</code><span>KafkaRaftServer.scala:140</span></li><li><code>scala.Option.foreach</code><span>Option.scala:437</span></li><li><code>kafka.server.KafkaRaftServer.$anonfun$startup$1$adapted</code><span>KafkaRaftServer.scala:140</span></li><li><code>kafka.server.KafkaRaftServer.$anonfun$startup$1</code><span>KafkaRaftServer.scala:140</span></li><li><code>kafka.server.ControllerServer.startup</code><span>ControllerServer.scala:218</span></li><li><code>org.apache.kafka.controller.QuorumController$Builder.build</code><span>QuorumController.java:323</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue.&lt;init&gt;</code><span>KafkaEventQueue.java:370</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>org.apache.kafka.queue.KafkaEventQueue$EventHandler.enqueue</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · jvm platform thread stack</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:840</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue$EventHandler.run</code><span>KafkaEventQueue.java:173</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue$EventHandler.handleEvents</code><span>KafkaEventQueue.java:200</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue$EventContext.run</code><span>KafkaEventQueue.java:121</span></li><li><code>org.apache.kafka.controller.QuorumController$ControllerWriteEvent.run</code><span>QuorumController.java:763</span></li><li><code>org.apache.kafka.controller.QuorumController.access$2400</code><span>QuorumController.java:147</span></li><li><code>org.apache.kafka.controller.QuorumController.replay</code><span>QuorumController.java:1349</span></li><li><code>org.apache.kafka.controller.QuorumController.handleFeatureControlChange</code><span>QuorumController.java:1302</span></li><li><code>org.apache.kafka.controller.QuorumController.maybeScheduleNextWriteNoOpRecord</code><span>QuorumController.java:1287</span></li><li><code>org.apache.kafka.queue.EventQueue.scheduleDeferred</code><span>EventQueue.java:169</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue.enqueue</code><span>KafkaEventQueue.java:379</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue$EventHandler.enqueue</code><span>KafkaEventQueue.java:307</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>org.apache.kafka.controller.QuorumController$ControllerWriteEvent.run</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · jvm platform thread stack</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:840</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue$EventHandler.run</code><span>KafkaEventQueue.java:173</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue$EventHandler.handleEvents</code><span>KafkaEventQueue.java:200</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue$EventContext.run</code><span>KafkaEventQueue.java:121</span></li><li><code>org.apache.kafka.controller.QuorumController$ControllerWriteEvent.run</code><span>QuorumController.java:728</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>org.apache.kafka.controller.QuorumControllerMetrics.updateEventQueueTime</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · jvm platform thread stack</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:840</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue$EventHandler.run</code><span>KafkaEventQueue.java:173</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue$EventHandler.handleEvents</code><span>KafkaEventQueue.java:200</span></li><li><code>org.apache.kafka.queue.KafkaEventQueue$EventContext.run</code><span>KafkaEventQueue.java:121</span></li><li><code>org.apache.kafka.controller.QuorumController$ControllerWriteEvent.run</code><span>QuorumController.java:729</span></li><li><code>org.apache.kafka.controller.QuorumControllerMetrics.updateEventQueueTime</code><span>QuorumControllerMetrics.java:191</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In a three-controller KRaft cluster, a five-second idle-write interval drove the active controller’s EventQueueTimeMs p99 to 5,000 ms in both affected runs, versus 0 ms in both patched runs and both 3.3.0 runs.</dd></div><div><dt>What CoroPerf showed</dt><dd>Changing only QuorumController removed the timing call for the scheduled write while replication continued and ordinary createTopics requests still updated the metric.</dd></div><div><dt>Scope and limits</dt><dd>The test covers the idle-controller false positive. Production backlog, failover, and other delayed events were outside its scope.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

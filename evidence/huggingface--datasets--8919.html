@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Batched Dataset.map drops rows at each worker boundary">
+  <title>huggingface/datasets #8919 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">huggingface/datasets #8919</p>
+        <h1>Batched Dataset.map drops rows at each worker boundary</h1>
+        <div class="case-links"><a href="https://github.com/huggingface/datasets/issues/8919">Upstream report ↗</a><a href="https://github.com/huggingface/datasets/pull/8952">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>_map_single</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>worker</code><span>pool.py:125</span></li><li><code>_write_generator_to_queue</code><span>py_utils.py:585</span></li><li><code>_map_single</code><span>arrow_dataset.py:3958</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_map_single</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>worker</code><span>pool.py:125</span></li><li><code>_write_generator_to_queue</code><span>py_utils.py:585</span></li><li><code>_map_single</code><span>arrow_dataset.py:3958</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>_batch_arrow_table</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>worker</code><span>pool.py:125</span></li><li><code>_write_generator_to_queue</code><span>py_utils.py:585</span></li><li><code>_map_single</code><span>arrow_dataset.py:3989</span></li><li><code>iter_outputs</code><span>arrow_dataset.py:3942</span></li><li><code>apply_function</code><span>arrow_dataset.py:3863</span></li><li><code>_batch_arrow_table</code><span>table.py:62</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>For 10 rows and batches of three, two workers kept only rows 0–2 and 5–7 with drop_last_batch enabled, while one worker kept rows 0–8.</dd></div><div><dt>What CoroPerf showed</dt><dd>Each worker rounded its five-row shard down to three, dropping four rows in total instead of one. The proposal assigned six and three rows, and reopening the Arrow output confirmed all nine survived.</dd></div><div><dt>Scope and limits</dt><dd>Tested two multiprocessing start methods on Linux with Python 3.13. The report used macOS, and the proposed fix was still open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

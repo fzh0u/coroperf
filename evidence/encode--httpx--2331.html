@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="HTTPX dropped an empty query field when it merged request parameters">
+  <title>encode/httpx #2331 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">encode/httpx #2331</p>
+        <h1>HTTPX dropped an empty query field when it merged request parameters</h1>
+        <div class="case-links"><a href="https://github.com/encode/httpx/issues/2331">Upstream report ↗</a><a href="https://github.com/encode/httpx/pull/2354">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 2</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>__main__.&lt;module&gt;</code><span>trace_instance.py:98</span></li><li><code>__main__.observe</code><span>trace_instance.py:86</span></li><li><code>runpy.run_path</code><span>runpy.py:289</span></li><li><code>runpy._run_module_code</code><span>runpy.py:96</span></li><li><code>runpy._run_code</code><span>runpy.py:86</span></li><li><code>__main__.&lt;module&gt;</code><span>posted-local.py:9</span></li><li><code>asyncio.runners.run</code><span>runners.py:44</span></li><li><code>asyncio.base_events.run_until_complete</code><span>base_events.py:636</span></li><li><code>asyncio.base_events.run_forever</code><span>base_events.py:603</span></li><li><code>asyncio.base_events._run_once</code><span>base_events.py:1909</span></li><li><code>asyncio.events._run</code><span>events.py:80</span></li><li><code>__main__.main</code><span>posted-local.py:6</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>__main__.&lt;module&gt;</code><span>trace_instance.py:98</span></li><li><code>__main__.observe</code><span>trace_instance.py:86</span></li><li><code>runpy.run_path</code><span>runpy.py:289</span></li><li><code>runpy._run_module_code</code><span>runpy.py:96</span></li><li><code>runpy._run_code</code><span>runpy.py:86</span></li><li><code>__main__.&lt;module&gt;</code><span>posted-local.py:9</span></li><li><code>asyncio.runners.run</code><span>runners.py:44</span></li><li><code>asyncio.base_events.run_until_complete</code><span>base_events.py:636</span></li><li><code>asyncio.base_events.run_forever</code><span>base_events.py:603</span></li><li><code>asyncio.base_events._run_once</code><span>base_events.py:1909</span></li><li><code>asyncio.events._run</code><span>events.py:80</span></li><li><code>__main__.main</code><span>posted-local.py:6</span></li><li><code>httpx._client.get</code><span>_client.py:1751</span></li><li><code>httpx._client.request</code><span>_client.py:1514</span></li><li><code>httpx._client.build_request</code><span>_client.py:356</span></li><li><code>httpx._models.__init__</code><span>_models.py:328</span></li><li><code>httpx._urls.copy_merge_params</code><span>_urls.py:475</span></li><li><code>httpx._urls.params</code><span>_urls.py:285</span></li><li><code>httpx._urls.__init__</code><span>_urls.py:543</span></li><li><code>urllib.parse.parse_qs</code><span>parse.py:752</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>__main__.&lt;module&gt;</code><span>trace_instance.py:98</span></li><li><code>__main__.observe</code><span>trace_instance.py:86</span></li><li><code>runpy.run_path</code><span>runpy.py:289</span></li><li><code>runpy._run_module_code</code><span>runpy.py:96</span></li><li><code>runpy._run_code</code><span>runpy.py:86</span></li><li><code>__main__.&lt;module&gt;</code><span>posted-local.py:9</span></li><li><code>asyncio.runners.run</code><span>runners.py:44</span></li><li><code>asyncio.base_events.run_until_complete</code><span>base_events.py:636</span></li><li><code>asyncio.base_events.run_forever</code><span>base_events.py:603</span></li><li><code>asyncio.base_events._run_once</code><span>base_events.py:1909</span></li><li><code>asyncio.events._run</code><span>events.py:80</span></li><li><code>__main__.main</code><span>posted-local.py:6</span></li><li><code>httpx._client.get</code><span>_client.py:1751</span></li><li><code>httpx._client.request</code><span>_client.py:1514</span></li><li><code>httpx._client.build_request</code><span>_client.py:356</span></li><li><code>httpx._models.__init__</code><span>_models.py:328</span></li><li><code>httpx._urls.copy_merge_params</code><span>_urls.py:475</span></li><li><code>httpx._urls.params</code><span>_urls.py:285</span></li><li><code>httpx._urls.__init__</code><span>_urls.py:543</span></li><li><code>urllib.parse.parse_qs</code><span>parse.py:752</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>__main__.&lt;module&gt;</code><span>trace_instance.py:98</span></li><li><code>__main__.observe</code><span>trace_instance.py:86</span></li><li><code>runpy.run_path</code><span>runpy.py:289</span></li><li><code>runpy._run_module_code</code><span>runpy.py:96</span></li><li><code>runpy._run_code</code><span>runpy.py:86</span></li><li><code>__main__.&lt;module&gt;</code><span>posted-local.py:9</span></li><li><code>asyncio.runners.run</code><span>runners.py:44</span></li><li><code>asyncio.base_events.run_until_complete</code><span>base_events.py:636</span></li><li><code>asyncio.base_events.run_forever</code><span>base_events.py:603</span></li><li><code>asyncio.base_events._run_once</code><span>base_events.py:1909</span></li><li><code>asyncio.events._run</code><span>events.py:80</span></li><li><code>__main__.main</code><span>posted-local.py:6</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>__main__.&lt;module&gt;</code><span>trace_instance.py:98</span></li><li><code>__main__.observe</code><span>trace_instance.py:86</span></li><li><code>runpy.run_path</code><span>runpy.py:289</span></li><li><code>runpy._run_module_code</code><span>runpy.py:96</span></li><li><code>runpy._run_code</code><span>runpy.py:86</span></li><li><code>__main__.&lt;module&gt;</code><span>posted-local.py:9</span></li><li><code>asyncio.runners.run</code><span>runners.py:44</span></li><li><code>asyncio.base_events.run_until_complete</code><span>base_events.py:636</span></li><li><code>asyncio.base_events.run_forever</code><span>base_events.py:603</span></li><li><code>asyncio.base_events._run_once</code><span>base_events.py:1909</span></li><li><code>asyncio.events._run</code><span>events.py:80</span></li><li><code>__main__.main</code><span>posted-local.py:6</span></li><li><code>httpx._client.get</code><span>_client.py:1751</span></li><li><code>httpx._client.request</code><span>_client.py:1527</span></li><li><code>httpx._client.send</code><span>_client.py:1614</span></li><li><code>httpx._client._send_handling_auth</code><span>_client.py:1642</span></li><li><code>httpx._client._send_handling_redirects</code><span>_client.py:1679</span></li><li><code>httpx._client._send_single_request</code><span>_client.py:1716</span></li><li><code>httpx._transports.default.handle_async_request</code><span>default.py:353</span></li><li><code>httpcore._async.connection_pool.handle_async_request</code><span>connection_pool.py:237</span></li><li><code>httpcore._async.connection.handle_async_request</code><span>connection.py:90</span></li><li><code>httpcore._async.http11.handle_async_request</code><span>http11.py:73</span></li><li><code>httpcore._async.http11._send_request_headers</code><span>http11.py:119</span></li><li><code>httpcore._async.http11._send_event</code><span>http11.py:136</span></li><li><code>h11._connection.send</code><span>_connection.py:468</span></li><li><code>h11._connection.send_with_data_passthrough</code><span>_connection.py:501</span></li><li><code>h11._writers.write_request</code><span>_writers.py:31</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>__main__.&lt;module&gt;</code><span>trace_instance.py:98</span></li><li><code>__main__.observe</code><span>trace_instance.py:86</span></li><li><code>runpy.run_path</code><span>runpy.py:289</span></li><li><code>runpy._run_module_code</code><span>runpy.py:96</span></li><li><code>runpy._run_code</code><span>runpy.py:86</span></li><li><code>__main__.&lt;module&gt;</code><span>posted-local.py:9</span></li><li><code>asyncio.runners.run</code><span>runners.py:44</span></li><li><code>asyncio.base_events.run_until_complete</code><span>base_events.py:636</span></li><li><code>asyncio.base_events.run_forever</code><span>base_events.py:603</span></li><li><code>asyncio.base_events._run_once</code><span>base_events.py:1909</span></li><li><code>asyncio.events._run</code><span>events.py:80</span></li><li><code>__main__.main</code><span>posted-local.py:6</span></li><li><code>httpx._client.get</code><span>_client.py:1751</span></li><li><code>httpx._client.request</code><span>_client.py:1527</span></li><li><code>httpx._client.send</code><span>_client.py:1614</span></li><li><code>httpx._client._send_handling_auth</code><span>_client.py:1642</span></li><li><code>httpx._client._send_handling_redirects</code><span>_client.py:1679</span></li><li><code>httpx._client._send_single_request</code><span>_client.py:1716</span></li><li><code>httpx._transports.default.handle_async_request</code><span>default.py:353</span></li><li><code>httpcore._async.connection_pool.handle_async_request</code><span>connection_pool.py:237</span></li><li><code>httpcore._async.connection.handle_async_request</code><span>connection.py:90</span></li><li><code>httpcore._async.http11.handle_async_request</code><span>http11.py:73</span></li><li><code>httpcore._async.http11._send_request_headers</code><span>http11.py:119</span></li><li><code>httpcore._async.http11._send_event</code><span>http11.py:136</span></li><li><code>h11._connection.send</code><span>_connection.py:468</span></li><li><code>h11._connection.send_with_data_passthrough</code><span>_connection.py:501</span></li><li><code>h11._writers.write_request</code><span>_writers.py:31</span></li></ol></section>
+          <p class="small trace-note">The frames on record 3 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter added hello=world to an HTTPS GET whose URL already contained the bare field foobar. HTTPX 0.23.0 and the immediate parent of the fix sent /get?hello=world. The fixed commit and HTTPX 0.23.1 sent /get?foobar=&amp;hello=world. The loopback server returned HTTP 200 for all 64 HTTPX requests and the independent reference request. On two fresh SeaweedFS stores, losing the uploads selector changed the list itself. The affected release returned one completed object, parts/complete. The fixed release returned the two pending uploads, parts/pending-a and parts/pending-b.</dd></div><div><dt>What CoroPerf showed</dt><dd>The affected parser received the string foobar and returned an empty dictionary. The merge consequently received an empty base and retained only the added field. The fix sets keep_blank_values=True at the parser call. The parser then returned one empty-string value under foobar. The same QueryParams object entered the merge, and the resulting request target matched the h11 writer and the server request line. In two additional batches, the GET_AWAITABLE instruction in the reporter’s main function exposed the newly created AsyncClient.get coroutine on line 6. Its cr_origin pointed to that line. The same pinned coroutine frame was present on the physical parser and writer stacks while it was running.</dd></div><div><dt>Scope and limits</dt><dd>The reporter program changes only its destination authority for loopback HTTPS. The additional query shapes and no-merge runs are local controls. The fixed release emits an equals sign and places foobar first. The reporter’s literal spelling was checked with a separate stdlib request. Each plain/profile pair yielded identical HTTP bytes. The 32 detailed parser/merge graphs contain 256 synchronous frame samples. The separate lifecycle check measured eight real get coroutines and eight plain GETs across four builds. Its three segments cover creation, parsing and writing. Closure was read after execution. The separate SeaweedFS 3.93 control used local HTTP and matched the returned upload IDs to successful initiation responses from each store.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

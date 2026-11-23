@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A Nest TCP event error reaches a Subject with no subscribers">
+  <title>nestjs/nest #17633 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">nestjs/nest #17633</p>
+        <h1>A Nest TCP event error reaches a Subject with no subscribers</h1>
+        <div class="case-links"><a href="https://github.com/nestjs/nest/issues/17633">Upstream report ↗</a><a href="https://github.com/nestjs/nest/pull/17634#issuecomment-5649901190">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Observation selected in the issue review · observation 2209</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 2125</span></div><ol class="frames"><li><code>JsonSocket.emitMessage</code><span>tcp-socket.js:57</span></li><li><code>Socket.emit</code><span>node:events:509</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>server-tcp.js:53</span></li><li><code>ServerTCP.handleMessage</code><span>server-tcp.js:60</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2151</span></div><ol class="frames"><li><code>ServerTCP.onProcessingStartHook</code><span>server.js:21</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:108</span></li><li><code>eventHandler</code><span>listeners-controller.js:57</span></li><li><code>&lt;anonymous&gt;</code><span>rpc-proxy.js:8</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2209 · semantic boundary</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>coroperf_nest_observable_agent.cjs:25</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:108</span></li><li><code>&lt;anonymous&gt;</code><span>rpc-proxy.js:8</span></li><li><code>process.processTicksAndRejections</code><span>task_queues:104</span></li><li><code>&lt;anonymous&gt;</code><span>rpc-context-creator.js:48</span></li><li><code>AppController.evtRpc</code><span>repro.js:50</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2209 · semantic boundary</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>coroperf_nest_observable_agent.cjs:25</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:108</span></li><li><code>&lt;anonymous&gt;</code><span>rpc-proxy.js:8</span></li><li><code>process.processTicksAndRejections</code><span>task_queues:104</span></li><li><code>&lt;anonymous&gt;</code><span>rpc-context-creator.js:48</span></li><li><code>AppController.evtRpc</code><span>repro.js:50</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2209 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 2219</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 2125</span></div><ol class="frames"><li><code>JsonSocket.emitMessage</code><span>tcp-socket.js:57</span></li><li><code>Socket.emit</code><span>node:events:509</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>server-tcp.js:53</span></li><li><code>ServerTCP.handleMessage</code><span>server-tcp.js:60</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2152</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>coroperf_nest_observable_agent.cjs:25</span></li><li><code>ServerTCP.handleEvent</code><span>server.js:107</span></li><li><code>ServerTCP.onProcessingStartHook</code><span>server.js:21</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:108</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2219 · semantic boundary</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>finalize.js:8</span></li><li><code>Observable.subscribe</code><span>Observable.js:26</span></li><li><code>Object.errorContext</code><span>errorContext.js:22</span></li><li><code>&lt;anonymous&gt;</code><span>Observable.js:35</span></li><li><code>Observable._trySubscribe</code><span>Observable.js:41</span></li><li><code>Observable.init [as _subscribe]</code><span>throwError.js:8</span></li><li><code>Subscriber.error</code><span>Subscriber.js:60</span></li><li><code>Subscriber._error</code><span>Subscriber.js:84</span></li><li><code>ConsumerObserver.error</code><span>Subscriber.js:124</span></li><li><code>Subject.error</code><span>coroperf_nest_observable_agent.cjs:39</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2219 · semantic boundary</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>finalize.js:8</span></li><li><code>Observable.subscribe</code><span>Observable.js:26</span></li><li><code>Object.errorContext</code><span>errorContext.js:22</span></li><li><code>&lt;anonymous&gt;</code><span>Observable.js:35</span></li><li><code>Observable._trySubscribe</code><span>Observable.js:41</span></li><li><code>Observable.init [as _subscribe]</code><span>throwError.js:8</span></li><li><code>Subscriber.error</code><span>Subscriber.js:60</span></li><li><code>Subscriber._error</code><span>Subscriber.js:84</span></li><li><code>ConsumerObserver.error</code><span>Subscriber.js:124</span></li><li><code>Subject.error</code><span>coroperf_nest_observable_agent.cjs:39</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2219 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 2377</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 2293</span></div><ol class="frames"><li><code>JsonSocket.emitMessage</code><span>tcp-socket.js:57</span></li><li><code>Socket.emit</code><span>node:events:509</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>server-tcp.js:53</span></li><li><code>ServerTCP.handleMessage</code><span>server-tcp.js:60</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2319</span></div><ol class="frames"><li><code>ServerTCP.onProcessingStartHook</code><span>server.js:21</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:108</span></li><li><code>eventHandler</code><span>listeners-controller.js:57</span></li><li><code>&lt;anonymous&gt;</code><span>rpc-proxy.js:8</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2377 · semantic boundary</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>coroperf_nest_observable_agent.cjs:25</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:108</span></li><li><code>&lt;anonymous&gt;</code><span>rpc-proxy.js:8</span></li><li><code>process.processTicksAndRejections</code><span>task_queues:104</span></li><li><code>&lt;anonymous&gt;</code><span>rpc-context-creator.js:48</span></li><li><code>AppController.evtFiltered</code><span>repro.js:56</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2377 · semantic boundary</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>coroperf_nest_observable_agent.cjs:25</span></li><li><code>&lt;anonymous&gt;</code><span>server.js:108</span></li><li><code>&lt;anonymous&gt;</code><span>rpc-proxy.js:8</span></li><li><code>process.processTicksAndRejections</code><span>task_queues:104</span></li><li><code>&lt;anonymous&gt;</code><span>rpc-context-creator.js:48</span></li><li><code>AppController.evtFiltered</code><span>repro.js:56</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2377 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 2387 · sample<code>Subject.error</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2387 · semantic boundary</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>finalize.js:8</span></li><li><code>Observable.subscribe</code><span>Observable.js:26</span></li><li><code>Object.errorContext</code><span>errorContext.js:22</span></li><li><code>&lt;anonymous&gt;</code><span>Observable.js:35</span></li><li><code>Observable._trySubscribe</code><span>Observable.js:41</span></li><li><code>Observable.init [as _subscribe]</code><span>throwError.js:8</span></li><li><code>Subscriber.error</code><span>Subscriber.js:60</span></li><li><code>Subscriber._error</code><span>Subscriber.js:84</span></li><li><code>ConsumerObserver.error</code><span>Subscriber.js:124</span></li><li><code>Subject.error</code><span>coroperf_nest_observable_agent.cjs:39</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original TCP event program sent its exception to a Subject with zero observers.</dd></div><div><dt>What CoroPerf showed</dt><dd>The trace followed evtRpc through the exception filter to Subject.error, where the subscriber count explained why no observer reported it.</dd></div><div><dt>Scope and limits</dt><dd>Used a local port. The Kafka branch of the related PR was untested.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

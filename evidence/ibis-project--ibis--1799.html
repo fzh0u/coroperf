@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Filling two columns in sequence drops the first replacement">
+  <title>ibis-project/ibis #1799 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ibis-project/ibis #1799</p>
+        <h1>Filling two columns in sequence drops the first replacement</h1>
+        <div class="case-links"><a href="https://github.com/ibis-project/ibis/issues/1799">Upstream report ↗</a><a href="https://github.com/ibis-project/ibis/pull/1812">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>try_fusion</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:75</span></li><li><code>execute</code><span>workload.py:48</span></li><li><code>run_path</code><span>runpy.py:288</span></li><li><code>_run_module_code</code><span>runpy.py:97</span></li><li><code>_run_code</code><span>runpy.py:87</span></li><li><code>&lt;module&gt;</code><span>posted.py:6</span></li><li><code>mutate</code><span>api.py:3397</span></li><li><code>projection</code><span>api.py:3501</span></li><li><code>get_result</code><span>analysis.py:762</span></li><li><code>try_fusion</code><span>analysis.py:824</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>try_fusion</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:75</span></li><li><code>execute</code><span>workload.py:60</span></li><li><code>mutate</code><span>api.py:3397</span></li><li><code>projection</code><span>api.py:3501</span></li><li><code>get_result</code><span>analysis.py:762</span></li><li><code>try_fusion</code><span>analysis.py:824</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>try_fusion</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:75</span></li><li><code>execute</code><span>workload.py:63</span></li><li><code>mutate</code><span>api.py:3397</span></li><li><code>projection</code><span>api.py:3501</span></li><li><code>get_result</code><span>analysis.py:762</span></li><li><code>try_fusion</code><span>analysis.py:824</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The posted Ibis query filled two columns. Version 1.0.0 compiled only the second replacement into its Impala SQL. On 891 Titanic passenger records, SQLite returned 688 missing decks when deck was filled first, or two missing towns when embarkation town was filled first. Version 1.1.0 filled every missing value in both orders.</dd></div><div><dt>What CoroPerf showed</dt><dd>The stack follows the second mutate call to projection, get_result and try_fusion. At entry, the prior projection contains an IfNull expression for column b. The parent commit returns a fused projection that reads b from the base table, discarding that expression. The fix declines fusion and the inner query fills b. Filling both columns in a single mutation also gives the correct value for every passenger on all four builds.</dd></div><div><dt>Scope and limits</dt><dd>The original report demonstrates Impala SQL compilation and gives no exact revision. The passenger queries ran on local SQLite. A targeted CPython probe captured the optimizer’s input and return value alongside its stack. This is a synchronous query.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="The callback query API omits the application line from driver errors">
+  <title>sidorares/node-mysql2 #1067 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">sidorares/node-mysql2 #1067</p>
+        <h1>The callback query API omits the application line from driver errors</h1>
+        <div class="case-links"><a href="https://github.com/sidorares/node-mysql2/issues/1067">Upstream report ↗</a><a href="https://github.com/sidorares/node-mysql2/issues/1067#issuecomment-557299852">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Observation selected in the issue review · observation 52</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>callbackFromApplication</code><span>query.cjs:13</span></li><li><code>Pool.query</code><span>pool.js:138</span></li><li><code>Pool.getConnection</code><span>pool.js:50</span></li><li><code>new PoolConnection</code><span>pool_connection.js:7</span></li><li><code>new Connection</code><span>connection.js:35</span></li><li><code>Object.connect</code><span>net.js:180</span></li><li><code>Socket.connect</code><span>net.js:952</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 52 · semantic boundary</span></div><ol class="frames"><li><code>Socket.Readable.push</code><span>_stream_readable.js:241</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:307</span></li><li><code>addChunk</code><span>_stream_readable.js:332</span></li><li><code>Socket.emit</code><span>events.js:219</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:82</span></li><li><code>PacketParser.executeStart</code><span>packet_parser.js:75</span></li><li><code>PacketParser.onPacket</code><span>connection.js:75</span></li><li><code>PoolConnection.handlePacket</code><span>connection.js:417</span></li><li><code>Query.execute</code><span>command.js:28</span></li><li><code>Packet.asError</code><span>packet.js:712</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 52 · semantic boundary</span></div><ol class="frames"><li><code>Socket.Readable.push</code><span>_stream_readable.js:241</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:307</span></li><li><code>addChunk</code><span>_stream_readable.js:332</span></li><li><code>Socket.emit</code><span>events.js:219</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:82</span></li><li><code>PacketParser.executeStart</code><span>packet_parser.js:75</span></li><li><code>PacketParser.onPacket</code><span>connection.js:75</span></li><li><code>PoolConnection.handlePacket</code><span>connection.js:417</span></li><li><code>Query.execute</code><span>command.js:28</span></li><li><code>Packet.asError</code><span>packet.js:712</span></li></ol></section>
+          <p class="small trace-note">The frames on record 52 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>A callback-based pool.query returned MySQL error 1054 with only packet-processing frames. The Promise API showed promiseFromApplication for the same query, and SELECT 1 succeeded.</dd></div><div><dt>What CoroPerf showed</dt><dd>The error traveled through Query.execute to Packet.asError. The callback API retained the socket’s allocation site but did not save the individual query call site.</dd></div><div><dt>Scope and limits</dt><dd>The first query opened the socket. Its creator cannot identify arbitrary later queries on a reused connection.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

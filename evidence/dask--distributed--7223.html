@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Dask leaves queued work undispatched after a task secedes">
+  <title>dask/distributed #7223 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dask/distributed #7223</p>
+        <h1>Dask leaves queued work undispatched after a task secedes</h1>
+        <div class="case-links"><a href="https://github.com/dask/distributed/issues/7223">Upstream report ↗</a><a href="https://github.com/dask/distributed/pull/7224">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>handle_long_running</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · runtime-boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>run_loop</code><span>utils.py:500</span></li><li><code>start</code><span>asyncio.py:199</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_handle_comm</code><span>core.py:771</span></li><li><code>wrapper</code><span>utils.py:742</span></li><li><code>add_worker</code><span>scheduler.py:4262</span></li><li><code>handle_worker</code><span>scheduler.py:5422</span></li><li><code>handle_stream</code><span>core.py:843</span></li><li><code>handle_long_running</code><span>scheduler.py:5310</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>handle_long_running</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · runtime-boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>run_loop</code><span>utils.py:500</span></li><li><code>start</code><span>asyncio.py:199</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_handle_comm</code><span>core.py:771</span></li><li><code>wrapper</code><span>utils.py:742</span></li><li><code>add_worker</code><span>scheduler.py:4262</span></li><li><code>handle_worker</code><span>scheduler.py:5422</span></li><li><code>handle_stream</code><span>core.py:843</span></li><li><code>handle_long_running</code><span>scheduler.py:5339</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>After a task on a single-threaded worker called secede, the affected scheduler left a root task queued even though the worker had capacity.</dd></div><div><dt>What CoroPerf showed</dt><dd>After the fix, the first handle_long_running call cut the queue from four tasks to three and all five tasks could secede before the second event. Disabling queuing on the old build also passed.</dd></div><div><dt>Scope and limits</dt><dd>The 0.8-second window measured entry into the long-running state in the PR’s local scenario, not recovery time.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

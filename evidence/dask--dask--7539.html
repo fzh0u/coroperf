@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Reading only the SQL index discarded every populated Dask partition">
+  <title>dask/dask #7539 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dask/dask #7539</p>
+        <h1>Reading only the SQL index discarded every populated Dask partition</h1>
+        <div class="case-links"><a href="https://github.com/dask/dask/issues/7539">Upstream report ↗</a><a href="https://github.com/dask/dask/pull/7572">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>_read_sql_chunk</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:113</span></li><li><code>main</code><span>workload.py:97</span></li><li><code>execute</code><span>workload.py:76</span></li><li><code>compute</code><span>base.py:285</span></li><li><code>compute</code><span>base.py:567</span></li><li><code>get_sync</code><span>local.py:560</span></li><li><code>get_async</code><span>local.py:502</span></li><li><code>fire_tasks</code><span>local.py:497</span></li><li><code>submit</code><span>local.py:545</span></li><li><code>batch_execute_tasks</code><span>local.py:237</span></li><li><code>&lt;listcomp&gt;</code><span>local.py:237</span></li><li><code>execute_task</code><span>local.py:223</span></li><li><code>_execute_task</code><span>core.py:121</span></li><li><code>apply</code><span>utils.py:34</span></li><li><code>_read_sql_chunk</code><span>sql.py:228</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_read_sql_chunk</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:113</span></li><li><code>main</code><span>workload.py:97</span></li><li><code>execute</code><span>workload.py:76</span></li><li><code>compute</code><span>base.py:285</span></li><li><code>compute</code><span>base.py:567</span></li><li><code>get_sync</code><span>local.py:560</span></li><li><code>get_async</code><span>local.py:502</span></li><li><code>fire_tasks</code><span>local.py:497</span></li><li><code>submit</code><span>local.py:545</span></li><li><code>batch_execute_tasks</code><span>local.py:237</span></li><li><code>&lt;listcomp&gt;</code><span>local.py:237</span></li><li><code>execute_task</code><span>local.py:223</span></li><li><code>_execute_task</code><span>core.py:121</span></li><li><code>apply</code><span>utils.py:34</span></li><li><code>_read_sql_chunk</code><span>sql.py:228</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>_read_sql_chunk</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:113</span></li><li><code>main</code><span>workload.py:97</span></li><li><code>execute</code><span>workload.py:76</span></li><li><code>compute</code><span>base.py:285</span></li><li><code>compute</code><span>base.py:567</span></li><li><code>get_sync</code><span>local.py:560</span></li><li><code>get_async</code><span>local.py:502</span></li><li><code>fire_tasks</code><span>local.py:497</span></li><li><code>submit</code><span>local.py:545</span></li><li><code>batch_execute_tasks</code><span>local.py:237</span></li><li><code>&lt;listcomp&gt;</code><span>local.py:237</span></li><li><code>execute_task</code><span>local.py:223</span></li><li><code>_execute_task</code><span>core.py:121</span></li><li><code>apply</code><span>utils.py:34</span></li><li><code>_read_sql_chunk</code><span>sql.py:228</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>_read_sql_chunk</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:113</span></li><li><code>main</code><span>workload.py:97</span></li><li><code>execute</code><span>workload.py:76</span></li><li><code>compute</code><span>base.py:285</span></li><li><code>compute</code><span>base.py:567</span></li><li><code>get_sync</code><span>local.py:560</span></li><li><code>get_async</code><span>local.py:502</span></li><li><code>fire_tasks</code><span>local.py:497</span></li><li><code>submit</code><span>local.py:545</span></li><li><code>batch_execute_tasks</code><span>local.py:237</span></li><li><code>&lt;listcomp&gt;</code><span>local.py:237</span></li><li><code>execute_task</code><span>local.py:223</span></li><li><code>_execute_task</code><span>core.py:121</span></li><li><code>apply</code><span>utils.py:34</span></li><li><code>_read_sql_chunk</code><span>sql.py:228</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>SQLite returned 3,503 track IDs across four partitions. Dask 2021.02.0 returned zero of them when asked for the index alone. Selecting the track name as well returned all 3,503 IDs. The same index-only read lost all 50 rows in a single-column table. Both affected reads returned every ID on the fixed build.</dd></div><div><dt>What CoroPerf showed</dt><dd>Each sampled _read_sql_chunk return on the parent showed a fetched DataFrame with hundreds of IDs and zero ordinary columns alongside a metadata template with zero IDs. The pandas empty property was true for the fetched frame. Dask returned the metadata template. The fixed branch measured the number of rows and returned the fetched frame. Independent SQLite reads reproduced the exact index digest of each recorded chunk.</dd></div><div><dt>Scope and limits</dt><dd>The posted call omitted the partition setting required with head_rows=0 and explicit metadata. Running it as written raised the same validation error on all four builds. The partitioned runs supplied this parameter. The catalog is the public Chinook sample database. The CPython stack samples cover synchronous computation. Both synchronous and threaded reads produced the same user-visible results with pandas 1.2.5 and SQLAlchemy 1.3.24.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Multiprocess histogram export interleaves OpenMetrics label groups">
+  <title>prometheus/client_python #1147 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">prometheus/client_python #1147</p>
+        <h1>Multiprocess histogram export interleaves OpenMetrics label groups</h1>
+        <div class="case-links"><a href="https://github.com/prometheus/client_python/issues/1147">Upstream report ↗</a><a href="https://github.com/prometheus/client_python/pull/1148">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>_accumulate_metrics</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:114</span></li><li><code>collect</code><span>workload.py:95</span></li><li><code>handle_request</code><span>socketserver.py:297</span></li><li><code>_handle_request_noblock</code><span>socketserver.py:317</span></li><li><code>process_request</code><span>socketserver.py:348</span></li><li><code>finish_request</code><span>socketserver.py:361</span></li><li><code>__init__</code><span>socketserver.py:755</span></li><li><code>handle</code><span>simple_server.py:134</span></li><li><code>run</code><span>handlers.py:137</span></li><li><code>prometheus_app</code><span>exposition.py:148</span></li><li><code>_bake_output</code><span>exposition.py:112</span></li><li><code>generate_latest</code><span>exposition.py:61</span></li><li><code>collect</code><span>registry.py:97</span></li><li><code>collect</code><span>multiprocess.py:158</span></li><li><code>merge</code><span>multiprocess.py:44</span></li><li><code>_accumulate_metrics</code><span>multiprocess.py:136</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_accumulate_metrics</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:114</span></li><li><code>collect</code><span>workload.py:95</span></li><li><code>handle_request</code><span>socketserver.py:297</span></li><li><code>_handle_request_noblock</code><span>socketserver.py:317</span></li><li><code>process_request</code><span>socketserver.py:348</span></li><li><code>finish_request</code><span>socketserver.py:361</span></li><li><code>__init__</code><span>socketserver.py:755</span></li><li><code>handle</code><span>simple_server.py:134</span></li><li><code>run</code><span>handlers.py:137</span></li><li><code>prometheus_app</code><span>exposition.py:148</span></li><li><code>_bake_output</code><span>exposition.py:112</span></li><li><code>generate_latest</code><span>exposition.py:61</span></li><li><code>collect</code><span>registry.py:97</span></li><li><code>collect</code><span>multiprocess.py:158</span></li><li><code>merge</code><span>multiprocess.py:44</span></li><li><code>_accumulate_metrics</code><span>multiprocess.py:153</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>text_fd_to_metric_families</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:114</span></li><li><code>collect</code><span>workload.py:98</span></li><li><code>text_string_to_metric_families</code><span>parser.py:23</span></li><li><code>text_fd_to_metric_families</code><span>parser.py:612</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>A local HTTP scrape reproduced the report’s 38 samples and HELP/TYPE lines byte for byte. The parser rejected the first histogram group that reappeared later in the output.</dd></div><div><dt>What CoroPerf showed</dt><dd>The collector inserted both views’ sums before their buckets and counts, and the exporter preserved that order. The fix accumulated each label group separately so its samples stayed together.</dd></div><div><dt>Scope and limits</dt><dd>Used the reported observations and 17 buckets with a real WSGI scrape. The original Django and Gunicorn configuration was unavailable.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

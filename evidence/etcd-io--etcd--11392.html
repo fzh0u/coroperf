@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Why did the compaction counter stay at zero after nine revisions disappeared?">
+  <title>etcd-io/etcd #11392 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">etcd-io/etcd #11392</p>
+        <h1>Why did the compaction counter stay at zero after nine revisions disappeared?</h1>
+        <div class="case-links"><a href="https://github.com/etcd-io/etcd/issues/11392">Upstream report ↗</a><a href="https://github.com/etcd-io/etcd/pull/11400">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 11</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0 · diagnostic stacktrace</span></div><ol class="frames"><li><code>main.main</code><span>main.go:28</span></li><li><code>go.etcd.io/etcd/etcdmain.Main</code><span>main.go:46</span></li><li><code>go.etcd.io/etcd/etcdmain.startEtcdOrProxyV2</code><span>etcd.go:160</span></li><li><code>go.etcd.io/etcd/etcdmain.startEtcd</code><span>etcd.go:302</span></li><li><code>go.etcd.io/etcd/embed.StartEtcd</code><span>etcd.go:211</span></li><li><code>go.etcd.io/etcd/etcdserver.NewServer</code><span>server.go:543</span></li><li><code>go.etcd.io/etcd/mvcc.New</code><span>watchable_store.go:73</span></li><li><code>go.etcd.io/etcd/mvcc.newWatchableStore</code><span>watchable_store.go:78</span></li><li><code>go.etcd.io/etcd/mvcc.NewStore</code><span>kvstore.go:135</span></li><li><code>go.etcd.io/etcd/pkg/schedule.NewFIFOScheduler</code><span>schedule.go:70</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11 · diagnostic stacktrace</span></div><ol class="frames"><li><code>go.etcd.io/etcd/pkg/schedule.(*fifo).run</code><span>schedule.go:157</span></li><li><code>go.etcd.io/etcd/mvcc.(*store).compact.func1</code><span>kvstore.go:283</span></li><li><code>go.etcd.io/etcd/mvcc.(*store).scheduleCompaction</code><span>kvstore_compaction.go:63</span></li><li><code>go.etcd.io/etcd/mvcc.(*store).scheduleCompaction.func2</code><span>kvstore_compaction.go:28</span></li><li><code>go.etcd.io/etcd/mvcc.observeCompaction</code><span>coroperf_observe.go:33</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11 · diagnostic stacktrace</span></div><ol class="frames"><li><code>go.etcd.io/etcd/pkg/schedule.(*fifo).run</code><span>schedule.go:157</span></li><li><code>go.etcd.io/etcd/mvcc.(*store).compact.func1</code><span>kvstore.go:283</span></li><li><code>go.etcd.io/etcd/mvcc.(*store).scheduleCompaction</code><span>kvstore_compaction.go:63</span></li><li><code>go.etcd.io/etcd/mvcc.(*store).scheduleCompaction.func2</code><span>kvstore_compaction.go:28</span></li><li><code>go.etcd.io/etcd/mvcc.observeCompaction</code><span>coroperf_observe.go:33</span></li></ol></section>
+          <p class="small trace-note">The frames on record 11 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0 · diagnostic stacktrace</span></div><ol class="frames"><li><code>main.main</code><span>main.go:28</span></li><li><code>go.etcd.io/etcd/etcdmain.Main</code><span>main.go:46</span></li><li><code>go.etcd.io/etcd/etcdmain.startEtcdOrProxyV2</code><span>etcd.go:160</span></li><li><code>go.etcd.io/etcd/etcdmain.startEtcd</code><span>etcd.go:302</span></li><li><code>go.etcd.io/etcd/embed.StartEtcd</code><span>etcd.go:211</span></li><li><code>go.etcd.io/etcd/etcdserver.NewServer</code><span>server.go:543</span></li><li><code>go.etcd.io/etcd/mvcc.New</code><span>watchable_store.go:73</span></li><li><code>go.etcd.io/etcd/mvcc.newWatchableStore</code><span>watchable_store.go:78</span></li><li><code>go.etcd.io/etcd/mvcc.NewStore</code><span>kvstore.go:135</span></li><li><code>go.etcd.io/etcd/pkg/schedule.NewFIFOScheduler</code><span>schedule.go:70</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic stacktrace</span></div><ol class="frames"><li><code>go.etcd.io/etcd/pkg/schedule.(*fifo).run</code><span>schedule.go:157</span></li><li><code>go.etcd.io/etcd/mvcc.(*store).compact.func1</code><span>kvstore.go:283</span></li><li><code>go.etcd.io/etcd/mvcc.(*store).scheduleCompaction</code><span>kvstore_compaction.go:45</span></li><li><code>go.etcd.io/etcd/mvcc.observeCompaction</code><span>coroperf_observe.go:33</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic stacktrace</span></div><ol class="frames"><li><code>go.etcd.io/etcd/pkg/schedule.(*fifo).run</code><span>schedule.go:157</span></li><li><code>go.etcd.io/etcd/mvcc.(*store).compact.func1</code><span>kvstore.go:283</span></li><li><code>go.etcd.io/etcd/mvcc.(*store).scheduleCompaction</code><span>kvstore_compaction.go:45</span></li><li><code>go.etcd.io/etcd/mvcc.observeCompaction</code><span>coroperf_observe.go:33</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On a three-voter etcd 3.4.3 cluster, compacting through revision 5 reduced each backend snapshot from 15 historical records to 6. All three current keys were still readable. Every member reported zero additional compacted records. The 3.4.4 release reported nine on the same workload.</dd></div><div><dt>What CoroPerf showed</dt><dd>Go recorded the MVCC worker being created at schedule.go line 70. On that same goroutine the compaction loop deleted the nine verified revision tuples. The deferred update passed 0 to the Prometheus counter. The fix increments the local count after each delete. A mixed cluster replicated the same writes and compactions to all three builds, allowing the one-line correction to be tested against the original 3.4.3 implementation.</dd></div><div><dt>Scope and limits</dt><dd>The reported symptom was reproduced with the upstream Linux releases. Native goroutine creation and compaction operands were captured in same-tag observed builds. The experiment measures historical MVCC records per member. Each physical snapshot and scrape belongs to the member named in its archive path.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

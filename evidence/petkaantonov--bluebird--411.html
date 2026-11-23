@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Bluebird’s done() changes how a browser reports a rejection">
+  <title>petkaantonov/bluebird #411 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">petkaantonov/bluebird #411</p>
+        <h1>Bluebird’s done() changes how a browser reports a rejection</h1>
+        <div class="case-links"><a href="https://github.com/petkaantonov/bluebird/issues/411">Upstream report ↗</a><a href="https://github.com/petkaantonov/bluebird/issues/411#issuecomment-67542868">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>Promise$_rejectUnchecked</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>Promise$_Scheduler</code><span>bluebird.js:4295</span></li><li><code>Async$consumeFunctionBuffer</code><span>bluebird.js:119</span></li><li><code>Async$_consumeFunctionBuffer</code><span>bluebird.js:156</span></li><li><code>Promise$_settlePromiseAt</code><span>bluebird.js:2830</span></li><li><code>Promise$_reject</code><span>bluebird.js:2795</span></li><li><code>Promise$_rejectUnchecked</code><span>bluebird.js:2929</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>Promise$_Scheduler</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>app.js:2</span></li><li><code>applicationOrigin</code><span>app.js:1</span></li><li><code>Promise$Reject</code><span>bluebird.js:2277</span></li><li><code>Promise$_ensurePossibleRejectionHandled</code><span>bluebird.js:2959</span></li><li><code>Async$invokeLater</code><span>bluebird.js:134</span></li><li><code>Async$_queue</code><span>bluebird.js:182</span></li><li><code>Promise$_Scheduler</code><span>bluebird.js:4303</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>addScriptUrl</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>:1:44</span></li><li><code>evaluate</code><span>:372:16</span></li><li><code>addScriptUrl</code><span>:10:25</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Calling .done() produced an uncaught browser pageerror, while removing it produced an unhandled-rejection console diagnostic with the source.</dd></div><div><dt>What CoroPerf showed</dt><dd>A breakpoint showed the final Promise taking rejectUnchecked’s deferred rethrow branch, and the browser event still contained applicationOrigin.</dd></div><div><dt>Scope and limits</dt><dd>Chromium 159 reproduced the rethrow. The original page and Chrome build were unavailable, so the 2014 DevTools display could not be verified.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

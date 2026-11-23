@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Why did Ratis reject a listener addition before the leader received it?">
+  <title>apache/ratis #RATIS-2640 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">apache/ratis #RATIS-2640</p>
+        <h1>Why did Ratis reject a listener addition before the leader received it?</h1>
+        <div class="case-links"><a href="https://issues.apache.org/jira/browse/RATIS-2640">Upstream report ↗</a><a href="https://github.com/apache/ratis/pull/1543">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 3 · sample<code>org.apache.ratis.protocol.SetConfigurationRequest$Arguments$Builder.setListenersInNewConf</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · diagnostic stacktrace</span></div><ol class="frames"><li><code>ObservedCall.main</code><span>ObservedCall.java:59</span></li><li><code>org.apache.ratis.client.api.AdminApi.setConfiguration</code><span>AdminApi.java:63</span></li><li><code>org.apache.ratis.protocol.SetConfigurationRequest$Arguments$Builder.setListenersInNewConf</code><span>SetConfigurationRequest.java:124</span></li></ol></section></details><details class="extra" ><summary>Record 5 · sample<code>org.apache.ratis.protocol.SetConfigurationRequest$Arguments$Builder.setListenersInNewConf</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5 · diagnostic stacktrace</span></div><ol class="frames"><li><code>ObservedCall.main</code><span>ObservedCall.java:59</span></li><li><code>org.apache.ratis.client.api.AdminApi.setConfiguration</code><span>AdminApi.java:64</span></li><li><code>org.apache.ratis.protocol.SetConfigurationRequest$Arguments$Builder.setListenersInNewConf</code><span>SetConfigurationRequest.java:124</span></li></ol></section></details><details class="extra" ><summary>Record 6 · sample<code>org.apache.ratis.protocol.SetConfigurationRequest$Arguments$Builder.build</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 6 · diagnostic stacktrace</span></div><ol class="frames"><li><code>ObservedCall.main</code><span>ObservedCall.java:59</span></li><li><code>org.apache.ratis.client.api.AdminApi.setConfiguration</code><span>AdminApi.java:65</span></li><li><code>org.apache.ratis.protocol.SetConfigurationRequest$Arguments$Builder.build</code><span>SetConfigurationRequest.java:144</span></li></ol></section></details><details class="extra" ><summary>Record 10 · sample<code>org.apache.ratis.util.Preconditions.assertUnique</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 10 · diagnostic stacktrace</span></div><ol class="frames"><li><code>ObservedCall.main</code><span>ObservedCall.java:59</span></li><li><code>org.apache.ratis.client.api.AdminApi.setConfiguration</code><span>AdminApi.java:65</span></li><li><code>org.apache.ratis.protocol.SetConfigurationRequest$Arguments$Builder.build</code><span>SetConfigurationRequest.java:144</span></li><li><code>org.apache.ratis.protocol.SetConfigurationRequest$Arguments.&lt;init&gt;</code><span>SetConfigurationRequest.java:36</span></li><li><code>org.apache.ratis.protocol.SetConfigurationRequest$Arguments.&lt;init&gt;</code><span>SetConfigurationRequest.java:59</span></li><li><code>org.apache.ratis.util.Preconditions.assertUnique</code><span>Preconditions.java:136</span></li><li><code>org.apache.ratis.util.Preconditions.assertUnique</code><span>Preconditions.java:141</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>A healthy group of three voters (s0, s1, s2) had a fourth server ready to join as listener l0. The Java client supplied all four IDs to AdminApi.setConfiguration. With the array overload, 3.2.2, 3.3.0 and the immediate parent threw NullPointerException. The servers counted zero configuration RPCs and the three voters retained their original configuration. The list overload succeeded on all five builds. The fixed array overload also sent one RPC, committed the joint and final configurations, and let l0 apply the subsequent write. Each table entry was checked on two fresh groups.</dd></div><div><dt>What CoroPerf showed</dt><dd>In a separate four-server run, a debugger followed the production client reasserting its installed membership. On 3.2.2 the builder wrote a list backed by the voter array into the listener field, then overwrote it with a list backed by the listener array. The voter field was null when Preconditions.assertUnique threw. The debugger saw exception object 4491 both at the throw and in the caller’s catch. On 3.3.1 the builder wrote each array to its own field. AdminImpl constructed request object 4702, the gRPC serializer received that same object, and the successful reply matched call ID 17.</dd></div><div><dt>Scope and limits</dt><dd>The reporter supplied the API code and exception stack. The fix supplied the two JUnit tests and peer IDs. Those tests capture configuration arguments at the client API boundary. The live listener additions also checked server RPC counters, group membership and replicated log entries through writes before and after the call. Ratis 3.2.2 omits an optional configuration field in GroupInfo replies. Its member IDs, division configuration and committed log entries establish the result. The cross-version control below changes one voter’s priority on a single-voter leader. The graphs follow synchronous work on the Java main thread and contain zero creation edges.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

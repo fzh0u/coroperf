@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A synchronous checkpoint read waits on its own event loop">
+  <title>langchain-ai/langgraph #1800 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">langchain-ai/langgraph #1800</p>
+        <h1>A synchronous checkpoint read waits on its own event loop</h1>
+        <div class="case-links"><a href="https://github.com/langchain-ai/langgraph/issues/1800">Upstream report ↗</a><a href="https://github.com/langchain-ai/langgraph/pull/1803">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Observation selected in the issue review · observation 14</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 14 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>1800-original.py:14</span></li><li><code>invoke</code><span>__init__.py:1545</span></li><li><code>stream</code><span>__init__.py:1228</span></li><li><code>__enter__</code><span>loop.py:699</span></li><li><code>get_tuple</code><span>aio.py:154</span></li><li><code>run_coroutine_threadsafe</code><span>tasks.py:931</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 14 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>1800-original.py:14</span></li><li><code>invoke</code><span>__init__.py:1545</span></li><li><code>stream</code><span>__init__.py:1228</span></li><li><code>__enter__</code><span>loop.py:699</span></li><li><code>get_tuple</code><span>aio.py:154</span></li><li><code>run_coroutine_threadsafe</code><span>tasks.py:931</span></li></ol></section>
+          <p class="small trace-note">The frames on record 14 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 16</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 16 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>1800-original.py:14</span></li><li><code>invoke</code><span>__init__.py:1545</span></li><li><code>stream</code><span>__init__.py:1228</span></li><li><code>__enter__</code><span>loop.py:699</span></li><li><code>get_tuple</code><span>aio.py:156</span></li><li><code>result</code><span>_base.py:428</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 16 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>1800-original.py:14</span></li><li><code>invoke</code><span>__init__.py:1545</span></li><li><code>stream</code><span>__init__.py:1228</span></li><li><code>__enter__</code><span>loop.py:699</span></li><li><code>get_tuple</code><span>aio.py:156</span></li><li><code>result</code><span>_base.py:428</span></li></ol></section>
+          <p class="small trace-note">The frames on record 16 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 17</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>1800-original.py:14</span></li><li><code>invoke</code><span>__init__.py:1545</span></li><li><code>stream</code><span>__init__.py:1228</span></li><li><code>__enter__</code><span>loop.py:699</span></li><li><code>get_tuple</code><span>aio.py:156</span></li><li><code>result</code><span>_base.py:451</span></li><li><code>wait</code><span>threading.py:323</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>1800-original.py:14</span></li><li><code>invoke</code><span>__init__.py:1545</span></li><li><code>stream</code><span>__init__.py:1228</span></li><li><code>__enter__</code><span>loop.py:699</span></li><li><code>get_tuple</code><span>aio.py:156</span></li><li><code>result</code><span>_base.py:451</span></li><li><code>wait</code><span>threading.py:323</span></li></ol></section>
+          <p class="small trace-note">The frames on record 17 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 13 · sample<code>_run_once</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 13 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1922</span></li></ol></section></details><details class="extra" ><summary>Record 15 · sample<code>run_coroutine_threadsafe</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 15 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:59</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>1800-original.py:21</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>1800-original.py:14</span></li><li><code>invoke</code><span>__init__.py:1545</span></li><li><code>stream</code><span>__init__.py:1228</span></li><li><code>__enter__</code><span>loop.py:699</span></li><li><code>get_tuple</code><span>aio.py:154</span></li><li><code>run_coroutine_threadsafe</code><span>tasks.py:951</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reported in-memory SQLite get_tuple call exceeded two seconds, while its async counterpart completed and the fixed synchronous entry point raised InvalidStateError immediately.</dd></div><div><dt>What CoroPerf showed</dt><dd>The loop thread scheduled the coroutine back onto itself and then blocked in Future.result(), preventing the callback from running.</dd></div><div><dt>Scope and limits</dt><dd>The replay used the reported framework and storage packages with a newer Python patch release and covered one checkpoint read.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

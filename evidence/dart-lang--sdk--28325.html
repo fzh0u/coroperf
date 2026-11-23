@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="An awaited socket error loses its source line and column">
+  <title>dart-lang/sdk #28325 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dart-lang/sdk #28325</p>
+        <h1>An awaited socket error loses its source line and column</h1>
+        <div class="case-links"><a href="https://github.com/dart-lang/sdk/issues/28325">Upstream report ↗</a><a href="https://github.com/dart-lang/sdk/commit/204bd5a932b4f15abd5a10e8966fb118d2535701">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>main.&lt;main_async_body&gt;</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>_RawReceivePortImpl._handleMessage</code><span>isolate_patch.dart:149</span></li><li><code>_runPendingImmediateCallback</code><span>isolate_patch.dart:96</span></li><li><code>_startMicrotaskLoop</code><span>schedule_microtask.dart:50</span></li><li><code>_microtaskLoop</code><span>schedule_microtask.dart:41</span></li><li><code>_Future._asyncCompleteError.&lt;anonymous closure&gt;</code><span>future_impl.dart:537</span></li><li><code>_Future._completeError</code><span>future_impl.dart:485</span></li><li><code>_Future._propagateToListeners</code><span>future_impl.dart:671</span></li><li><code>_Future._propagateToListeners.handleError</code><span>future_impl.dart:649</span></li><li><code>_FutureListener.handleError</code><span>future_impl.dart:146</span></li><li><code>_RootZone.runBinary</code><span>zone.dart:1410</span></li><li><code>_asyncErrorWrapperHelper.&lt;anonymous closure&gt;</code><span>async_patch.dart:34</span></li><li><code>main.&lt;main_async_body&gt;</code><span>regress_28325_test.dart</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The upstream loopback Socket.connect regression failed on 1.21.1 with no location in its first frame and passed on 1.24.0 with main:12:5.</dd></div><div><dt>What CoroPerf showed</dt><dd>A refused connection in the related socket test likewise had no location on 1.21.1 and pointed to 108:19 on 1.24.0, isolating the source-location change.</dd></div><div><dt>Scope and limits</dt><dd>The unmodified test from #28315 passed on both versions. Its intermittent SIMMIPS connection failure was not observed on local x64.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

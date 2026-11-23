@@ -1,0 +1,2100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Real systems issues and the recorded call-stack joins that recover coroutine origins.">
+  <title>Coroutine Evidence Atlas · coroPerf</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script defer src="assets/filter.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="index.html#issues">Issue evidence</a>
+        <a href="research.html">Research notes</a>
+        <a href="index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="wrap hero" aria-labelledby="hero-title">
+      <div>
+        <p class="eyebrow">Coroutine Evidence Atlas</p>
+        <h1 id="hero-title">Follow the stack<br>across <em>resumes.</em></h1>
+        <p class="hero-copy">Explore real issue reproductions, performance investigations, and the recorded stack links that recover where asynchronous execution began.</p>
+        <div class="actions"><a class="button" href="#issues">Browse issue evidence ↓</a><a href="research.html">Read the research notes ↗</a></div>
+      </div>
+      <figure class="specimen">
+        <figcaption><span>From the issue evidence</span><a href="evidence/dotnet--runtime--60764.html#call-stack">dotnet/runtime #60764 ↗</a></figcaption>
+        <div class="specimen-body">
+          <div class="specimen-block"><span>Creation · record 0</span><code>Program.Main</code><code>Program.Foo [MoveNext]</code></div>
+          <div class="specimen-edge">↓ &nbsp; Same state-machine instance</div>
+          <div class="specimen-block"><span>Observation · record 6</span><code>Program.Foo [MoveNext]</code><code>A..ctor</code></div>
+        </div>
+        <div class="specimen-foot">Selected frames from the recorded join</div>
+      </figure>
+    </section>
+    <section class="wrap block" aria-labelledby="coverage">
+      <div class="section-head"><h2 id="coverage">Evidence coverage</h2><span class="small">Corpus snapshot · <time>2026-11-21</time></span></div>
+      <dl class="stats"><div><dd>501</dd><dt>Issue evidence pages</dt></div><div><dd>264</dd><dt>Coroutine stack joins</dt></div><div><dd>1</dd><dt>Renderer chains</dt></div><div><dd>206</dd><dt>Reviewed origins in the full study</dt></div></dl>
+    </section>
+    <section class="wrap block" aria-labelledby="selected">
+      <div class="section-head"><h2 id="selected">Selected investigations</h2></div>
+      <div class="features">
+      <a class="feature" href="evidence/dotnet--runtime--60764.html">
+        <span class="feature-label">Managed identity</span>
+        <h3>Recovering Main after an async resume</h3>
+        <span class="feature-ref">dotnet/runtime #60764 <span aria-hidden="true">↗</span></span>
+      </a>
+      <a class="feature" href="evidence/sgl-project--sglang--50722.html">
+        <span class="feature-label">Performance</span>
+        <h3>Finding the poll loop behind a throughput drop</h3>
+        <span class="feature-ref">sgl-project/sglang #50722 <span aria-hidden="true">↗</span></span>
+      </a>
+      <a class="feature" href="evidence/drogonframework--drogon--2331.html">
+        <span class="feature-label">Native disassembly</span>
+        <h3>Attributing a database stall in a stripped binary</h3>
+        <span class="feature-ref">drogonframework/drogon #2331 <span aria-hidden="true">↗</span></span>
+      </a>
+      <a class="feature" href="evidence/vercel--next.js--74988.html">
+        <span class="feature-label">Framework ownership</span>
+        <h3>Finding the components behind a render failure</h3>
+        <span class="feature-ref">vercel/next.js #74988 <span aria-hidden="true">↗</span></span>
+      </a></div>
+    </section>
+    <section class="wrap block" id="issues" aria-labelledby="issues-title">
+      <div class="section-head"><h2 id="issues-title">Issue evidence</h2><a href="data/cases.json" download>Download snapshot data ↓</a></div>
+      <p class="section-copy">Open a case to inspect its connected call stack, original physical frames, local findings, and upstream report. Cases with limited captures describe the evidence gap.</p>
+      <div class="filters" hidden>
+        <div><label for="query">Search issues</label><input type="search" id="query" placeholder="Project, issue number, or title"></div>
+        <div><label for="state">Call stack</label><select id="state"><option value="">Any stack status</option><option value="creation">Coroutine stack joined</option><option value="renderer">Renderer chain linked</option><option value="physical">Physical stacks captured</option><option value="missing">No stack captured</option></select></div>
+        <div><label for="origin">Issue review</label><select id="origin"><option value="">Any review status</option><option value="yes">Confirmed coroutine origin</option></select></div>
+      </div>
+      <p class="results-count" id="results-count" role="status">501 issues</p>
+      <div class="table-wrap">
+        <table><thead><tr><th scope="col">Issue</th><th scope="col">Call stack</th><th scope="col">Reproduction</th></tr></thead>
+        <tbody id="case-rows">
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--accelerate--952.html"><span>huggingface/accelerate #952</span>Distributed GPT-2 evaluation discarded its final 128 predictions</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--accelerate--4359.html"><span>huggingface/accelerate #4359</span>Accelerate keeps padding duplicates from a sized iterable dataset</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--accelerate--1674.html"><span>huggingface/accelerate #1674</span>Uneven batches inflate a metric gathered across four GPUs</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--accelerate--4122.html"><span>huggingface/accelerate #4122</span>A sharded data loader counts a final batch that one rank never receives</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--transformers--46315.html"><span>huggingface/transformers #46315</span>Repeated token-ID lookups rebuild the added-token map</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/ray-project--ray--53071.html"><span>ray-project/ray #53071</span>Ray Serve processes ready batches serially by default</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/ray-project--ray--55142.html"><span>ray-project/ray #55142</span>A Ray Serve handle touches another thread’s event loop</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/ray-project--ray--56633.html"><span>ray-project/ray #56633</span>Batched Ray Serve requests can select the wrong multiplexed model</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/ray-project--ray--59140.html"><span>ray-project/ray #59140</span>The reported cold model-load delay did not recur locally</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Attempted, symptom unconfirmed</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--datasets--8669.html"><span>huggingface/datasets #8669</span>Default shuffling leaves three of four DataLoader workers idle</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--accelerate--2007.html"><span>huggingface/accelerate #2007</span>gather_for_metrics trims a full batch when drop_last is set</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiocache--1037.html"><span>aio-libs/aiocache #1037</span>Custom keys are encoded twice by multi_cached</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiocache--423.html"><span>aio-libs/aiocache #423</span>A renewed cache entry disappears at its original expiry time</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/mkuranowski--aiocsv--5.html"><span>mkuranowski/aiocsv #5</span>aiocsv splits a quoted multiline field into separate records</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/mkuranowski--aiocsv--3.html"><span>mkuranowski/aiocsv #3</span>An LF-terminated airport file yielded its header and no data</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aioftp--107.html"><span>aio-libs/aioftp #107</span>A leap-day file disappears from an FTP directory listing</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aioftp--60.html"><span>aio-libs/aioftp #60</span>Why did the FTP listing date a 2017 file to 1900?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/requests-cache--aiohttp-client-cache--169.html"><span>requests-cache/aiohttp-client-cache #169</span>Why did the third GET return an empty stream from a full cache?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--12996.html"><span>aio-libs/aiohttp #12996</span>Trailing whitespace makes aiohttp reject a valid disposition type</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--8011.html"><span>aio-libs/aiohttp #8011</span>A precompressed file receives a second layer of HTTP compression</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--2844.html"><span>aio-libs/aiohttp #2844</span>A partial download contained the right bytes but could not be resumed</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--4012.html"><span>aio-libs/aiohttp #4012</span>A multipart upload arrives under the wrong form field name</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--6701.html"><span>aio-libs/aiohttp #6701</span>A two-byte separator split CSV records one byte too early</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--11438.html"><span>aio-libs/aiohttp #11438</span>aiohttp traces the whole request across middleware retries</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--2805.html"><span>aio-libs/aiohttp #2805</span>aiohttp returned a prefix slice for an HTTP suffix range</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/omnilib--aioitertools--153.html"><span>omnilib/aioitertools #153</span>aioitertools.zip delivers raised exceptions as batch values</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiokafka--886.html"><span>aio-libs/aiokafka #886</span>Batched Kafka sends skip the configured key and value serializers</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiokafka--958.html"><span>aio-libs/aiokafka #958</span>aiokafka treats positional message headers as a partition key</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs-abandoned--aioredis-py--94.html"><span>aio-libs-abandoned/aioredis-py #94</span>Redis transactions return bytes despite a UTF-8 setting</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/omnilib--aiosqlite--34.html"><span>omnilib/aiosqlite #34</span>Row-by-row async SQLite iteration makes one worker handoff per row</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/omnilib--aiosqlite--285.html"><span>omnilib/aiosqlite #285</span>Committing through an aiosqlite cursor exposes the underlying connection</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/omnilib--aiosqlite--180.html"><span>omnilib/aiosqlite #180</span>Setting row_factory on an aiosqlite cursor still returns a tuple</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/vxgmichel--aiostream--76.html"><span>vxgmichel/aiostream #76</span>Awaiting an empty aiostream stream reported an extra exception</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/vxgmichel--aiostream--129.html"><span>vxgmichel/aiostream #129</span>aiostream flatmap checked a coroutine before awaiting it</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/vxgmichel--aiostream--78.html"><span>vxgmichel/aiostream #78</span>A synchronous iterator stalls the event-loop heartbeat</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/vxgmichel--aiostream--71.html"><span>vxgmichel/aiostream #71</span>Simultaneous iterator failures leave one task exception unread</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/agronholm--anyio--642.html"><span>agronholm/anyio #642</span>A shielded AnyIO host left its sibling waiting for cancellation</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/agronholm--anyio--837.html"><span>agronholm/anyio #837</span>Cancelling task startup bypasses an active asyncio shield</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/agronholm--apscheduler--1141.html"><span>agronholm/apscheduler #1141</span>PostgreSQL sent the schedule notification, but the scheduler stayed asleep</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/agronholm--apscheduler--1061.html"><span>agronholm/apscheduler #1061</span>CronTrigger scheduled its first run before the start time</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/agronholm--apscheduler--652.html"><span>agronholm/apscheduler #652</span>APScheduler records job failures without printing the exception</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python-arq--arq--390.html"><span>python-arq/arq #390</span>A job on the default queue waits while a custom worker is idle</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python-arq--arq--483.html"><span>python-arq/arq #483</span>An arq quarterly schedule loses its time zone at a month boundary</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--arrow--51194.html"><span>apache/arrow #51194</span>Arrow returned a positive running maximum for a negative first value</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--arrow--42980.html"><span>apache/arrow #42980</span>Parquet footer statistics undercount nulls in a repeated column</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--async-lru--480.html"><span>aio-libs/async-lru #480</span>Cache eviction leaves callers waiting after their work finishes</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--async-lru--528.html"><span>aio-libs/async-lru #528</span>A cached async call loses its caller from the live stack</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/maxfischer2781--asyncstdlib--234.html"><span>maxfischer2781/asyncstdlib #234</span>Descending async merge reverses source order for equal keys</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/maxfischer2781--asyncstdlib--235.html"><span>maxfischer2781/asyncstdlib #235</span>Async max selects the last item tied for first</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--1149.html"><span>magicstack/asyncpg #1149</span>Cursor prefetch delays delivery of rows that are already available</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--62.html"><span>magicstack/asyncpg #62</span>Why did a PostgreSQL date range raise an error, and December 31 become year 1?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--590.html"><span>magicstack/asyncpg #590</span>Reading an enum array changes later scalar enum handling</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--363.html"><span>magicstack/asyncpg #363</span>asyncpg added one second to fractional timestamps before 2000</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--514.html"><span>magicstack/asyncpg #514</span>Why did an eight-place PostgreSQL decimal come back with twelve places?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/maxfischer2781--asyncstdlib--176.html"><span>maxfischer2781/asyncstdlib #176</span>An extra None in an asynchronous running total</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/maxfischer2781--asyncstdlib--111.html"><span>maxfischer2781/asyncstdlib #111</span>asyncstdlib.heapq.merge reverses the source order of equal keys</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/maxfischer2781--asyncstdlib--177.html"><span>maxfischer2781/asyncstdlib #177</span>A nested async tee skips records when its parent advances</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--beam--40814.html"><span>apache/beam #40814</span>Beam rejects duplicated() on a deferred Series</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--beam--40638.html"><span>apache/beam #40638</span>RunInference’s file watcher can publish an older model after a newer one</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/boltdb--bolt--392.html"><span>boltdb/bolt #392</span>A Bolt reader waiting for a writer can block a database remap</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/mahmoud--boltons--319.html"><span>mahmoud/boltons #319</span>Why did a yearly date range skip every other December?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--cassandra--CASSANDRA-14245.html"><span>apache/cassandra #CASSANDRA-14245</span>Cassandra SELECT JSON displayed empty text as null</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--cassandra--CASSANDRA-12060.html"><span>apache/cassandra #CASSANDRA-12060</span>A failed conditional delete omitted a null static column</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/catboost--catboost--3211.html"><span>catboost/catboost #3211</span>CatBoost accuracy changes when labels are reshaped to a single column</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/celery--celery--8421.html"><span>celery/celery #8421</span>Why did a Celery chord return ten results in reverse order?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/chroma-core--chroma--7491.html"><span>chroma-core/chroma #7491</span>Chroma matched a stored integer of 2 against a filter for 2.5</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/cockroachdb--cockroach--76651.html"><span>cockroachdb/cockroach #76651</span>The CockroachDB CLI displays CHAR text as escaped bytes</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/cockroachdb--cockroach--33313.html"><span>cockroachdb/cockroach #33313</span>Why did skipping one conflicting row also discard the next valid row?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/hashicorp--raft--606.html"><span>hashicorp/raft #606</span>Followers reject pre-votes from their former leader</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/hashicorp--raft--696.html"><span>hashicorp/raft #696</span>A re-elected Raft leader keeps rejecting writes after leadership transfer</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--kafka--KAFKA-14178.html"><span>apache/kafka #KAFKA-14178</span>Idle KRaft controllers report five seconds of queue time</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/hashicorp--consul--7826.html"><span>hashicorp/consul #7826</span>A successful Consul transaction returns the wrong index for an unchanged key</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/opennmt--ctranslate2--1291.html"><span>opennmt/ctranslate2 #1291</span>Why did a longer prompt return no new tokens in a mixed batch?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--dask--10322.html"><span>dask/dask #10322</span>Dask assigned accident counts to the wrong year during aggregation</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/dask--distributed--3368.html"><span>dask/distributed #3368</span>The Dask dashboard counts the same keys under two task names</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--dask--4321.html"><span>dask/dask #4321</span>A Dask bag built from zero files lost its dataframe schema</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--dask--3755.html"><span>dask/dask #3755</span>Dask returned the first column twice when computing grouped cumulative sums</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--dask--8749.html"><span>dask/dask #8749</span>A groupby shift assigns values to the wrong rows after a shuffle</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--dask--12426.html"><span>dask/dask #12426</span>Dask Series.map loses lookups across partition boundaries</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--dask--10655.html"><span>dask/dask #10655</span>Dask dropped the month-end count when the last input fell on January 31</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/dask--distributed--4927.html"><span>dask/distributed #4927</span>Dask undercounts replicated task data and can report negative bytes</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/dask--distributed--8165.html"><span>dask/distributed #8165</span>Why did sorting a three-row Dask DataFrame return zero rows?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--dask--7539.html"><span>dask/dask #7539</span>Reading only the SQL index discarded every populated Dask partition</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--dask--5472.html"><span>dask/dask #5472</span>Dask reverses contraction axes when calculating tensordot chunks</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/dask--distributed--7474.html"><span>dask/distributed #7474</span>Worker log requests return the oldest entries first</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--547.html"><span>magicstack/asyncpg #547</span>Cancelling a timed acquire leaves an asyncpg pool slot occupied</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--12077.html"><span>sqlalchemy/sqlalchemy #12077</span>An asyncpg backend survives cancellation after its pool entry is invalidated</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/django--django--28900.html"><span>django/django #28900</span>A UNION selecting only an annotation returns integers instead of booleans</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/encode--databases--160.html"><span>encode/databases #160</span>A nested RETURNING clause shifted PostgreSQL result columns</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/encode--databases--101.html"><span>encode/databases #101</span>A PostgreSQL row turns into an empty dictionary after a raw SQL query</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/encode--databases--377.html"><span>encode/databases #377</span>An expanding SQLAlchemy IN parameter reaches PostgreSQL unrendered</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/apache--datafusion--13145.html"><span>apache/datafusion #13145</span>DataFusion placed exact pre-epoch timestamps in the previous time bin</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--datasets--8919.html"><span>huggingface/datasets #8919</span>Batched Dataset.map drops rows at each worker boundary</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--datasets--3273.html"><span>huggingface/datasets #3273</span>Joining two sorted datasets by column pairs sentences with the wrong tags</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--datasets--7156.html"><span>huggingface/datasets #7156</span>Interleaving datasets loses the shuffled shard order</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/huggingface--datasets--8568.html"><span>huggingface/datasets #8568</span>Skipping a row after a distributed split sends the same data to both ranks</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--datasets--8145.html"><span>huggingface/datasets #8145</span>Resuming a mapped streaming dataset skips 800 examples</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--datasets--8359.html"><span>huggingface/datasets #8359</span>Resuming a filtered IterableDataset skips part of an Arrow table</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--datasets--7954.html"><span>huggingface/datasets #7954</span>Hugging Face Datasets drops records from longer inputs during round-robin interleaving</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/psycopg--psycopg--374.html"><span>psycopg/psycopg #374</span>An implicit pipeline transaction reaches SAVEPOINT too early</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--1008.html"><span>magicstack/asyncpg #1008</span>An exhausted cursor prevents a schema change in the same transaction</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--13439.html"><span>sqlalchemy/sqlalchemy #13439</span>Concurrent UPDATE … RETURNING calls can map a value to the wrong column</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--kafka--KAFKA-10847.html"><span>apache/kafka #KAFKA-10847</span>A Kafka Streams left join can emit an unmatched order before its payment arrives</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/django--django--34464.html"><span>django/django #34464</span>Counting ten hourly groups returned zero in Django</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--10867.html"><span>duckdb/duckdb #10867</span>Why did an ASOF join lose the earlier non-NULL match?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--17143.html"><span>duckdb/duckdb #17143</span>DuckDB returned a primary key that did not identify the updated row</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--28893.html"><span>duckdb/duckdb #28893</span>Why did DuckDB return a decimal sum exactly 100 times too large?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--5070.html"><span>duckdb/duckdb #5070</span>Filtered COUNT DISTINCT depends on input order</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--6341.html"><span>duckdb/duckdb #6341</span>A range LEFT JOIN against a newly created empty table dropped every left row</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--5776.html"><span>duckdb/duckdb #5776</span>Year-end pickups moved into the wrong ISO reporting week</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--15141.html"><span>duckdb/duckdb #15141</span>DuckDB drops ORDER BY from a PIVOT without an ON clause</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--17175.html"><span>duckdb/duckdb #17175</span>DuckDB kept a rolled-up join key in two subtotal rows</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--21592.html"><span>duckdb/duckdb #21592</span>DuckDB returned a group total for every row of a running sum</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--8315.html"><span>duckdb/duckdb #8315</span>Window ranks reuse the first window’s NULL ordering</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/etcd-io--etcd--11392.html"><span>etcd-io/etcd #11392</span>Why did the compaction counter stay at zero after nine revisions disappeared?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/etcd-io--etcd--6671.html"><span>etcd-io/etcd #6671</span>etcd returned key order for a range sorted by creation revision</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/etcd-io--etcd--14857.html"><span>etcd-io/etcd #14857</span>etcd raises a one-second lease to the cluster minimum</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/etcd-io--etcd--13709.html"><span>etcd-io/etcd #13709</span>Why did etcdctl print 10 when the Raft term was 16?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/etcd-io--etcd--6145.html"><span>etcd-io/etcd #6145</span>An etcd range page returns the correct keys and the wrong count</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/etcd-io--etcd--22612.html"><span>etcd-io/etcd #22612</span>A limited etcd range returned the second-oldest key</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/etcd-io--etcd--19253.html"><span>etcd-io/etcd #19253</span>etcd snapshot status counts internal entries and old revisions</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/etcd-io--etcd--2225.html"><span>etcd-io/etcd #2225</span>etcd counted a completed one-shot watch twice on removal</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/etcd-io--etcd--15220.html"><span>etcd-io/etcd #15220</span>An etcd progress notification can overtake watch history</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/etcd-io--etcd--11080.html"><span>etcd-io/etcd #11080</span>etcd sent file-only Zap logs to standard error</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/etcd-io--etcd--9532.html"><span>etcd-io/etcd #9532</span>etcdctl prints plain text when endpoint health requests JSON</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/etcd-io--etcd--7049.html"><span>etcd-io/etcd #7049</span>etcdctl v3 omits the settings needed to start a new cluster member</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/etcd-io--etcd--6315.html"><span>etcd-io/etcd #6315</span>etcdctl stored the quote characters around transaction values</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/rexxars--eventsource-parser--17.html"><span>rexxars/eventsource-parser #17</span>Splitting CRLF across chunks turned one server-sent event into two</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/facebookresearch--faiss--5329.html"><span>facebookresearch/faiss #5329</span>Why did moving the query and both candidates change the nearest neighbor?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--flink--flink-33489.html"><span>apache/flink #flink-33489</span>Flink dropped the LISTAGG separator during aggregation planning</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--flink--flink-26334.html"><span>apache/flink #flink-26334</span>Flink assigned pre-epoch events to a future window</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/twmb--franz-go--1422.html"><span>twmb/franz-go #1422</span>kfake returned offsets 0 and 2 for two Kafka timestamp lookups that both required offset 1</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/fsspec--filesystem_spec--2408.html"><span>fsspec/filesystem_spec #2408</span>Why did a seven-byte fsspec read return the whole ten-byte file?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/fsspec--filesystem_spec--2433.html"><span>fsspec/filesystem_spec #2433</span>An async fsspec download treats a file-like destination as a path</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/fsspec--filesystem_spec--2459.html"><span>fsspec/filesystem_spec #2459</span>A larger second Parquet footer is assigned to the first file</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/fsspec--filesystem_spec--2349.html"><span>fsspec/filesystem_spec #2349</span>Reading one line from an HTTP stream tried to seek backwards</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/gradio-app--gradio--9679.html"><span>gradio-app/gradio #9679</span>Streaming a chat reply collapsed separate paragraphs</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/graphql-python--graphql-core--258.html"><span>graphql-python/graphql-core #258</span>A synchronous GraphQL list resolver creates an unawaited coroutine for a Django QuerySet</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/grpc--grpc--43502.html"><span>grpc/grpc #43502</span>A unary gRPC call loses the cancellation reason that a streaming call preserves</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/grpc--grpc--37881.html"><span>grpc/grpc #37881</span>A synchronous gRPC handler loses its async interceptor’s request ID</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/grpc--grpc--20226.html"><span>grpc/grpc #20226</span>The first gRPC calls concentrate on the first ready backend</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/encode--httpx--2810.html"><span>encode/httpx #2810</span>HTTPX included the query string in the ASGI raw path</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/encode--httpx--1310.html"><span>encode/httpx #1310</span>HTTPX interprets elapsed seconds as days</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/encode--httpx--2331.html"><span>encode/httpx #2331</span>HTTPX dropped an empty query field when it merged request parameters</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/encode--httpx--620.html"><span>encode/httpx #620</span>HTTPX overwrote an explicit JSON media type</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/encode--httpx--1033.html"><span>encode/httpx #1033</span>HTTPX drops the start of a JSON line spanning multiple chunks</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/ibis-project--ibis--1799.html"><span>ibis-project/ibis #1799</span>Filling two columns in sequence drops the first replacement</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/ibis-project--ibis--4722.html"><span>ibis-project/ibis #4722</span>Ibis omits the window clause for lag inside coalesce</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/influxdata--influxdb--24458.html"><span>influxdata/influxdb #24458</span>A relative month starts 14 hours and 30 minutes late in a Flux query</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats-server--6077.html"><span>nats-io/nats-server #6077</span>JetStream Direct Get returned a message written after the requested cutoff</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/segmentio--kafka-go--326.html"><span>segmentio/kafka-go #326</span>Synchronous single-message Kafka writes wait for the batch timer</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/kornia--kornia--2037.html"><span>kornia/kornia #2037</span>Nested Kornia augmentations interpolate a binary mask</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/langchain-ai--langchain--35475.html"><span>langchain-ai/langchain #35475</span>A failed batch item receives another item’s successful retry</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/langchain-ai--langgraph--9584.html"><span>langchain-ai/langgraph #9584</span>The exit-mode checkpoint stream reports a stale parent</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/langchain-ai--langgraph--4372.html"><span>langchain-ai/langgraph #4372</span>LangGraph omits a Command tool message from the message stream</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/langchain-ai--langgraph--3590.html"><span>langchain-ai/langgraph #3590</span>Command.PARENT can re-emit the user message after the AI reply</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/langchain-ai--langgraph--4084.html"><span>langchain-ai/langgraph #4084</span>Why did awaiting a LangGraph task return None when its end event said “Task 2”?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/langchain-ai--langchain--40858.html"><span>langchain-ai/langchain #40858</span>Structured streaming drops tool calls after a model falls back to invoke</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/lightning-ai--litserve--740.html"><span>lightning-ai/litserve #740</span>LitServe returned a float array to clients that requested base64 embeddings</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/run-llama--llama_index--19537.html"><span>run-llama/llama_index #19537</span>Mixed embedding cache hits and misses attach vectors to the wrong nodes</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/abetlen--llama-cpp-python--1787.html"><span>abetlen/llama-cpp-python #1787</span>The chat client could not read the token scores that Qwen generated</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/seldonio--mlserver--514.html"><span>seldonio/mlserver #514</span>MLServer returned a class label when clients requested probabilities</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/empicano--aiomqtt--58.html"><span>empicano/aiomqtt #58</span>An MQTT v5 connection refusal surfaces as a timeout</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/narwhals-dev--narwhals--3853.html"><span>narwhals-dev/narwhals #3853</span>The PyArrow backend returns the lower value as a two-element median</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/narwhals-dev--narwhals--3311.html"><span>narwhals-dev/narwhals #3311</span>A grouped conditional sum includes every row on pandas and PyArrow</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats-server--8752.html"><span>nats-io/nats-server #8752</span>Filtered connection pages report the total for all NATS clients</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats-server--8912.html"><span>nats-io/nats-server #8912</span>An ordered consumer reports zero pending before delivering an unseen key</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats.py--809.html"><span>nats-io/nats.py #809</span>JetStream direct reads lose the stored message timestamp</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats.go--468.html"><span>nats-io/nats.go #468</span>A slow callback serializes requests on one NATS subscription</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats.py--482.html"><span>nats-io/nats.py #482</span>Three NATS consumers share one outstanding delivery limit</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats.py--1079.html"><span>nats-io/nats.py #1079</span>JetStream key enumeration can finish before all keys arrive</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats-server--2611.html"><span>nats-io/nats-server #2611</span>Why did JetStream still report 197 pending messages after the consumer drained?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats.py--380.html"><span>nats-io/nats.py #380</span>The Python NATS client keeps only the last duplicate header</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats.py--613.html"><span>nats-io/nats.py #613</span>Why did the JetStream subscriber receive all ten messages while its named delivery subject received none?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats.py--1027.html"><span>nats-io/nats.py #1027</span>A NATS subscription stops before its second message callback completes</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nats-io--nats.py--924.html"><span>nats-io/nats.py #924</span>A non-ASCII value makes nats.py drop every message header</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/nats-io--natscli--1511.html"><span>nats-io/natscli #1511</span>A stream copy reports the source name in its success message</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/nats-io--natscli--1030.html"><span>nats-io/natscli #1030</span>JetStream stream info labels local timestamps as UTC</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--13433.html"><span>aio-libs/aiohttp #13433</span>A dynamic route returns 404 for its own space-encoded URL</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--14378.html"><span>aio-libs/aiohttp #14378</span>trust_env adds executor lookups before aiohttp sends request headers</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--14381.html"><span>aio-libs/aiohttp #14381</span>A HEAD response without Content-Length prevents connection reuse</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/encode--httpcore--598.html"><span>encode/httpcore #598</span>httpcore can start a second HTTP/2 stream before the peer permits it</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/aio-libs--aiohttp--5324.html"><span>aio-libs/aiohttp #5324</span>Reading ClientResponse.content skips the chunk trace callback</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/onnx--sklearn-onnx--1117.html"><span>onnx/sklearn-onnx #1117</span>Two exported AdaBoost trees lost a small class probability</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pytorch--pytorch--183528.html"><span>pytorch/pytorch #183528</span>ONNX Runtime averaged five boundary windows over too many cells</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/onnx--sklearn-onnx--1116.html"><span>onnx/sklearn-onnx #1116</span>Exporting binary LDA to ONNX exaggerated class probabilities</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/onnx--sklearn-onnx--1281.html"><span>onnx/sklearn-onnx #1281</span>ColumnTransformer loses a permutation when it selects every column</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/onnx--sklearn-onnx--889.html"><span>onnx/sklearn-onnx #889</span>A converted forest returned class probabilities that summed to 2.56</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/onnx--sklearn-onnx--1192.html"><span>onnx/sklearn-onnx #1192</span>How did a float32 threshold change six tree decisions?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/onnx--sklearn-onnx--1026.html"><span>onnx/sklearn-onnx #1026</span>Why did converting a one-hot encoder change five of six random-forest predictions?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/onnx--sklearn-onnx--1215.html"><span>onnx/sklearn-onnx #1215</span>An ONNX ordinal encoder assigned distinct codes to categories trained to share one</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/onnx--sklearn-onnx--1246.html"><span>onnx/sklearn-onnx #1246</span>Sigmoid calibration uses probabilities instead of raw pipeline scores</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/databendlabs--openraft--912.html"><span>databendlabs/openraft #912</span>OpenRaft publishes the snapshot index before installation finishes</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/databendlabs--openraft--1659.html"><span>databendlabs/openraft #1659</span>OpenRaft’s storage suite rejected a valid node display format</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/ormar-orm--ormar--72.html"><span>ormar-orm/ormar #72</span>A five-record ormar page returned only two parents</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pandas-dev--pandas--71940.html"><span>pandas-dev/pandas #71940</span>Grouped OHLC fails on Arrow-backed numeric data</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pandas-dev--pandas--63920.html"><span>pandas-dev/pandas #63920</span>A missing categorical key contributes to the wrong group</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--cassandra--CASSANDRA-19935.html"><span>apache/cassandra #CASSANDRA-19935</span>Paxos treats identical voting members as different</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--cassandra--CASSANDRA-19637.html"><span>apache/cassandra #CASSANDRA-19637</span>Conditional updates treat null lists differently in Cassandra</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/coleifer--peewee--2872.html"><span>coleifer/peewee #2872</span>Why did a PostgreSQL cursor with 42 rows evaluate as false?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/petl-developers--petl--552.html"><span>petl-developers/petl #552</span>Why did a two-column group count return four fields?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/piccolo-orm--piccolo--1127.html"><span>piccolo-orm/piccolo #1127</span>Piccolo rounds large SQLite integers when reading them</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/piccolo-orm--piccolo--410.html"><span>piccolo-orm/piccolo #410</span>Piccolo generates invalid SQL for JSONB null checks</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/piccolo-orm--piccolo--715.html"><span>piccolo-orm/piccolo #715</span>Piccolo inserts an empty string for a null get_or_create condition</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/piccolo-orm--piccolo--1399.html"><span>piccolo-orm/piccolo #1399</span>Prefetching a related row decodes a JSON array twice</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/piccolo-orm--piccolo--1444.html"><span>piccolo-orm/piccolo #1444</span>Why did SQLite return a float from a decimal array?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pola-rs--polars--26918.html"><span>pola-rs/polars #26918</span>Grouped min_by returns the first value when all sorting keys are null</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pola-rs--polars--22936.html"><span>pola-rs/polars #22936</span>A positive rolling window returned a negative mean</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pola-rs--polars--25468.html"><span>pola-rs/polars #25468</span>A nearest-date join selects the same date with exact matches disabled</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pola-rs--polars--22868.html"><span>pola-rs/polars #22868</span>A partial weighted rolling window gets the wrong mean</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pola-rs--polars--28559.html"><span>pola-rs/polars #28559</span>Why did Polars return b as the minimum of [b, a, c]?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pola-rs--polars--18943.html"><span>pola-rs/polars #18943</span>A valid sorted flag misaligns ordered window results</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/prefecthq--prefect--23831.html"><span>prefecthq/prefect #23831</span>Why did a three-row DataFrame return a cached count of two?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--beam--23071.html"><span>apache/beam #23071</span>Beam’s processing-time trigger resets a pending timer</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--distributed--5513.html"><span>dask/distributed #5513</span>worker_client fails inside an async Dask worker function</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--distributed--7047.html"><span>dask/distributed #7047</span>A Dask parent waits for a child that only its own busy worker may run</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--distributed--7223.html"><span>dask/distributed #7223</span>Dask leaves queued work undispatched after a task secedes</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--distributed--9034.html"><span>dask/distributed #9034</span>Nested worker_client calls try to release the same worker thread twice</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/duckdb--duckdb--18309.html"><span>duckdb/duckdb #18309</span>An OR condition makes a DuckDB ASOF join skip a valid row</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/dask--dask--10708.html"><span>dask/dask #10708</span>Dask’s peer-to-peer shuffle can keep the wrong first row for a duplicate key</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/prometheus--client_python--1147.html"><span>prometheus/client_python #1147</span>Multiprocess histogram export interleaves OpenMetrics label groups</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/prometheus--client_python--1037.html"><span>prometheus/client_python #1037</span>Timestamp comparison lets nanoseconds override the seconds field</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/psycopg--psycopg--962.html"><span>psycopg/psycopg #962</span>A notification received during a health check disappears</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/psycopg--psycopg--972.html"><span>psycopg/psycopg #972</span>The notification generator bypasses registered callbacks</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/psycopg--psycopg--1073.html"><span>psycopg/psycopg #1073</span>Psycopg mistakes a row mapped to None for the end of a cursor</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/psycopg--psycopg--178.html"><span>psycopg/psycopg #178</span>executemany reports −1 after two deletes that match no rows</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--iceberg-python--3522.html"><span>apache/iceberg-python #3522</span>Why did a decimal equality scan miss a row in an Iceberg table?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python--cpython--134471.html"><span>python/cpython #134471</span>A zero-second timeout converted an earlier external task cancellation</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python--cpython--86296.html"><span>python/cpython #86296</span>AsyncIO wait_for swallowed an external task cancellation</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/qdrant--qdrant-client--1477.html"><span>qdrant/qdrant-client #1477</span>Three spellings of one UUID produce three local vector points</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/hashicorp--raft--722.html"><span>hashicorp/raft #722</span>Raft reports configuration index zero after bootstrap</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/hashicorp--raft--56.html"><span>hashicorp/raft #56</span>Why did Raft write snapshot index zero after restoring ten committed rows?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/hashicorp--raft--637.html"><span>hashicorp/raft #637</span>Raft logs a snapshot error when only no-op entries have advanced</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/etcd-io--etcd--22207.html"><span>etcd-io/etcd #22207</span>etcdctl prints RaftTerm twice in endpoint status</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--ratis--RATIS-2640.html"><span>apache/ratis #RATIS-2640</span>Why did Ratis reject a listener addition before the leader received it?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--ratis--RATIS-1723.html"><span>apache/ratis #RATIS-1723</span>The Ratis counter writes snapshots without updating its cached index</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--ratis--RATIS-2685.html"><span>apache/ratis #RATIS-2685</span>Why did a Ratis follower’s reported index stop advancing while it kept applying writes?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--ratis--RATIS-784.html"><span>apache/ratis #RATIS-784</span>Why did Ratis report a sync batch size of zero after writing three receipts?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--ratis--RATIS-1885.html"><span>apache/ratis #RATIS-1885</span>The client-write timer starts after request processing has begun</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/ray-project--ray--33517.html"><span>ray-project/ray #33517</span>Ray Data returns all 100 rows while its progress bar stops at 10%</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/ray-project--ray--60872.html"><span>ray-project/ray #60872</span>Why did Ray return one patch when the application requested one image?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/ray-project--ray--51188.html"><span>ray-project/ray #51188</span>Ray Data’s ordered async map can return zero rows from ten inputs</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/ray-project--ray--67404.html"><span>ray-project/ray #67404</span>Ray Serve swapped two features in a batched prediction</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/redis--redis-py--2003.html"><span>redis/redis-py #2003</span>Why did a Redis Cluster scan return one of nineteen keys?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/redis--redis-py--4428.html"><span>redis/redis-py #4428</span>The default Redis protocol returns sorted-set scores as bytes when text was requested</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/redis--redis-py--1776.html"><span>redis/redis-py #1776</span>LMOVE and BLMOVE return True instead of the moved value</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/redis--redis-py--3416.html"><span>redis/redis-py #3416</span>Redis pipeline command packing blocks the asyncio loop</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/redis--redis-py--2916.html"><span>redis/redis-py #2916</span>Why did asking Redis for a rank and its score raise TypeError?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/redis--redis-py--2601.html"><span>redis/redis-py #2601</span>A pipelined vector search returned raw replies instead of document objects</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/redis--redis-py--2226.html"><span>redis/redis-py #2226</span>The Redis client dropped the cursor for the next stream page</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/online-ml--river--1964.html"><span>online-ml/river #1964</span>Why did River return 0.44723478 for a predictive standard deviation of 0.20001895?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/online-ml--river--1730.html"><span>online-ml/river #1730</span>Why did River return three clusters when none met the minimum weight?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/rqlite--rqlite--2372.html"><span>rqlite/rqlite #2372</span>The execute endpoint ignores associative response formatting</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/rqlite--rqlite--1833.html"><span>rqlite/rqlite #1833</span>Successive automatic backups reuse the first timestamp in their object name</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/rqlite--rqlite--257.html"><span>rqlite/rqlite #257</span>A read-only rqlite query printed the previous write count</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/rqlite--rqlite--1330.html"><span>rqlite/rqlite #1330</span>An aggregate returned its numeric value with an empty column type</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/rqlite--rqlite--2777.html"><span>rqlite/rqlite #2777</span>An rqlite dump of one table includes objects from unselected tables</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/rqlite--rqlite--1048.html"><span>rqlite/rqlite #1048</span>A Raft leader reports its own read as stale</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/rqlite--rqlite--1545.html"><span>rqlite/rqlite #1545</span>DNS-SRV discovery gives a configured rqlite non-voter a Raft vote</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/rqlite--rqlite--763.html"><span>rqlite/rqlite #763</span>Raft commit indexes arrived as strings in the rqlite status API</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/rqlite--rqlite--2965.html"><span>rqlite/rqlite #2965</span>A successful rqlite insert returned year 1 for the current timestamp</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/reactivex--rxpy--734.html"><span>reactivex/rxpy #734</span>RxPY’s AsyncIOScheduler reports dates in 1970</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/reactivex--rxpy--578.html"><span>reactivex/rxpy #578</span>RxPY zip completes before it pairs two four-item sources</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/scipy--scipy--12836.html"><span>scipy/scipy #12836</span>SciPy returned a negative median for two positive pixel values</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/scikit-learn--scikit-learn--33757.html"><span>scikit-learn/scikit-learn #33757</span>BayesianRidge reports the wrong predictive uncertainty for uncentered inputs</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/scikit-learn--scikit-learn--26965.html"><span>scikit-learn/scikit-learn #26965</span>scikit-learn awarded a perfect F1 score to two swapped predictions</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/scikit-learn--scikit-learn--33305.html"><span>scikit-learn/scikit-learn #33305</span>Why did a three-component MDS fit return two coordinates?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/onnx--sklearn-onnx--793.html"><span>onnx/sklearn-onnx #793</span>Why did a converted max normalizer turn negative values positive on CPU?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/scikit-learn--scikit-learn--32589.html"><span>scikit-learn/scikit-learn #32589</span>OneHotEncoder discarded the low-frequency feature for an unseen category</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/scikit-learn--scikit-learn--31859.html"><span>scikit-learn/scikit-learn #31859</span>Warm-starting Newton–Cholesky changes multiclass predictions</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/miguelgrinberg--python-socketio--811.html"><span>miguelgrinberg/python-socketio #811</span>MessagePack binary events and acknowledgments get the wrong packet type</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/miguelgrinberg--python-socketio--1081.html"><span>miguelgrinberg/python-socketio #1081</span>An async Socket.IO server dropped messages addressed to a list of rooms</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--13689.html"><span>sqlalchemy/sqlalchemy #13689</span>AsyncResult.freeze stores an unawaited fetchall coroutine</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/golang--go--64498.html"><span>golang/go #64498</span>Rows.Err can block after a RawBytes scan and query cancellation</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--13209.html"><span>sqlalchemy/sqlalchemy #13209</span>Chained selectinload waits until attribute access</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--13688.html"><span>sqlalchemy/sqlalchemy #13688</span>Async SQLAlchemy result views lose column and uniqueness settings</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/tobymao--sqlglot--8858.html"><span>tobymao/sqlglot #8858</span>Casting a timestamp to a date made the optimizer drop matching rows</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/tobymao--sqlglot--4112.html"><span>tobymao/sqlglot #4112</span>SQLGlot loses a join source when USING follows an ON clause</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/tobymao--sqlglot--7295.html"><span>tobymao/sqlglot #7295</span>SQLGlot mishandles a correlated scalar subquery during optimization</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/tobymao--sqlglot--7964.html"><span>tobymao/sqlglot #7964</span>Moving a filter inside a right join returned excluded flights</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/tobymao--sqlglot--8315.html"><span>tobymao/sqlglot #8315</span>SQLite translation changes how GREATEST and LEAST handle NULL</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/tobymao--sqlglot--9150.html"><span>tobymao/sqlglot #9150</span>Where did the two-hour shift go in generated SQLite SQL?</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/sqlite--sqlite--aeae62275ebbf584.html"><span>sqlite/sqlite #aeae62275ebbf584</span>SQLite counts two rows in a UNION ALL subquery that returns three</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/sqlite--sqlite--ccf3b5673ba852cf.html"><span>sqlite/sqlite #ccf3b5673ba852cf</span>A sliding group_concat window cut digits off a surviving value</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/omnilib--aiosqlite--87.html"><span>omnilib/aiosqlite #87</span>An upsert can leave lastrowid pointing to another project</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/florimondmanca--httpx-sse--35.html"><span>florimondmanca/httpx-sse #35</span>An SSE heartbeat after an event ID produces an empty message</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/florimondmanca--httpx-sse--34.html"><span>florimondmanca/httpx-sse #34</span>A Unicode line separator truncated a server-sent event</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--sentence-transformers--3159.html"><span>huggingface/sentence-transformers #3159</span>Scalar quantization wraps values outside the calibration range</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--sentence-transformers--4103.html"><span>huggingface/sentence-transformers #4103</span>Left padding changed weighted-mean sentence embeddings</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/apache--kafka--KAFKA-18326.html"><span>apache/kafka #KAFKA-18326</span>A cached Kafka Streams scan returns a deleted key</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python-streamz--streamz--336.html"><span>python-streamz/streamz #336</span>Streamz reuses the first dictionary event across ten Dask submissions</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/python-streamz--streamz--468.html"><span>python-streamz/streamz #468</span>Flushing a collection leaves async sink callbacks unawaited</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python-streamz--streamz--394.html"><span>python-streamz/streamz #394</span>A repeated stream value cancelled a new Dask task</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python-streamz--streamz--462.html"><span>python-streamz/streamz #462</span>Streamz consumed the first generator item and delivered none</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/tikv--tikv--17037.html"><span>tikv/tikv #17037</span>tikv-ctl omits the state of a healthy Raft region</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--tokenizers--1819.html"><span>huggingface/tokenizers #1819</span>A tokenizer counted a real leading space as part of the first word</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--tokenizers--1229.html"><span>huggingface/tokenizers #1229</span>Left padding assigns tokens to the wrong input sequence</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/lightning-ai--torchmetrics--2570.html"><span>lightning-ai/torchmetrics #2570</span>A second MetricCollection read can return another metric’s cached result</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/lightning-ai--torchmetrics--1691.html"><span>lightning-ai/torchmetrics #1691</span>A perfect classifier received a macro accuracy of two thirds</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/lightning-ai--torchmetrics--2558.html"><span>lightning-ai/torchmetrics #2558</span>TorchMetrics summed per-batch segmentation IoU at validation epoch end</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/lightning-ai--torchmetrics--3486.html"><span>lightning-ai/torchmetrics #3486</span>A failed compute leaves the metric synchronized</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/lightning-ai--torchmetrics--2851.html"><span>lightning-ai/torchmetrics #2851</span>Weighted Dice scores exceed one when foreground is absent</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tornadoweb--tornado--2726.html"><span>tornadoweb/tornado #2726</span>Tornado drops the Allow header from a 204 OPTIONS response</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2060.html"><span>tortoise/tortoise-orm #2060</span>Concurrent update_or_create returns the other caller’s value</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--130.html"><span>tortoise/tortoise-orm #130</span>SQLite wrote a timestamp that the ORM could not find</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--256.html"><span>tortoise/tortoise-orm #256</span>SQLite sorted a decimal bill of 27.27 before 9.99</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--1549.html"><span>tortoise/tortoise-orm #1549</span>Why did an HTTP response turn 200.00 into 2E+2?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2178.html"><span>tortoise/tortoise-orm #2178</span>A directory page returned two distinct users and a total of three</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2225.html"><span>tortoise/tortoise-orm #2225</span>A reverse foreign-key lookup uses the primary key instead of to_field</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2046.html"><span>tortoise/tortoise-orm #2046</span>Which book does first() return when a subclass inherits its ordering?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2273.html"><span>tortoise/tortoise-orm #2273</span>Updating a Shanghai timestamp moved 09:00 to 17:00</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--1969.html"><span>tortoise/tortoise-orm #1969</span>Two many-to-many filters incorrectly share one JOIN alias</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--327.html"><span>tortoise/tortoise-orm #327</span>A tournament participant count used the joins in reverse order</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--326.html"><span>tortoise/tortoise-orm #326</span>Tortoise resolves a nested ordering field on the wrong model</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2351.html"><span>tortoise/tortoise-orm #2351</span>Why did a non-null filter return the only NULL row?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2004.html"><span>tortoise/tortoise-orm #2004</span>Projecting book IDs dropped the join needed to order by the author</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2352.html"><span>tortoise/tortoise-orm #2352</span>Related-field CASE and filtered COUNT queries lose a required join</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--transformers--50328.html"><span>huggingface/transformers #50328</span>The audio pipeline applies softmax to regression and multi-label scores</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--transformers--26624.html"><span>huggingface/transformers #26624</span>Beam scores include prompt tokens in the length denominator</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--transformers--33973.html"><span>huggingface/transformers #33973</span>The Transformers pipeline squeezed a regression score onto a probability scale</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dmlc--treelite--222.html"><span>dmlc/treelite #222</span>Treelite changed the order of search results on sparse ranking features</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pydata--xarray--6739.html"><span>pydata/xarray #6739</span>Manual iteration shifts a centered xarray rolling window</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pydata--xarray--7358.html"><span>pydata/xarray #7358</span>Descending sort moves missing values to the front</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pydata--xarray--9381.html"><span>pydata/xarray #9381</span>A missing-temperature marker survived xarray decoding</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pydata--xarray--8541.html"><span>pydata/xarray #8541</span>Rolling argmax and argmin counted days from the wrong end of the window</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pydata--xarray--11048.html"><span>pydata/xarray #11048</span>Seasonal resampling changed the timestamp unit of passenger totals</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/pydata--xarray--9972.html"><span>pydata/xarray #9972</span>Time weights aligned with latitude in a three-dimensional fit</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dmlc--xgboost--11373.html"><span>dmlc/xgboost #11373</span>XGBoost returns raw margins as binary probabilities</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/zarr-developers--zarr-python--4285.html"><span>zarr-developers/zarr-python #4285</span>Unsigned indices select an invalid row within a Zarr chunk</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/golang--go--22485.html"><span>golang/go #22485</span>Go’s CommandContext can keep waiting for an inherited pipe</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/golang--go--23458.html"><span>golang/go #23458</span>Go’s goroutine profile omits workload labels</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/googleapis--python-genai--1709.html"><span>googleapis/python-genai #1709</span>An SDK cleanup Task can outlive its event loop</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--huggingface_hub--2521.html"><span>huggingface/huggingface_hub #2521</span>An uniterated inference stream leaves a client warning</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/huggingface--huggingface_hub--5186.html"><span>huggingface/huggingface_hub #5186</span>Video polling blocks the async client’s event loop</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/langchain-ai--langgraph--1800.html"><span>langchain-ai/langgraph #1800</span>A synchronous checkpoint read waits on its own event loop</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/langchain-ai--langgraph--2992.html"><span>langchain-ai/langgraph #2992</span>Synchronous history listing waits on its own event loop</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/python--cpython--112169.html"><span>python/cpython #112169</span>A busy default executor delays DNS until an HTTP request times out</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python--cpython--83167.html"><span>python/cpython #83167</span>A slow Future wakeup warning hides the identity of its Task</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python--cpython--88831.html"><span>python/cpython #88831</span>Garbage collection destroys a pending task waiting on an isolated Future</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python--cpython--90155.html"><span>python/cpython #90155</span>An asyncio semaphore releaser can repeatedly reacquire ahead of waiters</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python-websockets--websockets--865.html"><span>python-websockets/websockets #865</span>A WebSocket sender delays the server heartbeat</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/qdrant--qdrant-client--1175.html"><span>qdrant/qdrant-client #1175</span>A large upsert pauses the event loop during request serialization</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/run-llama--llama_index--22369.html"><span>run-llama/llama_index #22369</span>Synchronous retrieval delays async LlamaIndex routing tasks</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/sgl-project--sglang--17021.html"><span>sgl-project/sglang #17021</span>Some SGLang multimodal responses arrive seconds after the first token ID is ready</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/sgl-project--sglang--30770.html"><span>sgl-project/sglang #30770</span>Synchronous tokenization delays SGLang health checks in an ASGI test</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/sgl-project--sglang--39689.html"><span>sgl-project/sglang #39689</span>Pause and continue time out before a worker starts receiving</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/sgl-project--sglang--50722.html"><span>sgl-project/sglang #50722</span>Per-chunk polling reduces SGLang streaming throughput</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/vllm-project--vllm--1629.html"><span>vllm-project/vllm #1629</span>A local vLLM stream did not reproduce the reported burst of late tokens</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/vllm-project--vllm--3839.html"><span>vllm-project/vllm #3839</span>A vLLM worker exits after a reported NCCL broadcast timeout</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Original run unavailable</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/vllm-project--vllm--57350.html"><span>vllm-project/vllm #57350</span>Streaming detokenization runs on the vLLM renderer’s event loop</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dotnet--runtime--125417.html"><span>dotnet/runtime #125417</span>Async v2 stack recovery depends on how the task is awaited</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/dotnet--runtime--60764.html"><span>dotnet/runtime #60764</span>Main disappears from the physical stack after Foo resumes</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/drogonframework--drogon--2331.html"><span>drogonframework/drogon #2331</span>Synchronous SQL on Drogon’s database loop times out the profile request</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/expressjs--express--4548.html"><span>expressjs/express #4548</span>Express error forwarding reaches middleware after an empty database lookup</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/fastapi--fastapi--709.html"><span>fastapi/fastapi #709</span>A WebSocket subscription task remains pending at shutdown</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/golang--go--13759.html"><span>golang/go #13759</span>Identical Go sender stacks can have different leak status</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/golang--go--22289.html"><span>golang/go #22289</span>A goroutine dump omits creators that have already exited</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/grpc--grpc--43522.html"><span>grpc/grpc #43522</span>A gRPC health check stalls with the observability plugin enabled</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/hashicorp--raft--729.html"><span>hashicorp/raft #729</span>A restarting Raft follower blocks while replaying committed logs</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/kludex--starlette--1438.html"><span>kludex/starlette #1438</span>Starlette cancels a background task after the client disconnects</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2604.html"><span>kotlin/kotlinx.coroutines #2604</span>A Kotlin exception after delay omits secondCall from the JVM stack</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--3611.html"><span>kotlin/kotlinx.coroutines #3611</span>Optimized Android builds lose the coroutine await site</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--74.html"><span>kotlin/kotlinx.coroutines #74</span>Kotlin’s recovered coroutine stack can omit a caller after suspension</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/llvm--llvm-project--121092.html"><span>llvm/llvm-project #121092</span>Optimized Clang builds omit coroutine-frame debug information</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/llvm--llvm-project--37601.html"><span>llvm/llvm-project #37601</span>Optimized coroutine code reuses the thread ID from before suspension</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/nestjs--nest--17633.html"><span>nestjs/nest #17633</span>A Nest TCP event error reaches a Subject with no subscribers</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/nodejs--node--11865.html"><span>nodejs/node #11865</span>An async error stack omits the caller shown by the generator</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/nodejs--node--36126.html"><span>nodejs/node #36126</span>A stack captured after sleep omits the function that started sub</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/nodejs--node--46158.html"><span>nodejs/node #46158</span>An empty stdout write adds a tick frame to an assertion stack</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/nodejs--node--48511.html"><span>nodejs/node #48511</span>An indirect call hides the async caller in Node’s default stack</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/nodejs--node--53858.html"><span>nodejs/node #53858</span>A Node DNS error omits the awaiting read call</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/open-telemetry--opentelemetry-java-instrumentation--10181.html"><span>open-telemetry/opentelemetry-java-instrumentation #10181</span>An instrumented Spring/MySQL request stalls on the affected JDK</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/pgjdbc--pgjdbc--1951.html"><span>pgjdbc/pgjdbc #1951</span>A Quarkus request pinned in Hibernate while waiting on PostgreSQL</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/python--cpython--105288.html"><span>python/cpython #105288</span>Asyncio shutdown stalls during subprocess cleanup</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python--cpython--91048.html"><span>python/cpython #91048</span>Recovering the creator and the current waiter of a sleeping asyncio task</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/ray-project--ray--54201.html"><span>ray-project/ray #54201</span>A Ray Serve request stays pending after a lock is released</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/redis--redis-py--3847.html"><span>redis/redis-py #3847</span>Cancelling release leaves Redis and its client disagreeing about a lock</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/rust-lang--wg-async--75.html"><span>rust-lang/wg-async #75</span>A Tokio trace exposes a task’s lifecycle</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Attempted, symptom unconfirmed</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/scylladb--seastar--1701.html"><span>scylladb/seastar #1701</span>Seastar’s HTTP streaming response stops in the chunked output sink</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/scylladb--seastar--3380.html"><span>scylladb/seastar #3380</span>A Seastar generator’s waiter chain leads back to the same task</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/spring-projects--spring-boot--51379.html"><span>spring-projects/spring-boot #51379</span>A nested-JAR initialization stack also occurs on healthy requests</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--8145.html"><span>sqlalchemy/sqlalchemy #8145</span>Cancellation during async connection cleanup leaves a pool checkout outstanding</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/temporalio--sdk-java--1262.html"><span>temporalio/sdk-java #1262</span>A local activity queued at the heartbeat deadline can leave a workflow waiting</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--6315.html"><span>tokio-rs/tokio #6315</span>A spawned task remains in the local LIFO slot when its worker blocks</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="renderer" data-reviewed="no">
+        <th scope="row"><a href="evidence/vercel--next.js--74988.html"><span>vercel/next.js #74988</span>A Next.js render error hides the App Router component hierarchy</a></th>
+        <td><span class="pill renderer">Renderer chain linked</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/automattic--mongoose--1034.html"><span>automattic/mongoose #1034</span>Mongoose validation errors lose the caller across nextTick</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/automattic--mongoose--12792.html"><span>automattic/mongoose #12792</span>Awaiting a Mongoose query can hide the Express caller</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/automattic--mongoose--15317.html"><span>automattic/mongoose #15317</span>Mongoose validation errors lose the application’s save call</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/automattic--mongoose--15770.html"><span>automattic/mongoose #15770</span>A Mongoose validation error omits the application call site</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/automattic--mongoose--3692.html"><span>automattic/mongoose #3692</span>A MongoDB write error loses its application call site</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/automattic--mongoose--8691.html"><span>automattic/mongoose #8691</span>Awaiting a Mongoose query hides the ObjectId cast caller</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/axios--axios--11131.html"><span>axios/axios #11131</span>Axios drops the caller when V8 limits the stack to two frames</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/axios--axios--2387.html"><span>axios/axios #2387</span>Axios errors hide which application call issued a request</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/axios--axios--4713.html"><span>axios/axios #4713</span>AxiosError instances lack a stack property in 0.27.0</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/axios--axios--5012.html"><span>axios/axios #5012</span>Axios omits the awaiting caller from a connection error</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/axios--axios--6670.html"><span>axios/axios #6670</span>Axios reports a generic browser network error</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/knex--knex--1256.html"><span>knex/knex #1256</span>A failed Knex migration omits the migration filename</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/knex--knex--2419.html"><span>knex/knex #2419</span>Await and catch expose different Knex query stacks</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/knex--knex--2500.html"><span>knex/knex #2500</span>Awaiting a Knex query drops the caller from its error stack</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/knex--knex--3200.html"><span>knex/knex #3200</span>A misspelled Knex option hides the application call site</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/knex--knex--4531.html"><span>knex/knex #4531</span>An undefined binding hides the Knex query-builder call site</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/knex--knex--5415.html"><span>knex/knex #5415</span>Knex query errors omit the application call site when tracing is off</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/sequelize--sequelize--12044.html"><span>sequelize/sequelize #12044</span>A duplicate-key error loses its caller on Sequelize’s create path</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/sequelize--sequelize--6983.html"><span>sequelize/sequelize #6983</span>A foreign-key update error loses the Sequelize model call site</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/sidorares--node-mysql2--1067.html"><span>sidorares/node-mysql2 #1067</span>The callback query API omits the application line from driver errors</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/sidorares--node-mysql2--530.html"><span>sidorares/node-mysql2 #530</span>A MySQL query error loses its async caller</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/sindresorhus--got--1077.html"><span>sindresorhus/got #1077</span>Got’s HTTPError stack omits the application caller</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/sindresorhus--got--2277.html"><span>sindresorhus/got #2277</span>Got’s connection timeout stack omits the downloader’s application caller</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/sindresorhus--got--2293.html"><span>sindresorhus/got #2293</span>A refused Got request omits the top-level await call site</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/typeorm--typeorm--11271.html"><span>typeorm/typeorm #11271</span>MySQL’s duplicate-key error loses the TypeORM insert caller</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/typeorm--typeorm--11499.html"><span>typeorm/typeorm #11499</span>TypeORM’s SQL Server error stack starts in the query runner</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/typeorm--typeorm--8785.html"><span>typeorm/typeorm #8785</span>A TypeORM query error stack ends at the Promise wrapper</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/vincit--objection.js--1618.html"><span>vincit/objection.js #1618</span>Objection’s QueryBuilder loses application callers from async error stacks</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/angular--protractor--4600.html"><span>angular/protractor #4600</span>Protractor’s async wait loses the helper’s call site</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/async-rs--async-attributes--23.html"><span>async-rs/async-attributes #23</span>The async test macro changes wrapper line numbers</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Attempted, symptom unconfirmed</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/chriskohlhoff--asio--1239.html"><span>chriskohlhoff/asio #1239</span>Recovering suspended Asio callers after a timer resumes</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/colinhacks--zod--572.html"><span>colinhacks/zod #572</span>Async Zod validation errors omit the caller</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/devexpress--testcafe--6067.html"><span>devexpress/testcafe #6067</span>A second async assertion loses the TestCafe caller</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dotnet--runtime--137619.html"><span>dotnet/runtime #137619</span>NativeAOT omits a non-inlined Task forwarder from an exception stack</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/ethers-io--ethers.js--4181.html"><span>ethers-io/ethers.js #4181</span>A reverted contract call loses its application call site</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/getsentry--sentry-cocoa--852.html"><span>getsentry/sentry-cocoa #852</span>A dispatch callback’s stack omits the code that submitted it</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/holoviz--panel--6150.html"><span>holoviz/panel #6150</span>Panel reports different callback stacks for the same exception</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/jestjs--jest--10784.html"><span>jestjs/jest #10784</span>Jest loses the original error stack for an unhandled VM rejection</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/jestjs--jest--3839.html"><span>jestjs/jest #3839</span>Jest reports stackFormatter instead of the failing request</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/jestjs--jest--4628.html"><span>jestjs/jest #4628</span>Jest’s resolves and rejects matchers omit the test line</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/jestjs--jest--5104.html"><span>jestjs/jest #5104</span>Async Jest assertion errors omit the test line</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/jongpie--nebulalogger--728.html"><span>jongpie/nebulalogger #728</span>Async logger creation shortens the component mounting stack</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/microsoft--playwright--40141.html"><span>microsoft/playwright #40141</span>Nested Playwright steps lose the outer page-object method from an assertion stack</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/microsoft--typescript--8392.html"><span>microsoft/typescript #8392</span>A compiled async error omits the calling TypeScript function</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/mr-fatalyst--fastopenapi--17.html"><span>mr-fatalyst/fastopenapi #17</span>FastOpenAPI returns a 500 without logging the route exception</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/mxcl--promisekit--462.html"><span>mxcl/promisekit #462</span>Dispatching a PromiseKit callback hides its registration frame</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/nodejs--abi-stable-node--342.html"><span>nodejs/abi-stable-node #342</span>Errors created in a Node-API completion callback lack the application stack</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/nodejs--node--30944.html"><span>nodejs/node #30944</span>Asynchronous file errors omit the JavaScript readFile caller</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/nuitka--nuitka--3878.html"><span>nuitka/nuitka #3878</span>Compiled async structlog calls lose the active traceback</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/nuitka--nuitka--4073.html"><span>nuitka/nuitka #4073</span>An unstarted async generator loses the injected exception’s original traceback</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/openlawlibrary--pygls--187.html"><span>openlawlibrary/pygls #187</span>pygls logs an empty traceback for an async notification error</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/petkaantonov--bluebird--1181.html"><span>petkaantonov/bluebird #1181</span>A forgotten-return warning prints without its available stack</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/petkaantonov--bluebird--1182.html"><span>petkaantonov/bluebird #1182</span>A Bluebird warning omits the origin of a nested Promise.delay</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/petkaantonov--bluebird--411.html"><span>petkaantonov/bluebird #411</span>Bluebird’s done() changes how a browser reports a rejection</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/petkaantonov--bluebird--971.html"><span>petkaantonov/bluebird #971</span>A forgotten-return warning loses the fromCallback creation stack</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/puppeteer--puppeteer--7786.html"><span>puppeteer/puppeteer #7786</span>Puppeteer’s Target closed error omits the application caller</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/puppeteer--puppeteer--867.html"><span>puppeteer/puppeteer #867</span>Puppeteer’s selector timeout shows only timer frames</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/python--cpython--156278.html"><span>python/cpython #156278</span>Awaiting wait_closed rewrites the original read traceback</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/python--cpython--93592.html"><span>python/cpython #93592</span>Resuming a coroutine with throw() shortens its traceback</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/python-trio--trio--285.html"><span>python-trio/trio #285</span>Identical Trio socket-read frames obscure which child was cancelled</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/rwf2--rocket--1623.html"><span>rwf2/rocket #1623</span>Compressed SQLx debug information leaves Rust backtrace frames unresolved</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/vercel--next.js--84694.html"><span>vercel/next.js #84694</span>The browser reports a closed connection for a page served with HTTP 200</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="no">
+        <th scope="row"><a href="evidence/vitest-dev--vitest--11791.html"><span>vitest-dev/vitest #11791</span>Soft async assertions lose their source locations</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/yuin--gopher-lua--529.html"><span>yuin/gopher-lua #529</span>A GopherLua coroutine error omits the Go stack</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--18005.html"><span>dart-lang/sdk #18005</span>Dartium reports a two-frame error when opening a WAV file</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--22437.html"><span>dart-lang/sdk #22437</span>Dart compiler stack loss remains unexplained</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--28325.html"><span>dart-lang/sdk #28325</span>An awaited socket error loses its source line and column</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--29847.html"><span>dart-lang/sdk #29847</span>DDC loses an error from an async generator</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--34673.html"><span>dart-lang/sdk #34673</span>Dart’s debugger pauses at the wrong await under optimization</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--41578.html"><span>dart-lang/sdk #41578</span>A Dart AOT error trace yields two frames instead of ten</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--46318.html"><span>dart-lang/sdk #46318</span>A Dart timer callback disappears from the stack after an await</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--50336.html"><span>dart-lang/sdk #50336</span>Dart’s browser error stack omits two awaiting callers</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--55561.html"><span>dart-lang/sdk #55561</span>Pausing a Flutter startup wait yields no Dart frames</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--56787.html"><span>dart-lang/sdk #56787</span>A missing-file stream error omits its caller</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--61585.html"><span>dart-lang/sdk #61585</span>A Dart interceptor stack cannot distinguish two feature callers</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/dart-lang--sdk--64960.html"><span>dart-lang/sdk #64960</span>Optimized Dart Wasm omits the throwing async function</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/flutter--flutter--89138.html"><span>flutter/flutter #89138</span>A Flutter integration test loses the test caller after a delay</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--10483.html"><span>oven-sh/bun #10483</span>Bun’s error stack omits the module awaiting a rejected Promise</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--17877.html"><span>oven-sh/bun #17877</span>An error thrown by throwIfAborted lacks a stack</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--17878.html"><span>oven-sh/bun #17878</span>Bun drops the caller from a stack after await</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--21593.html"><span>oven-sh/bun #21593</span>Reading .stack changes how Bun displays a Redis callback error</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--21900.html"><span>oven-sh/bun #21900</span>A Bun timeout can leave the caught error’s stack empty</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Original run unavailable</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--22011.html"><span>oven-sh/bun #22011</span>Bun’s PostgreSQL syntax error has no stack in the affected release</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--23760.html"><span>oven-sh/bun #23760</span>Bun omits the awaiting module when a then callback throws</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--24003.html"><span>oven-sh/bun #24003</span>AsyncLocalStorage.run hides callers in Bun’s error stack</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--25182.html"><span>oven-sh/bun #25182</span>A fetch timeout produces an empty error stack</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--2704.html"><span>oven-sh/bun #2704</span>Bun drops a caller when an error is thrown after await</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--39007.html"><span>oven-sh/bun #39007</span>Bun’s error stack omits the module-level await</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--3972.html"><span>oven-sh/bun #3972</span>Bun omits the application stack from a missing-path lstat error</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--5719.html"><span>oven-sh/bun #5719</span>Bun loses an earlier error stack after a timer wait in catch</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/oven-sh--bun--9182.html"><span>oven-sh/bun #9182</span>A shell error omits the line that created the command</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/grpc--grpc-kotlin--299.html"><span>grpc/grpc-kotlin #299</span>Which Kotlin caller received the gRPC status exception?</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--1660.html"><span>kotlin/kotlinx.coroutines #1660</span>A suspending tail call disappears after a dispatcher switch</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2103.html"><span>kotlin/kotlinx.coroutines #2103</span>Two awaiters receive the producer’s exception stack</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2327.html"><span>kotlin/kotlinx.coroutines #2327</span>Kotlin Future bridges lose the caller of a failed request</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2550.html"><span>kotlin/kotlinx.coroutines #2550</span>Sending to a closed callbackFlow can yield a frameless cancellation</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2958.html"><span>kotlin/kotlinx.coroutines #2958</span>Reported iOS coroutine stack loss does not reproduce on Linux</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Attempted, symptom unconfirmed</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--3222.html"><span>kotlin/kotlinx.coroutines #3222</span>Android omits the fatal stack for UnknownHostException</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--4398.html"><span>kotlin/kotlinx.coroutines #4398</span>Stack recovery misses a suspend API’s await site</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--4471.html"><span>kotlin/kotlinx.coroutines #4471</span>Nested suspend callers disappear from the exception stack</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/ktorio--ktor--1267.html"><span>ktorio/ktor #1267</span>Ktor loses the bar caller when a pipeline resumes</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/typelevel--cats-effect--1447.html"><span>typelevel/cats-effect #1447</span>Enhanced exceptions filter out the application’s require call</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/typelevel--cats-effect--2620.html"><span>typelevel/cats-effect #2620</span>Four waiting Cats Effect fibers have no application frames</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/typelevel--cats-effect--2742.html"><span>typelevel/cats-effect #2742</span>A second timeout points to the first timeout’s source line</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="creation" data-reviewed="yes">
+        <th scope="row"><a href="evidence/zio--zio--1003.html"><span>zio/zio #1003</span>A ZIO failure trace loses the application’s unsafeRun entry point</a></th>
+        <td><span class="pill creation">Coroutine stack joined</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--3719.html"><span>zio/zio #3719</span>Five historical stack-trace assertions fail when ZIO yields at every step</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--5785.html"><span>zio/zio #5785</span>ZIO logs lose callers at a non-ZIO runtime boundary</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--5955.html"><span>zio/zio #5955</span>Cause.prettyPrint omits the fiber ID and source location</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--6243.html"><span>zio/zio #6243</span>Publishing before a ZIO Hub subscription leaves the reader waiting</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--6407.html"><span>zio/zio #6407</span>ZIO prints an interruption message without a fiber number</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--6779.html"><span>zio/zio #6779</span>A typed ZIO failure logs the stream endpoint instead of the parser line</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Component reproduced</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--7003.html"><span>zio/zio #7003</span>ZIO.attempt drops the Java call site from the printed failure</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--7111.html"><span>zio/zio #7111</span>A ZIO map failure loses the application line that called Nil.head</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--7586.html"><span>zio/zio #7586</span>Exhausted retries replace the original failure location</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--8747.html"><span>zio/zio #8747</span>An exception on the right side of ZIO flatMap loses caller context</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr>
+      <tr data-state="physical" data-reviewed="no">
+        <th scope="row"><a href="evidence/zio--zio--9025.html"><span>zio/zio #9025</span>ZIO’s getOrThrow error stack omits the outer caller</a></th>
+        <td><span class="pill physical">Physical stacks captured</span></td><td>Full local reproduction</td>
+      </tr></tbody></table>
+      </div>
+    </section>
+    <section class="method" id="method" aria-labelledby="method-title">
+      <div class="wrap">
+        <div class="section-head"><h2 id="method-title">How to read the evidence</h2></div>
+        <div class="method-grid">
+          <div><h3>The recorded join</h3><p>Each join has two stack-bearing records with a shared instance identity and a recorded graph edge or audited runtime task ID. Parent and renderer-owner links have their own labels. Frames run from caller to callee within each record.</p></div>
+          <div><h3>Two coverage measures</h3><p>The join count measures coverage in the published captures. The lower bound of 206 measures issue-relevant origins reviewed in the underlying 505-issue corpus. A join from a different observation in the same capture may provide context while the origin relevant to the reported symptom remains open.</p></div>
+          <div><h3>Reproduction scope</h3><p>The affected example, a reproduced component, and a limited or unavailable reproduction have distinct labels. A case can show a physical stack or diagnose a symptom even when creation was outside the capture window.</p></div>
+        </div>
+      </div>
+    </section></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

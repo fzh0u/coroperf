@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A partial weighted rolling window gets the wrong mean">
+  <title>pola-rs/polars #22868 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">pola-rs/polars #22868</p>
+        <h1>A partial weighted rolling window gets the wrong mean</h1>
+        <div class="case-links"><a href="https://github.com/pola-rs/polars/issues/22868">Upstream report ↗</a><a href="https://github.com/pola-rs/polars/pull/23485">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>polars_python::expr::rolling::&lt;impl polars_python::expr::PyExpr&gt;::__pymethod_rolling_mean__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>main</code></li><li><code>pymain_main.llvm</code></li><li><code>Py_RunMain</code></li><li><code>pymain_run_file</code></li><li><code>pymain_run_file_obj</code></li><li><code>_PyRun_AnyFileObject</code></li><li><code>_PyRun_SimpleFileObject</code></li><li><code>pyrun_file</code></li><li><code>run_mod.llvm</code></li><li><code>PyEval_EvalCode</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>cfunction_vectorcall_FASTCALL.llvm.1389210256044623945</code></li><li><code>builtin_eval[warm]</code></li><li><code>PyEval_EvalCode</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>method_vectorcall_VARARGS_KEYWORDS.llvm.4423039280050994690</code></li><li><code>polars_python::expr::rolling::_::__INVENTORY::trampoline</code></li><li><code>pyo3::impl_::trampoline::trampoline</code></li><li><code>polars_python::expr::rolling::&lt;impl polars_python::expr::PyExpr&gt;::__pymethod_rolling_mean__</code></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>polars_time::chunkedarray::rolling_window::dispatch::SeriesOpsTime::rolling_mean</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>main</code></li><li><code>pymain_main.llvm</code></li><li><code>Py_RunMain</code></li><li><code>pymain_run_file</code></li><li><code>pymain_run_file_obj</code></li><li><code>_PyRun_AnyFileObject</code></li><li><code>_PyRun_SimpleFileObject</code></li><li><code>pyrun_file</code></li><li><code>run_mod.llvm</code></li><li><code>PyEval_EvalCode</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>cfunction_vectorcall_FASTCALL.llvm.1389210256044623945</code></li><li><code>builtin_eval[warm]</code></li><li><code>PyEval_EvalCode</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>method_vectorcall_VARARGS_KEYWORDS.llvm.4423039280050994690</code></li><li><code>polars_python::lazyframe::general::_::__INVENTORY::trampoline</code></li><li><code>pyo3::impl_::trampoline::trampoline</code></li><li><code>polars_python::lazyframe::general::&lt;impl polars_python::lazyframe::PyLazyFrame&gt;::__pymethod_collect__</code></li><li><code>polars_lazy::frame::LazyFrame::collect_with_engine</code></li><li><code>&lt;polars_mem_engine::executors::executor::SinkExecutor as polars_mem_engine::executors::executor::Executor&gt;::execute</code></li><li><code>&lt;polars_mem_engine::executors::stack::StackExec as polars_mem_engine::executors::executor::Executor&gt;::execute</code></li><li><code>polars_mem_engine::executors::stack::StackExec::execute_impl</code></li><li><code>polars_mem_engine::executors::projection_utils::run_exprs_seq</code></li><li><code>&lt;polars_expr::expressions::apply::ApplyExpr as polars_expr::expressions::PhysicalExpr&gt;::evaluate</code></li><li><code>&lt;F as polars_plan::dsl::expr::expr_dyn_fn::ColumnsUdf&gt;::call_udf</code></li><li><code>polars_time::chunkedarray::rolling_window::dispatch::SeriesOpsTime::rolling_mean</code></li></ol></section></details><details class="extra" ><summary>Record 10 · sample<code>polars_python::expr::rolling::&lt;impl polars_python::expr::PyExpr&gt;::__pymethod_rolling_mean__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 10 · native runtime stack</span></div><ol class="frames"><li><code>main</code></li><li><code>pymain_main.llvm</code></li><li><code>Py_RunMain</code></li><li><code>pymain_run_file</code></li><li><code>pymain_run_file_obj</code></li><li><code>_PyRun_AnyFileObject</code></li><li><code>_PyRun_SimpleFileObject</code></li><li><code>pyrun_file</code></li><li><code>run_mod.llvm</code></li><li><code>PyEval_EvalCode</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>method_vectorcall_VARARGS_KEYWORDS.llvm.4423039280050994690</code></li><li><code>polars_python::expr::rolling::_::__INVENTORY::trampoline</code></li><li><code>pyo3::impl_::trampoline::trampoline</code></li><li><code>polars_python::expr::rolling::&lt;impl polars_python::expr::PyExpr&gt;::__pymethod_rolling_mean__</code></li></ol></section></details><details class="extra" ><summary>Record 11 · sample<code>polars_time::chunkedarray::rolling_window::dispatch::SeriesOpsTime::rolling_mean</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 11 · native runtime stack</span></div><ol class="frames"><li><code>clone3</code></li><li><code>start_thread</code></li><li><code>std::sys::pal::unix::thread::Thread::new::thread_start</code></li><li><code>core::ops::function::FnOnce::call_once{{vtable.shim}}</code></li><li><code>std::sys::backtrace::__rust_begin_short_backtrace</code></li><li><code>rayon_core::registry::WorkerThread::wait_until_cold</code></li><li><code>&lt;rayon_core::job::StackJob&lt;L,F,R&gt; as rayon_core::job::Job&gt;::execute</code></li><li><code>rayon_core::join::join_context::{{closure}}</code></li><li><code>rayon_core::registry::WorkerThread::wait_until_cold</code></li><li><code>&lt;rayon_core::job::StackJob&lt;L,F,R&gt; as rayon_core::job::Job&gt;::execute</code></li><li><code>rayon::iter::plumbing::bridge_producer_consumer::helper</code></li><li><code>polars_expr::expressions::apply::ApplyExpr::apply_single_group_aware::{{closure}}</code></li><li><code>&lt;F as polars_plan::dsl::expr::expr_dyn_fn::ColumnsUdf&gt;::call_udf</code></li><li><code>polars_time::chunkedarray::rolling_window::dispatch::SeriesOpsTime::rolling_mean</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With weights [1, 2], Polars 1.30.0 gave 1/3 for the first window and 1.33.0 gave 1, while the other four rows agreed. Grouped Parquet input showed the same first-window error.</dd></div><div><dt>What CoroPerf showed</dt><dd>Unit-vector controls showed the old implementation took the first weight and divided by the full weight sum, narrowing the defect to alignment and normalization in incomplete windows.</dd></div><div><dt>Scope and limits</dt><dd>Native stacks reached the rolling operator’s entry. Coefficient checks covered positive weights and inputs without nulls.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

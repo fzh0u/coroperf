@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="etcdctl v3 omits the settings needed to start a new cluster member">
+  <title>etcd-io/etcd #7049 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">etcd-io/etcd #7049</p>
+        <h1>etcdctl v3 omits the settings needed to start a new cluster member</h1>
+        <div class="case-links"><a href="https://github.com/etcd-io/etcd/issues/7049">Upstream report ↗</a><a href="https://github.com/etcd-io/etcd/pull/7173">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdctl/ctlv3/command.(*simplePrinter).MemberAdd</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>main.main</code><span>main.go:40</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdctl/ctlv3.Start</code><span>ctl.go:96</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/spf13/cobra.(*Command).Execute</code><span>command.go:618</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/spf13/cobra.(*Command).ExecuteC</code><span>command.go:662</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/spf13/cobra.(*Command).execute</code><span>command.go:572</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdctl/ctlv3/command.memberAddCommandFunc</code><span>member_command.go:115</span></li><li><code>github.com/coreos/etcd/cmd/vendor/github.com/coreos/etcd/etcdctl/ctlv3/command.(*simplePrinter).MemberAdd</code><span>printer_simple.go:101</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The v3 member add command registered the fourth member but printed only its ID and the cluster ID. API v2 printed three join variables. With the fix, the v3 text output also included ETCD_NAME, ETCD_INITIAL_CLUSTER and ETCD_INITIAL_CLUSTER_STATE. All four members subsequently served quorum reads.</dd></div><div><dt>What CoroPerf showed</dt><dd>At registration the server knew the new member’s ID and peer address. Its name remained empty until the process joined. The corrected CLI matched the ID in the response to the CLI argument newMember and printed a complete peer list. After startup, the four membership views confirmed that name and address.</dd></div><div><dt>Scope and limits</dt><dd>The original report compared v2 and v3 without specifying an exact topology or version. The replay used the command from the merged documentation with three initial voters and a fourth process started from independently prepared configuration. Eight cluster runs covered both client revisions, text and JSON output, and GDB observation. The observed stacks belong to the synchronous CLI.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A successful rqlite insert returned year 1 for the current timestamp">
+  <title>rqlite/rqlite #2965 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">rqlite/rqlite #2965</p>
+        <h1>A successful rqlite insert returned year 1 for the current timestamp</h1>
+        <div class="case-links"><a href="https://github.com/rqlite/rqlite/issues/2965">Upstream report ↗</a><a href="https://github.com/rqlite/rqlite/pull/2966">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 3</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>github.com/rqlite/rqlite/v10/http.(*Service).Start.func2</code><span>service.go:408</span></li><li><code>net/http.(*Server).Serve</code><span>server.go:3464</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>net/http.(*conn).serve</code><span>server.go:2067</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3311</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).ServeHTTP</code><span>service.go:489</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).handleExecute</code><span>service.go:1419</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).execute</code><span>service.go:1532</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.Process</code><span>processor.go:72</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.(*Rewriter).Do</code><span>processor.go:160</span></li><li><code>github.com/rqlite/sql.Walk</code><span>walk.go:17</span></li><li><code>github.com/rqlite/sql.walk</code><span>walk.go:496</span></li><li><code>github.com/rqlite/sql.walk</code><span>walk.go:857</span></li><li><code>github.com/rqlite/sql.walkExprList</code><span>walk.go:1301</span></li><li><code>github.com/rqlite/sql.walk</code><span>walk.go:22</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.(*Rewriter).Visit</code><span>processor.go:234</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.case2965</code><span>processor.go:293</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>net/http.(*conn).serve</code><span>server.go:2067</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3311</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).ServeHTTP</code><span>service.go:489</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).handleExecute</code><span>service.go:1419</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).execute</code><span>service.go:1532</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.Process</code><span>processor.go:72</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.(*Rewriter).Do</code><span>processor.go:160</span></li><li><code>github.com/rqlite/sql.Walk</code><span>walk.go:17</span></li><li><code>github.com/rqlite/sql.walk</code><span>walk.go:496</span></li><li><code>github.com/rqlite/sql.walk</code><span>walk.go:857</span></li><li><code>github.com/rqlite/sql.walkExprList</code><span>walk.go:1301</span></li><li><code>github.com/rqlite/sql.walk</code><span>walk.go:22</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.(*Rewriter).Visit</code><span>processor.go:234</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.case2965</code><span>processor.go:293</span></li></ol></section>
+          <p class="small trace-note">The frames on record 3 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 1</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>github.com/rqlite/rqlite/v10/http.(*Service).Start.func2</code><span>service.go:408</span></li><li><code>net/http.(*Server).Serve</code><span>server.go:3464</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>net/http.(*conn).serve</code><span>server.go:2067</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3311</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).ServeHTTP</code><span>service.go:489</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).handleExecute</code><span>service.go:1419</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).execute</code><span>service.go:1527</span></li><li><code>github.com/rqlite/rqlite/v10/http.write2965</code><span>service.go:2160</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>net/http.(*conn).serve</code><span>server.go:2067</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3311</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).ServeHTTP</code><span>service.go:489</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).handleExecute</code><span>service.go:1419</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).execute</code><span>service.go:1527</span></li><li><code>github.com/rqlite/rqlite/v10/http.write2965</code><span>service.go:2160</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>github.com/rqlite/rqlite/v10/http.(*Service).Start.func2</code><span>service.go:408</span></li><li><code>net/http.(*Server).Serve</code><span>server.go:3464</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>net/http.(*conn).serve</code><span>server.go:2067</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3311</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).ServeHTTP</code><span>service.go:489</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).handleExecute</code><span>service.go:1419</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).execute</code><span>service.go:1532</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.Process</code><span>processor.go:69</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.case2965</code><span>processor.go:293</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>net/http.(*conn).serve</code><span>server.go:2067</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3311</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).ServeHTTP</code><span>service.go:489</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).handleExecute</code><span>service.go:1419</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).execute</code><span>service.go:1532</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.Process</code><span>processor.go:69</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.case2965</code><span>processor.go:293</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 4 · sample<code>github.com/rqlite/rqlite/v10/command/sql.case2965</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4</span></div><ol class="frames"><li><code>net/http.(*conn).serve</code><span>server.go:2067</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3311</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).ServeHTTP</code><span>service.go:489</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).handleExecute</code><span>service.go:1419</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).execute</code><span>service.go:1532</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.Process</code><span>processor.go:72</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.(*Rewriter).Do</code><span>processor.go:160</span></li><li><code>github.com/rqlite/sql.Walk</code><span>walk.go:17</span></li><li><code>github.com/rqlite/sql.walk</code><span>walk.go:496</span></li><li><code>github.com/rqlite/sql.walk</code><span>walk.go:857</span></li><li><code>github.com/rqlite/sql.walkExprList</code><span>walk.go:1301</span></li><li><code>github.com/rqlite/sql.walk</code><span>walk.go:22</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.(*Rewriter).Visit</code><span>processor.go:234</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.case2965</code><span>processor.go:293</span></li></ol></section></details><details class="extra" ><summary>Record 5 · sample<code>github.com/rqlite/rqlite/v10/command/sql.case2965</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5</span></div><ol class="frames"><li><code>net/http.(*conn).serve</code><span>server.go:2067</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3311</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).ServeHTTP</code><span>service.go:489</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).handleExecute</code><span>service.go:1419</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).execute</code><span>service.go:1532</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.Process</code><span>processor.go:80</span></li><li><code>github.com/rqlite/rqlite/v10/command/sql.case2965</code><span>processor.go:293</span></li></ol></section></details><details class="extra" ><summary>Record 6 · sample<code>github.com/rqlite/rqlite/v10/http.write2965</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 6</span></div><ol class="frames"><li><code>net/http.(*conn).serve</code><span>server.go:2067</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3311</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).ServeHTTP</code><span>service.go:489</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).handleExecute</code><span>service.go:1419</span></li><li><code>github.com/rqlite/rqlite/v10/http.(*Service).execute</code><span>service.go:1549</span></li><li><code>github.com/rqlite/rqlite/v10/http.write2965</code><span>service.go:2160</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The posted INSERT combined CURRENT_TIMESTAMP and strftime in two DATETIME columns. The reported release acknowledged one inserted row, but the first column stored the text CURRENT_TIMESTAMP. Its typed API value was 0001-01-01T00:00:00Z and its Unix epoch was NULL. All three healthy voters in the parent cluster returned those values. At the fixed revision in UTC, all three returned a timestamp matching the HTTP response clock.</dd></div><div><dt>What CoroPerf showed</dt><dd>The parent parser classified CURRENT_TIMESTAMP as an identifier. Visiting strftime marked the statement for serialization, which put double quotes around the identifier. SQLite accepted that unbound quoted name as text. The fix recognized a timestamp literal and emitted datetime with a numeric Julian day. The HTTP peer, Go creation event, visitor stack and returned Raft index identify one request goroutine. All three Bolt stores contain the same replicated command bytes for that index. Local backups independently confirm the resulting value.</dd></div><div><dt>Scope and limits</dt><dd>The six posted curl requests use loopback port remapping and one fresh connection each. The three-voter runs, parameterized insert, Unix-epoch reads and timezone comparison are local controls. Each process run has its own wall-clock timestamp. UTC results are checked against that request’s time window. With the fixed server explicitly set to Asia/Shanghai, the mixed insert returned an epoch 28,800 seconds ahead of its HTTP Date in this run. The origin evidence identifies the leader’s HTTP connection goroutine.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

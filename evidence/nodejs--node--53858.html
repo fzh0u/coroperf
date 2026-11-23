@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A Node DNS error omits the awaiting read call">
+  <title>nodejs/node #53858 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">nodejs/node #53858</p>
+        <h1>A Node DNS error omits the awaiting read call</h1>
+        <div class="case-links"><a href="https://github.com/nodejs/node/issues/53858">Upstream report ↗</a><a href="https://github.com/nodejs/node/issues/53858#issuecomment-2233618233">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Observation selected in the issue review · observation 369</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 6</span></div><ol class="frames"><li><code>runEntryPointWithESMLoader</code><span>run_main:131</span></li><li><code>asyncRunEntryPointWithESMLoader</code><span>run_main:109</span></li><li><code>&lt;anonymous&gt;</code><span>run_main:168</span></li><li><code>ModuleLoader.import</code><span>loader:474</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 38</span></div><ol class="frames"><li><code>asyncRunEntryPointWithESMLoader</code><span>run_main:109</span></li><li><code>ModuleLoader.import</code><span>loader:475</span></li><li><code>ModuleJob.run</code><span>module_job:254</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 369 · semantic boundary</span></div><ol class="frames"><li><code>asyncRunEntryPointWithESMLoader</code><span>run_main:109</span></li><li><code>ModuleLoader.import</code><span>loader:475</span></li><li><code>ModuleJob.run</code><span>module_job:262</span></li><li><code>&lt;anonymous&gt;</code><span>report.mjs:10</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 369 · semantic boundary</span></div><ol class="frames"><li><code>asyncRunEntryPointWithESMLoader</code><span>run_main:109</span></li><li><code>ModuleLoader.import</code><span>loader:475</span></li><li><code>ModuleJob.run</code><span>module_job:262</span></li><li><code>&lt;anonymous&gt;</code><span>report.mjs:10</span></li></ol></section>
+          <p class="small trace-note">The frames on record 369 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 480</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 6</span></div><ol class="frames"><li><code>runEntryPointWithESMLoader</code><span>run_main:131</span></li><li><code>asyncRunEntryPointWithESMLoader</code><span>run_main:109</span></li><li><code>&lt;anonymous&gt;</code><span>run_main:168</span></li><li><code>ModuleLoader.import</code><span>loader:474</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 38</span></div><ol class="frames"><li><code>asyncRunEntryPointWithESMLoader</code><span>run_main:109</span></li><li><code>ModuleLoader.import</code><span>loader:475</span></li><li><code>ModuleJob.run</code><span>module_job:254</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 354</span></div><ol class="frames"><li><code>lookupAndConnect</code><span>node:net:1357</span></li><li><code>&lt;anonymous&gt;</code><span>node:net:1358</span></li><li><code>lookupAndConnectMultiple</code><span>node:net:1412</span></li><li><code>emitLookup</code><span>node:net:1413</span></li><li><code>lookup</code><span>node:dns:235</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 474</span></div><ol class="frames"><li><code>GetAddrInfoReqWrap.onlookupall [as oncomplete]</code><span>node:dns:120</span></li><li><code>GetAddrInfoReqWrap.emitLookup [as callback]</code><span>node:net:1425</span></li><li><code>process.nextTick</code><span>task_queues:132</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 477</span></div><ol class="frames"><li><code>Writable.destroy</code><span>writable:1113</span></li><li><code>Socket.destroy</code><span>destroy:84</span></li><li><code>_destroy</code><span>destroy:122</span></li><li><code>Socket._destroy</code><span>node:net:834</span></li><li><code>onDestroy</code><span>destroy:116</span></li><li><code>process.nextTick</code><span>task_queues:132</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 480 · semantic boundary</span></div><ol class="frames"><li><code>GetAddrInfoReqWrap.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>GetAddrInfoReqWrap.onlookupall [as oncomplete]</code><span>node:dns:120</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 480 · semantic boundary</span></div><ol class="frames"><li><code>GetAddrInfoReqWrap.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>GetAddrInfoReqWrap.onlookupall [as oncomplete]</code><span>node:dns:120</span></li></ol></section>
+          <p class="small trace-note">The frames on record 480 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 502</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 6</span></div><ol class="frames"><li><code>runEntryPointWithESMLoader</code><span>run_main:131</span></li><li><code>asyncRunEntryPointWithESMLoader</code><span>run_main:109</span></li><li><code>&lt;anonymous&gt;</code><span>run_main:168</span></li><li><code>ModuleLoader.import</code><span>loader:474</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 38</span></div><ol class="frames"><li><code>asyncRunEntryPointWithESMLoader</code><span>run_main:109</span></li><li><code>ModuleLoader.import</code><span>loader:475</span></li><li><code>ModuleJob.run</code><span>module_job:254</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 370</span></div><ol class="frames"><li><code>ModuleJob.run</code><span>module_job:262</span></li><li><code>&lt;anonymous&gt;</code><span>report.mjs:10</span></li><li><code>ReadableStreamDefaultReader.observedRead [as read]</code><span>diagnostics.cjs:35</span></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 502 · semantic boundary</span></div><ol class="frames"><li><code>GetAddrInfoReqWrap.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>GetAddrInfoReqWrap.onlookupall [as oncomplete]</code><span>node:dns:120</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 502 · semantic boundary</span></div><ol class="frames"><li><code>GetAddrInfoReqWrap.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>GetAddrInfoReqWrap.onlookupall [as oncomplete]</code><span>node:dns:120</span></li></ol></section>
+          <p class="small trace-note">The frames on record 502 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On Node 22.2.0, all three ordinary runs and all three runs with native async stacks enabled reported ENOTFOUND without the application’s read call on line 10.</dd></div><div><dt>What CoroPerf showed</dt><dd>In all three traced runs, CoroPerf matched the socket error to the rejection of the same read Promise and recovered its application call on line 10. In all three wrapped controls, AggregateError printed the same line.</dd></div><div><dt>Scope and limits</dt><dd>The report used Windows x64. The Linux x64 run used the same Node release, the local resolver, and a probe that returned the original Promise.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

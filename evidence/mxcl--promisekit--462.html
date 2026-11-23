@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Dispatching a PromiseKit callback hides its registration frame">
+  <title>mxcl/promisekit #462 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">mxcl/promisekit #462</p>
+        <h1>Dispatching a PromiseKit callback hides its registration frame</h1>
+        <div class="case-links"><a href="https://github.com/mxcl/promisekit/issues/462">Upstream report ↗</a><a href="https://github.com/mxcl/promisekit/issues/462#issuecomment-233793266">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>dispatch_async () from libdispatch.so</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>main ()</code></li><li><code>$s4main23registerFromApplicationyySbF ()</code></li><li><code>$s10PromiseKit8ThenablePAAE4then2on5flags_AA0A0Cy1TQyd__G8Dispatch0G5QueueCSg_AL0G13WorkItemFlagsVSgqd__AIQzKctAaBRd__lF (on=..., flags=..., body=..., self=...) at Thenable.swift:35</code></li><li><code>$s10PromiseKit0A0CyxGAA8ThenableA2aEP4pipe2toyyAA6ResultOy1TQzGc_tFTW () from libPromiseKit.so</code></li><li><code>$s10PromiseKit0A0C4pipe2toyyAA6ResultOyxGc_tF (to=..., self=...) at Promise.swift:85</code></li><li><code>$s10PromiseKit8ThenablePAAE4then2on5flags_AA0A0Cy1TQyd__G8Dispatch0G5QueueCSg_AL0G13WorkItemFlagsVSgqd__AIQzKctAaBRd__lFyAA6ResultOyASGcfU_TA () at Thenable.swift:50</code></li><li><code>$s10PromiseKit8ThenablePAAE4then2on5flags_AA0A0Cy1TQyd__G8Dispatch0G5QueueCSg_AL0G13WorkItemFlagsVSgqd__AIQzKctAaBRd__lFyAA6ResultOyASGcfU_ () at Thenable.swift:38</code></li><li><code>$sSq10PromiseKit8Dispatch0C5QueueCRbzlE5async5flags_yAB0C13WorkItemFlagsVSg_yyctF (flags=..., body=..., self=...) at Box.swift:97</code></li><li><code>$s8Dispatch0A5QueueC5async5group3qos5flags7executeyAA0A5GroupCSg_AA0A3QoSVAA0A13WorkItemFlagsVyyYbXBtF () from libswiftDispatch.so</code></li><li><code>dispatch_async () from libdispatch.so</code></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_dispatch_call_block_and_release () from libdispatch.so</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:81</code></li><li><code>start_thread (arg=&lt;optimized out&gt;) at ./nptl/pthread_create.c:442</code></li><li><code>_dispatch_worker_thread () from libdispatch.so</code></li><li><code>_dispatch_lane_invoke () from libdispatch.so</code></li><li><code>_dispatch_lane_serial_drain () from libdispatch.so</code></li><li><code>_dispatch_call_block_and_release () from libdispatch.so</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With then on the main queue, the physical stack showed only the closure symbol, while inline execution retained registerFromApplication.</dd></div><div><dt>What CoroPerf showed</dt><dd>The same block was observed at dispatch_async and at callback execution, linking it to a submission stack containing PromiseKit.then and the registration function.</dd></div><div><dt>Scope and limits</dt><dd>The historical implementation was inspected, but the available run used Linux Swift and PromiseKit 6.18.1. The original iOS project and build settings were unavailable.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

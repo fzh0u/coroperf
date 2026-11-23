@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A restarting Raft follower blocks while replaying committed logs">
+  <title>hashicorp/raft #729 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">hashicorp/raft #729</p>
+        <h1>A restarting Raft follower blocks while replaying committed logs</h1>
+        <div class="case-links"><a href="https://github.com/hashicorp/raft/issues/729">Upstream report ↗</a><a href="https://github.com/hashicorp/raft/pull/730">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 22</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 21</span></div><ol class="frames"><li><code>main.main</code><span>main.go:81</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 22 · runtime goroutine dump</span></div><ol class="frames"><li><code>main.main.func4</code><span>main.go:81</span></li><li><code>github.com/hashicorp/raft.NewRaft</code><span>api.go:606</span></li><li><code>github.com/hashicorp/raft.(*Raft).restoreFromCommittedLogs</code><span>api.go:753</span></li><li><code>github.com/hashicorp/raft.(*Raft).processLogs</code><span>raft.go:1346</span></li><li><code>github.com/hashicorp/raft.(*Raft).processLogs.func1</code><span>raft.go:1305</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 22 · runtime goroutine dump</span></div><ol class="frames"><li><code>main.main.func4</code><span>main.go:81</span></li><li><code>github.com/hashicorp/raft.NewRaft</code><span>api.go:606</span></li><li><code>github.com/hashicorp/raft.(*Raft).restoreFromCommittedLogs</code><span>api.go:753</span></li><li><code>github.com/hashicorp/raft.(*Raft).processLogs</code><span>raft.go:1346</span></li><li><code>github.com/hashicorp/raft.(*Raft).processLogs.func1</code><span>raft.go:1305</span></li></ol></section>
+          <p class="small trace-note">The frames on record 22 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Other observation in the same capture · observation 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>github.com/hashicorp/raft.NewNetworkTransportWithConfig</code><span>net_transport.go:242</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · runtime goroutine dump</span></div><ol class="frames"><li><code>github.com/hashicorp/raft.(*NetworkTransport).listen</code><span>net_transport.go:568</span></li><li><code>net.(*TCPListener).Accept</code><span>tcpsock.go:380</span></li><li><code>net.(*TCPListener).accept</code><span>tcpsock_posix.go:159</span></li><li><code>net.(*netFD).accept</code><span>fd_unix.go:161</span></li><li><code>internal/poll.(*FD).Accept</code><span>fd_unix.go:613</span></li><li><code>internal/poll.(*pollDesc).waitRead</code><span>fd_poll_runtime.go:89</span></li><li><code>internal/poll.(*pollDesc).wait</code><span>fd_poll_runtime.go:84</span></li><li><code>internal/poll.runtime_pollWait</code><span>netpoll.go:351</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · runtime goroutine dump</span></div><ol class="frames"><li><code>github.com/hashicorp/raft.(*NetworkTransport).listen</code><span>net_transport.go:568</span></li><li><code>net.(*TCPListener).Accept</code><span>tcpsock.go:380</span></li><li><code>net.(*TCPListener).accept</code><span>tcpsock_posix.go:159</span></li><li><code>net.(*netFD).accept</code><span>fd_unix.go:161</span></li><li><code>internal/poll.(*FD).Accept</code><span>fd_unix.go:613</span></li><li><code>internal/poll.(*pollDesc).waitRead</code><span>fd_poll_runtime.go:89</span></li><li><code>internal/poll.(*pollDesc).wait</code><span>fd_poll_runtime.go:84</span></li><li><code>internal/poll.runtime_pollWait</code><span>netpoll.go:351</span></li></ol></section>
+          <p class="small trace-note">The frames on record 4 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 5</span></div><ol class="frames"><li><code>github.com/hashicorp/raft.NewNetworkTransportWithConfig</code><span>net_transport.go:242</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · runtime goroutine dump</span></div><ol class="frames"><li><code>github.com/hashicorp/raft.(*NetworkTransport).listen</code><span>net_transport.go:568</span></li><li><code>net.(*TCPListener).Accept</code><span>tcpsock.go:380</span></li><li><code>net.(*TCPListener).accept</code><span>tcpsock_posix.go:159</span></li><li><code>net.(*netFD).accept</code><span>fd_unix.go:161</span></li><li><code>internal/poll.(*FD).Accept</code><span>fd_unix.go:613</span></li><li><code>internal/poll.(*pollDesc).waitRead</code><span>fd_poll_runtime.go:89</span></li><li><code>internal/poll.(*pollDesc).wait</code><span>fd_poll_runtime.go:84</span></li><li><code>internal/poll.runtime_pollWait</code><span>netpoll.go:351</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · runtime goroutine dump</span></div><ol class="frames"><li><code>github.com/hashicorp/raft.(*NetworkTransport).listen</code><span>net_transport.go:568</span></li><li><code>net.(*TCPListener).Accept</code><span>tcpsock.go:380</span></li><li><code>net.(*TCPListener).accept</code><span>tcpsock_posix.go:159</span></li><li><code>net.(*netFD).accept</code><span>fd_unix.go:161</span></li><li><code>internal/poll.(*FD).Accept</code><span>fd_unix.go:613</span></li><li><code>internal/poll.(*pollDesc).waitRead</code><span>fd_poll_runtime.go:89</span></li><li><code>internal/poll.(*pollDesc).wait</code><span>fd_poll_runtime.go:84</span></li><li><code>internal/poll.runtime_pollWait</code><span>netpoll.go:351</span></li></ol></section>
+          <p class="small trace-note">The frames on record 6 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original test timed out after 130 submissions. In a new three-node group, a follower reopening a database at commit 135 stalled in NewRaft while the other two nodes still committed new values.</dd></div><div><dt>What CoroPerf showed</dt><dd>The follower blocked on a queue send in restoreFromCommittedLogs → processLogs before replay wrote anything. With proposed change #730 it applied all 135 writes and caught up.</dd></div><div><dt>Scope and limits</dt><dd>Tested on v1.8.0 with real Bolt storage and a clean shutdown. The wrapper persisted the commit position after logging. Power-loss atomicity was outside scope, and #730 was unmerged.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

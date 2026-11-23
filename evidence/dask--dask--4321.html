@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A Dask bag built from zero files lost its dataframe schema">
+  <title>dask/dask #4321 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dask/dask #4321</p>
+        <h1>A Dask bag built from zero files lost its dataframe schema</h1>
+        <div class="case-links"><a href="https://github.com/dask/dask/issues/4321">Upstream report ↗</a><a href="https://github.com/dask/dask/pull/4475">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>from_sequence</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:132</span></li><li><code>run</code><span>workload.py:91</span></li><li><code>&lt;module&gt;</code><span>reporter.py:2</span></li><li><code>from_sequence</code><span>core.py:1488</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>to_dataframe</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:132</span></li><li><code>run</code><span>workload.py:91</span></li><li><code>&lt;module&gt;</code><span>reporter.py:4</span></li><li><code>to_dataframe</code><span>core.py:1320</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>to_dataframe</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:884</span></li><li><code>_bootstrap_inner</code><span>threading.py:916</span></li><li><code>run</code><span>threading.py:864</span></li><li><code>worker</code><span>pool.py:119</span></li><li><code>execute_task</code><span>local.py:272</span></li><li><code>_execute_task</code><span>local.py:253</span></li><li><code>to_dataframe</code><span>core.py:2150</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>to_dataframe</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:884</span></li><li><code>_bootstrap_inner</code><span>threading.py:916</span></li><li><code>run</code><span>threading.py:864</span></li><li><code>worker</code><span>pool.py:119</span></li><li><code>execute_task</code><span>local.py:272</span></li><li><code>_execute_task</code><span>local.py:253</span></li><li><code>to_dataframe</code><span>core.py:2150</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In the two posted examples, filtering four records down to zero produced an empty pandas DataFrame with an integer column named a. Starting from an empty list returned an empty tuple. The two fixed builds produced the typed DataFrame in both cases.</dd></div><div><dt>What CoroPerf showed</dt><dd>The from_sequence call recorded zero input partitions on the affected builds. Bag.to_dataframe had the column metadata, but it scheduled zero conversion tasks. The finalizer called _concat with no partition results and returned the empty tuple. The fix created one empty partition. The worker converted it to a typed DataFrame, which the finalizer returned.</dd></div><div><dt>Scope and limits</dt><dd>The public example ran on the reported Python 3.6.5, Dask 0.19.3 and pandas 0.23.4. The directory experiment used local monthly files from the Seattle weather dataset. A calendar join checked 191 rainy days in 2012 and 1,461 dates in total against the source CSV under both synchronous and threaded scheduling. These traces cover ordinary calls and worker tasks.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

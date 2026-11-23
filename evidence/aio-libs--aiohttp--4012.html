@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A multipart upload arrives under the wrong form field name">
+  <title>aio-libs/aiohttp #4012 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">aio-libs/aiohttp #4012</p>
+        <h1>A multipart upload arrives under the wrong form field name</h1>
+        <div class="case-links"><a href="https://github.com/aio-libs/aiohttp/issues/4012">Upstream report ↗</a><a href="https://github.com/aio-libs/aiohttp/pull/4031">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 10</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:672</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>main</code><span>workload.py:23</span></li><li><code>upload</code><span>posted.py:9</span></li><li><code>_request</code><span>client.py:540</span></li><li><code>send</code><span>client_reqrep.py:671</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 10 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>write_bytes</code><span>client_reqrep.py:583</span></li><li><code>write</code><span>multipart.py:890</span></li><li><code>write</code><span>http_writer.py:79</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 10 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>write_bytes</code><span>client_reqrep.py:583</span></li><li><code>write</code><span>multipart.py:890</span></li><li><code>write</code><span>http_writer.py:79</span></li></ol></section>
+          <p class="small trace-note">The frames on record 10 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:672</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>main</code><span>workload.py:23</span></li><li><code>upload</code><span>posted.py:7</span></li><li><code>set_content_disposition</code><span>payload.py:203</span></li><li><code>content_disposition_header</code><span>helpers.py:406</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>main</code><span>workload.py:23</span></li><li><code>upload</code><span>posted.py:7</span></li><li><code>set_content_disposition</code><span>payload.py:203</span></li><li><code>content_disposition_header</code><span>helpers.py:406</span></li></ol></section>
+          <p class="small trace-note">The frames on record 4 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 12</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:672</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>main</code><span>workload.py:23</span></li><li><code>upload</code><span>posted.py:9</span></li><li><code>_request</code><span>client.py:540</span></li><li><code>send</code><span>client_reqrep.py:671</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 12 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>write_bytes</code><span>client_reqrep.py:583</span></li><li><code>write</code><span>multipart.py:901</span></li><li><code>write</code><span>payload.py:305</span></li><li><code>write</code><span>http_writer.py:79</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 12 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:47</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>write_bytes</code><span>client_reqrep.py:583</span></li><li><code>write</code><span>multipart.py:901</span></li><li><code>write</code><span>payload.py:305</span></li><li><code>write</code><span>http_writer.py:79</span></li></ol></section>
+          <p class="small trace-note">The frames on record 12 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>aiohttp 3.5.4 sent the file in the reporter’s example. The receiver stored it under files%5B%5D, so looking it up under files[] returned an empty list. aiohttp 3.8.0 preserved the brackets and the lookup found the file. When two island data files were uploaded together, both releases delivered both files in the submitted order.</dd></div><div><dt>What CoroPerf showed</dt><dd>The encoder’s return value already contained the escaped name. The creation stack in ClientRequest.send identifies the writer task that later sent those exact header bytes. Independent parsing of the saved body and replay through a second server reproduced the field lookup. The file hashes matched across builds.</dd></div><div><dt>Scope and limits</dt><dd>The reporter supplied an async client fragment on Python 3.6.8. The local run supplied an upload URL, files and a Werkzeug receiver. Its HTTP 200 receipt exposed what the parser received. The creation and write samples come from the source builds on Python 3.8.20.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

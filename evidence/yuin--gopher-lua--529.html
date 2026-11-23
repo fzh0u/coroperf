@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A GopherLua coroutine error omits the Go stack">
+  <title>yuin/gopher-lua #529 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">yuin/gopher-lua #529</p>
+        <h1>A GopherLua coroutine error omits the Go stack</h1>
+        <div class="case-links"><a href="https://github.com/yuin/gopher-lua/issues/529">Upstream report ↗</a><a href="https://github.com/yuin/gopher-lua/pull/539/files#diff-385c79a41cd40e8984dcfa84c2e5e03046627b8c5f73dd284f69a1db37f44635R145">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>github.com/yuin/gopher-lua.threadRun.func1 () at vm.go:278</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>main.main () at main.go:31</code></li><li><code>github.com/yuin/gopher-lua.(*LState).DoString (ls=[address], source=..., ~r0=...) at auxlib.go:410</code></li><li><code>github.com/yuin/gopher-lua.(*LState).PCall (ls=[address], nargs=0, nret=-1, errfunc=0x0, err=...) at state.go:2092</code></li><li><code>github.com/yuin/gopher-lua.(*LState).Call (ls=[address], nargs=0, nret=-1) at state.go:2026</code></li><li><code>github.com/yuin/gopher-lua.(*LState).callR (ls=[address], nargs=0, nret=-1, rbase=0) at state.go:1269</code></li><li><code>github.com/yuin/gopher-lua.mainLoop (L=[address], baseframe=[address]) at vm.go:31</code></li><li><code>github.com/yuin/gopher-lua.init.3.func26 (L=[address], inst=&lt;optimized out&gt;, baseframe=&lt;optimized out&gt;, ~r0=&lt;optimized out&gt;) at vm.go:1308</code></li><li><code>github.com/yuin/gopher-lua.callGFunction (L=0x5565a0, tailcall=false, ~r0=&lt;optimized out&gt;) at vm.go:202</code></li><li><code>github.com/yuin/gopher-lua.coResume (L=[address], ~r0=&lt;optimized out&gt;) at coroutinelib.go:80</code></li><li><code>github.com/yuin/gopher-lua.threadRun (L=[address]) at vm.go:294</code></li><li><code>github.com/yuin/gopher-lua.mainLoop (L=[address], baseframe=0x0) at vm.go:31</code></li><li><code>github.com/yuin/gopher-lua.init.3.func26 (L=[address], inst=&lt;optimized out&gt;, baseframe=&lt;optimized out&gt;, ~r0=&lt;optimized out&gt;) at vm.go:1308</code></li><li><code>github.com/yuin/gopher-lua.callGFunction (L=0x5565a0, tailcall=false, ~r0=&lt;optimized out&gt;) at vm.go:202</code></li><li><code>main.diagnosticMarker (L=&lt;optimized out&gt;, ~r0=&lt;optimized out&gt;) at main.go:11</code></li><li><code>runtime.gopanic (e=...) at panic.go:787</code></li><li><code>github.com/yuin/gopher-lua.threadRun.func1 () at vm.go:278</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With IncludeGoStackTrace enabled, coroutine.resume returned only the diagnostic marker, while a direct call included a Go stack.</dd></div><div><dt>What CoroPerf showed</dt><dd>At the VM’s threadRun recovery branch, the debugger showed coResume, callGFunction and diagnosticMarker, locating the Go call before the error became text.</dd></div><div><dt>Scope and limits</dt><dd>Used a benign diagnostic marker. The original embedded host and Lua script were unavailable, and the #539 change was reviewed.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

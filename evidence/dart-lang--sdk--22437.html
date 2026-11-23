@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Dart compiler stack loss remains unexplained">
+  <title>dart-lang/sdk #22437 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dart-lang/sdk #22437</p>
+        <h1>Dart compiler stack loss remains unexplained</h1>
+        <div class="case-links"><a href="https://github.com/dart-lang/sdk/issues/22437">Upstream report ↗</a><a href="https://github.com/dart-lang/sdk/issues/22437#issuecomment-108459603">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Insufficient</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>FletchBackend.codegenFunction</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>_RawReceivePortImpl@709387912._handleMessage@709387912</code><span>isolate_patch.dart</span></li><li><code>_runPendingImmediateCallback@709387912</code><span>isolate_patch.dart</span></li><li><code>_asyncRunCallback@687914314</code><span>schedule_microtask.dart</span></li><li><code>_asyncRunCallbackLoop@687914314</code><span>schedule_microtask.dart</span></li><li><code>_Future@687914314.&lt;anonymous closure&gt;</code><span>future_impl.dart</span></li><li><code>_Future@687914314._completeWithValue@687914314</code><span>future_impl.dart</span></li><li><code>_Future@687914314._propagateToListeners@687914314</code><span>future_impl.dart</span></li><li><code>_Future@687914314.handleValueCallback</code><span>future_impl.dart</span></li><li><code>_RootZone@687914314.runUnary</code><span>zone.dart</span></li><li><code>Compiler.&lt;anonymous closure&gt;</code><span>compiler.dart</span></li><li><code>Compiler.compileLoadedLibraries</code><span>compiler.dart</span></li><li><code>Compiler.processQueue</code><span>compiler.dart</span></li><li><code>Enqueuer.forEach</code><span>enqueue.dart</span></li><li><code>QueueFilter.processWorkItem</code><span>enqueue.dart</span></li><li><code>Compiler.&lt;anonymous closure&gt;</code><span>compiler.dart</span></li><li><code>Compiler.withCurrentElement</code><span>compiler.dart</span></li><li><code>Compiler.&lt;anonymous closure&gt;</code><span>compiler.dart</span></li><li><code>CodegenWorkItem.run</code><span>compiler.dart</span></li><li><code>Compiler.codegen</code><span>compiler.dart</span></li><li><code>FletchBackend.codegen</code><span>fletch_backend.dart:96</span></li><li><code>FletchBackend.codegenFunction</code><span>fletch_backend.dart:113</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original package compiled system.dart and hello_test.dart into 23 and seven commands, and a healthy VM breakpoint showed both reported code-generation lines.</dd></div><div><dt>What CoroPerf showed</dt><dd>The VM debugger recovered codegenFunction:113 and its caller codegen:96, and a controlled unsupported-function error retained the generator stack both with and without catchError.</dd></div><div><dt>Scope and limits</dt><dd>The original noSuchMethod input, checkout, and VM build were unknown. Generated Fletch code was not executed.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Worker log requests return the oldest entries first">
+  <title>dask/distributed #7474 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dask/distributed #7474</p>
+        <h1>Worker log requests return the oldest entries first</h1>
+        <div class="case-links"><a href="https://github.com/dask/distributed/issues/7474">Upstream report ↗</a><a href="https://github.com/dask/distributed/pull/7475">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 118</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 98</span></div><ol class="frames"><li><code>&lt;module&gt;:1:&lt;string&gt;</code></li><li><code>spawn_main</code><span>spawn.py:116</span></li><li><code>_main</code><span>spawn.py:129</span></li><li><code>_bootstrap</code><span>process.py:315</span></li><li><code>run</code><span>process.py:108</span></li><li><code>_run</code><span>process.py:188</span></li><li><code>_run</code><span>nanny.py:981</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_handle_events</code><span>asyncio.py:189</span></li><li><code>accept_handler</code><span>netutil.py:276</span></li><li><code>_handle_connection</code><span>tcpserver.py:331</span></li><li><code>wrapper</code><span>functools.py:888</span></li><li><code>convert_yielded</code><span>gen.py:867</span></li><li><code>ensure_future</code><span>tasks.py:665</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 117</span></div><ol class="frames"><li><code>&lt;module&gt;:1:&lt;string&gt;</code></li><li><code>spawn_main</code><span>spawn.py:116</span></li><li><code>_main</code><span>spawn.py:129</span></li><li><code>_bootstrap</code><span>process.py:315</span></li><li><code>run</code><span>process.py:108</span></li><li><code>_run</code><span>process.py:188</span></li><li><code>_run</code><span>nanny.py:981</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_handle_stream</code><span>tcp.py:622</span></li><li><code>handle_comm</code><span>core.py:721</span></li><li><code>call_soon</code><span>core.py:193</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 118 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;:1:&lt;string&gt;</code></li><li><code>spawn_main</code><span>spawn.py:116</span></li><li><code>_main</code><span>spawn.py:129</span></li><li><code>_bootstrap</code><span>process.py:315</span></li><li><code>run</code><span>process.py:108</span></li><li><code>_run</code><span>process.py:188</span></li><li><code>_run</code><span>nanny.py:981</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_handle_comm</code><span>core.py:818</span></li><li><code>get_logs</code><span>node.py:124</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 118 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;:1:&lt;string&gt;</code></li><li><code>spawn_main</code><span>spawn.py:116</span></li><li><code>_main</code><span>spawn.py:129</span></li><li><code>_bootstrap</code><span>process.py:315</span></li><li><code>run</code><span>process.py:108</span></li><li><code>_run</code><span>process.py:188</span></li><li><code>_run</code><span>nanny.py:981</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_handle_comm</code><span>core.py:818</span></li><li><code>get_logs</code><span>node.py:124</span></li></ol></section>
+          <p class="small trace-note">The frames on record 118 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Other observation in the same capture · observation 133</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 127</span></div><ol class="frames"><li><code>&lt;module&gt;:1:&lt;string&gt;</code></li><li><code>spawn_main</code><span>spawn.py:116</span></li><li><code>_main</code><span>spawn.py:129</span></li><li><code>_bootstrap</code><span>process.py:315</span></li><li><code>run</code><span>process.py:108</span></li><li><code>_run</code><span>process.py:188</span></li><li><code>_run</code><span>nanny.py:981</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_handle_events</code><span>asyncio.py:189</span></li><li><code>accept_handler</code><span>netutil.py:276</span></li><li><code>_handle_connection</code><span>tcpserver.py:331</span></li><li><code>wrapper</code><span>functools.py:888</span></li><li><code>convert_yielded</code><span>gen.py:867</span></li><li><code>ensure_future</code><span>tasks.py:665</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 132</span></div><ol class="frames"><li><code>&lt;module&gt;:1:&lt;string&gt;</code></li><li><code>spawn_main</code><span>spawn.py:116</span></li><li><code>_main</code><span>spawn.py:129</span></li><li><code>_bootstrap</code><span>process.py:315</span></li><li><code>run</code><span>process.py:108</span></li><li><code>_run</code><span>process.py:188</span></li><li><code>_run</code><span>nanny.py:981</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_handle_stream</code><span>tcp.py:622</span></li><li><code>handle_comm</code><span>core.py:721</span></li><li><code>call_soon</code><span>core.py:193</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 133 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;:1:&lt;string&gt;</code></li><li><code>spawn_main</code><span>spawn.py:116</span></li><li><code>_main</code><span>spawn.py:129</span></li><li><code>_bootstrap</code><span>process.py:315</span></li><li><code>run</code><span>process.py:108</span></li><li><code>_run</code><span>process.py:188</span></li><li><code>_run</code><span>nanny.py:981</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_handle_comm</code><span>core.py:818</span></li><li><code>get_logs</code><span>node.py:124</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 133 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;:1:&lt;string&gt;</code></li><li><code>spawn_main</code><span>spawn.py:116</span></li><li><code>_main</code><span>spawn.py:129</span></li><li><code>_bootstrap</code><span>process.py:315</span></li><li><code>run</code><span>process.py:108</span></li><li><code>_run</code><span>process.py:188</span></li><li><code>_run</code><span>nanny.py:981</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_handle_comm</code><span>core.py:818</span></li><li><code>get_logs</code><span>node.py:124</span></li></ol></section>
+          <p class="small trace-note">The frames on record 133 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter’s one- and two-worker programs returned the two oldest startup records on both affected releases, while 2023.1.1 and the fix returned the newest first.</dd></div><div><dt>What CoroPerf showed</dt><dd>The worker’s RPC task scanned the log queue from the head and stopped at the requested limit. Reversing iteration also restored the time-filtered results.</dd></div><div><dt>Scope and limits</dt><dd>Local Linux TCP workers ran in separate processes. The two nannies shared a process and logger, so their broadcast results were checked individually.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

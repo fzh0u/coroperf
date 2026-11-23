@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Bun’s PostgreSQL syntax error has no stack in the affected release">
+  <title>oven-sh/bun #22011 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">oven-sh/bun #22011</p>
+        <h1>Bun’s PostgreSQL syntax error has no stack in the affected release</h1>
+        <div class="case-links"><a href="https://github.com/oven-sh/bun/issues/22011">Upstream report ↗</a><a href="https://github.com/oven-sh/bun/issues/22011#issuecomment-3208791340">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Insufficient</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 4 · sample<code>&lt;anonymous&gt;</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4 · native runtime stack</span></div><ol class="frames"><li><code>onRejectPostgresQuery</code><span>bun:sql:449</span></li><li><code>enqueueJob</code><span>[native code]</span></li><li><code>then</code></li><li><code>enqueueJob</code><span>[native code]</span></li><li><code>promiseReactionJob</code></li><li><code>&lt;anonymous&gt;</code></li></ol></section></details><details class="extra" ><summary>Record 5 · sample<code>&lt;anonymous&gt;</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5 · native runtime stack</span></div><ol class="frames"><li><code>onRejectPostgresQuery</code><span>bun:sql:449</span></li><li><code>enqueueJob</code><span>[native code]</span></li><li><code>&lt;anonymous&gt;</code></li><li><code>enqueueJob</code><span>[native code]</span></li><li><code>promiseReactionJob</code></li><li><code>promiseReactionJobWithoutPromiseUnwrapAsyncContext</code></li><li><code>asyncFunctionResume</code></li><li><code>&lt;anonymous&gt;</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Bun 1.2.20 passed its own syntax-error test on PostgreSQL 14. A valid query returned 1, while the invalid query returned SQLSTATE 42601 with an undefined stack.</dd></div><div><dt>What CoroPerf showed</dt><dd>A separate Promise catch exposed its callback stack, and the earlier graph showed onRejectPostgresQuery. Version 1.4.4 supplied a one-line message but failed the old test’s SyntaxError type assertion.</dd></div><div><dt>Scope and limits</dt><dd>The reporter’s query, schema and application code were unavailable. The test’s error location differed from the reported VALUES position.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

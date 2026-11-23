@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A Bluebird warning omits the origin of a nested Promise.delay">
+  <title>petkaantonov/bluebird #1182 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">petkaantonov/bluebird #1182</p>
+        <h1>A Bluebird warning omits the origin of a nested Promise.delay</h1>
+        <div class="case-links"><a href="https://github.com/petkaantonov/bluebird/issues/1182">Upstream report ↗</a><a href="https://github.com/petkaantonov/bluebird/issues/1182#issuecomment-237928407">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>Function.Promise.delay</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>processImmediate [as _immediateCallback]</code><span>timers.js:396</span></li><li><code>Immediate.Async.drainQueues [as _onImmediate]</code><span>async.js:17</span></li><li><code>Async._drainQueues</code><span>async.js:148</span></li><li><code>Async._drainQueue</code><span>async.js:143</span></li><li><code>Promise._settlePromiseCtx</code><span>promise.js:598</span></li><li><code>Promise._settlePromise</code><span>promise.js:561</span></li><li><code>Promise._settlePromiseFromHandler</code><span>promise.js:504</span></li><li><code>tryCatcher</code><span>util.js:16</span></li><li><code>&lt;anonymous&gt;</code><span>case-1182-original.js:5</span></li><li><code>Function.observedApi [as delay]</code><span>legacy.js:25</span></li><li><code>Function.Promise.delay</code><span>timers.js:26</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>&lt;anonymous&gt;</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>processImmediate [as _immediateCallback]</code><span>timers.js:396</span></li><li><code>Immediate.Async.drainQueues [as _onImmediate]</code><span>async.js:17</span></li><li><code>Async._drainQueues</code><span>async.js:148</span></li><li><code>Async._drainQueue</code><span>async.js:143</span></li><li><code>Promise._settlePromiseCtx</code><span>promise.js:598</span></li><li><code>Promise._settlePromise</code><span>promise.js:561</span></li><li><code>Promise._settlePromiseFromHandler</code><span>promise.js:504</span></li><li><code>tryCatcher</code><span>util.js:16</span></li><li><code>&lt;anonymous&gt;</code><span>case-1182-original.js:5</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>Object.checkForgottenReturns</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>processImmediate [as _immediateCallback]</code><span>timers.js:396</span></li><li><code>Immediate.Async.drainQueues [as _onImmediate]</code><span>async.js:17</span></li><li><code>Async._drainQueues</code><span>async.js:148</span></li><li><code>Async._drainQueue</code><span>async.js:143</span></li><li><code>Promise._settlePromiseCtx</code><span>promise.js:598</span></li><li><code>Promise._settlePromise</code><span>promise.js:561</span></li><li><code>Promise._settlePromiseFromHandler</code><span>promise.js:515</span></li><li><code>Object.checkForgottenReturns</code><span>debuggability.js:399</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>methodName</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>processImmediate [as _immediateCallback]</code><span>timers.js:396</span></li><li><code>Immediate.Async.drainQueues [as _onImmediate]</code><span>async.js:17</span></li><li><code>Async._drainQueues</code><span>async.js:148</span></li><li><code>Async._drainQueue</code><span>async.js:143</span></li><li><code>Promise._settlePromiseCtx</code><span>promise.js:598</span></li><li><code>Promise._settlePromise</code><span>promise.js:561</span></li><li><code>Promise._settlePromiseFromHandler</code><span>promise.js:515</span></li><li><code>Object.checkForgottenReturns</code><span>debuggability.js:399</span></li><li><code>Promise.observedForgotten [as _warn]</code><span>legacy.js:33</span></li><li><code>Promise._warn</code><span>debuggability.js:93</span></li><li><code>warn</code><span>debuggability.js:423</span></li><li><code>activeFireEvent</code><span>debuggability.js:202</span></li><li><code>methodName</code><span>debuggability.js:159</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter’s nested-delay warning omitted its creation site, while 3.4.7 included an additional origin segment.</dd></div><div><dt>What CoroPerf showed</dt><dd>The Promise returned by delay had no _trace, and _warn received that same object. The revised release exposed the delay creation site in the original program.</dd></div><div><dt>Scope and limits</dt><dd>Node 4 lacked async_hooks. Object matches came from an observer’s WeakMap.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Video polling blocks the async client’s event loop">
+  <title>huggingface/huggingface_hub #5186 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">huggingface/huggingface_hub #5186</p>
+        <h1>Video polling blocks the async client’s event loop</h1>
+        <div class="case-links"><a href="https://github.com/huggingface/huggingface_hub/issues/5186">Upstream report ↗</a><a href="https://github.com/huggingface/huggingface_hub/pull/5200">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Observation selected in the issue review · observation 7</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 7 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>queue_client.py:17</span></li><li><code>text_to_video</code><span>_async_client.py:2696</span></li><li><code>get_response</code><span>fal_ai.py:189</span></li><li><code>get_response</code><span>fal_ai.py:51</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 7 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>queue_client.py:17</span></li><li><code>text_to_video</code><span>_async_client.py:2696</span></li><li><code>get_response</code><span>fal_ai.py:189</span></li><li><code>get_response</code><span>fal_ai.py:51</span></li></ol></section>
+          <p class="small trace-note">The frames on record 7 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 8</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>queue_client.py:17</span></li><li><code>text_to_video</code><span>_async_client.py:2696</span></li><li><code>get_response</code><span>fal_ai.py:189</span></li><li><code>get_response</code><span>fal_ai.py:82</span></li><li><code>get</code><span>_client.py:1096</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>queue_client.py:17</span></li><li><code>text_to_video</code><span>_async_client.py:2696</span></li><li><code>get_response</code><span>fal_ai.py:189</span></li><li><code>get_response</code><span>fal_ai.py:82</span></li><li><code>get</code><span>_client.py:1096</span></li></ol></section>
+          <p class="small trace-note">The frames on record 8 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 17</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>queue_client.py:17</span></li><li><code>text_to_video</code><span>_async_client.py:2696</span></li><li><code>get_response</code><span>fal_ai.py:191</span></li><li><code>get</code><span>_client.py:1096</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>queue_client.py:17</span></li><li><code>text_to_video</code><span>_async_client.py:2696</span></li><li><code>get_response</code><span>fal_ai.py:191</span></li><li><code>get</code><span>_client.py:1096</span></li></ol></section>
+          <p class="small trace-note">The frames on record 17 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 1 · create<code>create_task</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>queue_client.py:14</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section></details><details class="extra" ><summary>Record 10 · sample<code>get</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 10 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>queue_client.py:17</span></li><li><code>text_to_video</code><span>_async_client.py:2696</span></li><li><code>get_response</code><span>fal_ai.py:189</span></li><li><code>get_response</code><span>fal_ai.py:82</span></li><li><code>get</code><span>_client.py:1096</span></li></ol></section></details><details class="extra" ><summary>Record 12 · sample<code>get</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 12 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>queue_client.py:17</span></li><li><code>text_to_video</code><span>_async_client.py:2696</span></li><li><code>get_response</code><span>fal_ai.py:189</span></li><li><code>get_response</code><span>fal_ai.py:82</span></li><li><code>get</code><span>_client.py:1096</span></li></ol></section></details><details class="extra" ><summary>Record 14 · sample<code>get</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 14 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>queue_client.py:21</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>queue_client.py:17</span></li><li><code>text_to_video</code><span>_async_client.py:2696</span></li><li><code>get_response</code><span>fal_ai.py:189</span></li><li><code>get_response</code><span>fal_ai.py:86</span></li><li><code>get</code><span>_client.py:1096</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>During 1.5 seconds of mock polling the timer ticked zero times on the old SDK and 29 times after the fix. With a real local TCP queue the counts were zero and 31.</dd></div><div><dt>What CoroPerf showed</dt><dd>The request task made three status queries and one result query inside nested get_response calls before downloading the video, while the fixed task yielded at to_thread.</dd></div><div><dt>Scope and limits</dt><dd>All variants returned the same 1,099-byte, eight-frame video. The test covered local client polling without contacting a hosted model.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

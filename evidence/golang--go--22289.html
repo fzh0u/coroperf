@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A goroutine dump omits creators that have already exited">
+  <title>golang/go #22289 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">golang/go #22289</p>
+        <h1>A goroutine dump omits creators that have already exited</h1>
+        <div class="case-links"><a href="https://github.com/golang/go/issues/22289">Upstream report ↗</a><a href="https://github.com/golang/go/issues/22289#issuecomment-378453217">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 12</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>main.main</code><span>_testmain.go:45</span></li><li><code>testing.(*M).Run</code><span>testing.go:2034</span></li><li><code>testing.runTests</code><span>testing.go:2166</span></li><li><code>testing.tRunner</code><span>testing.go:1690</span></li><li><code>testing.runTests.func1</code><span>testing.go:2168</span></li><li><code>testing.(*T).Run</code><span>testing.go:1743</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 5</span></div><ol class="frames"><li><code>testing.tRunner</code><span>testing.go:1690</span></li><li><code>_program.TestOriginal</code><span>main_test.go:3</span></li><li><code>_program.main</code><span>main.go:27</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 7</span></div><ol class="frames"><li><code>_program.foo</code><span>main.go:44</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:63</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 8</span></div><ol class="frames"><li><code>_program.foo.func2</code><span>main.go:44</span></li><li><code>_program.bar</code><span>main.go:55</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:63</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 9</span></div><ol class="frames"><li><code>_program.bar.func1</code><span>main.go:55</span></li><li><code>_program.foo</code><span>main.go:44</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:63</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 10</span></div><ol class="frames"><li><code>_program.foo.func2</code><span>main.go:44</span></li><li><code>_program.bar</code><span>main.go:55</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:63</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 11</span></div><ol class="frames"><li><code>_program.bar.func1</code><span>main.go:55</span></li><li><code>_program.foo</code><span>main.go:44</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:63</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 12 · Go runtime channel wait</span></div><ol class="frames"><li><code>_program.foo.func2</code><span>main.go:44</span></li><li><code>_program.bar</code><span>main.go:51</span></li><li><code>runtime.chanrecv1</code><span>chan.go:489</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 12 · Go runtime channel wait</span></div><ol class="frames"><li><code>_program.foo.func2</code><span>main.go:44</span></li><li><code>_program.bar</code><span>main.go:51</span></li><li><code>runtime.chanrecv1</code><span>chan.go:489</span></li></ol></section>
+          <p class="small trace-note">The frames on record 12 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Other observation in the same capture · observation 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>main.main</code><span>_testmain.go:45</span></li><li><code>testing.(*M).Run</code><span>testing.go:2034</span></li><li><code>testing.runTests</code><span>testing.go:2166</span></li><li><code>testing.tRunner</code><span>testing.go:1690</span></li><li><code>testing.runTests.func1</code><span>testing.go:2168</span></li><li><code>testing.(*T).Run</code><span>testing.go:1743</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · Go runtime channel wait</span></div><ol class="frames"><li><code>testing.tRunner</code><span>testing.go:1690</span></li><li><code>_program.TestOriginal</code><span>main_test.go:3</span></li><li><code>_program.main</code><span>main.go:28</span></li><li><code>runtime.chanrecv1</code><span>chan.go:489</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · Go runtime channel wait</span></div><ol class="frames"><li><code>testing.tRunner</code><span>testing.go:1690</span></li><li><code>_program.TestOriginal</code><span>main_test.go:3</span></li><li><code>_program.main</code><span>main.go:28</span></li><li><code>runtime.chanrecv1</code><span>chan.go:489</span></li></ol></section>
+          <p class="small trace-note">The frames on record 6 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 13</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>main.main</code><span>_testmain.go:45</span></li><li><code>testing.(*M).Run</code><span>testing.go:2025</span></li><li><code>testing.(*M).before</code><span>testing.go:2207</span></li><li><code>runtime/trace.Start</code><span>trace.go:125</span></li><li><code>runtime.StartTrace</code><span>trace.go:308</span></li><li><code>runtime.traceStartReadCPU</code><span>tracecpu.go:42</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 13 · Go runtime channel wait</span></div><ol class="frames"><li><code>runtime.traceStartReadCPU.func1</code><span>tracecpu.go:54</span></li><li><code>runtime.(*wakeableSleep).sleep</code><span>trace.go:1022</span></li><li><code>runtime.chanrecv1</code><span>chan.go:489</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 13 · Go runtime channel wait</span></div><ol class="frames"><li><code>runtime.traceStartReadCPU.func1</code><span>tracecpu.go:54</span></li><li><code>runtime.(*wakeableSleep).sleep</code><span>trace.go:1022</span></li><li><code>runtime.chanrecv1</code><span>chan.go:489</span></li></ol></section>
+          <p class="small trace-note">The frames on record 13 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 10 · create<code>_program.d1</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 10</span></div><ol class="frames"><li><code>_program.foo.func2</code><span>main.go:44</span></li><li><code>_program.bar</code><span>main.go:55</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:63</span></li></ol></section></details><details class="extra" ><summary>Record 9 · create<code>_program.d1</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 9</span></div><ol class="frames"><li><code>_program.bar.func1</code><span>main.go:55</span></li><li><code>_program.foo</code><span>main.go:44</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:63</span></li></ol></section></details><details class="extra" ><summary>Record 8 · create<code>_program.d1</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 8</span></div><ol class="frames"><li><code>_program.foo.func2</code><span>main.go:44</span></li><li><code>_program.bar</code><span>main.go:55</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:63</span></li></ol></section></details><details class="extra" ><summary>Record 7 · create<code>_program.d1</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 7</span></div><ol class="frames"><li><code>_program.foo</code><span>main.go:44</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:66</span></li><li><code>_program.d1</code><span>main.go:63</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original Go program left its last goroutine blocked on a channel, with exited ancestors absent from the ordinary stack dump.</dd></div><div><dt>What CoroPerf showed</dt><dd>Runtime trace creator IDs linked the blocked bar back through foo and an earlier bar to main.</dd></div><div><dt>Scope and limits</dt><dd>The upstream issue concerned diagnostic visibility in this example.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

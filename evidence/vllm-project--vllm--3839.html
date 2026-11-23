@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A vLLM worker exits after a reported NCCL broadcast timeout">
+  <title>vllm-project/vllm #3839 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">vllm-project/vllm #3839</p>
+        <h1>A vLLM worker exits after a reported NCCL broadcast timeout</h1>
+        <div class="case-links"><a href="https://github.com/vllm-project/vllm/issues/3839">Upstream report ↗</a><a href="https://github.com/vllm-project/vllm/issues/3839#issuecomment-3135897869">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Original run unavailable</dd></div>
+          <div><dt>Diagnosis</dt><dd>Insufficient</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>_wrap_awaitable</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · upstream exception stack</span></div><ol class="frames"><li><code>_raise_exception_on_finish</code><span>async_llm_engine.py:29</span></li><li><code>run_engine_loop</code><span>async_llm_engine.py:414</span></li><li><code>engine_step</code><span>async_llm_engine.py:393</span></li><li><code>step_async</code><span>async_llm_engine.py:189</span></li><li><code>_run_workers_async</code><span>async_llm_engine.py:276</span></li><li><code>_wrap_awaitable</code><span>tasks.py:694</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_raise_exception_on_finish</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · upstream exception stack</span></div><ol class="frames"><li><code>uvloop.loop.Handle._run</code><span>cbhandles.pyx:63</span></li><li><code>_raise_exception_on_finish</code><span>async_llm_engine.py:38</span></li><li><code>_raise_exception_on_finish</code><span>async_llm_engine.py:33</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Upstream logs showed a rank-0 NCCL broadcast timeout and a Ray worker exit. A healthy vLLM 0.3.3 control on two A100s completed six tokens with OPT-125M.</dd></div><div><dt>What CoroPerf showed</dt><dd>The published stack placed _run_workers_async waiting for a worker, but the two stacks lacked a shared timeline or task identity to establish causation.</dd></div><div><dt>Scope and limits</dt><dd>The incident input and missing rank’s state were unavailable. The graph uses upstream logs, and the two-GPU run validates only healthy inference.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

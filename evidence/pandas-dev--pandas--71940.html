@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Grouped OHLC fails on Arrow-backed numeric data">
+  <title>pandas-dev/pandas #71940 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">pandas-dev/pandas #71940</p>
+        <h1>Grouped OHLC fails on Arrow-backed numeric data</h1>
+        <div class="case-links"><a href="https://github.com/pandas-dev/pandas/issues/71940">Upstream report ↗</a><a href="https://github.com/pandas-dev/pandas/pull/71975">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 2 · sample<code>__arrow_array__</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>matrix.py:76</span></li><li><code>ohlc</code><span>groupby.py:3502</span></li><li><code>_cython_operation</code><span>ops.py:1077</span></li><li><code>cython_operation</code><span>ops.py:616</span></li><li><code>_groupby_op</code><span>array.py:3944</span></li><li><code>_groupby_result_to_arrow</code><span>array.py:3849</span></li><li><code>__arrow_array__</code><span>masked.py:983</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Grouping the reporter’s three floats into two groups raised “Mask must be 1D array” with Arrow, while pandas nullable floats and NumPy floats produced the correct four OHLC columns.</dd></div><div><dt>What CoroPerf showed</dt><dd>Aggregation had already produced the correct values and a two-dimensional mask when __arrow_array__ passed them to a one-dimensional conversion. The proposal preserved the result for table construction.</dd></div><div><dt>Scope and limits</dt><dd>The replay used Linux x86-64 instead of macOS ARM. Closed PR #71975 was built locally and was not verified as a released fix.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

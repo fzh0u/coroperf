@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Nested worker_client calls try to release the same worker thread twice">
+  <title>dask/distributed #9034 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dask/distributed #9034</p>
+        <h1>Nested worker_client calls try to release the same worker thread twice</h1>
+        <div class="case-links"><a href="https://github.com/dask/distributed/issues/9034">Upstream report ↗</a><a href="https://github.com/dask/distributed/pull/9038">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 3 · sample<code>secede</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · runtime-boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_worker</code><span>threadpoolexecutor.py:58</span></li><li><code>run</code><span>_concurrent_futures_thread.py:65</span></li><li><code>&lt;lambda&gt;</code><span>utils.py:1508</span></li><li><code>_run_task</code><span>worker.py:2946</span></li><li><code>_run_task_simple</code><span>worker.py:2982</span></li><li><code>__call__</code><span>_task_spec.py:755</span></li><li><code>nested_job</code><span>&lt;dynamic-code&gt;:80</span></li><li><code>__enter__</code><span>contextlib.py:137</span></li><li><code>worker_client</code><span>worker_client.py:71</span></li><li><code>secede</code><span>threadpoolexecutor.py:112</span></li></ol></section></details><details class="extra" ><summary>Record 7 · sample<code>secede</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 7 · runtime-boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_worker</code><span>threadpoolexecutor.py:58</span></li><li><code>run</code><span>_concurrent_futures_thread.py:65</span></li><li><code>&lt;lambda&gt;</code><span>utils.py:1508</span></li><li><code>_run_task</code><span>worker.py:2946</span></li><li><code>_run_task_simple</code><span>worker.py:2982</span></li><li><code>__call__</code><span>_task_spec.py:755</span></li><li><code>nested_job</code><span>&lt;dynamic-code&gt;:81</span></li><li><code>transform_range</code><span>&lt;dynamic-code&gt;:72</span></li><li><code>__enter__</code><span>contextlib.py:137</span></li><li><code>worker_client</code><span>worker_client.py:71</span></li><li><code>secede</code><span>threadpoolexecutor.py:112</span></li></ol></section></details><details class="extra" ><summary>Record 8 · sample<code>secede</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 8 · runtime-boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_worker</code><span>threadpoolexecutor.py:58</span></li><li><code>run</code><span>_concurrent_futures_thread.py:65</span></li><li><code>&lt;lambda&gt;</code><span>utils.py:1508</span></li><li><code>_run_task</code><span>worker.py:2946</span></li><li><code>_run_task_simple</code><span>worker.py:2982</span></li><li><code>__call__</code><span>_task_spec.py:755</span></li><li><code>nested_job</code><span>&lt;dynamic-code&gt;:81</span></li><li><code>transform_range</code><span>&lt;dynamic-code&gt;:72</span></li><li><code>__enter__</code><span>contextlib.py:137</span></li><li><code>worker_client</code><span>worker_client.py:71</span></li><li><code>secede</code><span>threadpoolexecutor.py:121</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The inner worker_client raised KeyError before submitting file work. Disabling its secede call, removing the outer context, or using the fix produced all four file sums.</dd></div><div><dt>What CoroPerf showed</dt><dd>The inner call tried to secede a thread that had already left the pool, while the fixed worker_client caught the internal KeyError and the task succeeded.</dd></div><div><dt>Scope and limits</dt><dd>The replay used a real local scheduler, nanny and worker with numeric files. The reporter’s ETL job was unavailable.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

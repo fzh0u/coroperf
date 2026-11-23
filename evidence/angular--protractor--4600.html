@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Protractor’s async wait loses the helper’s call site">
+  <title>angular/protractor #4600 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">angular/protractor #4600</p>
+        <h1>Protractor’s async wait loses the helper’s call site</h1>
+        <div class="case-links"><a href="https://github.com/angular/protractor/issues/4600">Upstream report ↗</a><a href="https://github.com/angular/protractor/issues/4600#issuecomment-777715006">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>&lt;unknown&gt;</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>_tickCallback</code><span>next_tick.js:188</span></li><li><code>&lt;unknown&gt;</code><span>promise.js:2107</span></li></ol></section></details><details class="extra" ><summary>Record 13 · sample<code>scheduleWait</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 13 · native runtime stack</span></div><ol class="frames"><li><code>_tickCallback</code><span>next_tick.js:188</span></li><li><code>fulfilled</code><span>search-helper.ts:4</span></li><li><code>&lt;unknown&gt;</code><span>search-helper.ts:13</span></li><li><code>step</code><span>search-helper.ts:32</span></li><li><code>&lt;unknown&gt;</code><span>search-helper.ts:49</span></li><li><code>to.(anonymous function)</code><span>browser.js:67</span></li><li><code>run</code><span>browser.js:59</span></li><li><code>wait</code><span>webdriver.js:943</span></li><li><code>wait</code><span>promise.js:2158</span></li><li><code>scheduleWait</code><span>promise.js:2094</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With Selenium’s promise manager disabled, the 10-second wait failed without the helper in its stack, while skipping the wait exposed the helper in the failed click.</dd></div><div><dt>What CoroPerf showed</dt><dd>The helper was visible when the wait was registered, the condition was still false after 10 seconds, and enabling the promise manager restored the helper frame.</dd></div><div><dt>Scope and limits</dt><dd>The report omitted the full configuration and lockfile. The test used ES5, ts-node 3.3.0 and a locally proxied page.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

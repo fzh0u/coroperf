@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Why did a non-null filter return the only NULL row?">
+  <title>tortoise/tortoise-orm #2351 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">tortoise/tortoise-orm #2351</p>
+        <h1>Why did a non-null filter return the only NULL row?</h1>
+        <div class="case-links"><a href="https://github.com/tortoise/tortoise-orm/issues/2351">Upstream report ↗</a><a href="https://github.com/tortoise/tortoise-orm/pull/2353">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 6</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:139</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:109</span></li><li><code>&lt;module&gt;</code><span>posted.py:9</span></li><li><code>ValuesListQuery.__await__</code><span>queryset.py:1859</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:139</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:109</span></li><li><code>&lt;module&gt;</code><span>posted.py:9</span></li><li><code>ValuesListQuery._execute</code><span>queryset.py:1887</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:139</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:109</span></li><li><code>&lt;module&gt;</code><span>posted.py:9</span></li><li><code>ValuesListQuery._execute</code><span>queryset.py:1887</span></li></ol></section>
+          <p class="small trace-note">The frames on record 6 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:139</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:109</span></li><li><code>&lt;module&gt;</code><span>posted.py:9</span></li><li><code>ValuesListQuery.__await__</code><span>queryset.py:1859</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:139</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:109</span></li><li><code>&lt;module&gt;</code><span>posted.py:9</span></li><li><code>ValuesListQuery._execute</code><span>queryset.py:1866</span></li><li><code>translate_exceptions.&lt;locals&gt;.translate_exceptions_</code><span>client.py:42</span></li><li><code>SqliteClient.execute_query</code><span>client.py:152</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:139</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:109</span></li><li><code>&lt;module&gt;</code><span>posted.py:9</span></li><li><code>ValuesListQuery._execute</code><span>queryset.py:1866</span></li><li><code>translate_exceptions.&lt;locals&gt;.translate_exceptions_</code><span>client.py:42</span></li><li><code>SqliteClient.execute_query</code><span>client.py:152</span></li></ol></section>
+          <p class="small trace-note">The frames on record 5 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 1 · sample<code>not_equal</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:139</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:109</span></li><li><code>&lt;module&gt;</code><span>posted.py:9</span></li><li><code>ValuesListQuery.__await__</code><span>queryset.py:1858</span></li><li><code>ValuesListQuery._make_query</code><span>queryset.py:1829</span></li><li><code>AwaitableQuery.resolve_filters</code><span>queryset.py:145</span></li><li><code>Q.resolve</code><span>expressions.py:544</span></li><li><code>Q._resolve_kwargs</code><span>expressions.py:507</span></li><li><code>Q._resolve_regular_kwarg</code><span>expressions.py:432</span></li><li><code>Q._process_filter_kwarg</code><span>expressions.py:420</span></li><li><code>not_equal</code><span>filters.py:136</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>Q._process_filter_kwarg</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:139</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:109</span></li><li><code>&lt;module&gt;</code><span>posted.py:9</span></li><li><code>ValuesListQuery.__await__</code><span>queryset.py:1858</span></li><li><code>ValuesListQuery._make_query</code><span>queryset.py:1829</span></li><li><code>AwaitableQuery.resolve_filters</code><span>queryset.py:145</span></li><li><code>Q.resolve</code><span>expressions.py:544</span></li><li><code>Q._resolve_kwargs</code><span>expressions.py:507</span></li><li><code>Q._resolve_regular_kwarg</code><span>expressions.py:432</span></li><li><code>Q._process_filter_kwarg</code><span>expressions.py:421</span></li></ol></section></details><details class="extra" ><summary>Record 4 · sample<code>ValuesListQuery._execute</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:139</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>worker.py:109</span></li><li><code>&lt;module&gt;</code><span>posted.py:9</span></li><li><code>ValuesListQuery._execute</code><span>queryset.py:1865</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter inserted two names in SQLite, &#x27;a&#x27; and NULL. On the reported revision, the 1.1.9 wheel and the immediate fix parent, awaiting name__not=None printed [None]. Both the SQL reference and a Python check on the two stored values selected [&#x27;a&#x27;]. The landed source returned [&#x27;a&#x27;].
+
+A separate check on the same connection added an empty string, a second &#x27;a&#x27;, &#x27;b&#x27; and another NULL. Four rows had non-null names. The affected builds selected the two NULL rows, IDs 2 and 6. The fix selected IDs 1, 3, 4 and 5, including the empty string. Explicit null checks and comparisons with &#x27;a&#x27; agreed across all four builds.</dd></div><div><dt>What CoroPerf showed</dt><dd>The affected filter function received None and returned an inequality with NULL joined by OR to IS NULL. The resolver received the same criterion object. SQLite evaluated the resulting expression as unknown on &#x27;a&#x27; and true on NULL, so only the NULL row survived. The landed source returned field.notnull() for the same argument. The emitted SQL spelled this as NOT &quot;name&quot; IS NULL.
+
+On the reported revision, segments 1 and 2 record synchronous predicate construction. Segment 3 records ValuesListQuery.__await__ creating the unstarted _execute coroutine at queryset.py line 1859. Segment 5 samples the live instance while the SQLite client returns the projected row. At segment 6 the same coroutine object and frame return [None], which the original application prints. The corresponding fixed trace returns [&#x27;a&#x27;].</dd></div><div><dt>Scope and limits</dt><dd>The original program uses an in-memory SQLite database and a nullable character column. The four additional inserts and control queries follow the original print calls. The fixed comparison ran the merged source commit. Coroutine identity was measured in the query on the event-loop thread. SQLite’s truth values were checked by running SQL on backups of the original connection.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

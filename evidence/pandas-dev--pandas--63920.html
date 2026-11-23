@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A missing categorical key contributes to the wrong group">
+  <title>pandas-dev/pandas #63920 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">pandas-dev/pandas #63920</p>
+        <h1>A missing categorical key contributes to the wrong group</h1>
+        <div class="case-links"><a href="https://github.com/pandas-dev/pandas/issues/63920">Upstream report ↗</a><a href="https://github.com/pandas-dev/pandas/pull/63961">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>result_index_and_ids</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:48</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>reporter.py:33</span></li><li><code>groups</code><span>groupby.py:550</span></li><li><code>groups</code><span>ops.py:734</span></li><li><code>result_index_and_ids</code><span>ops.py:831</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>result_index_and_ids</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:48</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>reporter.py:33</span></li><li><code>groups</code><span>groupby.py:550</span></li><li><code>groups</code><span>ops.py:734</span></li><li><code>result_index_and_ids</code><span>ops.py:833</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>result_index_and_ids</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:48</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>reporter.py:33</span></li><li><code>groups</code><span>groupby.py:550</span></li><li><code>groups</code><span>ops.py:734</span></li><li><code>result_index_and_ids</code><span>ops.py:859</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>result_index_and_ids</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:48</span></li><li><code>run_path:287:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>reporter.py:38</span></li><li><code>sum</code><span>groupby.py:3065</span></li><li><code>_agg_general</code><span>groupby.py:1708</span></li><li><code>_cython_agg_general</code><span>groupby.py:1808</span></li><li><code>grouped_reduce</code><span>managers.py:2257</span></li><li><code>array_func</code><span>groupby.py:1783</span></li><li><code>_cython_operation</code><span>ops.py:955</span></li><li><code>has_dropped_na</code><span>ops.py:756</span></li><li><code>ids</code><span>ops.py:774</span></li><li><code>result_index_and_ids</code><span>ops.py:831</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter’s February row appeared in January group 2, raising its sum from 5 to 13. In another case an empty category took the missing-key row’s value, first 31 and then 131.</dd></div><div><dt>What CoroPerf showed</dt><dd>The combined ID for missing key −1 collided with a valid group. Restoring −1 after reordering returned the sum to 5 and made all four upstream parameter cases pass.</dd></div><div><dt>Scope and limits</dt><dd>The isolated patch ran on 3.0.0 with 3.0.1 as a release control. The Cython wrapper was observed, not the C summation internals.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

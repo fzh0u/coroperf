@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="ZIO logs lose callers at a non-ZIO runtime boundary">
+  <title>zio/zio #5785 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">zio/zio #5785</p>
+        <h1>ZIO logs lose callers at a non-ZIO runtime boundary</h1>
+        <div class="case-links"><a href="https://github.com/zio/zio/issues/5785">Upstream report ↗</a><a href="https://github.com/zio/zio/issues/5785#issuecomment-1791659967">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>Example$.baz(Example.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · method-entry</span></div><ol class="frames"><li><code>Example.main(Example.scala)</code></li><li><code>Example$.main(Example.scala:3)</code></li><li><code>scala.App.main$(App.scala:96)</code></li><li><code>scala.App.main(App.scala:98)</code></li><li><code>scala.collection.AbstractIterable.foreach(Iterable.scala:933)</code></li><li><code>scala.collection.IterableOnceOps.foreach$(IterableOnce.scala:574)</code></li><li><code>scala.collection.IterableOnceOps.foreach(IterableOnce.scala:576)</code></li><li><code>scala.App.$anonfun$main$1$adapted(App.scala:98)</code></li><li><code>scala.App.$anonfun$main$1(App.scala:98)</code></li><li><code>scala.runtime.AbstractFunction0.apply$mcV$sp(AbstractFunction0.scala:17)</code></li><li><code>scala.Function0.apply$mcV$sp$(Function0.scala:42)</code></li><li><code>scala.Function0.apply$mcV$sp(Function0.scala:42)</code></li><li><code>Example$delayedInit$body.apply(Example.scala:3)</code></li><li><code>Example$.delayedEndpoint$Example$1(Example.scala:63)</code></li><li><code>Example$.foo(Example.scala:49)</code></li><li><code>Example$.bar(Example.scala:52)</code></li><li><code>Example$.baz(Example.scala)</code></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>zio.FiberRefs.getOrDefault(FiberRefs.scala:72)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · method-return</span></div><ol class="frames"><li><code>java.base/java.lang.Thread.run(Thread.java:1583)</code></li><li><code>java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)</code></li><li><code>java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)</code></li><li><code>zio.internal.FiberRuntime.run(FiberRuntime.scala:139)</code></li><li><code>zio.internal.FiberRuntime.drainQueueOnCurrentThread(FiberRuntime.scala:220)</code></li><li><code>zio.internal.FiberRuntime.evaluateMessageWhileSuspended(FiberRuntime.scala:504)</code></li><li><code>zio.internal.FiberRuntime.evaluateEffect(FiberRuntime.scala:381)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:890)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:1067)</code></li><li><code>zio.ZIO$.$anonfun$logErrorCause$1(ZIO.scala:3996)</code></li><li><code>zio.internal.FiberRuntime.log(FiberRuntime.scala:744)</code></li><li><code>scala.collection.immutable.Set$Set1.foreach(Set.scala:177)</code></li><li><code>zio.internal.FiberRuntime.$anonfun$log$1(FiberRuntime.scala:745)</code></li><li><code>Example$$anon$1.apply(Example.scala:11)</code></li><li><code>Example$$anon$1.apply(Example.scala:28)</code></li><li><code>zio.FiberRefs.getOrDefault(FiberRefs.scala:72)</code></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>zio.Cause.traced(Cause.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · method-entry</span></div><ol class="frames"><li><code>java.base/java.lang.Thread.run(Thread.java:1583)</code></li><li><code>java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)</code></li><li><code>java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)</code></li><li><code>zio.internal.FiberRuntime.run(FiberRuntime.scala:139)</code></li><li><code>zio.internal.FiberRuntime.drainQueueOnCurrentThread(FiberRuntime.scala:220)</code></li><li><code>zio.internal.FiberRuntime.evaluateMessageWhileSuspended(FiberRuntime.scala:504)</code></li><li><code>zio.internal.FiberRuntime.evaluateEffect(FiberRuntime.scala:381)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:890)</code></li><li><code>zio.internal.FiberRuntime.runLoop(FiberRuntime.scala:1067)</code></li><li><code>zio.ZIO$.$anonfun$logErrorCause$1(ZIO.scala:3996)</code></li><li><code>zio.internal.FiberRuntime.log(FiberRuntime.scala:744)</code></li><li><code>scala.collection.immutable.Set$Set1.foreach(Set.scala:177)</code></li><li><code>zio.internal.FiberRuntime.$anonfun$log$1(FiberRuntime.scala:745)</code></li><li><code>Example$$anon$1.apply(Example.scala:11)</code></li><li><code>Example$$anon$1.apply(Example.scala:28)</code></li><li><code>zio.Cause.traced(Cause.scala)</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In 1.0.12, a Cause logged inside an effect showed the parse failure but omitted externalRequestHandler. In 2.0.18, the internal log likewise omitted foo and bar without propagated context.</dd></div><div><dt>What CoroPerf showed</dt><dd>In two runs of the proposed example, ZLogger retrieved the StackTrace captured by fromJava from FiberRefs and passed that same object to Cause.traced, restoring foo and bar.</dd></div><div><dt>Scope and limits</dt><dd>The original logging APIs were private. The controls cover one runtime boundary and an unmerged proposal, PR #8509.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

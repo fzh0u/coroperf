@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Seastar’s HTTP streaming response stops in the chunked output sink">
+  <title>scylladb/seastar #1701 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">scylladb/seastar #1701</p>
+        <h1>Seastar’s HTTP streaming response stops in the chunked output sink</h1>
+        <div class="case-links"><a href="https://github.com/scylladb/seastar/issues/1701">Upstream report ↗</a><a href="https://github.com/scylladb/seastar/pull/2436">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>__pthread_kill_implementation (no_tid=0, signo=6, threadid=140737335333440) at ./nptl/pthread_kill.c:44</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>main (argc=5, argv=[address]) at server.cpp:43</code></li><li><code>seastar::app_template::run(int, char**, std::function&lt;seastar::future&lt;void&gt; ()&gt;&amp;&amp;) () from libseastar.so</code></li><li><code>seastar::app_template::run(int, char**, std::function&lt;seastar::future&lt;int&gt; ()&gt;&amp;&amp;) () from libseastar.so</code></li><li><code>seastar::app_template::run_deprecated(int, char**, std::function&lt;void ()&gt;&amp;&amp;) () from libseastar.so</code></li><li><code>seastar::reactor::run() () from libseastar.so</code></li><li><code>seastar::reactor::do_run() () from libseastar.so</code></li><li><code>seastar::reactor::run_some_tasks() () from libseastar.so</code></li><li><code>seastar::reactor::run_tasks(seastar::reactor::task_queue&amp;) () from libseastar.so</code></li><li><code>seastar::continuation&lt;seastar::internal::promise_base_with_type&lt;void&gt;, seastar::httpd::connection::do_response_loop()::$_0, seastar::future&lt;std::unique_ptr&lt;seastar::http::reply, std::default_delete&lt;seastar::http::reply&gt; &gt; &gt;::then_impl_nrvo&lt;seastar::httpd::connection::do_response_loop()::$_0, seastar::future&lt;void&gt; &gt;(seastar::httpd::connection::do_response_loop()::$_0&amp;&amp;)::{lambda(seastar::internal::promise_base_with_type&lt;void&gt;&amp;&amp;, seastar::httpd::connection::do_response_loop()::$_0&amp;, seastar::future_state&lt;std::unique_ptr&lt;seastar::http::reply, std::default_delete&lt;seastar::http::reply&gt; &gt; &gt;&amp;&amp;)#1}, std::unique_ptr&lt;seastar::http::reply, std::default_delete&lt;seastar::http::reply&gt; &gt; &gt;::run_and_dispose() () from libseastar.so</code></li><li><code>seastar::httpd::connection::do_response_loop()::$_0::operator()(std::unique_ptr&lt;seastar::http::reply, std::default_delete&lt;seastar::http::reply&gt; &gt;) const () from libseastar.so</code></li><li><code>seastar::httpd::connection::start_response() () from libseastar.so</code></li><li><code>seastar::http::reply::write_reply_to_connection(seastar::httpd::connection&amp;) () from libseastar.so</code></li><li><code>seastar::noncopyable_function&lt;seastar::future&lt;void&gt; (seastar::output_stream&lt;char&gt;&amp;&amp;)&gt;::direct_vtable_for&lt;handl::handle(seastar::basic_sstring&lt;char, unsigned int, 15u, true&gt; const&amp;, std::unique_ptr&lt;seastar::http::request, std::default_delete&lt;seastar::http::request&gt; &gt;, std::unique_ptr&lt;seastar::http::reply, std::default_delete&lt;seastar::http::reply&gt; &gt;)::{lambda(seastar::output_stream&lt;char&gt;&amp;&amp;)#1}&gt;::call(seastar::noncopyable_function&lt;seastar::future&lt;void&gt; (seastar::output_stream&lt;char&gt;&amp;&amp;)&gt; const*, seastar::output_stream&lt;char&gt;&amp;&amp;) (func=0x21b87, args=...) at noncopyable_function.hh:129</code></li><li><code>handl::handle(seastar::basic_sstring&lt;char, unsigned int, 15u, true&gt; const&amp;, std::unique_ptr&lt;seastar::http::request, std::default_delete&lt;seastar::http::request&gt; &gt;, std::unique_ptr&lt;seastar::http::reply, std::default_delete&lt;seastar::http::reply&gt; &gt;)::{lambda(seastar::output_stream&lt;char&gt;&amp;&amp;)#1}::operator()(seastar::output_stream&lt;char&gt;&amp;&amp;) const (this=&lt;optimized out&gt;, stream_=...) at server.cpp:33</code></li><li><code>seastar::output_stream&lt;char&gt;::close (this=0x21b87, this@entry=[address]) at iostream-impl.hh:497</code></li><li><code>seastar::output_stream&lt;char&gt;::flush (this=0x21b87, this@entry=[address]) at iostream-impl.hh:436</code></li><li><code>seastar::output_stream&lt;char&gt;::do_flush (this=[address]) at iostream-impl.hh:424</code></li><li><code>seastar::data_sink::put (this=this@entry=[address], p=...) at iostream.hh:174</code></li><li><code>seastar::http::internal::http_chunked_data_sink_impl::put(seastar::net::packet) () from libseastar.so</code></li><li><code>__GI_abort () at ./stdlib/abort.c:79</code></li><li><code>__GI_raise (sig=sig@entry=6) at ../sysdeps/posix/raise.c:26</code></li><li><code>__GI___pthread_kill (threadid=140737335333440, signo=signo@entry=6) at ./nptl/pthread_kill.c:89</code></li><li><code>__pthread_kill_internal (signo=6, threadid=140737335333440) at ./nptl/pthread_kill.c:78</code></li><li><code>__pthread_kill_implementation (no_tid=0, signo=6, threadid=140737335333440) at ./nptl/pthread_kill.c:44</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original server’s streaming handler terminated on the affected build, while a control using a different write overload delivered the expected three bytes.</dd></div><div><dt>What CoroPerf showed</dt><dd>The native debugger located the termination in the chunked sink’s packet overload, isolating the difference between the two output paths.</dd></div><div><dt>Scope and limits</dt><dd>The local server used initialized response bytes and a private loopback listener.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

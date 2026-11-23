@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A precompressed file receives a second layer of HTTP compression">
+  <title>aio-libs/aiohttp #8011 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">aio-libs/aiohttp #8011</p>
+        <h1>A precompressed file receives a second layer of HTTP compression</h1>
+        <div class="case-links"><a href="https://github.com/aio-libs/aiohttp/issues/8011">Upstream report ↗</a><a href="https://github.com/aio-libs/aiohttp/pull/8014">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 10</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>connection_made</code><span>web_protocol.py:305</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 8</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>start</code><span>web_protocol.py:537</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 10 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_handle_request</code><span>web_protocol.py:487</span></li><li><code>finish_response</code><span>web_protocol.py:643</span></li><li><code>prepare</code><span>web_fileresponse.py:291</span></li><li><code>_sendfile</code><span>web_fileresponse.py:82</span></li><li><code>prepare</code><span>web_response.py:341</span></li><li><code>_start</code><span>web_response.py:347</span></li><li><code>_prepare_headers</code><span>web_response.py:369</span></li><li><code>_start_compression</code><span>web_response.py:332</span></li><li><code>_do_start_compression</code><span>web_response.py:316</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 10 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_handle_request</code><span>web_protocol.py:487</span></li><li><code>finish_response</code><span>web_protocol.py:643</span></li><li><code>prepare</code><span>web_fileresponse.py:291</span></li><li><code>_sendfile</code><span>web_fileresponse.py:82</span></li><li><code>prepare</code><span>web_response.py:341</span></li><li><code>_start</code><span>web_response.py:347</span></li><li><code>_prepare_headers</code><span>web_response.py:369</span></li><li><code>_start_compression</code><span>web_response.py:332</span></li><li><code>_do_start_compression</code><span>web_response.py:316</span></li></ol></section>
+          <p class="small trace-note">The frames on record 10 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 9</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>connection_made</code><span>web_protocol.py:305</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 8</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>start</code><span>web_protocol.py:537</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_handle_request</code><span>web_protocol.py:487</span></li><li><code>finish_response</code><span>web_protocol.py:643</span></li><li><code>prepare</code><span>web_fileresponse.py:267</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_handle_request</code><span>web_protocol.py:487</span></li><li><code>finish_response</code><span>web_protocol.py:643</span></li><li><code>prepare</code><span>web_fileresponse.py:267</span></li></ol></section>
+          <p class="small trace-note">The frames on record 9 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 11</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>connection_made</code><span>web_protocol.py:305</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 8</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>start</code><span>web_protocol.py:537</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_handle_request</code><span>web_protocol.py:487</span></li><li><code>finish_response</code><span>web_protocol.py:643</span></li><li><code>prepare</code><span>web_fileresponse.py:291</span></li><li><code>_sendfile</code><span>web_fileresponse.py:82</span></li><li><code>prepare</code><span>web_response.py:341</span></li><li><code>_start</code><span>web_response.py:349</span></li><li><code>_write_headers</code><span>web_response.py:417</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_handle_request</code><span>web_protocol.py:487</span></li><li><code>finish_response</code><span>web_protocol.py:643</span></li><li><code>prepare</code><span>web_fileresponse.py:291</span></li><li><code>_sendfile</code><span>web_fileresponse.py:82</span></li><li><code>prepare</code><span>web_response.py:341</span></li><li><code>_start</code><span>web_response.py:349</span></li><li><code>_write_headers</code><span>web_response.py:417</span></li></ol></section>
+          <p class="small trace-note">The frames on record 11 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 4 · create<code>connection_made</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>exchange.py:97</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>connection_made</code><span>web_protocol.py:305</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On aiohttp 3.9.1, a GET for a precompressed file with dynamic compression enabled advertised deflate. Decoding the response once left 38 bytes of gzip data. The fixed server advertised gzip and returned the original 18 bytes after one decode. Serving the precompressed file alone and enabling compression on a plain file both produced the expected contents.</dd></div><div><dt>What CoroPerf showed</dt><dd>RequestHandler.start created the task that selected the gzip file. In that same request, _do_start_compression selected deflate. The client port, request object and task identity connect that decision to the raw HTTP response. Repeating the request with a second TCP client and a byte-identical file confirmed the result.</dd></div><div><dt>Scope and limits</dt><dd>The reported release ran locally on Python 3.12.13. The report used 3.12.0. The parent and fix ran with aiohttp’s Python implementation. The reporter’s test explicitly expects the old deflate header, so its assertion fails on the corrected header. A separate check decodes and compares the complete body.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

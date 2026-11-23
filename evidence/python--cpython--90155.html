@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="An asyncio semaphore releaser can repeatedly reacquire ahead of waiters">
+  <title>python/cpython #90155 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">python/cpython #90155</p>
+        <h1>An asyncio semaphore releaser can repeatedly reacquire ahead of waiters</h1>
+        <div class="case-links"><a href="https://github.com/python/cpython/issues/90155">Upstream report ↗</a><a href="https://github.com/python/cpython/issues/90155#issuecomment-1252235717">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 129</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:625</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>main</code><span>workload.py:68</span></li><li><code>submit_batch</code><span>workload.py:42</span></li><li><code>create_task</code><span>tasks.py:337</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 129 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>process</code><span>workload.py:22</span></li><li><code>__aenter__</code><span>locks.py:13</span></li><li><code>acquire</code><span>locks.py:393</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 129 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>process</code><span>workload.py:22</span></li><li><code>__aenter__</code><span>locks.py:13</span></li><li><code>acquire</code><span>locks.py:393</span></li></ol></section>
+          <p class="small trace-note">The frames on record 129 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 32</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:625</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>main</code><span>workload.py:68</span></li><li><code>submit_batch</code><span>workload.py:42</span></li><li><code>create_task</code><span>tasks.py:337</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 32 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>process</code><span>workload.py:22</span></li><li><code>__aenter__</code><span>locks.py:13</span></li><li><code>acquire</code><span>locks.py:385</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 32 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>process</code><span>workload.py:22</span></li><li><code>__aenter__</code><span>locks.py:13</span></li><li><code>acquire</code><span>locks.py:385</span></li></ol></section>
+          <p class="small trace-note">The frames on record 32 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 124</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:625</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>main</code><span>workload.py:68</span></li><li><code>submit_batch</code><span>workload.py:42</span></li><li><code>create_task</code><span>tasks.py:337</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 124 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>process</code><span>workload.py:22</span></li><li><code>__aexit__</code><span>locks.py:19</span></li><li><code>release</code><span>locks.py:395</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 124 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>process</code><span>workload.py:22</span></li><li><code>__aexit__</code><span>locks.py:19</span></li><li><code>release</code><span>locks.py:395</span></li></ol></section>
+          <p class="small trace-note">The frames on record 124 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 125 · sample<code>_wake_up_next</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 125 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>process</code><span>workload.py:22</span></li><li><code>__aexit__</code><span>locks.py:19</span></li><li><code>release</code><span>locks.py:401</span></li><li><code>_wake_up_next</code><span>locks.py:361</span></li></ol></section></details><details class="extra" ><summary>Record 126 · sample<code>_wake_up_next</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 126 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>process</code><span>workload.py:22</span></li><li><code>__aexit__</code><span>locks.py:19</span></li><li><code>release</code><span>locks.py:401</span></li><li><code>_wake_up_next</code><span>locks.py:366</span></li></ol></section></details><details class="extra" ><summary>Record 127 · sample<code>release</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 127 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>process</code><span>workload.py:22</span></li><li><code>__aexit__</code><span>locks.py:19</span></li><li><code>release</code><span>locks.py:401</span></li></ol></section></details><details class="extra" ><summary>Record 128 · sample<code>acquire</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 128 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:89</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>process</code><span>workload.py:22</span></li><li><code>__aenter__</code><span>locks.py:13</span></li><li><code>acquire</code><span>locks.py:372</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In the same bounded 20-worker workload without cancellation, only five workers acquired a permit on CPython 3.10.3, versus all 20 on 3.10.4.</dd></div><div><dt>What CoroPerf showed</dt><dd>The releasing task woke a distinct waiter but immediately reacquired the permit synchronously, whereas the fixed version yielded at that point. The task created by submit_batch released and reacquired the semaphore. The blocked waiter had a separate Task identity.</dd></div><div><dt>Scope and limits</dt><dd>This checks the upstream workload without cancellation and establishes no general fairness guarantee.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

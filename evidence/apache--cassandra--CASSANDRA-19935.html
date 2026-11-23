@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Paxos treats identical voting members as different">
+  <title>apache/cassandra #CASSANDRA-19935 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">apache/cassandra #CASSANDRA-19935</p>
+        <h1>Paxos treats identical voting members as different</h1>
+        <div class="case-links"><a href="https://issues.apache.org/jira/browse/CASSANDRA-19935">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 3 · sample<code>org.apache.cassandra.service.paxos.Paxos$Electorate.equals(Paxos.java:276)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>java.lang.Thread.run(Thread.java:750)</code></li><li><code>io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)</code></li><li><code>org.apache.cassandra.concurrent.SEPWorker.run(SEPWorker.java:142)</code></li><li><code>org.apache.cassandra.concurrent.ExecutionFailure$1.run(ExecutionFailure.java:133)</code></li><li><code>org.apache.cassandra.net.InboundMessageHandler$ProcessMessage.run(InboundMessageHandler.java:430)</code></li><li><code>org.apache.cassandra.net.InboundSink.accept(InboundSink.java:45)</code></li><li><code>org.apache.cassandra.net.InboundSink.accept(InboundSink.java:97)</code></li><li><code>org.apache.cassandra.net.InboundSink.lambda$new$0(InboundSink.java:78)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare$RequestHandler.doVerb(PaxosPrepare.java:1024)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare$RequestHandler.execute(PaxosPrepare.java:1039)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare$RequestHandler.execute(PaxosPrepare.java:1055)</code></li><li><code>org.apache.cassandra.service.paxos.Paxos.verifyElectorate(Paxos.java:1168)</code></li><li><code>org.apache.cassandra.service.paxos.Paxos$Electorate.equals(Paxos.java:276)</code></li></ol></section></details><details class="extra" ><summary>Record 4 · sample<code>org.apache.cassandra.service.paxos.Paxos.verifyElectorate(Paxos.java:1193)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4 · native runtime stack</span></div><ol class="frames"><li><code>java.lang.Thread.run(Thread.java:750)</code></li><li><code>io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)</code></li><li><code>org.apache.cassandra.concurrent.SEPWorker.run(SEPWorker.java:142)</code></li><li><code>org.apache.cassandra.concurrent.ExecutionFailure$1.run(ExecutionFailure.java:133)</code></li><li><code>org.apache.cassandra.net.InboundMessageHandler$ProcessMessage.run(InboundMessageHandler.java:430)</code></li><li><code>org.apache.cassandra.net.InboundSink.accept(InboundSink.java:45)</code></li><li><code>org.apache.cassandra.net.InboundSink.accept(InboundSink.java:97)</code></li><li><code>org.apache.cassandra.net.InboundSink.lambda$new$0(InboundSink.java:78)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare$RequestHandler.doVerb(PaxosPrepare.java:1024)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare$RequestHandler.execute(PaxosPrepare.java:1039)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare$RequestHandler.execute(PaxosPrepare.java:1055)</code></li><li><code>org.apache.cassandra.service.paxos.Paxos.verifyElectorate(Paxos.java:1193)</code></li></ol></section></details><details class="extra" ><summary>Record 5 · sample<code>org.apache.cassandra.service.paxos.PaxosPrepare$ResponseSerializer.serialize(PaxosPrepare.java)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5 · native runtime stack</span></div><ol class="frames"><li><code>java.lang.Thread.run(Thread.java:750)</code></li><li><code>io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)</code></li><li><code>io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)</code></li><li><code>io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)</code></li><li><code>io.netty.channel.epoll.EpollEventLoop.run(EpollEventLoop.java:384)</code></li><li><code>io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:472)</code></li><li><code>io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:164)</code></li><li><code>org.apache.cassandra.net.OutboundConnection$Delivery.run(OutboundConnection.java:690)</code></li><li><code>org.apache.cassandra.net.OutboundConnection$EventLoopDelivery.doRun(OutboundConnection.java:816)</code></li><li><code>org.apache.cassandra.net.Message$Serializer.serialize(Message.java:738)</code></li><li><code>org.apache.cassandra.net.Message$Serializer.serializePost40(Message.java:878)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare$ResponseSerializer.serialize(PaxosPrepare.java:1181)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare$ResponseSerializer.serialize(PaxosPrepare.java)</code></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>org.apache.cassandra.service.paxos.PaxosPrepare.needsGossipUpdate(PaxosPrepare.java)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>java.lang.Thread.run(Thread.java:750)</code></li><li><code>io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)</code></li><li><code>org.apache.cassandra.concurrent.SEPWorker.run(SEPWorker.java:142)</code></li><li><code>org.apache.cassandra.concurrent.ExecutionFailure$1.run(ExecutionFailure.java:133)</code></li><li><code>org.apache.cassandra.net.InboundMessageHandler$ProcessMessage.run(InboundMessageHandler.java:430)</code></li><li><code>org.apache.cassandra.net.InboundSink.accept(InboundSink.java:45)</code></li><li><code>org.apache.cassandra.net.InboundSink.accept(InboundSink.java:97)</code></li><li><code>org.apache.cassandra.net.InboundSink.lambda$new$0(InboundSink.java:78)</code></li><li><code>org.apache.cassandra.net.ResponseVerbHandler.doVerb(ResponseVerbHandler.java:58)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosRequestCallback.onResponse(PaxosRequestCallback.java:47)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare.onResponse(PaxosPrepare.java:105)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare.onResponse(PaxosPrepare.java:465)</code></li><li><code>org.apache.cassandra.service.paxos.PaxosPrepare.needsGossipUpdate(PaxosPrepare.java)</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The conditional insert succeeded, but all 192 remote responses in Cassandra 4.1.7 returned three extra gossip entries, while all 96 in-process responses returned none.</dd></div><div><dt>What CoroPerf showed</dt><dd>The remote HashSet and local AsList contained the same three addresses; replacing only Electorate or upgrading to 4.1.8 made all 192 remote comparisons equal and removed the extra entries.</dd></div><div><dt>Scope and limits</dt><dd>Fixed membership and serial requests on loopback. TCP counts include background traffic, and messages were not linked across nodes by ID.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

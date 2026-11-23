@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Reading ClientResponse.content skips the chunk trace callback">
+  <title>aio-libs/aiohttp #5324 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">aio-libs/aiohttp #5324</p>
+        <h1>Reading ClientResponse.content skips the chunk trace callback</h1>
+        <div class="case-links"><a href="https://github.com/aio-libs/aiohttp/issues/5324">Upstream report ↗</a><a href="https://github.com/aio-libs/aiohttp/issues/5324#issuecomment-748540799">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 32</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reporter.py:26</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:669</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 32 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reporter.py:26</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>main</code><span>reporter.py:19</span></li><li><code>read</code><span>streams.py:374</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 32 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reporter.py:26</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>main</code><span>reporter.py:19</span></li><li><code>read</code><span>streams.py:374</span></li></ol></section>
+          <p class="small trace-note">The frames on record 32 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 17</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reporter.py:26</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:669</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · task snapshot</span></div><ol class="frames"><li><code>main</code><span>reporter.py:19</span></li><li><code>read</code><span>streams.py:370</span></li><li><code>readany</code><span>streams.py:392</span></li><li><code>_wait</code><span>streams.py:306</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · task snapshot</span></div><ol class="frames"><li><code>main</code><span>reporter.py:19</span></li><li><code>read</code><span>streams.py:370</span></li><li><code>readany</code><span>streams.py:392</span></li><li><code>_wait</code><span>streams.py:306</span></li></ol></section>
+          <p class="small trace-note">The frames on record 17 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reporter.py:26</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:669</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · task snapshot</span></div><ol class="frames"><li><code>main</code><span>reporter.py:18</span></li><li><code>__aenter__</code><span>client.py:1117</span></li><li><code>_request</code><span>client.py:520</span></li><li><code>connect</code><span>connector.py:535</span></li><li><code>_create_connection</code><span>connector.py:892</span></li><li><code>_create_direct_connection</code><span>connector.py:1020</span></li><li><code>_wrap_create_connection</code><span>connector.py:969</span></li><li><code>create_connection</code><span>base_events.py:1050</span></li><li><code>_create_connection_transport</code><span>base_events.py:1080</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · task snapshot</span></div><ol class="frames"><li><code>main</code><span>reporter.py:18</span></li><li><code>__aenter__</code><span>client.py:1117</span></li><li><code>_request</code><span>client.py:520</span></li><li><code>connect</code><span>connector.py:535</span></li><li><code>_create_connection</code><span>connector.py:892</span></li><li><code>_create_direct_connection</code><span>connector.py:1020</span></li><li><code>_wrap_create_connection</code><span>connector.py:969</span></li><li><code>create_connection</code><span>base_events.py:1050</span></li><li><code>_create_connection_transport</code><span>base_events.py:1080</span></li></ol></section>
+          <p class="small trace-note">The frames on record 3 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In two uninstrumented runs, the client read the entire 4,519-byte PNG over HTTPS and printed only “main received 4519 bytes.”</dd></div><div><dt>What CoroPerf showed</dt><dd>The reader task’s stack and the returned data hash confirmed the read, while two positive controls showed where notification occurred on other read paths.</dd></div><div><dt>Scope and limits</dt><dd>The original icon was served locally. The fix comparison used Python 3.12.4, separately from the reported 3.8.6 environment.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

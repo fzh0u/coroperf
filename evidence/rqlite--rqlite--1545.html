@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="DNS-SRV discovery gives a configured rqlite non-voter a Raft vote">
+  <title>rqlite/rqlite #1545 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">rqlite/rqlite #1545</p>
+        <h1>DNS-SRV discovery gives a configured rqlite non-voter a Raft vote</h1>
+        <div class="case-links"><a href="https://github.com/rqlite/rqlite/issues/1545">Upstream report ↗</a><a href="https://github.com/rqlite/rqlite/pull/1546">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>github.com/rqlite/rqlite/v8/cluster.(*Service).serve</code><span>service.go:213</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>github.com/rqlite/rqlite/v8/cluster.(*Service).handleConn</code><span>service.go:440</span></li><li><code>github.com/rqlite/rqlite/v8/store.(*Store).Join</code><span>store.go:1476</span></li><li><code>github.com/rqlite/rqlite/v8/store.traceInbound</code><span>case_observer.go:11</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>github.com/rqlite/rqlite/v8/cluster.(*Service).handleConn</code><span>service.go:440</span></li><li><code>github.com/rqlite/rqlite/v8/store.(*Store).Join</code><span>store.go:1476</span></li><li><code>github.com/rqlite/rqlite/v8/store.traceInbound</code><span>case_observer.go:11</span></li></ol></section>
+          <p class="small trace-note">The frames on record 1 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 2 · sample<code>github.com/rqlite/rqlite/v8/cluster.traceOutbound</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2</span></div><ol class="frames"><li><code>main.main</code><span>main.go:174</span></li><li><code>main.createCluster</code><span>main.go:506</span></li><li><code>github.com/rqlite/rqlite/v8/cluster.(*Bootstrapper).Boot</code><span>bootstrap.go:182</span></li><li><code>github.com/rqlite/rqlite/v8/cluster.(*Joiner).Do</code><span>join.go:59</span></li><li><code>github.com/rqlite/rqlite/v8/cluster.(*Joiner).join</code><span>join.go:83</span></li><li><code>github.com/rqlite/rqlite/v8/cluster.traceOutbound</code><span>case_observer.go:11</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Three voters and one configured non-voter joined a local cluster. With DNS-SRV discovery, all four status responses on 8.14.0 listed the fourth member as Voter. Version 8.14.1 listed it as Nonvoter. All four nodes read back the same SQL row in both versions.</dd></div><div><dt>What CoroPerf showed</dt><dd>The DNS-SRV join path in 8.14.0 supplied a constant Voter flag. The leader received true and recorded AddVoter. The fixed code forwarded the configuration flag and recorded AddNonvoter. Runtime events matched the leader’s join handler to the exact goroutine created by the cluster service for the connection.</dd></div><div><dt>Scope and limits</dt><dd>The local cluster used four real processes and DNS SRV/A queries on loopback. It did not recreate the reporter’s Kubernetes, TLS or authentication setup. The matched goroutine is the leader-side connection handler; the replica’s sending stack was observed in a separate process.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

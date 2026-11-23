@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A failed Knex migration omits the migration filename">
+  <title>knex/knex #1256 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">knex/knex #1256</p>
+        <h1>A failed Knex migration omits the migration filename</h1>
+        <div class="case-links"><a href="https://github.com/knex/knex/issues/1256">Upstream report ↗</a><a href="https://github.com/knex/knex/issues/1256#issuecomment-193660619">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Observation selected in the issue review · observation 557</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>Function.Module._load</code><span>module.js:489</span></li><li><code>tryModuleLoad</code><span>module.js:497</span></li><li><code>Module.load</code><span>module.js:554</span></li><li><code>Object.Module._extensions..js</code><span>module.js:646</span></li><li><code>Module._compile</code><span>module.js:635</span></li><li><code>Object.&lt;anonymous&gt;</code><span>cli.js:164</span></li><li><code>Liftoff.launch</code><span>index.js:169</span></li><li><code>Liftoff.handleFlags</code><span>index.js:144</span></li><li><code>Liftoff.module.exports [as v8flags]</code><span>index.js:108</span></li><li><code>openConfig</code><span>index.js:36</span></li><li><code>tryOpenConfig</code><span>index.js:48</span></li><li><code>process.nextTick</code><span>next_tick.js:270</span></li><li><code>emitInitScript</code><span>async_hooks.js:388</span></li><li><code>emitInitNative</code><span>async_hooks.js:472</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 4</span></div><ol class="frames"><li><code>Command.listener</code><span>index.js:315</span></li><li><code>Command.&lt;anonymous&gt;</code><span>cli.js:104</span></li><li><code>initKnex</code><span>cli.js:69</span></li><li><code>Knex</code><span>index.js:26</span></li><li><code>new Client</code><span>make-client.js:15</span></li><li><code>Client_PG</code><span>index.js:20</span></li><li><code>Client</code><span>client.js:43</span></li><li><code>Client.initializePool</code><span>client.js:172</span></li><li><code>new Pool</code><span>pool.js:127</span></li><li><code>setImmediate</code><span>timers.js:845</span></li><li><code>createImmediate</code><span>timers.js:858</span></li><li><code>new Immediate</code><span>timers.js:816</span></li><li><code>emitInitScript</code><span>async_hooks.js:388</span></li><li><code>emitInitNative</code><span>async_hooks.js:472</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div><section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 21</span></div><ol class="frames"><li><code>tryOnImmediate</code><span>timers.js:751</span></li><li><code>runCallback</code><span>timers.js:789</span></li><li><code>Pool._ensureMinimum</code><span>pool.js:364</span></li><li><code>Pool._allocateResource</code><span>pool.js:506</span></li><li><code>Pool.acquire [as _acquire]</code><span>client.js:192</span></li><li><code>Client.acquireRawConnection</code><span>index.js:67</span></li><li><code>new Promise</code><span>promise.js:71</span></li><li><code>Promise._resolveFromResolver</code><span>promise.js:483</span></li><li><code>tryCatcher</code><span>util.js:26</span></li><li><code>&lt;anonymous&gt;</code><span>index.js:69</span></li><li><code>Client.connect</code><span>client.js:63</span></li><li><code>Connection.connect</code><span>connection.js:66</span></li><li><code>Socket.connect</code><span>net.js:1006</span></li><li><code>TCP.emitInitNative</code><span>async_hooks.js:472</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 551</span></div><ol class="frames"><li><code>Result.callback</code><span>index.js:154</span></li><li><code>&lt;anonymous&gt;</code><span>promise.js:485</span></li><li><code>Promise._resolveCallback</code><span>promise.js:446</span></li><li><code>Promise._fulfill</code><span>promise.js:554</span></li><li><code>Promise._fulfillUnchecked</code><span>promise.js:655</span></li><li><code>Promise._queueSettlePromises</code><span>promise.js:640</span></li><li><code>AsyncSettlePromises [as settlePromises]</code><span>async.js:70</span></li><li><code>Async._queueTick</code><span>async.js:141</span></li><li><code>Async._schedule</code><span>schedule.js:11</span></li><li><code>setImmediate</code><span>timers.js:845</span></li><li><code>createImmediate</code><span>timers.js:858</span></li><li><code>new Immediate</code><span>timers.js:816</span></li><li><code>emitInitScript</code><span>async_hooks.js:388</span></li><li><code>emitInitNative</code><span>async_hooks.js:472</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 557 · diagnostic</span></div><ol class="frames"><li><code>processImmediate [as _immediateCallback]</code><span>timers.js:722</span></li><li><code>tryOnImmediate</code><span>timers.js:751</span></li><li><code>runCallback</code><span>timers.js:789</span></li><li><code>Immediate.Async.drainQueues</code><span>async.js:15</span></li><li><code>Async._drainQueues</code><span>async.js:133</span></li><li><code>Async._drainQueue</code><span>async.js:123</span></li><li><code>Promise._settlePromises</code><span>promise.js:700</span></li><li><code>Promise._settlePromiseAt</code><span>promise.js:584</span></li><li><code>Promise._settlePromiseFromHandler</code><span>promise.js:510</span></li><li><code>tryCatcher</code><span>util.js:26</span></li><li><code>&lt;anonymous&gt;</code><span>using.js:176</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:34</span></li><li><code>SchemaBuilder.toSQL</code><span>builder.js:43</span></li><li><code>SchemaCompiler.toSQL</code><span>compiler.js:46</span></li><li><code>SchemaCompiler.createTable</code><span>compiler.js:59</span></li><li><code>TableBuilder.toSQL</code><span>tablebuilder.js:36</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 557 · diagnostic</span></div><ol class="frames"><li><code>processImmediate [as _immediateCallback]</code><span>timers.js:722</span></li><li><code>tryOnImmediate</code><span>timers.js:751</span></li><li><code>runCallback</code><span>timers.js:789</span></li><li><code>Immediate.Async.drainQueues</code><span>async.js:15</span></li><li><code>Async._drainQueues</code><span>async.js:133</span></li><li><code>Async._drainQueue</code><span>async.js:123</span></li><li><code>Promise._settlePromises</code><span>promise.js:700</span></li><li><code>Promise._settlePromiseAt</code><span>promise.js:584</span></li><li><code>Promise._settlePromiseFromHandler</code><span>promise.js:510</span></li><li><code>tryCatcher</code><span>util.js:26</span></li><li><code>&lt;anonymous&gt;</code><span>using.js:176</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:34</span></li><li><code>SchemaBuilder.toSQL</code><span>builder.js:43</span></li><li><code>SchemaCompiler.toSQL</code><span>compiler.js:46</span></li><li><code>SchemaCompiler.createTable</code><span>compiler.js:59</span></li><li><code>TableBuilder.toSQL</code><span>tablebuilder.js:36</span></li></ol></section>
+          <p class="small trace-note">The frames on record 557 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>migrate:latest printed the reported warning with a stack starting at TableBuilder.toSQL, and after rollback, the devices table was absent and the migration ledger was empty.</dd></div><div><dt>What CoroPerf showed</dt><dd>The graph traced the error from SchemaCompiler.createTable to TableBuilder.toSQL, and V8 breakpoints read an undefined callback both in exports.up and when the same table was compiled.</dd></div><div><dt>Scope and limits</dt><dd>The test used the maintainer’s invalid argument and PostgreSQL. The original migration and dialect were unpublished. The graph identifies the Bluebird task that logged the error.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

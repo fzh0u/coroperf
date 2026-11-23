@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Treelite changed the order of search results on sparse ranking features">
+  <title>dmlc/treelite #222 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dmlc/treelite #222</p>
+        <h1>Treelite changed the order of search results on sparse ranking features</h1>
+        <div class="case-links"><a href="https://github.com/dmlc/treelite/issues/222">Upstream report ↗</a><a href="https://github.com/dmlc/treelite/pull/227">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>predict</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>_start</code></li><li><code>__libc_start_main_impl</code><span>libc-start.c:392</span></li><li><code>__libc_start_call_main</code><span>libc_start_call_main.h:58</span></li><li><code>Py_BytesMain</code></li><li><code>Py_RunMain</code></li><li><code>pymain_run_python</code></li><li><code>pymain_run_file</code></li><li><code>PyRun_SimpleFileExFlags</code></li><li><code>pyrun_simple_file</code></li><li><code>pyrun_file</code></li><li><code>run_mod</code></li><li><code>_PyEval_EvalCodeWithName</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>PyCFuncPtr_call</code></li><li><code>_ctypes_callproc</code></li><li><code>ffi_call</code></li><li><code>ffi_call_int</code></li><li><code>ffi_call_unix64</code></li><li><code>TreelitePredictorPredictBatch</code></li><li><code>unsigned long treelite::Predictor::PredictBatchBase_&lt;treelite::CSRBatch&gt;(treelite::CSRBatch const*, int, bool, float*)</code></li><li><code>predict</code><span>main.c:36</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>predict</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>_start</code></li><li><code>__libc_start_main_impl</code><span>libc-start.c:392</span></li><li><code>__libc_start_call_main</code><span>libc_start_call_main.h:58</span></li><li><code>Py_BytesMain</code></li><li><code>Py_RunMain</code></li><li><code>pymain_run_python</code></li><li><code>pymain_run_file</code></li><li><code>PyRun_SimpleFileExFlags</code></li><li><code>pyrun_simple_file</code></li><li><code>pyrun_file</code></li><li><code>run_mod</code></li><li><code>_PyEval_EvalCodeWithName</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>PyCFuncPtr_call</code></li><li><code>_ctypes_callproc</code></li><li><code>ffi_call</code></li><li><code>ffi_call_int</code></li><li><code>ffi_call_unix64</code></li><li><code>TreelitePredictorPredictBatch</code></li><li><code>unsigned long treelite::Predictor::PredictBatchBase_&lt;treelite::CSRBatch&gt;(treelite::CSRBatch const*, int, bool, float*)</code></li><li><code>predict</code><span>main.c:37</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>predict</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>_start</code></li><li><code>__libc_start_main_impl</code><span>libc-start.c:392</span></li><li><code>__libc_start_call_main</code><span>libc_start_call_main.h:58</span></li><li><code>Py_BytesMain</code></li><li><code>Py_RunMain</code></li><li><code>pymain_run_python</code></li><li><code>pymain_run_file</code></li><li><code>PyRun_SimpleFileExFlags</code></li><li><code>pyrun_simple_file</code></li><li><code>pyrun_file</code></li><li><code>run_mod</code></li><li><code>_PyEval_EvalCodeWithName</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>PyCFuncPtr_call</code></li><li><code>_ctypes_callproc</code></li><li><code>ffi_call</code></li><li><code>ffi_call_int</code></li><li><code>ffi_call_unix64</code></li><li><code>TreelitePredictorPredictBatch</code></li><li><code>unsigned long treelite::Predictor::PredictBatchBase_&lt;treelite::CSRBatch&gt;(treelite::CSRBatch const*, int, bool, float*)</code></li><li><code>predict</code><span>main.c:37</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>predict</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>_start</code></li><li><code>__libc_start_main_impl</code><span>libc-start.c:392</span></li><li><code>__libc_start_call_main</code><span>libc_start_call_main.h:58</span></li><li><code>Py_BytesMain</code></li><li><code>Py_RunMain</code></li><li><code>pymain_run_python</code></li><li><code>pymain_run_file</code></li><li><code>PyRun_SimpleFileExFlags</code></li><li><code>pyrun_simple_file</code></li><li><code>pyrun_file</code></li><li><code>run_mod</code></li><li><code>_PyEval_EvalCodeWithName</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>PyCFuncPtr_call</code></li><li><code>_ctypes_callproc</code></li><li><code>ffi_call</code></li><li><code>ffi_call_int</code></li><li><code>ffi_call_unix64</code></li><li><code>TreelitePredictorPredictBatch</code></li><li><code>unsigned long treelite::Predictor::PredictBatchBase_&lt;treelite::CSRBatch&gt;(treelite::CSRBatch const*, int, bool, float*)</code></li><li><code>predict</code><span>main.c:71</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Treelite 0.93 changed six of ten scores in the maintainer’s LambdaRank regression, including a score of 2.0 that became −1.095265. Those six changes produced zero strict pair inversions in that fixture. On an additional workload with signed feature hashing, 658 of 768 held-out scores changed, reversing 1,181 candidate pairs across all 50 queries. For 19 queries, the returned and reference top sets had no common candidate. The original LightGBM example features passed on all four builds.</dd></div><div><dt>What CoroPerf showed</dt><dd>GDB stopped in the generated predictor at the split on feature 25416. The sparse row omitted the feature. Treelite 0.93 entered leaf 0 and the running score became −1.095265. The fix continued to leaf 5 and produced 2.0, matching native LightGBM and the dense control. An independent walk of the archived trees counted 2,339 changed leaves across the hashed sparse queries in 0.93. The source parent produced 1,180 strict inversions and the fixed builds produced zero.</dd></div><div><dt>Scope and limits</dt><dd>The reporter’s trained model and validation matrix were unavailable. The public ranking comparison uses LightGBM’s distributed train/test split and a separate signed-hash transformation. Strict inversions exclude near ties within 1e−6 on either ranking. A separate dense observation concerns only the source parent. In row 702 both physical predictors read present feature 64 as 0.49999999999999994 and its low word as −1. The parent reached a leaf worth -0.0925675473, and the fix reached one worth -0.0028503143. That single dense score change produced zero strict inversions. The captured execution is synchronous.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

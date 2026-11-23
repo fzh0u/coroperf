@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A forgotten-return warning prints without its available stack">
+  <title>petkaantonov/bluebird #1181 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">petkaantonov/bluebird #1181</p>
+        <h1>A forgotten-return warning prints without its available stack</h1>
+        <div class="case-links"><a href="https://github.com/petkaantonov/bluebird/issues/1181">Upstream report ↗</a><a href="https://github.com/petkaantonov/bluebird/issues/1181#issuecomment-237920461">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>methodName</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>processImmediate [as _immediateCallback]</code><span>timers.js:529</span></li><li><code>tryOnImmediate</code><span>timers.js:550</span></li><li><code>runCallback</code><span>timers.js:570</span></li><li><code>Immediate.Async.drainQueues</code><span>async.js:17</span></li><li><code>Async._drainQueues</code><span>async.js:148</span></li><li><code>Async._drainQueue</code><span>async.js:143</span></li><li><code>Promise._settlePromiseCtx</code><span>promise.js:598</span></li><li><code>Promise._settlePromise</code><span>promise.js:561</span></li><li><code>Promise._settlePromiseFromHandler</code><span>promise.js:515</span></li><li><code>Object.checkForgottenReturns</code><span>debuggability.js:399</span></li><li><code>Promise._warn</code><span>debuggability.js:93</span></li><li><code>warn</code><span>debuggability.js:423</span></li><li><code>activeFireEvent</code><span>debuggability.js:202</span></li><li><code>methodName</code><span>debuggability.js:159</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>warn</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>Promise._settlePromiseFromHandler</code><span>promise.js:515</span></li><li><code>Object.checkForgottenReturns</code><span>debuggability.js:399</span></li><li><code>Promise._warn</code><span>debuggability.js:93</span></li><li><code>warn</code><span>debuggability.js:412</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>Promise.longStackTracesCaptureStackTrace [as _captureStackTrace]</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>bootstrap_node.js:467</span></li><li><code>startup</code><span>bootstrap_node.js:144</span></li><li><code>run</code><span>bootstrap_node.js:352</span></li><li><code>Module.runMain</code><span>module.js:575</span></li><li><code>Function.Module._load</code><span>module.js:409</span></li><li><code>tryModuleLoad</code><span>module.js:417</span></li><li><code>Module.load</code><span>module.js:458</span></li><li><code>Object.Module._extensions..js</code><span>module.js:550</span></li><li><code>Module._compile</code><span>module.js:541</span></li><li><code>Object.&lt;anonymous&gt;</code><span>case-1181-original.js:9</span></li><li><code>Promise.then</code><span>promise.js:123</span></li><li><code>Promise._then</code><span>promise.js:230</span></li><li><code>Promise.longStackTracesCaptureStackTrace [as _captureStackTrace]</code><span>debuggability.js:369</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>Console.warn</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>Immediate.Async.drainQueues</code><span>async.js:17</span></li><li><code>Async._drainQueues</code><span>async.js:148</span></li><li><code>Async._drainQueue</code><span>async.js:143</span></li><li><code>Promise._settlePromiseCtx</code><span>promise.js:598</span></li><li><code>Promise._settlePromise</code><span>promise.js:561</span></li><li><code>Promise._settlePromiseFromHandler</code><span>promise.js:515</span></li><li><code>Object.checkForgottenReturns</code><span>debuggability.js:399</span></li><li><code>Promise._warn</code><span>debuggability.js:93</span></li><li><code>warn</code><span>debuggability.js:423</span></li><li><code>activeFireEvent</code><span>debuggability.js:202</span></li><li><code>methodName</code><span>debuggability.js:159</span></li><li><code>process.observedEmit [as emit]</code><span>legacy.js:13</span></li><li><code>process.emit</code><span>events.js:188</span></li><li><code>emitOne</code><span>events.js:96</span></li><li><code>process.on</code><span>warning.js:24</span></li><li><code>Console.warn</code><span>console.js:51</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original example printed only the warning message to stderr by default and included call frames with --trace-warnings.</dd></div><div><dt>What CoroPerf showed</dt><dd>The warning event already held an Error stack containing checkForgottenReturns, locating the difference in how Node displayed the warning.</dd></div><div><dt>Scope and limits</dt><dd>The reported package version ran on Linux rather than Windows. Native Node 6 warning observations did not establish promise ancestry.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Uneven batches inflate a metric gathered across four GPUs">
+  <title>huggingface/accelerate #1674 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">huggingface/accelerate #1674</p>
+        <h1>Uneven batches inflate a metric gathered across four GPUs</h1>
+        <div class="case-links"><a href="https://github.com/huggingface/accelerate/issues/1674">Upstream report ↗</a><a href="https://github.com/huggingface/accelerate/issues/1674#issuecomment-1638552441">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>_adjust_samples</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:49</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>reported.py:62</span></li><li><code>Fire</code><span>core.py:141</span></li><li><code>_Fire</code><span>core.py:475</span></li><li><code>_CallAndUpdateTrace</code><span>core.py:691</span></li><li><code>main</code><span>reported.py:48</span></li><li><code>gather_for_metrics</code><span>accelerator.py:1993</span></li><li><code>recursively_apply</code><span>operations.py:110</span></li><li><code>honor_type</code><span>operations.py:84</span></li><li><code>&lt;genexpr&gt;</code><span>operations.py:113</span></li><li><code>recursively_apply</code><span>operations.py:129</span></li><li><code>_adjust_samples</code><span>accelerator.py:1991</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_adjust_samples</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:49</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>reported.py:62</span></li><li><code>Fire</code><span>core.py:141</span></li><li><code>_Fire</code><span>core.py:475</span></li><li><code>_CallAndUpdateTrace</code><span>core.py:691</span></li><li><code>main</code><span>reported.py:48</span></li><li><code>gather_for_metrics</code><span>accelerator.py:1993</span></li><li><code>recursively_apply</code><span>operations.py:110</span></li><li><code>honor_type</code><span>operations.py:84</span></li><li><code>&lt;genexpr&gt;</code><span>operations.py:113</span></li><li><code>recursively_apply</code><span>operations.py:129</span></li><li><code>_adjust_samples</code><span>accelerator.py:1991</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>gather_for_metrics</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:49</span></li><li><code>run_path</code><span>runpy.py:289</span></li><li><code>_run_module_code</code><span>runpy.py:96</span></li><li><code>_run_code</code><span>runpy.py:86</span></li><li><code>&lt;module&gt;</code><span>reported.py:62</span></li><li><code>Fire</code><span>core.py:141</span></li><li><code>_Fire</code><span>core.py:475</span></li><li><code>_CallAndUpdateTrace</code><span>core.py:691</span></li><li><code>main</code><span>reported.py:48</span></li><li><code>gather_for_metrics</code><span>accelerator.py:1993</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With batch size 17 per rank, both four-GPU runs counted 636/10,064 (0.063196) instead of 572/10,000 (0.057200). Evenly divisible batches returned the expected score.</dd></div><div><dt>What CoroPerf showed</dt><dd>The caller reduced each rank to scalars before gather_for_metrics trimmed the final batch, so it kept all four subtotals, including 64 duplicate IDs that were all hits.</dd></div><div><dt>Scope and limits</dt><dd>This matches the maintainer’s explanation of API usage. The replay used Ubuntu 22.04 instead of 20.04. The unpadded control was stopped while ranks waited.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

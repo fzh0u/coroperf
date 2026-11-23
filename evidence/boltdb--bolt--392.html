@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A Bolt reader waiting for a writer can block a database remap">
+  <title>boltdb/bolt #392 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">boltdb/bolt #392</p>
+        <h1>A Bolt reader waiting for a writer can block a database remap</h1>
+        <div class="case-links"><a href="https://github.com/boltdb/bolt/issues/392">Upstream report ↗</a><a href="https://github.com/boltdb/bolt/issues/392#issuecomment-112141121">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 8</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 5</span></div><ol class="frames"><li><code>testing.(*T).Run</code><span>testing.go:1743</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 7</span></div><ol class="frames"><li><code>reporter-original.TestBoltTransactions</code><span>report_test.go:39</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8 · runtime goroutine dump</span></div><ol class="frames"><li><code>reporter-original.TestBoltTransactions.func2</code><span>report_test.go:41</span></li><li><code>github.com/boltdb/bolt.(*DB).Update</code><span>db.go:554</span></li><li><code>github.com/boltdb/bolt.(*Tx).Commit</code><span>tx.go:151</span></li><li><code>github.com/boltdb/bolt.(*Bucket).spill</code><span>bucket.go:536</span></li><li><code>github.com/boltdb/bolt.(*node).spill</code><span>node.go:363</span></li><li><code>github.com/boltdb/bolt.(*Tx).allocate</code><span>tx.go:399</span></li><li><code>github.com/boltdb/bolt.(*DB).allocate</code><span>db.go:647</span></li><li><code>github.com/boltdb/bolt.(*DB).mmap</code><span>db.go:210</span></li><li><code>sync.(*RWMutex).Lock</code><span>rwmutex.go:153</span></li><li><code>sync.runtime_SemacquireRWMutex</code><span>sema.go:105</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8 · runtime goroutine dump</span></div><ol class="frames"><li><code>reporter-original.TestBoltTransactions.func2</code><span>report_test.go:41</span></li><li><code>github.com/boltdb/bolt.(*DB).Update</code><span>db.go:554</span></li><li><code>github.com/boltdb/bolt.(*Tx).Commit</code><span>tx.go:151</span></li><li><code>github.com/boltdb/bolt.(*Bucket).spill</code><span>bucket.go:536</span></li><li><code>github.com/boltdb/bolt.(*node).spill</code><span>node.go:363</span></li><li><code>github.com/boltdb/bolt.(*Tx).allocate</code><span>tx.go:399</span></li><li><code>github.com/boltdb/bolt.(*DB).allocate</code><span>db.go:647</span></li><li><code>github.com/boltdb/bolt.(*DB).mmap</code><span>db.go:210</span></li><li><code>sync.(*RWMutex).Lock</code><span>rwmutex.go:153</span></li><li><code>sync.runtime_SemacquireRWMutex</code><span>sema.go:105</span></li></ol></section>
+          <p class="small trace-note">The frames on record 8 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 5</span></div><ol class="frames"><li><code>testing.(*T).Run</code><span>testing.go:1743</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · runtime goroutine dump</span></div><ol class="frames"><li><code>testing.tRunner</code><span>testing.go:1690</span></li><li><code>reporter-original.TestBoltTransactions</code><span>report_test.go:55</span></li><li><code>github.com/boltdb/bolt.(*DB).View</code><span>db.go:578</span></li><li><code>reporter-original.TestBoltTransactions.func3</code><span>report_test.go:67</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · runtime goroutine dump</span></div><ol class="frames"><li><code>testing.tRunner</code><span>testing.go:1690</span></li><li><code>reporter-original.TestBoltTransactions</code><span>report_test.go:55</span></li><li><code>github.com/boltdb/bolt.(*DB).View</code><span>db.go:578</span></li><li><code>reporter-original.TestBoltTransactions.func3</code><span>report_test.go:67</span></li></ol></section>
+          <p class="small trace-note">The frames on record 6 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Other observation in the same capture · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>time.goFunc</code><span>sleep.go:215</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · runtime goroutine dump</span></div><ol class="frames"><li><code>testing.(*M).startAlarm.func1</code><span>testing.go:2373</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · runtime goroutine dump</span></div><ol class="frames"><li><code>testing.(*M).startAlarm.func1</code><span>testing.go:2373</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter’s on-disk test blocked in all four runs and passed in all four when the read transaction returned before waiting for the writer.</dd></div><div><dt>What CoroPerf showed</dt><dd>The reader held the mapping lock the writer needed at the 32,768-byte remap boundary; reopening the same-size file let the writer reuse pages 2 and 3 and commit.</dd></div><div><dt>Scope and limits</dt><dd>The report gave no Bolt revision, so the test used a contemporary commit. Cross-device index exchange was outside the test.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

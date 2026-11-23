@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="kfake returned offsets 0 and 2 for two Kafka timestamp lookups that both required offset 1">
+  <title>twmb/franz-go #1422 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">twmb/franz-go #1422</p>
+        <h1>kfake returned offsets 0 and 2 for two Kafka timestamp lookups that both required offset 1</h1>
+        <div class="case-links"><a href="https://github.com/twmb/franz-go/issues/1422">Upstream report ↗</a><a href="https://github.com/twmb/franz-go/pull/1431">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 6</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>main.main</code><span>server.go:25</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.NewCluster</code><span>cluster.go:309</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6</span></div><ol class="frames"><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).run</code><span>cluster.go:608</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets</code><span>02_list_offsets.go:159</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.observe1422</code><span>02_list_offsets.go:169</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6</span></div><ol class="frames"><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).run</code><span>cluster.go:608</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets</code><span>02_list_offsets.go:159</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.observe1422</code><span>02_list_offsets.go:169</span></li></ol></section>
+          <p class="small trace-note">The frames on record 6 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>main.main</code><span>server.go:25</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.NewCluster</code><span>cluster.go:309</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).run</code><span>cluster.go:608</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets</code><span>02_list_offsets.go:144</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.forEachBatchRecord</code><span>data.go:1091</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets.func4</code><span>02_list_offsets.go:151</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.observe1422</code><span>02_list_offsets.go:169</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).run</code><span>cluster.go:608</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets</code><span>02_list_offsets.go:144</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.forEachBatchRecord</code><span>data.go:1091</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets.func4</code><span>02_list_offsets.go:151</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.observe1422</code><span>02_list_offsets.go:169</span></li></ol></section>
+          <p class="small trace-note">The frames on record 2 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 1 · sample<code>github.com/twmb/franz-go/pkg/kfake.observe1422</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1</span></div><ol class="frames"><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).run</code><span>cluster.go:608</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets</code><span>02_list_offsets.go:129</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.observe1422</code><span>02_list_offsets.go:169</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>github.com/twmb/franz-go/pkg/kfake.observe1422</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3</span></div><ol class="frames"><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).run</code><span>cluster.go:608</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets</code><span>02_list_offsets.go:144</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.forEachBatchRecord</code><span>data.go:1091</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets.func4</code><span>02_list_offsets.go:151</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.observe1422</code><span>02_list_offsets.go:169</span></li></ol></section></details><details class="extra" ><summary>Record 4 · sample<code>github.com/twmb/franz-go/pkg/kfake.observe1422</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4</span></div><ol class="frames"><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).run</code><span>cluster.go:608</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets</code><span>02_list_offsets.go:144</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.forEachBatchRecord</code><span>data.go:1091</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets.func4</code><span>02_list_offsets.go:151</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.observe1422</code><span>02_list_offsets.go:169</span></li></ol></section></details><details class="extra" ><summary>Record 5 · sample<code>github.com/twmb/franz-go/pkg/kfake.observe1422</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5</span></div><ol class="frames"><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).run</code><span>cluster.go:608</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets</code><span>02_list_offsets.go:144</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.forEachBatchRecord</code><span>data.go:1091</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.(*Cluster).handleListOffsets.func4</code><span>02_list_offsets.go:151</span></li><li><code>github.com/twmb/franz-go/pkg/kfake.observe1422</code><span>02_list_offsets.go:169</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter published four records in one partition and batch with timestamps 0, 10, 10 and 20 milliseconds after a common base. At +5 ms, the affected service returned offset 0, whose record was too early. At +10 ms, it returned offset 2, skipping the first record with that timestamp. A consumer sought to each returned offset and read those records. The fix and Apache Kafka 2.2.1 returned offset 1 and the +10 ms record for both queries.</dd></div><div><dt>What CoroPerf showed</dt><dd>The Kafka contract selects the earliest offset whose timestamp reaches the request. The parent scanned the whole batch and updated its answer whenever a record timestamp was less than or equal to the request. At +10 ms this selected offset 1 and then overwrote it with offset 2. The fixed scan stopped at offset 1. The Go runtime recorded the creation of the service event loop in NewCluster. The same goroutine handled the sampled requests, and the peer, correlation ID, query and result match the captured Kafka exchanges.</dd></div><div><dt>Scope and limits</dt><dd>The literal reporter test ran on Linux/amd64 with the reported Go 1.26.1. The six paired runs used a topic-specific client, uncompressed records and the Kafka 2.2 protocol cap. The singleton-batch topic and seven extra lookup times are local controls. The +21 ms wire reply had offset and timestamp −1. The admin client then looked up the partition end and returned offset 4. The goroutine evidence covers the two traced kfake runs. Apache Kafka supplies the independent broker and on-disk readback.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

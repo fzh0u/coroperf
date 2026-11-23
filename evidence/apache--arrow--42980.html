@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Parquet footer statistics undercount nulls in a repeated column">
+  <title>apache/arrow #42980 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">apache/arrow #42980</p>
+        <h1>Parquet footer statistics undercount nulls in a repeated column</h1>
+        <div class="case-links"><a href="https://github.com/apache/arrow/issues/42980">Upstream report ↗</a><a href="https://github.com/apache/arrow/issues/42980#issuecomment-2184213057">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 1 · sample<code>parquet::(anonymous namespace)::TypedStatisticsImpl&lt;parquet::PhysicalType&lt;(parquet::Type::type)2&gt; &gt;::UpdateSpaced(long const*, unsigned char const*, long, long, long)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>main</code></li><li><code>Py_RunMain</code></li><li><code>pymain_run_file</code></li><li><code>PyRun_SimpleFileExFlags</code></li><li><code>pyrun_simple_file</code></li><li><code>pyrun_file</code></li><li><code>run_mod</code></li><li><code>_PyEval_EvalCode</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>method_vectorcall</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>cfunction_call</code></li><li><code>__pyx_pw_7pyarrow_8_parquet_13ParquetWriter_5write_table(_object*, _object*, _object*)</code></li><li><code>parquet::arrow::FileWriterImpl::WriteTable(arrow::Table const&amp;, long)</code></li><li><code>parquet::arrow::FileWriterImpl::WriteColumnChunk(std::shared_ptr&lt;arrow::ChunkedArray&gt; const&amp;, long, long)</code></li><li><code>parquet::arrow::(anonymous namespace)::WritePath(parquet::arrow::ElementRange, parquet::arrow::(anonymous namespace)::PathInfo*, parquet::ArrowWriteContext*, std::function&lt;arrow::Status (parquet::arrow::MultipathLevelBuilderResult const&amp;)&gt;)</code></li><li><code>std::_Function_handler&lt;arrow::Status (parquet::arrow::MultipathLevelBuilderResult const&amp;), parquet::arrow::(anonymous namespace)::ArrowColumnWriterV2::Write(parquet::ArrowWriteContext*)::{lambda(parquet::arrow::MultipathLevelBuilderResult const&amp;)#1}&gt;::_M_invoke(std::_Any_data const&amp;, parquet::arrow::MultipathLevelBuilderResult const&amp;)</code></li><li><code>parquet::TypedColumnWriterImpl&lt;parquet::PhysicalType&lt;(parquet::Type::type)2&gt; &gt;::WriteArrow(short const*, short const*, long, arrow::Array const&amp;, parquet::ArrowWriteContext*, bool)</code></li><li><code>parquet::TypedColumnWriterImpl&lt;parquet::PhysicalType&lt;(parquet::Type::type)2&gt; &gt;::WriteArrowDense(short const*, short const*, long, arrow::Array const&amp;, parquet::ArrowWriteContext*, bool)</code></li><li><code>arrow::Status parquet::WriteArrowZeroCopy&lt;parquet::PhysicalType&lt;(parquet::Type::type)2&gt; &gt;(arrow::Array const&amp;, long, short const*, short const*, parquet::ArrowWriteContext*, parquet::TypedColumnWriter&lt;parquet::PhysicalType&lt;(parquet::Type::type)2&gt; &gt;*, bool)</code></li><li><code>non-virtual thunk to parquet::TypedColumnWriterImpl&lt;parquet::PhysicalType&lt;(parquet::Type::type)2&gt; &gt;::WriteBatchSpaced(long, short const*, short const*, unsigned char const*, long, long const*)</code></li><li><code>parquet::TypedColumnWriterImpl&lt;parquet::PhysicalType&lt;(parquet::Type::type)2&gt; &gt;::WriteBatchSpaced(long, short const*, short const*, unsigned char const*, long, long const*)::{lambda(long, long)#1}::operator()(long, long) const</code></li><li><code>parquet::(anonymous namespace)::TypedStatisticsImpl&lt;parquet::PhysicalType&lt;(parquet::Type::type)2&gt; &gt;::UpdateSpaced(long const*, unsigned char const*, long, long, long)</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>For [[0, 1], None, [2, None, 3]], the old footer reported one null and five non-null values instead of two and four. Both versions read back all three rows with the same minimum and maximum.</dd></div><div><dt>What CoroPerf showed</dt><dd>The old calculation subtracted four non-null values from five leaf slots, overlooking the outer None. The fix used all six level entries, and replacing the outer None with [None] also corrected the old count.</dd></div><div><dt>Scope and limits</dt><dd>Checked column-chunk statistics and decoded values, with synchronous native stacks. Query pruning was untested.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

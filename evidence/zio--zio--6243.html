@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Publishing before a ZIO Hub subscription leaves the reader waiting">
+  <title>zio/zio #6243 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">zio/zio #6243</p>
+        <h1>Publishing before a ZIO Hub subscription leaves the reader waiting</h1>
+        <div class="case-links"><a href="https://github.com/zio/zio/issues/6243">Upstream report ↗</a><a href="https://github.com/zio/zio/issues/6243#issuecomment-1019357887">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>zio.internal.BoundedHubArb.publish(BoundedHubArb.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · method-boundary</span></div><ol class="frames"><li><code>zio.internal.ZScheduler$$anon$1.run(ZScheduler.scala:151)</code></li><li><code>zio.internal.FiberContext.run(FiberContext.scala:115)</code></li><li><code>zio.internal.FiberContext.runUntil(FiberContext.scala:298)</code></li><li><code>zio.ZHub$$anon$5.$anonfun$publish$3(ZHub.scala:361)</code></li><li><code>zio.internal.BoundedHubArb.publish(BoundedHubArb.scala)</code></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>zio.internal.BoundedHubArb.subscribe(BoundedHubArb.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · method-boundary</span></div><ol class="frames"><li><code>zio.internal.ZScheduler$$anon$1.run(ZScheduler.scala:151)</code></li><li><code>zio.internal.FiberContext.run(FiberContext.scala:115)</code></li><li><code>zio.internal.FiberContext.runUntil(FiberContext.scala:874)</code></li><li><code>zio.ZIO$FlatMap.apply(ZIO.scala:6195)</code></li><li><code>zio.ZIO$FlatMap.apply(ZIO.scala:6206)</code></li><li><code>zio.ZIO.$anonfun$map$1(ZIO.scala:1166)</code></li><li><code>zio.ZHub$.$anonfun$makeSubscription$1(ZHub.scala:412)</code></li><li><code>zio.internal.BoundedHubArb.subscribe(BoundedHubArb.scala)</code></li></ol></section></details><details class="extra" ><summary>Record 4 · sample<code>HubExample$.failure(HubExample.scala)</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4 · method-boundary</span></div><ol class="frames"><li><code>zio.internal.ZScheduler$$anon$1.run(ZScheduler.scala:151)</code></li><li><code>zio.internal.FiberContext.run(FiberContext.scala:115)</code></li><li><code>zio.internal.FiberContext.runUntil(FiberContext.scala:874)</code></li><li><code>zio.ZIO$FlatMap.apply(ZIO.scala:6195)</code></li><li><code>zio.ZIO$FlatMap.apply(ZIO.scala:6206)</code></li><li><code>zio.ZIO.$anonfun$$times$greater$1(ZIO.scala:105)</code></li><li><code>zio.stream.internal.ChannelExecutor$.$anonfun$readUpstream$5(ChannelExecutor.scala:659)</code></li><li><code>zio.stream.internal.ChannelExecutor$.read$1(ChannelExecutor.scala:635)</code></li><li><code>zio.stream.internal.ChannelExecutor.$anonfun$run$15(ChannelExecutor.scala:196)</code></li><li><code>zio.stream.ZChannel.$anonfun$mapOut$1(ZChannel.scala:654)</code></li><li><code>zio.stream.ZStream.$anonfun$map$1(ZStream.scala:2360)</code></li><li><code>zio.Chunk.map(Chunk.scala:42)</code></li><li><code>zio.ChunkLike.map$(ChunkLike.scala:112)</code></li><li><code>zio.ChunkLike.map(ChunkLike.scala:113)</code></li><li><code>zio.Chunk.mapChunk(Chunk.scala:983)</code></li><li><code>HubExample$.$anonfun$run$19(HubExample.scala:13)</code></li><li><code>HubExample$.failure(HubExample.scala)</code></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Publishing before subscribing caused the read to time out. Reversing the order delivered the same element to map, where the expected exception was thrown.</dd></div><div><dt>What CoroPerf showed</dt><dd>The result matched the reporter’s explanation that the earlier publication never reached map. The upstream test waited for subscription, and the maintainer’s delayed publisher also reached map.</dd></div><div><dt>Scope and limits</dt><dd>The complete failing program was unavailable. The upstream examples and local publish-first control were recorded separately.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

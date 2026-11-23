@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A Dask parent waits for a child that only its own busy worker may run">
+  <title>dask/distributed #7047 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">dask/distributed #7047</p>
+        <h1>A Dask parent waits for a child that only its own busy worker may run</h1>
+        <div class="case-links"><a href="https://github.com/dask/distributed/issues/7047">Upstream report ↗</a><a href="https://github.com/dask/distributed/issues/7047#issuecomment-1253694086">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>wait</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>threadpoolexecutor.py:57</span></li><li><code>run</code><span>_concurrent_futures_thread.py:65</span></li><li><code>apply_function</code><span>worker.py:2860</span></li><li><code>apply_function_simple</code><span>worker.py:2882</span></li><li><code>parent_foo</code><span>report.py:10</span></li><li><code>gather</code><span>client.py:2174</span></li><li><code>sync</code><span>utils.py:336</span></li><li><code>sync</code><span>utils.py:399</span></li><li><code>wait</code><span>utils.py:388</span></li><li><code>wait</code><span>threading.py:581</span></li><li><code>wait</code><span>threading.py:316</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>wait</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>threadpoolexecutor.py:57</span></li><li><code>run</code><span>_concurrent_futures_thread.py:65</span></li><li><code>apply_function</code><span>worker.py:2860</span></li><li><code>apply_function_simple</code><span>worker.py:2882</span></li><li><code>parent_foo</code><span>report.py:10</span></li><li><code>gather</code><span>client.py:2174</span></li><li><code>sync</code><span>utils.py:336</span></li><li><code>sync</code><span>utils.py:399</span></li><li><code>wait</code><span>utils.py:388</span></li><li><code>wait</code><span>threading.py:581</span></li><li><code>wait</code><span>threading.py:316</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>wait</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>threadpoolexecutor.py:57</span></li><li><code>run</code><span>_concurrent_futures_thread.py:65</span></li><li><code>apply_function</code><span>worker.py:2860</span></li><li><code>apply_function_simple</code><span>worker.py:2882</span></li><li><code>parent_foo</code><span>report.py:10</span></li><li><code>gather</code><span>client.py:2174</span></li><li><code>sync</code><span>utils.py:336</span></li><li><code>sync</code><span>utils.py:399</span></li><li><code>wait</code><span>utils.py:388</span></li><li><code>wait</code><span>threading.py:581</span></li><li><code>wait</code><span>threading.py:316</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter’s example remained pending in two local process groups. Across three snapshots one worker ran the parent with the child ready, while the other three workers were idle.</dd></div><div><dt>What CoroPerf showed</dt><dd>The parent waited in gather while occupying the only thread eligible for the child. Both controls that relaxed the constraint completed, and the worker states matched the reporter’s dump.</dd></div><div><dt>Scope and limits</dt><dd>Ran the public example in six local processes. The AWS deployment and private transformation workload were unavailable.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

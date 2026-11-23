@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="etcd snapshot status counts internal entries and old revisions">
+  <title>etcd-io/etcd #19253 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">etcd-io/etcd #19253</p>
+        <h1>etcd snapshot status counts internal entries and old revisions</h1>
+        <div class="case-links"><a href="https://github.com/etcd-io/etcd/issues/19253">Upstream report ↗</a><a href="https://github.com/etcd-io/etcd/pull/19344">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>go.etcd.io/etcd/etcdutl/v3/snapshot.(*v3Manager).Status.func1.1</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1695</span></li><li><code>runtime.main</code><span>proc.go:271</span></li><li><code>main.main</code><span>command.go:897</span></li><li><code>github.com/spf13/cobra.(*Command).ExecuteC</code><span>command.go:960</span></li><li><code>github.com/spf13/cobra.(*Command).execute</code><span>command.go:856</span></li><li><code>go.etcd.io/etcd/etcdutl/v3/etcdutl.SnapshotStatusCommandFunc</code><span>snapshot_command.go:116</span></li><li><code>go.etcd.io/etcd/etcdutl/v3/snapshot.(*v3Manager).Status</code><span>v3_snapshot.go:125</span></li><li><code>go.etcd.io/bbolt.(*DB).View</code><span>db.go:917</span></li><li><code>go.etcd.io/etcd/etcdutl/v3/snapshot.(*v3Manager).Status.func1</code><span>v3_snapshot.go:145</span></li><li><code>go.etcd.io/bbolt.(*Bucket).ForEach</code><span>bucket.go:397</span></li><li><code>go.etcd.io/etcd/etcdutl/v3/snapshot.(*v3Manager).Status.func1.1</code><span>v3_snapshot.go:156</span></li></ol></section></details><details class="extra" ><summary>Record 8 · sample<code>go.etcd.io/etcd/etcdutl/v3/snapshot.(*v3Manager).Status.func1.1</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 8 · native runtime stack</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1695</span></li><li><code>runtime.main</code><span>proc.go:271</span></li><li><code>main.main</code><span>command.go:897</span></li><li><code>github.com/spf13/cobra.(*Command).ExecuteC</code><span>command.go:960</span></li><li><code>github.com/spf13/cobra.(*Command).execute</code><span>command.go:856</span></li><li><code>go.etcd.io/etcd/etcdutl/v3/etcdutl.SnapshotStatusCommandFunc</code><span>snapshot_command.go:116</span></li><li><code>go.etcd.io/etcd/etcdutl/v3/snapshot.(*v3Manager).Status</code><span>v3_snapshot.go:125</span></li><li><code>go.etcd.io/bbolt.(*DB).View</code><span>db.go:917</span></li><li><code>go.etcd.io/etcd/etcdutl/v3/snapshot.(*v3Manager).Status.func1</code><span>v3_snapshot.go:145</span></li><li><code>go.etcd.io/bbolt.(*Bucket).ForEach</code><span>bucket.go:397</span></li><li><code>go.etcd.io/etcd/etcdutl/v3/snapshot.(*v3Manager).Status.func1.1</code><span>v3_snapshot.go:156</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>As the live user-key count changed from 0 to 1 to 1 to 2, the old tool reported 6, 7, 9 and 10, while the fixed tool matched every count.</dd></div><div><dt>What CoroPerf showed</dt><dd>An independent bbolt scan found three revisions in the key bucket and six internal entries; the old counter incremented for each entry, while the fix counted distinct user keys.</dd></div><div><dt>Scope and limits</dt><dd>One healthy Linux/amd64 member and offline snapshots were tested. The six internal entries were specific to this initialization.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

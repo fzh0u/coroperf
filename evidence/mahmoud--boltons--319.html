@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Why did a yearly date range skip every other December?">
+  <title>mahmoud/boltons #319 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">mahmoud/boltons #319</p>
+        <h1>Why did a yearly date range skip every other December?</h1>
+        <div class="case-links"><a href="https://github.com/mahmoud/boltons/issues/319">Upstream report ↗</a><a href="https://github.com/mahmoud/boltons/commit/8ba3a7fa0d99b73f7f43c1aed82c571b941eecea">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 1 · sample<code>daterange</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:29</span></li><li><code>&lt;module&gt;</code><span>posted.py:6</span></li><li><code>daterange</code><span>timeutils.py:390</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>daterange</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:29</span></li><li><code>&lt;module&gt;</code><span>posted.py:6</span></li><li><code>daterange</code><span>timeutils.py:393</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>daterange</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:29</span></li><li><code>&lt;module&gt;</code><span>posted.py:6</span></li><li><code>daterange</code><span>timeutils.py:393</span></li></ol></section></details><details class="extra" ><summary>Record 4 · sample<code>daterange</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:29</span></li><li><code>&lt;module&gt;</code><span>posted.py:6</span></li><li><code>daterange</code><span>timeutils.py:390</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter iterated from December 25, 2012 to January 1, 2023 with a one-year step and an exclusive stop. boltons 21.0.0 yielded six dates, all in even years. The immediate source parent returned the same sequence. The landed commit and 23.0.0 yielded December 25 in all eleven years. A recursive SQLite query independently advanced each date by one calendar year.
+
+A separate SQLite table held one record per December 25, with quantities 1 through 11. Joining the generator’s dates to those records selected six records totaling 36 units on the affected builds. The corrected builds selected eleven records totaling 66 units.</dd></div><div><dt>What CoroPerf showed</dt><dd>The first physical yield in the reporter’s loop returned December 25, 2012. In the 21.0.0 graph, segments 2 and 3 sample the multi-line date.replace expression at timeutils.py line 393. The year step was 1, the month step 0, and divmod(12, 12) gave a year carry of 1 with remainder 0. The expression added both the explicit year step and the carry. Segment 4 records the next yield, December 25, 2014. In 23.0.0 the code converts the year step to 12 months and computes from a zero-based month index. The carry is 1 with remainder 11, which maps back to December. Line 395 adds only that carry. Segment 4 records December 25, 2013.
+
+The landed upstream test uses a shorter stop date, January 1, 2016. Its annual assertion expected four dates and found two on the affected builds. Both assertions in the landed test passed on the corrected builds. The thirteen-month example also passed independently on every build.</dd></div><div><dt>Scope and limits</dt><dd>The December 2022 report supplied the loop and its date bounds without a release number or imports. The replay prepends imports for date and daterange to those statements. The 21.0.0 and 23.0.0 controls are official PyPI wheels. The source comparison uses complete boltons packages from the adjacent Git commits. These runs used CPython 3.10.12 and date values without time zones. The table and quantities are a separate local application control. The execution samples belong to a synchronous generator and the coroutine-origin count is zero.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

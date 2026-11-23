@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Why did asking Redis for a rank and its score raise TypeError?">
+  <title>redis/redis-py #2916 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">redis/redis-py #2916</p>
+        <h1>Why did asking Redis for a rank and its score raise TypeError?</h1>
+        <div class="case-links"><a href="https://github.com/redis/redis-py/issues/2916">Upstream report ↗</a><a href="https://github.com/redis/redis-py/issues/2916#issuecomment-1698305502">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Reviewed creation-to-observation witness · observation 11</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span></div><ol class="frames"><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:224</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li><li><code>parse_response</code><span>client.py:551</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:224</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li><li><code>parse_response</code><span>client.py:551</span></li></ol></section>
+          <p class="small trace-note">The frames on record 11 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span></div><ol class="frames"><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · diagnostic stacktrace</span></div><ol class="frames"><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li><li><code>parse_response</code><span>client.py:530</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · diagnostic stacktrace</span></div><ol class="frames"><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li><li><code>parse_response</code><span>client.py:530</span></li></ol></section>
+          <p class="small trace-note">The frames on record 3 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span></div><ol class="frames"><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:224</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li><li><code>parse_response</code><span>client.py:539</span></li><li><code>read_response</code><span>connection.py:782</span></li><li><code>read_response</code><span>connection.py:265</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:224</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li><li><code>parse_response</code><span>client.py:539</span></li><li><code>read_response</code><span>connection.py:782</span></li><li><code>read_response</code><span>connection.py:265</span></li></ol></section>
+          <p class="small trace-note">The frames on record 6 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div></details><h3 class="related-head">Other captured stacks</h3><details class="extra" open><summary>Record 1 · sample<code>writelines</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · diagnostic stacktrace</span></div><ol class="frames"><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:491</span></li><li><code>send_command</code><span>connection.py:752</span></li><li><code>send_packed_command</code><span>connection.py:727</span></li><li><code>writelines</code><span>streams.py:343</span></li></ol></section></details><details class="extra" ><summary>Record 4 · sample<code>feed_data</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 4 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:224</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>_read_ready</code><span>selector_events.py:811</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:868</span></li><li><code>data_received</code><span>streams.py:286</span></li><li><code>feed_data</code><span>streams.py:471</span></li></ol></section></details><details class="extra" ><summary>Record 5 · sample<code>parse_response</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 5 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:224</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li><li><code>parse_response</code><span>client.py:539</span></li></ol></section></details><details class="extra" ><summary>Record 7 · sample<code>read_response</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 7 · diagnostic stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>worker.py:224</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1905</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>exercise</code><span>worker.py:187</span></li><li><code>execute_command</code><span>client.py:518</span></li><li><code>call_with_retry</code><span>retry.py:59</span></li><li><code>_send_command_parse_response</code><span>client.py:492</span></li><li><code>parse_response</code><span>client.py:539</span></li><li><code>read_response</code><span>connection.py:811</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter’s synchronous program adds one with score 1 and two with score 2, then asks Redis for the zero-based rank and score of two. Redis replied with an integer 1 and a one-byte score, 2. The 4.6.0 client raised TypeError. The 5.0.0 client printed [1, b&#x27;2&#x27;]. Running the same script again reproduced the reporter’s two leading zeros because both members already existed. On an empty set the two ZADD calls each printed 1. The rank outcome was the same in both states. Rank alone returned integer 1, and a scored query for an absent member returned None. Both a released Redis 7.2.0 server and the dated unstable server produced the same replies. The first table shows results shared by the synchronous client and its asyncio companion.</dd></div><div><dt>What CoroPerf showed</dt><dd>The synchronous process sent the posted lower-case ZRANK command and read a 15-byte RESP2 array. An independent socket read the same bytes. redis-py 4.6.0 decoded them into [1, b&#x27;2&#x27;], dispatched the list to int_or_none and called int(response). That scalar conversion raised the reported exception. A normal redis.asyncio.Redis client reproduced the error on the same public command. Its parser, connection and callback all received the same list object. In the 4.6.0 graph, segment 2 records the library creating parse_response at redis/asyncio/client.py line 492. Segment 11 observes the same running coroutine frame at line 551 as it received the callback’s TypeError. The separate stream-reader callback recorded the server bytes while the coroutine was suspended.
+
+On the 5.0 development branch, parent e13b239c still dispatched to int_or_none. Change 2a935eb9 removed the ZRANK callback registration, so parse_response returned the decoded list directly. Both source snapshots lacked the withscore keyword on the convenience method. By release 5.0.0 the keyword was available and ZRANK had a registered zset_score_pairs callback. On the reporter’s call this callback returned the original list object. The return path and the independent wire read agree on its two field types.</dd></div><div><dt>Scope and limits</dt><dd>The original program used redis.Redis synchronously on macOS with Python 3.9 and an unspecified Redis unstable commit. Replay ran the posted source on Linux with CPython 3.9.15 and the latest unstable commit at the report timestamp. It also ran against Redis 7.2.0. The coroutine certificate belongs to the separate asyncio companion. The synchronous reporter contributes zero coroutine origins, and the shared issue contributes one. Across the eight observed processes, 4 parser coroutines failed on the reported command, 2 failed on the scored wrapper and 22 completed successfully. Release 5.0.0 was already on PyPI when the issue opened on August 25, 2023. The maintainer identified it in a later comment. The two branch commits document an earlier behavioral transition. Separate issue #4428 concerns score bytes versus text under a later client’s protocol and decode_responses settings. This experiment used RESP2 and the default byte decoding.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Projecting book IDs dropped the join needed to order by the author">
+  <title>tortoise/tortoise-orm #2004 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">tortoise/tortoise-orm #2004</p>
+        <h1>Projecting book IDs dropped the join needed to order by the author</h1>
+        <div class="case-links"><a href="https://github.com/tortoise/tortoise-orm/issues/2004">Upstream report ↗</a><a href="https://github.com/tortoise/tortoise-orm/pull/2224">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill physical">Physical stacks captured</span></div>
+        <p class="section-copy">The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack.</p>
+        <details class="extra" open><summary>Record 0 · sample<code>values</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 0 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:130</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>run</code><span>workload.py:79</span></li><li><code>main</code><span>example.py:21</span></li><li><code>values</code><span>queryset.py:740</span></li></ol></section></details><details class="extra" ><summary>Record 1 · sample<code>_make_query</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 1 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:130</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>run</code><span>workload.py:79</span></li><li><code>main</code><span>example.py:21</span></li><li><code>sql</code><span>queryset.py:312</span></li><li><code>_make_query</code><span>queryset.py:1913</span></li></ol></section></details><details class="extra" ><summary>Record 2 · sample<code>sql</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 2 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:130</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>run</code><span>workload.py:79</span></li><li><code>main</code><span>example.py:21</span></li><li><code>sql</code><span>queryset.py:317</span></li></ol></section></details><details class="extra" ><summary>Record 3 · sample<code>execute_query_dict</code></summary><section class="stack "><div class="stack-head"><h4>Captured stack</h4><span>Record 3 · native runtime stack</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:130</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>run</code><span>workload.py:108</span></li><li><code>_execute</code><span>queryset.py:1939</span></li><li><code>_translate_exceptions</code><span>client.py:33</span></li><li><code>_translate_exceptions</code><span>client.py:90</span></li><li><code>execute_query_dict</code><span>client.py:154</span></li></ol></section></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter’s full-object query included the author join. On 0.25.1, 1.1.9 and the proposal parent, selecting just the book ID removed that join but kept the author column in ORDER BY. PostgreSQL returned SQLSTATE 42P01. SQLite reported a missing column when the same calculation used a portable CAST.</dd></div><div><dt>What CoroPerf showed</dt><dd>The recorded values() call began with author in the requested relations. Its returned ValuesQuery had an empty relation list, and _make_query built zero joins. The submitted patch carried the relation into the projection, producing one join. PostgreSQL and SQLite then returned the same six ordered catalog IDs for dictionary and flat projections.</dd></div><div><dt>Scope and limits</dt><dd>The posted module printed SQL. The launcher supplied the omitted RawSQL import and called the published main(). The database runs added six GITenberg catalog entries and used the difference between death year and birth year as the integer sort input. The proposed fix was open at collection time. The recorded stacks cover query construction and database execution.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

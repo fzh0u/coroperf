@@ -1,0 +1,57 @@
+<article class="wrap research">
+  <a class="back" href="index.html#issues">← Issue evidence</a>
+  <header>
+    <p class="eyebrow">November 2026 research update</p>
+    <h1>From stack links to diagnosis</h1>
+    <p class="section-copy">The revision tracks request performance, async state-machine identity across collection, and native coroutine ownership when symbols and unwind information are unavailable.</p>
+  </header>
+  <section class="block" aria-labelledby="perf">
+    <div class="section-head"><h2 id="perf">Performance in LLM serving</h2></div>
+    <div class="research-entry">
+      <h3>SGLang #50722 · Disconnect polling</h3>
+      <p>The joined request stack locates <code>is_disconnected</code> under the stream generator. In separate frontend CPU profiles, poll-related samples fell from 122 of 492 to 1 of 353 after limiting poll cadence.</p>
+      <p class="measure"><span>9,419 → 13,500 tokens/s</span><span>9,120 → 96 polls per workload</span></p>
+      <p class="small">Median throughput was measured without probes on one A100 with a 135M model and 48 concurrent clients.</p>
+      <a href="evidence/sgl-project--sglang--50722.html#call-stack">Inspect the request stack ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>vLLM #57350 · Detokenization on the event loop</h3>
+      <p>The request-task stack attributes incremental detokenization to the loop thread. The paired executor run lowered concurrent tokenization latency and reconstructed the same text, with lower aggregate streaming throughput.</p>
+      <p class="measure"><span>155 → 57 ms tokenization p95</span><span>1,993 → 1,753 tokens/s</span></p>
+      <p class="small">Each build had one paired GPU-less run with 20 streams and a local tokenizer.</p>
+      <a href="evidence/vllm-project--vllm--57350.html#call-stack">Inspect the request stack ↗</a>
+    </div>
+  </section>
+  <section class="block" aria-labelledby="identity">
+    <div class="section-head"><h2 id="identity">Identity across suspension</h2></div>
+    <div class="research-entry">
+      <h3>.NET #60764 · Creation before garbage collection</h3>
+      <p>The recorded state-machine identity connects <code>Program.Main</code> to the resumed <code>Foo</code> invocation in <code>A..ctor</code>. Follow-up controls matched the invocation in three normal runs and three runs with verified forced compacting collections.</p>
+      <a href="evidence/dotnet--runtime--60764.html#call-stack">Compare connected and physical stacks ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Next.js #74988 · Renderer ownership</h3>
+      <p>Captured React owner objects connect <code>Home</code>, <code>AsyncComponent</code>, and <code>ThrowingComponent</code>. All six instrumented throws recovered this owner chain. Zero of six control throws did with owner links disabled.</p>
+      <a href="evidence/vercel--next.js--74988.html#call-stack">Inspect the renderer chain ↗</a>
+    </div>
+  </section>
+  <section class="block" aria-labelledby="assembly">
+    <div class="section-head"><h2 id="assembly">Optimized and stripped binaries</h2></div>
+    <div class="research-entry">
+      <h3>Drogon #2331 · Which request stalled in PostgreSQL?</h3>
+      <p>Disassembly identified construction, actor, and cleanup paths in a stripped build. The SQL blocking stack alone leaves the owning request ambiguous. Observed transfer and activation bindings assigned all six fault samples. Retaining creation history recovered all six request origins.</p>
+      <p class="small">The HTTP/PostgreSQL adaptation used two request entry points to call the same coroutine function. Instruction dataflow alone assigned zero of six fault samples.</p>
+      <a href="evidence/drogonframework--drogon--2331.html#call-stack">Inspect the connected creation and stall stacks ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>LLVM code-generation benchmarks</h3>
+      <p class="small">These benchmarks form a separate set of assembly observations. Each entry reports a code path or layout comparison on local toolchains.</p>
+      <ul>
+        <li><strong>#148380.</strong> The stripped Clang 19 out-of-line build allocated a 24-byte coroutine frame and dispatched through the frame’s destroy slot. The path took 14.36 ns per iteration versus 2.15 ns in Clang 18. An inlined Clang 19 caller used an allocation-free path at 2.15 ns. <a href="https://github.com/llvm/llvm-project/issues/148380">Upstream issue ↗</a></li>
+        <li><strong>#56972.</strong> Moving cleanup to the destructor embedded the <code>Baz</code> frame inside <code>Bar</code> in the runnable adaptation. Allocations went from three to two per iteration and median time went from 45.77 to 34.71 ns. <a href="https://github.com/llvm/llvm-project/issues/56972">Upstream issue ↗</a></li>
+        <li><strong>#57852.</strong> Splitting grouped awaitables removed three allocations in a construction-only comparison. In the completed-result experiment, both groupings allocated three frames and splitting was slower. <a href="https://github.com/llvm/llvm-project/issues/57852">Upstream issue ↗</a></li>
+        <li><strong>#64933.</strong> Stripped Clang 14, 18, and 19 builds all executed the final-suspend indirect tail transfer. Clang 18 alone executed an out-of-line <code>await_suspend</code> helper in each observed iteration. <a href="https://github.com/llvm/llvm-project/issues/64933">Upstream issue ↗</a></li>
+      </ul>
+    </div>
+  </section>
+</article>

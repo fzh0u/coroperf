@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Awaiting a Knex query drops the caller from its error stack">
+  <title>knex/knex #2500 · coroPerf</title>
+  <link rel="stylesheet" href="../assets/site.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">knex/knex #2500</p>
+        <h1>Awaiting a Knex query drops the caller from its error stack</h1>
+        <div class="case-links"><a href="https://github.com/knex/knex/issues/2500">Upstream report ↗</a><a href="https://github.com/knex/knex/issues/2500#issuecomment-1445331959">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+          <div><dt>Reviewed coroutine origin</dt><dd>Outside the reviewed origin lower bound</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
+        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
+        <p class="provenance">Observation selected in the issue review · observation 74</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+
+
+          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>bootstrap_node.js:617</span></li><li><code>startup</code><span>bootstrap_node.js:193</span></li><li><code>Function.Module.runMain</code><span>module.js:701</span></li><li><code>Function.Module._load</code><span>module.js:505</span></li><li><code>tryModuleLoad</code><span>module.js:513</span></li><li><code>Module.load</code><span>module.js:573</span></li><li><code>Object.Module._extensions..js</code><span>module.js:671</span></li><li><code>Module._compile</code><span>module.js:660</span></li><li><code>Object.&lt;anonymous&gt;</code><span>app.cjs:19</span></li><li><code>test</code><span>app.cjs:15</span></li><li><code>&lt;anonymous&gt;</code></li></ol></section>
+          <div class="edge">↓ <span>Same coroutine instance across records</span><code>create_base_to_sample_stack</code></div>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 74 · diagnostic</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>bootstrap_node.js:617</span></li><li><code>startup</code><span>bootstrap_node.js:193</span></li><li><code>Function.Module.runMain</code><span>module.js:703</span></li><li><code>process._tickCallback</code><span>next_tick.js:160</span></li><li><code>Builder.Target.then</code><span>interface.js:35</span></li><li><code>Runner.run</code><span>runner.js:47</span></li><li><code>From previous event:</code></li><li><code>tryOnImmediate</code><span>timers.js:717</span></li><li><code>runCallback</code><span>timers.js:756</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:61</span></li><li><code>From previous event:</code></li><li><code>Runner.&lt;anonymous&gt;</code><span>runner.js:149</span></li><li><code>Client_PG.query</code><span>client.js:199</span></li><li><code>Client_PG._query</code><span>index.js:287</span></li><li><code>From previous event:</code></li><li><code>TCP.onread</code><span>net.js:599</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:213</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:256</span></li><li><code>addChunk</code><span>_stream_readable.js:269</span></li><li><code>Socket.emit</code><span>events.js:160</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:113</span></li><li><code>Connection.parseMessage</code><span>connection.js:370</span></li><li><code>Connection.parseE</code><span>connection.js:545</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 74 · diagnostic</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>bootstrap_node.js:617</span></li><li><code>startup</code><span>bootstrap_node.js:193</span></li><li><code>Function.Module.runMain</code><span>module.js:703</span></li><li><code>process._tickCallback</code><span>next_tick.js:160</span></li><li><code>Builder.Target.then</code><span>interface.js:35</span></li><li><code>Runner.run</code><span>runner.js:47</span></li><li><code>From previous event:</code></li><li><code>tryOnImmediate</code><span>timers.js:717</span></li><li><code>runCallback</code><span>timers.js:756</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:61</span></li><li><code>From previous event:</code></li><li><code>Runner.&lt;anonymous&gt;</code><span>runner.js:149</span></li><li><code>Client_PG.query</code><span>client.js:199</span></li><li><code>Client_PG._query</code><span>index.js:287</span></li><li><code>From previous event:</code></li><li><code>TCP.onread</code><span>net.js:599</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:213</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:256</span></li><li><code>addChunk</code><span>_stream_readable.js:269</span></li><li><code>Socket.emit</code><span>events.js:160</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:113</span></li><li><code>Connection.parseMessage</code><span>connection.js:370</span></li><li><code>Connection.parseE</code><span>connection.js:545</span></li></ol></section>
+          <p class="small trace-note">The frames on record 74 before stitching. Both columns list frames from caller to callee.</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>For the same missing userss table, Bluebird’s then stack retained line 18 of test, while await retained three previous-event sections and lost test.</dd></div><div><dt>What CoroPerf showed</dt><dd>The Promise delivered to unhandledRejection matched its async_hooks creation in test. A separate configuration control restored both caller stacks when the builder’s wrapper also enabled asyncStackTraces.</dd></div><div><dt>Scope and limits</dt><dd>The graph identified the function entry only. The later commenter’s application was unavailable.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
