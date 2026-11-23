@@ -8,6 +8,11 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>vLLM #61561 · 哪些请求在停机时丢失了最后一块？</h3>
+      <p>原版启动器让两个前端通道都丢失末块。用实际 collector 和异常对象，可以将每次输出处理异常接回对应的请求。两个开放提案在本地对照中均交付两条请求的末块。</p>
+      <a href="evidence/vllm-project--vllm--61561.html#call-stack">比较两组请求与异常发布栈</a>
+    </div>
+    <div class="research-entry">
       <h3>vLLM #58145 · 哪些调用重复构建 Mistral 词法器？</h3>
       <p>两条相同的构建栈分别接回发起任务。本地有界缓存复用词法器结构，解析事件一致。v0.30.0 的热态构建耗时中位数从 71.5 毫秒降到 0.14 毫秒。</p>
       <a href="evidence/vllm-project--vllm--58145.html#call-stack">比较两条解析器创建栈</a>

@@ -112,7 +112,7 @@
       </section>
       <section class="findings" aria-labelledby="findings-title">
         <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
-        <dl><div><dt>本地复现结果</dt><dd>在核对的 Ray 流式分支中，第一条 prompt 结束后第二条才开始。仍开放的 PR 让两条 prompt 重叠执行，较快的 prompt 可以先输出首个分片。单次请求包含两个 prompt 时，本地 CPU 实验的中位耗时从 115 毫秒降至 77 毫秒。每条 prompt 的索引、文本增量和结束原因一致。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>各个生成协程的入队物理栈相同。用实际的 Task、协程和协程帧，将入队执行记录 6、7 接回创建记录 3、4，再沿创建者 Task 接回不同的请求创建记录 0、1。用实际的队列元组，也核对了每个分片由对应的请求发出。两个请求以相反顺序传入相同的 prompt 时仍可正确归属。</dd></div><div><dt>适用范围与局限</dt><dd>实验执行实际的 Ray 流式方法和 SSE 格式化，生成引擎使用确定性的异步替身。计时反映该 CPU 组件实验中的串行与重叠效果。两轮共核对 8 条生成任务到请求的拼接和 16 个输出对象。核对过的 master 仍使用串行逻辑，Issue 与 PR 都开放。</dd></div></dl>
+        <dl><div><dt>本地复现结果</dt><dd>在核对的 Ray 流式分支中，第一条 prompt 结束后第二条才开始。仍开放的 PR 让两条 prompt 重叠执行，较快的 prompt 可以先输出首个分片。单次请求包含两个 prompt 时，本地 CPU 实验的中位耗时从 115 毫秒降至 77 毫秒。每条 prompt 的索引、文本增量和结束原因一致。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>各个生成协程的入队物理栈相同。用实际的 Task、协程和协程帧，将入队执行记录 6、7 接回创建记录 3、4，再沿创建者 Task 接回不同的请求创建记录 0、1。用实际的队列元组，也核对了每个分片由对应的请求发出。两个请求以相反顺序传入相同的 prompt 时仍可正确归属。</dd></div><div><dt>适用范围与局限</dt><dd>实验执行固定版本的 Ray 流式方法和 SSE 格式化，使用本地生成引擎替身。两轮共核对 8 条生成任务到请求的拼接和 16 个输出对象。在另一个慢消费者测试中，读完首块后暂停，开放提案仍让生产者生成全部 24 块，本地补丁限制队列后只生成 4 块，并能传递生产任务的取消。两版在双提示词计时中均约 77 毫秒。</dd></div></dl>
       </section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
