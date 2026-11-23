@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="vLLM 的哪些请求是在一轮调度之后才入队的？">
+  <title>vllm-project/vllm #68610 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/vllm-project--vllm--68610.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/vllm-project--vllm--68610.html" lang="en" hreflang="en">English</a><a href="vllm-project--vllm--68610.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">vllm-project/vllm #68610</p>
+        <h1>vLLM 的哪些请求是在一轮调度之后才入队的？</h1>
+        <div class="case-links"><a href="https://github.com/vllm-project/vllm/issues/68610">上游报告 ↗</a><a href="https://github.com/vllm-project/vllm/blob/283bf21b69686a9091fc59fa74b6c46303d365cc/vllm/v1/engine/core.py#L1949-L1976">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>请求与结果交接归因</dd></div>
+          <div><dt>问题类型</dt><dd>功能故障与正确性问题</dd></div>
+          <div><dt>GitHub 状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/vllm-project/vllm/pull/68700">候选修复已做本地对照 · PR 开放 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>完整 ADD 消息和实际入队的 Request 对象将两条相同的调度器观测接回交互与批量 Task 的创建栈。两条请求都在本次调度之后、等待计数生成之前到达。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_waiting.py:248</span></li><li><code>main</code><span>check_waiting.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>check</code><span>check_waiting.py:223</span></li><li><code>run</code><span>check_waiting.py:194</span></li><li><code>EngineCoreProc._wait_for_output</code><span>core.py:1964</span></li><li><code>EngineCoreProc._handle_client_request</code><span>core.py:1988</span></li><li><code>EngineCore.add_request</code><span>core.py:600</span></li><li><code>Scheduler.add_request</code><span>scheduler.py:3081</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>4 → 2</code></a><a href="#join-1-point-1">拼接点 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_waiting.py:248</span></li><li><code>main</code><span>check_waiting.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>check</code><span>check_waiting.py:223</span></li><li><code>run</code><span>check_waiting.py:194</span></li><li><code>EngineCoreProc._wait_for_output</code><span>core.py:1964</span></li><li><code>EngineCoreProc._handle_client_request</code><span>core.py:1988</span></li><li><code>EngineCore.add_request</code><span>core.py:600</span></li><li><code>Scheduler.add_request</code><span>scheduler.py:3081</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_waiting.py:248</span></li><li><code>main</code><span>check_waiting.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AsyncMPClient.add_request_async</code><span>core_client.py:1376</span></li><li><code>AsyncMPClient._send_input</code><span>core_client.py:1326</span></li><li><code>AsyncMPClient._send_input_message</code><span>core_client.py:1328</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_waiting.py:248</span></li><li><code>main</code><span>check_waiting.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>check</code><span>check_waiting.py:223</span></li><li><code>run</code><span>check_waiting.py:189</span></li><li><code>launch_interactive</code><span>check_waiting.py:125</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_waiting.py:248</span></li><li><code>main</code><span>check_waiting.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>check</code><span>check_waiting.py:223</span></li><li><code>run</code><span>check_waiting.py:194</span></li><li><code>EngineCoreProc._wait_for_output</code><span>core.py:1964</span></li><li><code>EngineCoreProc._handle_client_request</code><span>core.py:1988</span></li><li><code>EngineCore.add_request</code><span>core.py:600</span></li><li><code>Scheduler.add_request</code><span>scheduler.py:3081</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>5 → 3</code></a><a href="#join-2-point-1">拼接点 1 <code>3 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_waiting.py:248</span></li><li><code>main</code><span>check_waiting.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>check</code><span>check_waiting.py:223</span></li><li><code>run</code><span>check_waiting.py:194</span></li><li><code>EngineCoreProc._wait_for_output</code><span>core.py:1964</span></li><li><code>EngineCoreProc._handle_client_request</code><span>core.py:1988</span></li><li><code>EngineCore.add_request</code><span>core.py:600</span></li><li><code>Scheduler.add_request</code><span>scheduler.py:3081</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_waiting.py:248</span></li><li><code>main</code><span>check_waiting.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AsyncMPClient.add_request_async</code><span>core_client.py:1376</span></li><li><code>AsyncMPClient._send_input</code><span>core_client.py:1326</span></li><li><code>AsyncMPClient._send_input_message</code><span>core_client.py:1328</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 1 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_waiting.py:248</span></li><li><code>main</code><span>check_waiting.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>check</code><span>check_waiting.py:223</span></li><li><code>run</code><span>check_waiting.py:189</span></li><li><code>launch_batch</code><span>check_waiting.py:129</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>一个名额已被占用，另有一个请求已被调度器检查过并继续等待。两个新请求在本轮模型结果返回前入队。原版将容量等待数报为 3。PR #68700 将这一轮报为 1。下一次调度仍无法接纳这三个请求时，容量等待数恢复为 3。两版的实际队列计数始终都是 1 个运行、3 个排队。两条协程反向提交，计数相同。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两个请求进入 Scheduler.add_request 时的执行栈完全相同，前端 Task 当时已经结束。先核对 vLLM 客户端发出和本地接收的完整 ADD 消息，再按实际 Request 对象匹配输入队列和调度器。交互请求沿记录 4 → 2 → 0 回到创建栈，批量请求沿 5 → 3 → 1 回溯。这两条拼接说明了在 schedule() 之后、统计生成之前入队的请求各来自哪里。</dd></div><div><dt>适用范围与局限</dt><dd>CPU 对照运行 vLLM 的异步提交、请求预处理、引擎输入处理和调度器。跨边界传输使用进程内 ZeroMQ，模型结果由夹具提供。实验范围限于这些组件。线上报告中的张量并行、HTTP 指标抓取和网关仍待验证。Issue 和 PR 均开放。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

@@ -299,8 +299,7 @@ def featured_card(case, label, headline):
       </a>"""
 
 
-def table_row(case, text, language):
-    category = case["contribution_kind"]
+def table_status(case, text):
     state = case["tracker_status"]
     fix = case["fix"] or {}
     fix_text = fix_description(case, text, "fix_short_")
@@ -308,12 +307,18 @@ def table_row(case, text, language):
         fix_label = f'<a class="fix-label" href="{escape(fix["url"])}">{fix_text}</a>'
     else:
         fix_label = f'<span class="fix-label">{fix_text}</span>'
+    return f'<td class="row-status"><a class="state-pill state-{state}" href="{escape(case["url"])}">{text["tracker_" + state]}</a>{fix_label}</td>'
+
+
+def table_row(case, text, language):
+    category = case["contribution_kind"]
+    state = case["tracker_status"]
     other_language = "en" if language == "zh-CN" else "zh-CN"
     return f"""
       <tr class="issue-row" data-scope="{escape(case["reproduction"])}" data-kind="{case["kind"]}" data-contribution="{category}" data-tracker-status="{state}" data-title-alt="{escape(case_title(case, other_language))}">
         <th scope="row"><a href="evidence/{escape(case["id"])}.html"><span>{escape(case["reference"])}</span>{escape(case_title(case, language))}</a></th>
         <td class="row-contribution"><strong>{text[category]}</strong><small class="case-kind">{text[case["kind"]]}</small></td>
-        <td class="row-status"><a class="state-pill state-{state}" href="{escape(case["url"])}">{text["tracker_" + state]}</a>{fix_label}</td>
+        {table_status(case, text)}
       </tr>"""
 
 
@@ -333,7 +338,7 @@ def outcomes(cases, text, csv_path):
     tags = Counter(case["contribution_kind"] for case in cases)
     direct = Counter(case["contribution_kind"] for case in cases if case["diagnosis"] == "Direct")
     classified = "".join(
-        f'<tr><th scope="row">{text[key]}<small>{text[key + "_detail"]}</small></th>'
+        f'<tr><th scope="row"><a href="research.html#{key}">{text[key]}</a><small>{text[key + "_detail"]}</small></th>'
         f'<td>{tags[key]}</td><td>{direct[key]}</td></tr>' for key in CONTRIBUTION_KINDS
     )
     reported = Counter(case["kind"] for case in cases)
@@ -465,7 +470,61 @@ def index_page(snapshot, language):
     return document("index.html", text["atlas"], text["index_description"], body, language)
 
 
-def build(snapshot, language):
+def research_case(case, note, language):
+    if note:
+        anchor = note["anchor"]
+        title = note[language]["title"]
+        summary = note[language]["summary"]
+    else:
+        anchor = "call-stack"
+        title = case_title(case, language)
+        summary = f'<p>{escape(contribution(case, language))}</p>'
+    return f"""
+      <tr>
+        <th scope="row"><a href="evidence/{escape(case["id"])}.html#{escape(anchor)}"><span>{escape(case["reference"])}</span>{escape(title)}</a></th>
+        <td>{summary}</td>
+        {table_status(case, COPY[language])}
+      </tr>"""
+
+
+def research_page(cases, notes, language):
+    text = COPY[language]
+    groups = {category: [] for category in CONTRIBUTION_KINDS}
+    for case in cases:
+        groups[case["contribution_kind"]].append(case)
+    categories = []
+    sections = []
+    for category, group in groups.items():
+        label = text[category]
+        count = text["language_issues"].format(count=len(group))
+        categories.append(f'<li><a href="#{category}">{label} <span>({len(group)})</span></a></li>')
+        rows = "".join(research_case(case, notes.get(case["id"]), language) for case in group)
+        heading = "assembly" if category == "cost_attribution" else f"{category}-title"
+        sections.append(f"""
+    <section class="block" id="{category}" aria-labelledby="{heading}">
+      <div class="section-head"><h2 id="{heading}">{label}</h2><span class="case-kind">{count}</span></div>
+      <p class="section-copy">{text[category + "_detail"]}</p>
+      <div class="table-wrap research-table">
+        <table aria-labelledby="{heading}">
+          <thead><tr><th scope="col">{text["issue"]}</th><th scope="col">{text["interpretation"]}</th><th scope="col">{text["tracker_status"]}<small>{text["fix_status"]}</small></th></tr></thead>
+          <tbody>{rows}</tbody>
+        </table>
+      </div>
+    </section>""")
+    body = f"""
+    <article class="wrap research">
+      <a class="back" href="index.html#issues">← {text["issues"]}</a>
+      <header id="identity">
+        <h1>{text["research_title"]}</h1>
+        <p class="section-copy">{text["research_intro"]}</p>
+      </header>
+      <nav class="research-categories" aria-label="{text["contribution_kind"]}"><ul>{"".join(categories)}</ul></nav>
+      {"".join(sections)}
+    </article>"""
+    return document("research.html", text["research"], text["research_description"], body, language)
+
+
+def build(snapshot, language, notes):
     text = COPY[language]
     chinese = language == "zh-CN"
     destination = ROOT / "zh-cn" if chinese else ROOT
@@ -479,12 +538,8 @@ def build(snapshot, language):
     for stale in set(evidence.glob("*.html")) - generated:
         stale.unlink()
     (destination / "index.html").write_text(index_page(snapshot, language), encoding="utf-8")
-    fragment = "research.zh-cn.fragment.html" if chinese else "research.fragment.html"
-    research = (ROOT / "scripts" / fragment).read_text(encoding="utf-8")
-    (destination / "research.html").write_text(
-        document("research.html", text["research"], text["research_description"], research, language),
-        encoding="utf-8",
-    )
+    research = research_page(snapshot["cases"], notes, language)
+    (destination / "research.html").write_text(research, encoding="utf-8")
 
 
 def write_classification(snapshot):
@@ -515,5 +570,6 @@ if __name__ == "__main__":
         if pull in {"open", "closed", "merged", "unconfirmed"}:
             case["fix_pr_status"] = pull
     write_classification(snapshot)
+    notes = json.loads((ROOT / "scripts" / "research-notes.json").read_text(encoding="utf-8"))
     for language in COPY:
-        build(snapshot, language)
+        build(snapshot, language, notes)

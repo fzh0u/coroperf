@@ -334,9 +334,14 @@ LABELS = {
         "Real systems issues and the recorded call-stack joins that recover coroutine origins.",
         "真实系统案例及经过核实的协程调用栈拼接证据。",
     ),
+    "research_title": ("What the joined stack recovers", "拼接栈补回了什么"),
+    "research_intro": (
+        "Browse the same issues by the primary finding established by the recorded coroutine join.",
+        "按协程拼接所支持的主要诊断结论浏览案例。",
+    ),
     "research_description": (
-        "Performance and assembly-assisted coroutine investigations.",
-        "性能和汇编辅助的协程分析。",
+        "Coroutine investigations grouped by what the joined stack establishes.",
+        "按拼接栈得出的主要诊断结论组织的协程案例。",
     ),
 }
 

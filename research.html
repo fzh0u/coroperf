@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#772f26">
-  <meta name="description" content="Performance and assembly-assisted coroutine investigations.">
+  <meta name="description" content="Coroutine investigations grouped by what the joined stack establishes.">
   <title>Research notes · coroPerf</title>
   <link rel="alternate" hreflang="zh-CN" href="zh-cn/research.html">
   <link rel="icon" type="image/png" href="assets/coroperf-pony.png">
@@ -35,316 +35,516 @@
       </nav>
     </div>
   </header>
-  <main id="main"><article class="wrap research">
-  <a class="back" href="index.html#issues">← Issue evidence</a>
-  <header>
-    <p class="eyebrow">November 2026 research update</p>
-    <h1>What the joined stack recovers</h1>
-    <p class="section-copy">The selected investigations use a recorded coroutine join to recover a missing caller or attribute later behavior to the responsible request or task.</p>
-  </header>
-  <section class="block" aria-labelledby="identity">
-    <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
-    <div class="research-entry">
-      <h3>vLLM #58266 · Which request occupied the multimodal worker?</h3>
-      <p>Exact executor submissions identify the document that runs while the thumbnail waits. In the local six-image comparison, six threads finish sooner than a two-process prototype that copies its results.</p>
-      <a href="evidence/vllm-project--vllm--58266.html#call-stack">Compare the renderer stacks and both request starts</a>
-    </div>
-    <div class="research-entry">
-      <h3>Ray Serve #64036 · Which batches enter after a live limit change?</h3>
-      <p>The open proposal changes the batch limit without replacing the replica. Matching request Futures shows which batch enters after older work drains and which enters when the limit rises again.</p>
-      <a href="evidence/ray-project--ray--64036.html#call-stack">Trace all four batches to their enqueues</a>
-    </div>
-    <div class="research-entry">
-      <h3>LlamaIndex #22369 · Which query delayed an already-created task?</h3>
-      <p>The second synchronous read occupies about 202 ms of the first query’s downstream Task wait. The open fix lets native async retrieval yield the event loop. A sync-only retriever still waits on the loop.</p>
-      <a href="evidence/run-llama--llama_index--22369.html#call-stack">Compare the two routers and downstream tasks</a>
-    </div>
-    <div class="research-entry">
-      <h3>Ray Serve #56633 · Which request supplied a later batch’s model ID?</h3>
-      <p>Two handling Tasks join to the queue Task from the first request. Reversing the first model reverses the affected selection. The fixed release returns all twelve expected model IDs and items.</p>
-      <a href="evidence/ray-project--ray--56633.html#call-stack">Trace both batch handlers to the shared queue</a>
-    </div>
-    <div class="research-entry">
-      <h3>SGLang #44374 · Which sessions received the tokenizer worker results?</h3>
-      <p>Identical collector stacks join through separate callbacks to the original request Tasks. Both drafts return exact reference token IDs. The waiting draft delivers each result to its own Future and reduces callback delay in the local CPU comparison.</p>
-      <a href="evidence/sgl-project--sglang--44374.html#call-stack">Compare both request and result joins</a>
-    </div>
-    <div class="research-entry">
-      <h3>vLLM #49317 · Which requests preprocessed images on the loop?</h3>
-      <p>Identical Qwen2-VL stacks lead to two separate raw requests. The merged change moves preprocessing to a renderer worker. The median queued callback delay falls from 30.3 to 0.135 ms in the CPU fixture.</p>
-      <a href="evidence/vllm-project--vllm--49317.html#call-stack">Compare both request launchers before and after</a>
-    </div>
-    <div class="research-entry">
-      <h3>Ray Data #67984 · Which input conversion delayed another UDF?</h3>
-      <p>Separate launches lead to the formatter that holds the actor loop and the UDF waiting to resume. The open proposal moves formatting to a worker thread. The median queued-completion delay falls from 2.50 to 0.082 ms in the CPU comparison.</p>
-      <a href="evidence/ray-project--ray--67984.html#call-stack">Compare the formatter and UDF joins before and after</a>
-    </div>
-    <div class="research-entry">
-      <h3>SGLang #29367 · Which receivers delivered the pre-tokenized replies?</h3>
-      <p>The parent revision delivers both replies through the same receiver Task. The merged change restores two separate receiver Tasks. The four joins recover both receiver launchers and the corresponding request starts.</p>
-      <a href="evidence/sgl-project--sglang--29367.html#call-stack">Compare the two receivers and the two requests</a>
-    </div>
-    <div class="research-entry">
-      <h3>SGLang #17021 · Which work delayed the ready receiver?</h3>
-      <p>Two tokenizer stacks join to separate launchers. Both run after the real receiver Future is ready. Moving the same work to threads changes the median ready-to-resume interval from 32.6 to 0.050 ms in the CPU fixture.</p>
-      <a href="evidence/sgl-project--sglang--17021.html#call-stack">Compare the receiver and both tokenizer joins</a>
-    </div>
-    <div class="research-entry">
-      <h3>vLLM #54101 · Which benchmark requests waited before HTTP timing?</h3>
-      <p>Matching the Task joins the semaphore wait and HTTP entry to each request. In the capped fixture, the merged metrics show about 287 ms of queueing and 389 ms of queue-inclusive latency. The endpoint timer still reports about 102 ms.</p>
-      <a href="evidence/vllm-project--vllm--54101.html#call-stack">Compare both requests across the queue</a>
-    </div>
-    <div class="research-entry">
-      <h3>vLLM #61561 · Which requests lost their final chunks at shutdown?</h3>
-      <p>Two frontend channels drop the final chunks on the affected launcher. Matching the actual collector and error objects connects each output-handler failure to its request. Both open proposals deliver both final chunks in the local comparison.</p>
-      <a href="evidence/vllm-project--vllm--61561.html#call-stack">Compare both request and publisher joins</a>
-    </div>
-    <div class="research-entry">
-      <h3>vLLM #58145 · Which calls rebuilt the Mistral lexer?</h3>
-      <p>Two identical construction stacks join to their caller Tasks. A bounded local cache reuses the lexer shape and preserves the tested parser events. Median warm constructor time falls from 71.5 to 0.14 ms on v0.30.0.</p>
-      <a href="evidence/vllm-project--vllm--58145.html#call-stack">Compare both parser creation joins</a>
-    </div>
-    <div class="research-entry">
-      <h3>SGLang #50722 · Which tasks ran the per-chunk checks?</h3>
-      <p>The receive samples join to separate stream-body Tasks and their ASGI requests. The merged fix reduces the observed checks from seven to one per eight-chunk stream. The HTTP fixture's median throughput rises from 23,507 to 47,340 chunks/s.</p>
-      <a href="evidence/sgl-project--sglang--50722.html#call-stack">Compare the output Task and disconnect listener</a>
-    </div>
-    <div class="research-entry">
-      <h3>Ray Data #65038 · Which producer held the first chunk?</h3>
-      <p>The first-yield stacks join to the two batch Tasks and their bound inputs. The first chunk arrives after 12 yields on the original planner and after one yield with the local patch. At 24 chunks, a separate single-node test measures about 24 MiB of live Arrow allocations above UDF entry on the stock path and about 4 MiB with the patch.</p>
-      <a href="evidence/ray-project--ray--65038.html#call-stack">Compare both batch creation joins</a>
-    </div>
-    <div class="research-entry">
-      <h3>Hugging Face Hub #5186 · Which request blocked the event loop?</h3>
-      <p>Two call paths reach the same queue poll. The affected poll joins back to its request Task, and the repaired poll reaches that Task through its executor WorkItem. With the merged fix, a separate Task runs 30 times during polling and the video bytes match.</p>
-      <a href="evidence/huggingface--huggingface_hub--5186.html#call-stack">Inspect the request and worker stacks</a>
-    </div>
-    <div class="research-entry">
-      <h3>Ray Serve #53071 · Which queue serialized three batches?</h3>
-      <p>All 24 request Futures were enqueued before the first batch finished. Three execution stacks connect to one queue Task created in the first enqueue. Enabling concurrency on the fixed release gives each batch a separate Task.</p>
-      <a href="evidence/ray-project--ray--53071.html#call-stack">Inspect the serial queue Task and three batches</a>
-    </div>
-    <div class="research-entry">
-      <h3>Transformers #46315 · Which calls rebuilt the vocabulary?</h3>
-      <p>Two identical worker stacks connect through their executor WorkItems to separate tokenizer callers. The affected code rebuilds the mapping twelve or six times per six-token input. The fixed release performs all conversions without rebuilding it.</p>
-      <a href="evidence/huggingface--transformers--46315.html#call-stack">Compare both worker-to-caller joins</a>
-    </div>
-    <div class="research-entry">
-      <h3>Ray Serve #63901 · Which requests launched the prompt producers?</h3>
-      <p>The proposal overlaps prompts in a streaming SGLang completion. The actual producer Task and queue tuple recover the requesting coroutine even when two requests stream the same prompts.</p>
-      <a href="evidence/ray-project--ray--63901.html#call-stack">Compare the producer-to-request joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>SGLang #29163 · Which prompts used the slow tokenizer in a shared batch?</h3>
-      <p>Four requests share one executor item and the same physical stack. The actual input object and result Future connect each worker observation to its request. In a CPU component test, the unmerged proposal reduces median batch time from 141 to 43 ms.</p>
-      <a href="evidence/sgl-project--sglang--29163.html#call-stack">Compare two requests inside the same batch ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Ray Serve #67404 · Which task merged the swapped features?</h3>
-      <p>Matching the live Task, coroutine and frame restores the creation site for two identical merge stacks. The selected records preserve the exact values each affected batch forwarded. The open PR restored all feature bindings in the local control.</p>
-      <a href="evidence/ray-project--ray--67404.html#call-stack">Compare both batch-task joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>vLLM #57350 · Which route submitted each detokenization call?</h3>
-      <p>The merged repair runs streaming detokenization on renderer threads. Matching the exact executor WorkItem separates identical worker stacks into chat and completion submissions and restores both stream Task creation stacks.</p>
-      <a href="evidence/vllm-project--vllm--57350.html#call-stack">Compare both worker-to-request joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>SGLang #39689 · Which receiver unblocks each control call?</h3>
-      <p>Cold pause and continue calls each leave one unread broadcast. In the warm controls, the exact Future connects the waiting call to the broadcast receiver. The processing stack then leads back to the receive-loop creation.</p>
-      <a href="evidence/sgl-project--sglang--39689.html#call-stack">Compare both receiver stacks and creation records ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Ray Data #51188 · Which tasks wrote rows after their blocks ended?</h3>
-      <p>The two block managers send end markers before their batch Tasks write rows. The exact Task used in each failed await connects the later row write to its manager and creation stack.</p>
-      <a href="evidence/ray-project--ray--51188.html#call-stack">Compare both late writes and their creation stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>asyncpg #547 · Who borrowed each connection that kept the pool open?</h3>
-      <p>Both acquiring Tasks have been collected when shutdown gets stuck. Stock Task stacks and the allocation trace identify two pending release Futures at the same library line. CoroPerf matches each actual Future to its acquisition and recovers the application caller.</p>
-      <a href="evidence/magicstack--asyncpg--547.html#call-stack">Compare both acquisition-to-shutdown joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>SQLAlchemy #13689 · Who filled the cache entry that failed later?</h3>
-      <p>Both reads fail at the same library line after both writer Tasks have been collected. The allocation traces also match. CoroPerf uses each actual <code>FrozenResult</code> to connect the failing reader to its original writer.</p>
-      <a href="evidence/sqlalchemy--sqlalchemy--13689.html#call-stack">Compare the two cache handoffs ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>CPython #157157 · Which cancellation reached the final error?</h3>
-      <p>The target accepts two cancellation requests. With a stalled loop, the earlier cancelled Future supplies the final exception and the external message disappears. CoroPerf links the two request stacks to the observed Task and Future state.</p>
-      <a href="evidence/python--cpython--157157.html#call-stack">Compare the two cancellation requests ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Nuitka #4073 · Who first raised the error injected into the async generator?</h3>
-      <p>The affected build drops the original <code>make_exception</code> frame. Both caught errors have identical tracebacks. Matching the exception object across producer and receiver Tasks restores the application launcher for each error.</p>
-      <a href="evidence/nuitka--nuitka--4073.html#call-stack">Compare the receiver and first-raise stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>async-lru #480 · Who evicted the result and who stayed waiting?</h3>
-      <p>All 20 cache computations finish, while 15 callers remain blocked on the affected release. The same result <code>Future</code> connects each eviction to its completion callback and waiting Task. Joining the two Task stacks through their dispatch Handles recovers the original callers.</p>
-      <a href="evidence/aio-libs--async-lru--480.html#call-stack">Compare the eviction and waiting stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Dart #61585 · Which feature launched the interceptor?</h3>
-      <p>Stock Dart 3.14.0 shows <code>testFuture</code> as an async frame. The original feature remains absent. Matching the actual <code>Future</code> listener callback to its binding stack recovers <code>featureA</code> or <code>featureB</code> even when the second launch reaches the interceptor first.</p>
-      <a href="evidence/dart-lang--sdk--61585.html#call-stack">Compare both feature-to-interceptor stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>ZIO #1003 · Which unsafeRun initiated each worker failure?</h3>
-      <p>The reported runtime produces the same failure trace for two fibers apart from their IDs. Java thread snapshots show both <code>unsafeRun</code> calls. Matching the actual <code>FiberContext</code> restores the particular caller and source line for each failure.</p>
-      <a href="evidence/zio--zio--1003.html#call-stack">Compare both unsafeRun joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>gRPC Python #37881 · Which interceptor led to the worker that lost the request ID?</h3>
-      <p>Both RPCs use the same method and payload. In the reported build, two worker threads read <code>None</code> through identical stacks. The active <code>WorkItem</code> links each read to its submission. Matching the exact handler then restores the interceptor route on the asyncio thread.</p>
-      <a href="evidence/grpc--grpc--37881.html#call-stack">Inspect both interceptor-to-worker joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>CPython #157213 · Who started the tasks that outlived gather?</h3>
-      <p>The official patch corrects the list of current waiters. After the shared dispatch callback runs, built-in diagnostics omit both original launchers. Recording the actual <code>Handle</code> at dispatch connects each surviving <code>Task</code> back to its <code>call_soon</code> caller.</p>
-      <a href="evidence/python--cpython--157213.html#call-stack">Inspect both caller-to-survivor joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>CPython #156278 · Which reads failed before stream cleanup?</h3>
-      <p>Two tasks have the same final traceback through <code>wait_closed</code>. Keeping the first raise and linking it to the actual Task creation stack restores the failed <code>readexactly</code> or <code>readuntil</code> and its original caller.</p>
-      <a href="evidence/python--cpython--156278.html#call-stack">Inspect both first-raise joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>.NET #125417 · What called the resumed Task?</h3>
-      <p>On the tested CoreCLR draft, direct await recovers its caller in the live async stack. Both synchronous forwarders disappear after resumption. A TPL execution interval assigns each worker observation to its Task, and the recorded creation stack restores <code>LaunchInventory</code> or <code>LaunchProfile</code>. All eight checks matched the actual Task IDs.</p>
-      <a href="evidence/dotnet--runtime--125417.html#call-stack">Inspect both caller-to-callee joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>CPython #105836 · Which caller submitted the task still in cleanup?</h3>
-      <p>The bridge Future reports cancellation while the loop Task is still pending. After the submission callback runs, stock task diagnostics display the same cleanup for both tasks. Matching the actual Task and bridge Future at <code>_chain_future</code> recovers the original caller on the submitting thread.</p>
-      <a href="evidence/python--cpython--105836.html#call-stack">Inspect both submission-to-cleanup stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>.NET #60764 · Recovery across garbage collection</h3>
-      <p>The constructor stack starts on a timer worker. The token stored in the state machine joins the call from <code>Program.Main</code> to the resumed <code>Foo</code> invocation at <code>A..ctor</code>. A follow-up matched that initiation in three normal and three forced-compaction runs.</p>
-      <a href="evidence/dotnet--runtime--60764.html#join-1-point-1">Inspect the creation-to-execution join ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>gRPC Kotlin #299 · Which call failed?</h3>
-      <p>Two calls carried the same message, and the server reversed the reply order. Both failure stacks ended at the same library location. Matching the Kotlin Job identifies the distinct launch sites for the profile and inventory calls. An independent check compared the exception objects by reference.</p>
-      <a href="evidence/grpc--grpc-kotlin--299.html#call-stack">Compare both joined stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Kotlin #1660 · Recovering a caller removed by tail-call optimization</h3>
-      <p>After a dispatcher switch, exception recovery and the live DebugProbes dump both omit the tail caller on the tested Kotlin release. CoroPerf uses the actual <code>DispatchedCoroutine</code> Job to connect the worker's failing <code>invokeSuspend</code> to either <code>profileCaller</code> or <code>inventoryCaller</code>. All 16 attributions across two batches match the independent check.</p>
-      <a href="evidence/kotlin--kotlinx.coroutines--1660.html#call-stack">Compare both tail-caller joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Cats Effect #2620 · Who started the trace-less waiting fibers?</h3>
-      <p>In the original Play app, even full stock tracing leaves the dispatcher workers' <code>WAITING</code> rows empty. Matching each <code>IOFiber</code> at wait registration to its creation, then following its creator edge, leads back to dispatcher initialization at <code>AppLoader.scala:32</code>.</p>
-      <a href="evidence/typelevel--cats-effect--2620.html#call-stack">Inspect the four worker-to-creator chains ↗</a>
-    </div>
-  </section>
-  <section class="block" aria-labelledby="assembly">
-    <div class="section-head"><h2 id="assembly">Native and scheduling attribution</h2></div>
-    <div class="research-entry">
-      <h3>CPython #115218 · Which caller spent longer waiting for I/O?</h3>
-      <p>Python's async-aware sampler distinguishes the two suspended Tasks and shows which waited longer. CoroPerf measures each actual suspension and follows the dispatch Handle back to the original caller.</p>
-      <a href="evidence/python--cpython--115218.html#call-stack">Compare both I/O waits and their callers ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Go #52557 · Which exited producer left each waiter blocked?</h3>
-      <p>Both <code>singleflight</code> producers exit while all four waiters remain blocked. Go's trace records the launchers and exits. The shared call and each registered result channel connect a specific waiter to the producer it depended on.</p>
-      <a href="evidence/golang--go--52557.html#call-stack">Compare the two waiter-to-launcher joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>futures-rs #2387 · Whose handshake timed out while the stream processed another result?</h3>
-      <p>The server sends a reply before its simulated deadline. The stream polls that handshake again only after finishing the first item's work. Poll intervals and the actual result object connect the stalled handshake and the work ahead of it to two distinct callers.</p>
-      <a href="evidence/rust-lang--futures-rs--2387.html#call-stack">Compare the handshake and work stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>LLVM #121092 · Who launched each coroutine at the reused address?</h3>
-      <p>Four coroutine lifetimes share one frame address and one worker stack, even with frame types restored in GDB. Machine-code dataflow identifies the live frame. CoroPerf connects its current lifetime to the earlier creation stack that names the original caller.</p>
-      <a href="evidence/llvm--llvm-project--121092.html#call-stack">Compare the two generations at the same address ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>.NET #38904 · Which caller accounts for the repeated rethrows?</h3>
-      <p>Fourteen identical rethrow stacks interleave on one worker. CoroPerf matches the exception object to the fault of its root Task. In the selected run, that attributes twelve rethrows to <code>LaunchProfile</code> and two to <code>LaunchInventory</code>.</p>
-      <a href="evidence/dotnet--runtime--38904.html#call-stack">Compare both rethrow-to-caller stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Bun #45020 · Which callers were waiting through the same poll?</h3>
-      <p>Both immediate Promises resolve before one 165 ms <code>epoll_pwait2</code> in the selected run. Stock Inspector reaches the shared scheduler. CoroPerf matches each awaited Promise to its creation stack and recovers the original launcher for both delayed continuations.</p>
-      <a href="evidence/oven-sh--bun--45020.html#call-stack">Compare both caller-to-continuation stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Go #64614 · Who triggered each replacement dial?</h3>
-      <p>The pool reports three open connections while the driver has zero. One goroutine processes the buffered replacement signals in order. CoroPerf matches each dial interval to the original send stack on the same channel, recovering the caller that discarded the connection.</p>
-      <a href="evidence/golang--go--64614.html#call-stack">Compare both discard-to-dial stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>LLVM #56972 · Who incurred the extra coroutine-frame allocation?</h3>
-      <p>Clang 19 makes a 48-byte heap allocation when <code>Bar</code> resumes. The destructor control embeds <code>Baz</code> inside <code>Bar</code>. Two extra allocations return the same child address. CoroPerf recovers the distinct parent frames from stripped machine code and joins each one to its original caller.</p>
-      <a href="evidence/llvm--llvm-project--56972.html#call-stack">Compare both allocation-to-caller joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>futures-rs #2047 · Which caller delayed a ready task?</h3>
-      <p>A ready heartbeat waits through 102 retry attempts on the affected revision and 31 after the fix. Both retry futures have the same ordinary stack. The child poll intervals and <code>push</code> stacks assign 96 of the 102 attempts to <code>launch_profile</code> and six to <code>launch_inventory</code> in the displayed run.</p>
-      <a href="evidence/rust-lang--futures-rs--2047.html#call-stack">Compare both retry-to-caller joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>CPython #90155 · Who took the permit ahead of a queued waiter?</h3>
-      <p>On 3.10.3 the releasing task reacquires the permit while the woken waiter stays blocked. Joining each Task to the earlier dispatch <code>Handle</code> identifies both original callers. On 3.14.3 the queued task gets the next grant.</p>
-      <a href="evidence/python--cpython--90155.html#call-stack">Compare the grant and waiting stacks ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>CPython #112169 · Which caller occupied the DNS worker?</h3>
-      <p>Two busy worker threads have the same stack. The resolver waits for the one in the default pool. The actual <code>WorkItem</code> and the broker's earlier queue request connect that worker to its original application caller.</p>
-      <a href="evidence/python--cpython--112169.html#call-stack">Compare the default and private worker joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Tokio #8434 · Which callers submitted the stranded child futures?</h3>
-      <p>The stock task trace identifies the lock operations reached during the trace poll. After the children are stranded, it records no leaf stacks. CoroPerf matches the earlier leaf samples to the child nodes that were actually polled and recovers both original callers.</p>
-      <a href="evidence/tokio-rs--tokio--8434.html#call-stack">Inspect both leaf-to-caller joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>LLVM #37601 · Who launched the coroutine reporting the old thread ID?</h3>
-      <p>Two resumes have identical symbolized GDB stacks and the same obsolete pthread ID. CoroPerf uses the stripped machine code to identify the actual frame from registers and stack bytes, then joins it to its recorded launch. Two independent batches each pass eight caller checks.</p>
-      <a href="evidence/llvm--llvm-project--37601.html#call-stack">Inspect the two cross-thread joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Tokio #8760 · Who started the intervals that kept clearing timers?</h3>
-      <p>The released regression increases CPU time for 2,048 short intervals in the local benchmark. Both application entries share a spawn line and the same timer-clear stack. CoroPerf connects all 768 clear observations to the correct entry using each task's poll interval and creation stack.</p>
-      <a href="evidence/tokio-rs--tokio--8760.html#call-stack">Inspect both timer-to-caller joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Asio #1239 · Recovering the caller beyond a detached spawn</h3>
-      <p>Symbolized GDB shows the scheduler stack, and Asio's live awaiter chain stops at the detached boundary. From stripped machine code, register values and stack bytes, CoroPerf identifies the timer's active coroutine, then connects it through two recorded creation stacks to the original launcher.</p>
-      <a href="evidence/chriskohlhoff--asio--1239.html#call-stack">Inspect both caller-to-timer chains ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Node #50056 · Two callers, one CPU hot path</h3>
-      <p>In a V8 profiler adaptation, 603 ordinary samples showed the shared callee without either launch site. CoroPerf joined 579 independently checked samples to the correct <code>launchProfile</code> or <code>launchInventory</code> creation stack. The control reversed execution order.</p>
-      <a href="evidence/nodejs--node--50056.html#call-stack">Compare the two caller-to-callee joins ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Tokio #8085 · Which caller delayed the socket read?</h3>
-      <p>Two CPU tasks have the same physical stack after suspension and the same stock spawn location. CoroPerf joins each poll to its creation stack. In this local adaptation, moving the same CPU work to a separate runtime changes median read delay from 107.924 ms to 0.039 ms.</p>
-      <a href="evidence/tokio-rs--tokio--8085.html#call-stack">Compare the two launch paths ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Tokio #8527 · Who submitted the blocking jobs with long queue waits?</h3>
-      <p>The stock span records show task IDs and the same submit and producer-spawn locations for both routes. CoroPerf connects the worker's CPU sample through blocking task creation to the async producer's earlier caller. All 1,036 samples match the independently recorded handle IDs.</p>
-      <a href="evidence/tokio-rs--tokio--8527.html#call-stack">Inspect both caller chains and queue waits ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Drogon #2331 · Which request stalled in PostgreSQL?</h3>
-      <p>Two request entry points create instances of <code>shared_lookup</code>. In a stripped HTTP/PostgreSQL adaptation, instruction dataflow alone assigned zero of six external-wait samples. Observed activation bindings assigned six. Keeping creation history led all six samples back to the correct request origin.</p>
-      <a href="evidence/drogonframework--drogon--2331.html#call-stack">Inspect the stopped sample and its creator chain ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>Tokio #6315 · Who spawned the delayed task?</h3>
-      <p>In the controlled scheduler replay, a helper stayed in a worker’s LIFO slot while the spawning worker was blocked. A spawn hook and the helper-body sample recorded the same process-local task ID. The joined stack recovers the parent and launch site of that delayed helper.</p>
-      <a href="evidence/tokio-rs--tokio--6315.html#call-stack">Trace the delayed helper to its spawn ↗</a>
-    </div>
-  </section>
-</article>
-</main>
+  <main id="main">
+    <article class="wrap research">
+      <a class="back" href="index.html#issues">← Issue evidence</a>
+      <header id="identity">
+        <h1>What the joined stack recovers</h1>
+        <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
+      </header>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(17)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(20)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(10)</span></a></li></ul></nav>
+
+    <section class="block" id="caller_recovery" aria-labelledby="caller_recovery-title">
+      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">28 issues</span></div>
+      <p class="section-copy">Recover an application entry or call path missing from a traceback, live snapshot, or native stack.</p>
+      <div class="table-wrap research-table">
+        <table aria-labelledby="caller_recovery-title">
+          <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
+          <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/llvm--llvm-project--121092.html#call-stack"><span>llvm/llvm-project #121092</span>Who launched each coroutine at the reused address?</a></th>
+        <td><p>Four coroutine lifetimes share one frame address and one worker stack, even with frame types restored in GDB. Machine-code dataflow identifies the live frame. CoroPerf connects its current lifetime to the earlier creation stack that names the original caller.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/llvm/llvm-project/issues/121092">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/dart-lang--sdk--61585.html#call-stack"><span>dart-lang/sdk #61585</span>Which feature launched the interceptor?</a></th>
+        <td><p>Stock Dart 3.14.0 shows <code>testFuture</code> as an async frame. The original feature remains absent. Matching the actual <code>Future</code> listener callback to its binding stack recovers <code>featureA</code> or <code>featureB</code> even when the second launch reaches the interceptor first.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/dart-lang/sdk/issues/61585">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/zio--zio--1003.html#call-stack"><span>zio/zio #1003</span>Which unsafeRun initiated each worker failure?</a></th>
+        <td><p>The reported runtime produces the same failure trace for two fibers apart from their IDs. Java thread snapshots show both <code>unsafeRun</code> calls. Matching the actual <code>FiberContext</code> restores the particular caller and source line for each failure.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/zio/zio/issues/1003">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/dotnet--runtime--60764.html#join-1-point-1"><span>dotnet/runtime #60764</span>Recovery across garbage collection</a></th>
+        <td><p>The constructor stack starts on a timer worker. The token stored in the state machine joins the call from <code>Program.Main</code> to the resumed <code>Foo</code> invocation at <code>A..ctor</code>. A follow-up matched that initiation in three normal and three forced-compaction runs.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/dotnet/runtime/issues/60764">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/dotnet--runtime--125417.html#call-stack"><span>dotnet/runtime #125417</span>What called the resumed Task?</a></th>
+        <td><p>On the tested CoreCLR draft, direct await recovers its caller in the live async stack. Both synchronous forwarders disappear after resumption. A TPL execution interval assigns each worker observation to its Task, and the recorded creation stack restores <code>LaunchInventory</code> or <code>LaunchProfile</code>. All eight checks matched the actual Task IDs.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/dotnet/runtime/issues/125417">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/llvm--llvm-project--37601.html#call-stack"><span>llvm/llvm-project #37601</span>Who launched the coroutine reporting the old thread ID?</a></th>
+        <td><p>Two resumes have identical symbolized GDB stacks and the same obsolete pthread ID. CoroPerf uses the stripped machine code to identify the actual frame from registers and stack bytes, then joins it to its recorded launch. Two independent batches each pass eight caller checks.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/llvm/llvm-project/issues/37601">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/nodejs--node--36126.html#call-stack"><span>nodejs/node #36126</span>A stack captured after sleep omits the function that started sub</a></th>
+        <td><p>The resumed diagnostic contains sub. The Promise creation stack restores its synchronous initiator, main.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/nodejs/node/issues/36126">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/nodejs--node--48511.html#call-stack"><span>nodejs/node #48511</span>An indirect call hides the async caller in Node’s default stack</a></th>
+        <td><p>The early post-await diagnostic in foo omits main and indirectCall. The matching Promise creation record retains both.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/nodejs/node/issues/48511">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/aio-libs--async-lru--528.html#call-stack"><span>aio-libs/async-lru #528</span>A cached async call loses its caller from the live stack</a></th>
+        <td><p>The active stack shows bar. Its child-task creation stack recovers foo and main and identifies the first caller among several waiters.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/aio-libs/async-lru/issues/528">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/grpc--grpc-kotlin--299.html#call-stack"><span>grpc/grpc-kotlin #299</span>Which call failed?</a></th>
+        <td><p>Two calls carried the same message, and the server reversed the reply order. Both failure stacks ended at the same library location. Matching the Kotlin Job identifies the distinct launch sites for the profile and inventory calls. An independent check compared the exception objects by reference.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/grpc/grpc-kotlin/issues/299">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2327.html#call-stack"><span>kotlin/kotlinx.coroutines #2327</span>Kotlin Future bridges lose the caller of a failed request</a></th>
+        <td><p>Job lifecycle joins attribute the identical requestSuspend failures to the separate async and launch callers.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/kotlin/kotlinx.coroutines/issues/2327">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2604.html#call-stack"><span>kotlin/kotlinx.coroutines #2604</span>A Kotlin exception after delay omits secondCall from the JVM stack</a></th>
+        <td><p>The throw sample and its continuation chain are joined to the runBlocking Job; this recovers the caller path across suspension.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/Kotlin/kotlinx.coroutines/issues/2604">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/automattic--mongoose--15317.html#call-stack"><span>automattic/mongoose #15317</span>Mongoose validation errors lose the application’s save call</a></th>
+        <td><p>The validation stack starts at Document.invalidate. The Promise creation record recovers the originating model.save call in runDemo.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/Automattic/mongoose/issues/15317">Closed</a><a class="fix-label" href="https://github.com/Automattic/mongoose/commit/f4840bbbf7e81107e5a34cdfe964b7eab22bb12e">Repair verified</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/automattic--mongoose--8691.html#call-stack"><span>automattic/mongoose #8691</span>Awaiting a Mongoose query hides the ObjectId cast caller</a></th>
+        <td><p>The creation record shows Query.then starting exec internally and recovers the application context missing from the error.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/Automattic/mongoose/issues/8691">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/knex--knex--2500.html#call-stack"><span>knex/knex #2500</span>Awaiting a Knex query drops the caller from its error stack</a></th>
+        <td><p>The rejection&#x27;s Promise identity identifies the creation stack in the application test where the missing async caller originated.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/knex/knex/issues/2500">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sequelize--sequelize--12044.html#call-stack"><span>sequelize/sequelize #12044</span>A duplicate-key error loses its caller on Sequelize’s create path</a></th>
+        <td><p>Stitching the second create call to its catch reconnects the lost application call site to the driver-error path.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sequelize/sequelize/issues/12044">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sidorares--node-mysql2--530.html#call-stack"><span>sidorares/node-mysql2 #530</span>A MySQL query error loses its async caller</a></th>
+        <td><p>The two query Promise identities tie similar failures to readAccount and readInvoice separately.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sidorares/node-mysql2/issues/530">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sindresorhus--got--2277.html#call-stack"><span>sindresorhus/got #2277</span>Got’s connection timeout stack omits the downloader’s application caller</a></th>
+        <td><p>Promise and timer identities recover which initiating caller hit its connect-phase deadline in the timing control.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sindresorhus/got/issues/2277">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/typeorm--typeorm--11499.html#call-stack"><span>typeorm/typeorm #11499</span>TypeORM’s SQL Server error stack starts in the query runner</a></th>
+        <td><p>The same SQL produces the same error text in two callers. Matching each Promise and await continuation distinguishes importOrders from refreshCatalog.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/typeorm/typeorm/issues/11499">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/vincit--objection.js--1618.html#call-stack"><span>vincit/objection.js #1618</span>Objection’s QueryBuilder loses application callers from async error stacks</a></th>
+        <td><p>At the custom thenable boundary, query-object identity reconnects each rejection to its own application creation site.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/Vincit/objection.js/issues/1618">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/nodejs--node--53858.html#call-stack"><span>nodejs/node #53858</span>A Node DNS error omits the awaiting read call</a></th>
+        <td><p>The default diagnostic omits reader.read() on line 10. In three stock Inspector runs with async ancestry enabled, the debugger shows the DNS connect from line 4 and still omits the later read. The matched read Promise reconnects line 10 to the error.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/nodejs/node/issues/53858">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/microsoft--playwright--40141.html#call-stack"><span>microsoft/playwright #40141</span>Nested Playwright steps lose the outer page-object method from an assertion stack</a></th>
+        <td><p>The affected runner&#x27;s assertion stack omits its outer page-object method. Matching the returned step Promises recovers shouldBeCorrect and separates two inner step launches with identical error stacks.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/microsoft/playwright/issues/40141">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/knex--knex--2419.html#call-stack"><span>knex/knex #2419</span>Await and catch expose different Knex query stacks</a></th>
+        <td><p>Even with Bluebird long-stack traces enabled, direct await omits the test1 query line. Matching each query continuation reconnects the database error to test1 or test2.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/knex/knex/issues/2419">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/knex--knex--4531.html#call-stack"><span>knex/knex #4531</span>An undefined binding hides the Knex query-builder call site</a></th>
+        <td><p>The rejection stack starts in Knex query compilation. Matching the rejected Promise recovers the runCase dispatch line before the await boundary.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/knex/knex/issues/4531">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/typeorm--typeorm--11271.html#call-stack"><span>typeorm/typeorm #11271</span>MySQL’s duplicate-key error loses the TypeORM insert caller</a></th>
+        <td><p>The affected MySQL error stack starts in driver code and omits myNamedFunction1234. The returned Promise identity recovers that initiator and distinguishes it from the test callback reading the error.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/typeorm/typeorm/issues/11271">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--1660.html#call-stack"><span>Kotlin/kotlinx.coroutines #1660</span>Recovering a caller removed by tail-call optimization</a></th>
+        <td><p>After a dispatcher switch, exception recovery and the live DebugProbes dump both omit the tail caller on the tested Kotlin release. CoroPerf uses the actual <code>DispatchedCoroutine</code> Job to connect the worker's failing <code>invokeSuspend</code> to either <code>profileCaller</code> or <code>inventoryCaller</code>. All 16 attributions across two batches match the independent check.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/Kotlin/kotlinx.coroutines/issues/1660">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/typelevel--cats-effect--2620.html#call-stack"><span>typelevel/cats-effect #2620</span>Who started the trace-less waiting fibers?</a></th>
+        <td><p>In the original Play app, even full stock tracing leaves the dispatcher workers' <code>WAITING</code> rows empty. Matching each <code>IOFiber</code> at wait registration to its creation, then following its creator edge, leads back to dispatcher initialization at <code>AppLoader.scala:32</code>.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/typelevel/cats-effect/issues/2620">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/chriskohlhoff--asio--1239.html#call-stack"><span>chriskohlhoff/asio #1239</span>Recovering the caller beyond a detached spawn</a></th>
+        <td><p>Symbolized GDB shows the scheduler stack, and Asio's live awaiter chain stops at the detached boundary. From stripped machine code, register values and stack bytes, CoroPerf identifies the timer's active coroutine, then connects it through two recorded creation stacks to the original launcher.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/chriskohlhoff/asio/issues/1239">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="block" id="request_handoff" aria-labelledby="request_handoff-title">
+      <div class="section-head"><h2 id="request_handoff-title">Request and result handoffs</h2><span class="case-kind">17 issues</span></div>
+      <p class="section-copy">Track a request or value through a queue, callback, batch, or worker to establish its ownership.</p>
+      <div class="table-wrap research-table">
+        <table aria-labelledby="request_handoff-title">
+          <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
+          <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm--68610.html#call-stack"><span>vllm-project/vllm #68610</span>Which vLLM requests arrived after the scheduling pass?</a></th>
+        <td><p>The joined stacks recover the interactive and batch submitters for two identical scheduler observations. The open PR reports one capacity waiter where the base reports three. Both report three after the next scheduling pass, which has now examined the two new requests.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/vllm-project/vllm/issues/68610">Open</a><a class="fix-label" href="https://github.com/vllm-project/vllm/pull/68700">Proposal tested · PR open</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--56633.html#call-stack"><span>ray-project/ray #56633</span>Which request supplied a later batch’s model ID?</a></th>
+        <td><p>Two handling Tasks join to the queue Task from the first request. Reversing the first model reverses the affected selection. The fixed release returns all twelve expected model IDs and items.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/ray-project/ray/issues/56633">Closed</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/59334">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sgl-project--sglang--44374.html#call-stack"><span>sgl-project/sglang #44374</span>Which sessions received the tokenizer worker results?</a></th>
+        <td><p>Identical collector stacks join through separate callbacks to the original request Tasks. Both drafts return exact reference token IDs. The waiting draft delivers each result to its own Future and reduces callback delay in the local CPU comparison.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/sgl-project/sglang/issues/44374">Open</a><a class="fix-label" href="https://github.com/sgl-project/sglang/pull/44382">Proposal tested · PR closed</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sgl-project--sglang--29367.html#call-stack"><span>sgl-project/sglang #29367</span>Which receivers delivered the pre-tokenized replies?</a></th>
+        <td><p>The parent revision delivers both replies through the same receiver Task. The merged change restores two separate receiver Tasks. The four joins recover both receiver launchers and the corresponding request starts.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sgl-project/sglang/issues/29367">Closed</a><a class="fix-label" href="https://github.com/sgl-project/sglang/pull/30682">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--63901.html#call-stack"><span>ray-project/ray #63901</span>Which requests launched the prompt producers?</a></th>
+        <td><p>The proposal overlaps prompts in a streaming SGLang completion. The actual producer Task and queue tuple recover the requesting coroutine even when two requests stream the same prompts.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/63901">Open</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/64094">Proposal tested · PR open</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sgl-project--sglang--29163.html#call-stack"><span>sgl-project/sglang #29163</span>Which prompts used the slow tokenizer in a shared batch?</a></th>
+        <td><p>Four requests share one executor item and the same physical stack. The actual input object and result Future connect each worker observation to its request. In a CPU component test, the unmerged proposal reduces median batch time from 141 to 43 ms.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sgl-project/sglang/issues/29163">Closed</a><a class="fix-label" href="https://github.com/sgl-project/sglang/pull/29164">Proposal tested · PR closed</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--67404.html#call-stack"><span>ray-project/ray #67404</span>Which task merged the swapped features?</a></th>
+        <td><p>Matching the live Task, coroutine and frame restores the creation site for two identical merge stacks. The selected records preserve the exact values each affected batch forwarded. The open PR restored all feature bindings in the local control.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/67404">Open</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/67405">Proposal tested · PR open</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm--57350.html#call-stack"><span>vllm-project/vllm #57350</span>Which route submitted each detokenization call?</a></th>
+        <td><p>The merged repair runs streaming detokenization on renderer threads. Matching the exact executor WorkItem separates identical worker stacks into chat and completion submissions and restores both stream Task creation stacks.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/vllm-project/vllm/issues/57350">Closed</a><a class="fix-label" href="https://github.com/vllm-project/vllm/pull/57528">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sgl-project--sglang--39689.html#call-stack"><span>sgl-project/sglang #39689</span>Which receiver unblocks each control call?</a></th>
+        <td><p>Cold pause and continue calls each leave one unread broadcast. In the warm controls, the exact Future connects the waiting call to the broadcast receiver. The processing stack then leads back to the receive-loop creation.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sgl-project/sglang/issues/39689">Closed</a><a class="fix-label" href="https://github.com/sgl-project/sglang/pull/39693">Proposal tested · PR open</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--13689.html#call-stack"><span>sqlalchemy/sqlalchemy #13689</span>Who filled the cache entry that failed later?</a></th>
+        <td><p>Both reads fail at the same library line after both writer Tasks have been collected. The allocation traces also match. CoroPerf uses each actual <code>FrozenResult</code> to connect the failing reader to its original writer.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sqlalchemy/sqlalchemy/issues/13689">Closed</a><a class="fix-label" href="https://github.com/sqlalchemy/sqlalchemy/commit/7ca9b3d88a2d47a079c7c14fa37f254c48ab1cf2">Repair verified</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/golang--go--64614.html#call-stack"><span>golang/go #64614</span>Who triggered each replacement dial?</a></th>
+        <td><p>The pool reports three open connections while the driver has zero. One goroutine processes the buffered replacement signals in order. CoroPerf matches each dial interval to the original send stack on the same channel, recovering the caller that discarded the connection.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/golang/go/issues/64614">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/grpc--grpc--37881.html#call-stack"><span>grpc/grpc #37881</span>Which interceptor led to the worker that lost the request ID?</a></th>
+        <td><p>Both RPCs use the same method and payload. In the reported build, two worker threads read <code>None</code> through identical stacks. The active <code>WorkItem</code> links each read to its submission. Matching the exact handler then restores the interceptor route on the asyncio thread.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/grpc/grpc/issues/37881">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/python--cpython--91048.html#call-stack"><span>python/cpython #91048</span>Recovering the creator and the current waiter of a sleeping asyncio task</a></th>
+        <td><p>The suspended task is linked to the task creation in f2. The crossed-await control checks creator and current waiter independently.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/python/cpython/issues/91048">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/huggingface--huggingface_hub--2521.html#call-stack"><span>huggingface/huggingface_hub #2521</span>An uniterated inference stream leaves a client warning</a></th>
+        <td><p>Two requests shared a URL. The captured task lineage and response identities let the warning be attributed to submit_alpha.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/huggingface/huggingface_hub/issues/2521">Closed</a><a class="fix-label" href="https://github.com/huggingface/huggingface_hub/pull/2528">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/axios--axios--2387.html#call-stack"><span>axios/axios #2387</span>Axios errors hide which application call issued a request</a></th>
+        <td><p>Matching Promise, Error, and ClientRequest identities lets the two reports be traced to separate axios.get callers.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/axios/axios/issues/2387">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/omnilib--aiosqlite--87.html#call-stack"><span>omnilib/aiosqlite #87</span>An upsert can leave lastrowid pointing to another project</a></th>
+        <td><p>Task joins identify which concurrent gather callers received each lastrowid observation, so the reported values can be compared with the correct committed rows.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/omnilib/aiosqlite/issues/87">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2060.html#call-stack"><span>tortoise/tortoise-orm #2060</span>Concurrent update_or_create returns the other caller’s value</a></th>
+        <td><p>The join identifies the gather caller whose defaults were lost and traces its task to the conflict-handling path that returned the competing caller&#x27;s value.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/tortoise/tortoise-orm/issues/2060">Closed</a><a class="fix-label" href="https://github.com/tortoise/tortoise-orm/pull/2276">Repair verified · PR merged</a></td>
+      </tr></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="block" id="failure_lifecycle" aria-labelledby="failure_lifecycle-title">
+      <div class="section-head"><h2 id="failure_lifecycle-title">Failure and task lifecycle</h2><span class="case-kind">15 issues</span></div>
+      <p class="section-copy">Locate the first failure or identify the cancellation, exit, or cleanup that determines task state.</p>
+      <div class="table-wrap research-table">
+        <table aria-labelledby="failure_lifecycle-title">
+          <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
+          <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm--61561.html#call-stack"><span>vllm-project/vllm #61561</span>Which requests lost their final chunks at shutdown?</a></th>
+        <td><p>Two frontend channels drop the final chunks on the affected launcher. Matching the actual collector and error objects connects each output-handler failure to its request. Both open proposals deliver both final chunks in the local comparison.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/vllm-project/vllm/issues/61561">Open</a><a class="fix-label" href="https://github.com/vllm-project/vllm/pull/61562">Proposal tested · PR open</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/magicstack--asyncpg--547.html#call-stack"><span>MagicStack/asyncpg #547</span>Who borrowed each connection that kept the pool open?</a></th>
+        <td><p>Both acquiring Tasks have been collected when shutdown gets stuck. Stock Task stacks and the allocation trace identify two pending release Futures at the same library line. CoroPerf matches each actual Future to its acquisition and recovers the application caller.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/MagicStack/asyncpg/issues/547">Closed</a><a class="fix-label" href="https://github.com/MagicStack/asyncpg/pull/608">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/golang--go--52557.html#call-stack"><span>golang/go #52557</span>Which exited producer left each waiter blocked?</a></th>
+        <td><p>Both <code>singleflight</code> producers exit while all four waiters remain blocked. Go's trace records the launchers and exits. The shared call and each registered result channel connect a specific waiter to the producer it depended on.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/golang/go/issues/52557">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/python--cpython--157157.html#call-stack"><span>python/cpython #157157</span>Which cancellation reached the final error?</a></th>
+        <td><p>The target accepts two cancellation requests. With a stalled loop, the earlier cancelled Future supplies the final exception and the external message disappears. CoroPerf links the two request stacks to the observed Task and Future state.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/python/cpython/issues/157157">Closed</a><a class="fix-label" href="https://github.com/python/cpython/pull/157158">Repair merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/nuitka--nuitka--4073.html#call-stack"><span>Nuitka/Nuitka #4073</span>Who first raised the error injected into the async generator?</a></th>
+        <td><p>The affected build drops the original <code>make_exception</code> frame. Both caught errors have identical tracebacks. Matching the exception object across producer and receiver Tasks restores the application launcher for each error.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/Nuitka/Nuitka/issues/4073">Closed</a><a class="fix-label" href="https://github.com/Nuitka/Nuitka/releases/tag/4.3">Repair verified</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/aio-libs--async-lru--480.html#call-stack"><span>aio-libs/async-lru #480</span>Who evicted the result and who stayed waiting?</a></th>
+        <td><p>All 20 cache computations finish, while 15 callers remain blocked on the affected release. The same result <code>Future</code> connects each eviction to its completion callback and waiting Task. Joining the two Task stacks through their dispatch Handles recovers the original callers.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/aio-libs/async-lru/issues/480">Closed</a><a class="fix-label" href="https://github.com/aio-libs/async-lru/pull/481">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8434.html#call-stack"><span>tokio-rs/tokio #8434</span>Which callers submitted the stranded child futures?</a></th>
+        <td><p>The stock task trace identifies the lock operations reached during the trace poll. After the children are stranded, it records no leaf stacks. CoroPerf matches the earlier leaf samples to the child nodes that were actually polled and recovers both original callers.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/tokio-rs/tokio/issues/8434">Open</a><a class="fix-label" href="https://github.com/tokio-rs/tokio/pull/8445">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/python--cpython--157213.html#call-stack"><span>python/cpython #157213</span>Who started the tasks that outlived gather?</a></th>
+        <td><p>The official patch corrects the list of current waiters. After the shared dispatch callback runs, built-in diagnostics omit both original launchers. Recording the actual <code>Handle</code> at dispatch connects each surviving <code>Task</code> back to its <code>call_soon</code> caller.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/python/cpython/issues/157213">Closed</a><a class="fix-label" href="https://github.com/python/cpython/pull/157313">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/python--cpython--156278.html#call-stack"><span>python/cpython #156278</span>Which reads failed before stream cleanup?</a></th>
+        <td><p>Two tasks have the same final traceback through <code>wait_closed</code>. Keeping the first raise and linking it to the actual Task creation stack restores the failed <code>readexactly</code> or <code>readuntil</code> and its original caller.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/python/cpython/issues/156278">Open</a><a class="fix-label" href="https://github.com/python/cpython/pull/156286">Proposal tested · PR open</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/python--cpython--88831.html#call-stack"><span>python/cpython #88831</span>Garbage collection destroys a pending task waiting on an isolated Future</a></th>
+        <td><p>Finalization evidence identifies the pending task, and the identity-matched capture traces the task to its creation.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/python/cpython/issues/88831">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/kludex--starlette--1438.html#call-stack"><span>kludex/starlette #1438</span>Starlette cancels a background task after the client disconnects</a></th>
+        <td><p>The task creation link connects the request middleware to the background execution that received cancellation.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/kludex/starlette/issues/1438">Closed</a><a class="fix-label" href="https://github.com/Kludex/starlette/pull/1715#issue-1289392289">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/fastapi--fastapi--709.html#call-stack"><span>fastapi/fastapi #709</span>A WebSocket subscription task remains pending at shutdown</a></th>
+        <td><p>Joining the pending subscription stack to request-task creation identifies which request was still live at shutdown.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/fastapi/fastapi/issues/709">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--8145.html#call-stack"><span>sqlalchemy/sqlalchemy #8145</span>Cancellation during async connection cleanup leaves a pool checkout outstanding</a></th>
+        <td><p>The cleanup sample links back to the same Task created by main. Pool records then identify the matching checked-out connection left by the cancellation.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sqlalchemy/sqlalchemy/issues/8145">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/python-trio--trio--285.html#call-stack"><span>python-trio/trio #285</span>Identical Trio socket-read frames obscure which child was cancelled</a></th>
+        <td><p>Creation-to-cancellation attribution identifies which of two similarly executing tasks came from the unresponsive branch.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/python-trio/trio/issues/285">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/python--cpython--105836.html#call-stack"><span>python/cpython #105836</span>Which caller submitted the task still in cleanup?</a></th>
+        <td><p>The bridge Future reports cancellation while the loop Task is still pending. After the submission callback runs, stock task diagnostics display the same cleanup for both tasks. Matching the actual Task and bridge Future at <code>_chain_future</code> recovers the original caller on the submitting thread.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/python/cpython/issues/105836">Closed</a><a class="fix-label" href="https://github.com/python/cpython/pull/142358">Repair merged</a></td>
+      </tr></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
+      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">20 issues</span></div>
+      <p class="section-copy">Connect a delayed task to the execution order, poll interval, or resource that held it up.</p>
+      <div class="table-wrap research-table">
+        <table aria-labelledby="scheduling_contention-title">
+          <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
+          <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm--58266.html#call-stack"><span>vllm-project/vllm #58266</span>Which request occupied the multimodal worker?</a></th>
+        <td><p>Exact executor submissions identify the document that runs while the thumbnail waits. In the local six-image comparison, six threads finish sooner than a two-process prototype that copies its results.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/vllm-project/vllm/issues/58266">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--64036.html#call-stack"><span>ray-project/ray #64036</span>Which batches enter after a live limit change?</a></th>
+        <td><p>The open proposal changes the batch limit without replacing the replica. Matching request Futures shows which batch enters after older work drains and which enters when the limit rises again.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/64036">Open</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/64040">Proposal tested · PR open</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/run-llama--llama_index--22369.html#call-stack"><span>run-llama/llama_index #22369</span>Which query delayed an already-created task?</a></th>
+        <td><p>The second synchronous read occupies about 202 ms of the first query’s downstream Task wait. The open fix lets native async retrieval yield the event loop. A sync-only retriever still waits on the loop.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/run-llama/llama_index/issues/22369">Open</a><a class="fix-label" href="https://github.com/run-llama/llama_index/pull/22370">Proposal tested · PR open</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm--49317.html#call-stack"><span>vllm-project/vllm #49317</span>Which requests preprocessed images on the loop?</a></th>
+        <td><p>Identical Qwen2-VL stacks lead to two separate raw requests. The merged change moves preprocessing to a renderer worker. The median queued callback delay falls from 30.3 to 0.135 ms in the CPU fixture.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/vllm-project/vllm/issues/49317">Closed</a><a class="fix-label" href="https://github.com/vllm-project/vllm/pull/49608">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--67984.html#call-stack"><span>ray-project/ray #67984</span>Which input conversion delayed another UDF?</a></th>
+        <td><p>Separate launches lead to the formatter that holds the actor loop and the UDF waiting to resume. The open proposal moves formatting to a worker thread. The median queued-completion delay falls from 2.50 to 0.082 ms in the CPU comparison.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/67984">Open</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/67985">Proposal tested · PR open</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sgl-project--sglang--17021.html#call-stack"><span>sgl-project/sglang #17021</span>Which work delayed the ready receiver?</a></th>
+        <td><p>Two tokenizer stacks join to separate launchers. Both run after the real receiver Future is ready. Moving the same work to threads changes the median ready-to-resume interval from 32.6 to 0.050 ms in the CPU fixture.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sgl-project/sglang/issues/17021">Closed</a><a class="fix-label" href="https://github.com/sgl-project/sglang/pull/17069">Fix unconfirmed · PR closed</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--65038.html#call-stack"><span>ray-project/ray #65038</span>Which producer held the first chunk?</a></th>
+        <td><p>The first-yield stacks join to the two batch Tasks and their bound inputs. The first chunk arrives after 12 yields on the original planner and after one yield with the local patch. At 24 chunks, a separate single-node test measures about 24 MiB of live Arrow allocations above UDF entry on the stock path and about 4 MiB with the patch.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/65038">Open</a><span class="fix-label">Local patch tested</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/huggingface--huggingface_hub--5186.html#call-stack"><span>huggingface/huggingface_hub #5186</span>Which request blocked the event loop?</a></th>
+        <td><p>Two call paths reach the same queue poll. The affected poll joins back to its request Task, and the repaired poll reaches that Task through its executor WorkItem. With the merged fix, a separate Task runs 30 times during polling and the video bytes match.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/huggingface/huggingface_hub/issues/5186">Closed</a><a class="fix-label" href="https://github.com/huggingface/huggingface_hub/pull/5200">Repair merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--53071.html#call-stack"><span>ray-project/ray #53071</span>Which queue serialized three batches?</a></th>
+        <td><p>All 24 request Futures were enqueued before the first batch finished. Three execution stacks connect to one queue Task created in the first enqueue. Enabling concurrency on the fixed release gives each batch a separate Task.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/ray-project/ray/issues/53071">Closed</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/53096">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--51188.html#call-stack"><span>ray-project/ray #51188</span>Which tasks wrote rows after their blocks ended?</a></th>
+        <td><p>The two block managers send end markers before their batch Tasks write rows. The exact Task used in each failed await connects the later row write to its manager and creation stack.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/ray-project/ray/issues/51188">Closed</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/51180">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/rust-lang--futures-rs--2387.html#call-stack"><span>rust-lang/futures-rs #2387</span>Whose handshake timed out while the stream processed another result?</a></th>
+        <td><p>The server sends a reply before its simulated deadline. The stream polls that handshake again only after finishing the first item's work. Poll intervals and the actual result object connect the stalled handshake and the work ahead of it to two distinct callers.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/rust-lang/futures-rs/issues/2387">Open</a><a class="fix-label" href="https://github.com/rust-lang/futures-rs/issues/2387#issuecomment-1482910959">Workaround tested</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/oven-sh--bun--45020.html#call-stack"><span>oven-sh/bun #45020</span>Which callers were waiting through the same poll?</a></th>
+        <td><p>Both immediate Promises resolve before one 165 ms <code>epoll_pwait2</code> in the selected run. Stock Inspector reaches the shared scheduler. CoroPerf matches each awaited Promise to its creation stack and recovers the original launcher for both delayed continuations.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/oven-sh/bun/issues/45020">Closed</a><a class="fix-label" href="https://github.com/oven-sh/bun/pull/44833">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/rust-lang--futures-rs--2047.html#call-stack"><span>rust-lang/futures-rs #2047</span>Which caller delayed a ready task?</a></th>
+        <td><p>A ready heartbeat waits through 102 retry attempts on the affected revision and 31 after the fix. Both retry futures have the same ordinary stack. The child poll intervals and <code>push</code> stacks assign 96 of the 102 attempts to <code>launch_profile</code> and six to <code>launch_inventory</code> in the displayed run.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/rust-lang/futures-rs/issues/2047">Closed</a><a class="fix-label" href="https://github.com/rust-lang/futures-rs/pull/2049">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/python--cpython--90155.html#call-stack"><span>python/cpython #90155</span>Who took the permit ahead of a queued waiter?</a></th>
+        <td><p>On 3.10.3 the releasing task reacquires the permit while the woken waiter stays blocked. Joining each Task to the earlier dispatch <code>Handle</code> identifies both original callers. On 3.14.3 the queued task gets the next grant.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/python/cpython/issues/90155">Closed</a><a class="fix-label" href="https://github.com/python/cpython/pull/93222">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/python--cpython--112169.html#call-stack"><span>python/cpython #112169</span>Which caller occupied the DNS worker?</a></th>
+        <td><p>Two busy worker threads have the same stack. The resolver waits for the one in the default pool. The actual <code>WorkItem</code> and the broker's earlier queue request connect that worker to its original application caller.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/python/cpython/issues/112169">Closed</a><a class="fix-label" href="https://github.com/python/cpython/pull/112191">Docs updated · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/drogonframework--drogon--2331.html#call-stack"><span>drogonframework/drogon #2331</span>Which request stalled in PostgreSQL?</a></th>
+        <td><p>Two request entry points create instances of <code>shared_lookup</code>. In a stripped HTTP/PostgreSQL adaptation, instruction dataflow alone assigned zero of six external-wait samples. Observed activation bindings assigned six. Keeping creation history led all six samples back to the correct request origin.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/drogonframework/drogon/issues/2331">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/tokio-rs--tokio--6315.html#call-stack"><span>tokio-rs/tokio #6315</span>Who spawned the delayed task?</a></th>
+        <td><p>In the controlled scheduler replay, a helper stayed in a worker’s LIFO slot while the spawning worker was blocked. A spawn hook and the helper-body sample recorded the same process-local task ID. The joined stack recovers the parent and launch site of that delayed helper.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/tokio-rs/tokio/issues/6315">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/pgjdbc--pgjdbc--1951.html#call-stack"><span>pgjdbc/pgjdbc #1951</span>A Quarkus request pinned in Hibernate while waiting on PostgreSQL</a></th>
+        <td><p>Stock JFR shows the JDBC pin and the virtual thread&#x27;s own entry. Joining the pin to the factory&#x27;s creation record by JVM thread ID recovers the earlier Quarkus caller.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/pgjdbc/pgjdbc/issues/1951">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/magicstack--asyncpg--1149.html#call-stack"><span>magicstack/asyncpg #1149</span>Cursor prefetch delays delivery of rows that are already available</a></th>
+        <td><p>The sample shows consume blocked in _bind_exec. Joining it to start_export identifies the export cursor task in the two-cursor performance control. Protocol records independently establish that rows had arrived before delivery to the application.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/MagicStack/asyncpg/issues/1149">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8085.html#call-stack"><span>tokio-rs/tokio #8085</span>Which caller delayed the socket read?</a></th>
+        <td><p>Two CPU tasks have the same physical stack after suspension and the same stock spawn location. CoroPerf joins each poll to its creation stack. In this local adaptation, moving the same CPU work to a separate runtime changes median read delay from 107.924 ms to 0.039 ms.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/tokio-rs/tokio/issues/8085">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="block" id="cost_attribution" aria-labelledby="assembly">
+      <div class="section-head"><h2 id="assembly">Performance cost attribution</h2><span class="case-kind">10 issues</span></div>
+      <p class="section-copy">Assign measured CPU work, allocations, or waiting time to the application caller that incurred them.</p>
+      <div class="table-wrap research-table">
+        <table aria-labelledby="assembly">
+          <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
+          <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm--54101.html#call-stack"><span>vllm-project/vllm #54101</span>Which benchmark requests waited before HTTP timing?</a></th>
+        <td><p>Matching the Task joins the semaphore wait and HTTP entry to each request. In the capped fixture, the merged metrics show about 287 ms of queueing and 389 ms of queue-inclusive latency. The endpoint timer still reports about 102 ms.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/vllm-project/vllm/issues/54101">Closed</a><a class="fix-label" href="https://github.com/vllm-project/vllm/pull/54136">Repair merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm--58145.html#call-stack"><span>vllm-project/vllm #58145</span>Which calls rebuilt the Mistral lexer?</a></th>
+        <td><p>Two identical construction stacks join to their caller Tasks. A bounded local cache reuses the lexer shape and preserves the tested parser events. Median warm constructor time falls from 71.5 to 0.14 ms on v0.30.0.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/vllm-project/vllm/issues/58145">Open</a><span class="fix-label">Local patch tested</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/sgl-project--sglang--50722.html#call-stack"><span>sgl-project/sglang #50722</span>Which tasks ran the per-chunk checks?</a></th>
+        <td><p>The receive samples join to separate stream-body Tasks and their ASGI requests. The merged fix reduces the observed checks from seven to one per eight-chunk stream. The HTTP fixture's median throughput rises from 23,507 to 47,340 chunks/s.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sgl-project/sglang/issues/50722">Closed</a><a class="fix-label" href="https://github.com/sgl-project/sglang/pull/50741">Repair merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/huggingface--transformers--46315.html#call-stack"><span>huggingface/transformers #46315</span>Which calls rebuilt the vocabulary?</a></th>
+        <td><p>Two identical worker stacks connect through their executor WorkItems to separate tokenizer callers. The affected code rebuilds the mapping twelve or six times per six-token input. The fixed release performs all conversions without rebuilding it.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/huggingface/transformers/issues/46315">Closed</a><a class="fix-label" href="https://github.com/huggingface/transformers/pull/46323">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/python--cpython--115218.html#call-stack"><span>python/cpython #115218</span>Which caller spent longer waiting for I/O?</a></th>
+        <td><p>Python's async-aware sampler distinguishes the two suspended Tasks and shows which waited longer. CoroPerf measures each actual suspension and follows the dispatch Handle back to the original caller.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/python/cpython/issues/115218">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/dotnet--runtime--38904.html#call-stack"><span>dotnet/runtime #38904</span>Which caller accounts for the repeated rethrows?</a></th>
+        <td><p>Fourteen identical rethrow stacks interleave on one worker. CoroPerf matches the exception object to the fault of its root Task. In the selected run, that attributes twelve rethrows to <code>LaunchProfile</code> and two to <code>LaunchInventory</code>.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/dotnet/runtime/issues/38904">Open</a><a class="fix-label" href="https://github.com/dotnet/runtime/issues/38904">Workaround tested</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/llvm--llvm-project--56972.html#call-stack"><span>llvm/llvm-project #56972</span>Who incurred the extra coroutine-frame allocation?</a></th>
+        <td><p>Clang 19 makes a 48-byte heap allocation when <code>Bar</code> resumes. The destructor control embeds <code>Baz</code> inside <code>Bar</code>. Two extra allocations return the same child address. CoroPerf recovers the distinct parent frames from stripped machine code and joins each one to its original caller.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/llvm/llvm-project/issues/56972">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8760.html#call-stack"><span>tokio-rs/tokio #8760</span>Who started the intervals that kept clearing timers?</a></th>
+        <td><p>The released regression increases CPU time for 2,048 short intervals in the local benchmark. Both application entries share a spawn line and the same timer-clear stack. CoroPerf connects all 768 clear observations to the correct entry using each task's poll interval and creation stack.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/tokio-rs/tokio/issues/8760">Closed</a><a class="fix-label" href="https://github.com/tokio-rs/tokio/pull/8761">Repair verified · PR merged</a></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/nodejs--node--50056.html#call-stack"><span>nodejs/node #50056</span>Two callers, one CPU hot path</a></th>
+        <td><p>In a V8 profiler adaptation, 603 ordinary samples showed the shared callee without either launch site. CoroPerf joined 579 independently checked samples to the correct <code>launchProfile</code> or <code>launchInventory</code> creation stack. The control reversed execution order.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/nodejs/node/issues/50056">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8527.html#call-stack"><span>tokio-rs/tokio #8527</span>Who submitted the blocking jobs with long queue waits?</a></th>
+        <td><p>The stock span records show task IDs and the same submit and producer-spawn locations for both routes. CoroPerf connects the worker's CPU sample through blocking task creation to the async producer's earlier caller. All 1,036 samples match the independently recorded handle IDs.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/tokio-rs/tokio/issues/8527">Closed</a><a class="fix-label" href="https://github.com/tokio-rs/tokio/pull/8532">Repair merged</a></td>
+      </tr></tbody>
+        </table>
+      </div>
+    </section>
+    </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
 </body>
 </html>

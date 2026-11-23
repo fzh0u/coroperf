@@ -20,14 +20,14 @@ python3 -m http.server 8000
 
 - `index.html` groups the cases by language in one table. Each row shows its GitHub state, repair evidence, and primary CoroPerf contribution. Search and filters cover language, GitHub state, contribution, reported issue type, and reproduction scope.
 - `evidence/` contains the static issue pages.
-- `research.html` summarizes representative error, scheduling, and native attribution cases.
+- `research.html` groups the same issues by their primary diagnostic contribution and links to each call-stack comparison.
 - `zh-cn/` mirrors the index, research notes, and evidence pages in Simplified Chinese. Function names, paths to public upstream reports, and evidence labels from the graph retain their original spelling.
 - `data/focus.json` lists the reviewed cases, their reported issue types, primary diagnostic contributions, exact creation/observation pairs, and what each join establishes.
 - `data/cases.json` contains the exported findings, stacks, and graph edges in the public snapshot.
 - `data/upstream-status.json` records issue and linked repair PR states at the last check.
 - `data/case-classification.csv` exports the bilingual paper taxonomy, evidence scope, repair evidence, and linked GitHub issue and PR states.
 
-To update the snapshot from the original research workspace, run the export command first. For a text edit, update the case data, the site copy in `scripts/copy_text.py`, or the research notes fragments, then rebuild. The scripts use Python 3.10 or newer and its standard library. Chinese case findings come from the study's Chinese records. Most Chinese index headlines use the leading observation from the same record.
+To update the snapshot from the original research workspace, run the export command first. For a text edit, update the case data, site copy in `scripts/copy_text.py`, or optional case summaries in `scripts/research-notes.json`, then rebuild. The scripts use Python 3.10 or newer and its standard library. Chinese case findings come from the study's Chinese records. Most Chinese index headlines use the leading observation from the same record.
 
 ```sh
 python3 scripts/export_snapshot.py /path/to/research-workspace
