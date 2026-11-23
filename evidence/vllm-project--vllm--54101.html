@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which benchmark requests waited before their HTTP timers started?">
+  <title>vllm-project/vllm #54101 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/vllm-project--vllm--54101.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="vllm-project--vllm--54101.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/vllm-project--vllm--54101.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">vllm-project/vllm #54101</p>
+        <h1>Which benchmark requests waited before their HTTP timers started?</h1>
+        <div class="case-links"><a href="https://github.com/vllm-project/vllm/issues/54101">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Performance cost attribution</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Closed</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/vllm-project/vllm/pull/54136">Upstream change merged ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The live Task joins each semaphore wait and later HTTP backend entry to a single benchmark request. Their timestamps place the missing delay before the backend&#x27;s E2EL clock.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 5</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>benchmark.&lt;locals&gt;.limited_request_func</code><span>report-serve.py:976</span></li><li><code>_ContextManagerMixin.__aenter__</code><span>locks.py:14</span></li><li><code>Semaphore.acquire</code><span>locks.py:363</span></li></ol></section>
+          <p class="small trace-note">Frames from record 5 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>5 → 4</code></a></nav>
+          <section class="stack observed" id="join-1-record-5"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>benchmark.&lt;locals&gt;.limited_request_func</code><span>report-serve.py:976</span></li><li><code>_ContextManagerMixin.__aenter__</code><span>locks.py:14</span></li><li><code>Semaphore.acquire</code><span>locks.py:363</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-1-record-5">Record 5</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 4 → 5</code></p>
+        </aside><section class="stack " id="join-1-record-4"><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>main</code><span>check_benchmark.py:205</span></li><li><code>run</code><span>check_benchmark.py:173</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>benchmark</code><span>report-serve.py:1068</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 17</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>benchmark.&lt;locals&gt;.limited_request_func</code><span>report-serve.py:977</span></li><li><code>async_request_openai_completions</code><span>report-endpoint_request_func.py:159</span></li></ol></section>
+          <p class="small trace-note">Frames from record 17 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>17 → 4</code></a></nav>
+          <section class="stack observed" id="join-2-record-17"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>benchmark.&lt;locals&gt;.limited_request_func</code><span>report-serve.py:977</span></li><li><code>async_request_openai_completions</code><span>report-endpoint_request_func.py:159</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-2-record-17">Record 17</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 4 → 17</code></p>
+        </aside><section class="stack " id="join-2-record-4"><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>main</code><span>check_benchmark.py:205</span></li><li><code>run</code><span>check_benchmark.py:173</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>benchmark</code><span>report-serve.py:1068</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 16</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 16</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>benchmark.&lt;locals&gt;.limited_request_func</code><span>report-serve.py:976</span></li><li><code>_ContextManagerMixin.__aenter__</code><span>locks.py:14</span></li><li><code>Semaphore.acquire</code><span>locks.py:363</span></li></ol></section>
+          <p class="small trace-note">Frames from record 16 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-3-point-1">Join point 1 <code>16 → 15</code></a></nav>
+          <section class="stack observed" id="join-3-record-16"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 16</span><span class="record-instance">Instance from record 15</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>benchmark.&lt;locals&gt;.limited_request_func</code><span>report-serve.py:976</span></li><li><code>_ContextManagerMixin.__aenter__</code><span>locks.py:14</span></li><li><code>Semaphore.acquire</code><span>locks.py:363</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-3-record-15">Record 15</a><span aria-hidden="true">→</span><a href="#join-3-record-16">Record 16</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 15 → 16</code></p>
+        </aside><section class="stack " id="join-3-record-15"><div class="stack-head"><h4>Creation stack</h4><span>Record 15</span><span class="record-instance">Instance from record 15</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>main</code><span>check_benchmark.py:205</span></li><li><code>run</code><span>check_benchmark.py:173</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>benchmark</code><span>report-serve.py:1068</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 22</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 22</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>benchmark.&lt;locals&gt;.limited_request_func</code><span>report-serve.py:977</span></li><li><code>async_request_openai_completions</code><span>report-endpoint_request_func.py:159</span></li></ol></section>
+          <p class="small trace-note">Frames from record 22 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-4-point-1">Join point 1 <code>22 → 15</code></a></nav>
+          <section class="stack observed" id="join-4-record-22"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 22</span><span class="record-instance">Instance from record 15</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>benchmark.&lt;locals&gt;.limited_request_func</code><span>report-serve.py:977</span></li><li><code>async_request_openai_completions</code><span>report-endpoint_request_func.py:159</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-4-record-15">Record 15</a><span aria-hidden="true">→</span><a href="#join-4-record-22">Record 22</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 15 → 22</code></p>
+        </aside><section class="stack " id="join-4-record-15"><div class="stack-head"><h4>Creation stack</h4><span>Record 15</span><span class="record-instance">Instance from record 15</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_benchmark.py:244</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>main</code><span>check_benchmark.py:205</span></li><li><code>run</code><span>check_benchmark.py:173</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>benchmark</code><span>report-serve.py:1068</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With eight requests, a 100 ms loopback service delay, 50 scheduled requests per second, and a concurrency cap of one, the affected client reports mean E2EL of 101.9 ms. The merged client reports 101.9 ms for the same endpoint metric, 287.4 ms of mean client queueing, and 389.3 ms of queue-inclusive E2EL. All replies are identical in content.</dd></div><div><dt>What CoroPerf showed</dt><dd>Seven of eight Tasks encounter the held semaphore. Requests 2 and 7 have the same wait and send stacks. The live Task and actual RequestFuncInput join wait 5 and backend entry 17 to creation 4, and wait 16 and backend entry 22 to creation 15. In the traced trial these requests spend 166 and 581 ms respectively between semaphore entry and the backend&#x27;s start timestamp.</dd></div><div><dt>Scope and limits</dt><dd>This comparison runs both pinned benchmark functions and real HTTP clients against a deterministic loopback server. The merged queue clock starts at benchmark Task submission. It measures the wait before the backend timer, with a separate queue-inclusive E2EL for finite-rate runs. The pooling path passes the same accounting check. No inference server runs in the fixture.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

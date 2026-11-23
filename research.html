@@ -45,6 +45,11 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>vLLM #54101 · Which benchmark requests waited before HTTP timing?</h3>
+      <p>Matching the Task joins the semaphore wait and HTTP entry to each request. In the capped fixture, the merged metrics show about 287 ms of queueing and 389 ms of queue-inclusive latency. The endpoint timer still reports about 102 ms.</p>
+      <a href="evidence/vllm-project--vllm--54101.html#call-stack">Compare both requests across the queue</a>
+    </div>
+    <div class="research-entry">
       <h3>vLLM #61561 · Which requests lost their final chunks at shutdown?</h3>
       <p>Two frontend channels drop the final chunks on the affected launcher. Matching the actual collector and error objects connects each output-handler failure to its request. Both open proposals deliver both final chunks in the local comparison.</p>
       <a href="evidence/vllm-project--vllm--61561.html#call-stack">Compare both request and publisher joins</a>

@@ -8,6 +8,11 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>vLLM #54101 · 哪些请求在 HTTP 计时前已经排队？</h3>
+      <p>实际 Task 把 semaphore 等待与 HTTP 入口拼回同一请求。并发限制为 1 时，合并修复新增约 287 毫秒的排队计时，含排队延迟约 389 毫秒，原端到端指标仍约 102 毫秒。</p>
+      <a href="evidence/vllm-project--vllm--54101.html#call-stack">比较两个请求的等待和发送栈</a>
+    </div>
+    <div class="research-entry">
       <h3>vLLM #61561 · 哪些请求在停机时丢失了最后一块？</h3>
       <p>原版启动器让两个前端通道都丢失末块。用实际 collector 和异常对象，可以将每次输出处理异常接回对应的请求。两个开放提案在本地对照中均交付两条请求的末块。</p>
       <a href="evidence/vllm-project--vllm--61561.html#call-stack">比较两组请求与异常发布栈</a>

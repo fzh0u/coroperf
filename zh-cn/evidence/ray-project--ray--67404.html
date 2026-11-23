@@ -98,7 +98,7 @@
       </section>
       <section class="findings" aria-labelledby="findings-title">
         <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
-        <dl><div><dt>本地复现结果</dt><dd>原帖两个请求的输入分别为 (1, 10) 和 (2, 20)。受影响的 nightly 返回 (1, 10) 和 (20, 2)。独立的鸢尾花分类实验中，混合使用两种关键字顺序导致 60 行中有 30 行的特征被交换，16 行的预测改变。候选修复恢复了全部 60 行的特征绑定，正确预测数从 44 回到正确绑定时的 56。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>合并记录同时保留正在执行的 Task、协程和协程帧。用三者的身份，把回显合并记录 1 接回创建记录 0，把分类合并记录 13 接回创建记录 12。创建都发生在 _process_sub_batches。两个合并的物理栈相同，拼接后可以定位到实际被调度的那一批，并对照合并前后的参数值。所选分类批次的第二行从 sepal=46、petal=15 变成 sepal=15、petal=46。</dd></div><div><dt>适用范围与局限</dt><dd>在本地 CPU 集群上运行原帖的 Serve 程序和分类实验，Ray nightly 与原帖使用同一提交。Linux 对照环境只将 batching.py 替换为已测试的 PR 版本。两轮独立运行中，每个版本每轮都核验了 95 个创建到合并的匹配。候选修复 PR 仍开放。</dd></div></dl>
+        <dl><div><dt>本地复现结果</dt><dd>原帖两个请求的输入分别为 (1, 10) 和 (2, 20)。受影响的 nightly 返回 (1, 10) 和 (20, 2)。独立的鸢尾花分类实验中，混合使用两种关键字顺序导致 60 行中有 30 行的特征被交换，16 行的预测改变。候选修复恢复了全部 60 行的特征绑定，正确预测数从 44 回到正确绑定时的 56。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>合并记录同时保留正在执行的 Task、协程和协程帧。用三者的身份，把回显合并记录 1 接回创建记录 0，把分类合并记录 13 接回创建记录 12。创建都发生在 _process_sub_batches。两个合并的物理栈相同，拼接后可以定位到实际被调度的那一批，并对照合并前后的参数值。所选分类批次的第二行从 sepal=46、petal=15 变成 sepal=15、petal=46。</dd></div><div><dt>适用范围与局限</dt><dd>在本地 CPU 集群上运行原帖的 Serve 程序和分类实验，Ray nightly 与原帖使用同一提交。两轮中，每个版本每轮都核验了 95 个创建到合并的匹配。在另一组真实部署中，开放提案拒绝四个参数布局不同的有效请求。本地补丁按模型和参数布局拆分后，四个请求均正确返回，同布局请求和不同复用模型的分组保持正确。混合布局可能产生更多小批次。</dd></div></dl>
       </section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
