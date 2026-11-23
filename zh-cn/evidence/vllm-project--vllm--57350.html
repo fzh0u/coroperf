@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="流式解码的 CPU 工作由哪些请求提交？">
+  <title>vllm-project/vllm #57350 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/vllm-project--vllm--57350.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/vllm-project--vllm--57350.html" lang="en" hreflang="en">English</a><a href="vllm-project--vllm--57350.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">vllm-project/vllm #57350</p>
+        <h1>流式解码的 CPU 工作由哪些请求提交？</h1>
+        <div class="case-links"><a href="https://github.com/vllm-project/vllm/issues/57350">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd><a href="https://github.com/vllm-project/vllm/pull/57528">已在修复对照中验证 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>用实际的 WorkItem 把两条相同的工作线程栈分别接回聊天和文本补全协程的提交位置，再接到各自的流任务创建栈。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 5</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>OnlineDerenderer._detokenize_delta</code><span>online_derenderer.py:221</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>5 → 4</code></a><a href="#join-1-point-1">拼接点 1 <code>4 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>OnlineDerenderer._detokenize_delta</code><span>online_derenderer.py:221</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-4">记录 4</a><span aria-hidden="true">→</span><a href="#join-1-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>观测发生在工作线程执行同一个 WorkItem 时。该对象在事件循环线程创建时已记录。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 4 → 5</code></p>
+        </aside><section class="stack " id="join-1-record-4"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_worker_join.py:174</span></li><li><code>main</code><span>check_worker_join.py:142</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Workload.run.&lt;locals&gt;.stream</code><span>derender.py:44</span></li><li><code>AsyncClient.post</code><span>_client.py:1859</span></li><li><code>AsyncClient.request</code><span>_client.py:1540</span></li><li><code>AsyncClient.send</code><span>_client.py:1629</span></li><li><code>AsyncClient._send_handling_auth</code><span>_client.py:1657</span></li><li><code>AsyncClient._send_handling_redirects</code><span>_client.py:1694</span></li><li><code>AsyncClient._send_single_request</code><span>_client.py:1730</span></li><li><code>ASGITransport.handle_async_request</code><span>asgi.py:170</span></li><li><code>FastAPI.__call__</code><span>applications.py:1159</span></li><li><code>Starlette.__call__</code><span>applications.py:96</span></li><li><code>ServerErrorMiddleware.__call__</code><span>errors.py:164</span></li><li><code>ExceptionMiddleware.__call__</code><span>exceptions.py:63</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>AsyncExitStackMiddleware.__call__</code><span>asyncexitstack.py:18</span></li><li><code>Router.__call__</code><span>routing.py:683</span></li><li><code>Router.app</code><span>routing.py:704</span></li><li><code>Route.handle</code><span>routing.py:289</span></li><li><code>request_response.&lt;locals&gt;.app</code><span>routing.py:134</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>request_response.&lt;locals&gt;.app.&lt;locals&gt;.app</code><span>routing.py:120</span></li><li><code>get_request_handler.&lt;locals&gt;.app</code><span>routing.py:674</span></li><li><code>run_endpoint_function</code><span>routing.py:328</span></li><li><code>derender_chat_completion</code><span>api_router.py:65</span></li><li><code>ServingDerender.derender_chat_stream_response</code><span>serving.py:325</span></li><li><code>OnlineDerenderer.derender_chat_stream</code><span>online_derenderer.py:367</span></li><li><code>make_async.&lt;locals&gt;._async_wrapper</code><span>async_utils.py:41</span></li><li><code>BaseEventLoop.run_in_executor</code><span>base_events.py:863</span></li><li><code>ThreadPoolExecutor.submit</code><span>thread.py:176</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 4 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_worker_join.py:174</span></li><li><code>main</code><span>check_worker_join.py:142</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Capture.run</code><span>check_worker_join.py:119</span></li><li><code>Workload.run</code><span>derender.py:52</span></li><li><code>gather</code><span>tasks.py:831</span></li><li><code>ensure_future</code><span>tasks.py:695</span></li><li><code>BaseEventLoop.create_task</code><span>base_events.py:464</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 8</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>OnlineDerenderer._detokenize_delta</code><span>online_derenderer.py:221</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 8 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>8 → 6</code></a><a href="#join-2-point-1">拼接点 1 <code>6 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-8"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8</span><span class="record-instance">实例首次见于记录 6</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>OnlineDerenderer._detokenize_delta</code><span>online_derenderer.py:221</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-6">记录 6</a><span aria-hidden="true">→</span><a href="#join-2-record-8">记录 8</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>观测发生在工作线程执行同一个 WorkItem 时。该对象在事件循环线程创建时已记录。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 6 → 8</code></p>
+        </aside><section class="stack " id="join-2-record-6"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 6</span><span class="record-instance">实例首次见于记录 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_worker_join.py:174</span></li><li><code>main</code><span>check_worker_join.py:142</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Workload.run.&lt;locals&gt;.stream</code><span>derender.py:44</span></li><li><code>AsyncClient.post</code><span>_client.py:1859</span></li><li><code>AsyncClient.request</code><span>_client.py:1540</span></li><li><code>AsyncClient.send</code><span>_client.py:1629</span></li><li><code>AsyncClient._send_handling_auth</code><span>_client.py:1657</span></li><li><code>AsyncClient._send_handling_redirects</code><span>_client.py:1694</span></li><li><code>AsyncClient._send_single_request</code><span>_client.py:1730</span></li><li><code>ASGITransport.handle_async_request</code><span>asgi.py:170</span></li><li><code>FastAPI.__call__</code><span>applications.py:1159</span></li><li><code>Starlette.__call__</code><span>applications.py:96</span></li><li><code>ServerErrorMiddleware.__call__</code><span>errors.py:164</span></li><li><code>ExceptionMiddleware.__call__</code><span>exceptions.py:63</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>AsyncExitStackMiddleware.__call__</code><span>asyncexitstack.py:18</span></li><li><code>Router.__call__</code><span>routing.py:683</span></li><li><code>Router.app</code><span>routing.py:704</span></li><li><code>Route.handle</code><span>routing.py:289</span></li><li><code>request_response.&lt;locals&gt;.app</code><span>routing.py:134</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>request_response.&lt;locals&gt;.app.&lt;locals&gt;.app</code><span>routing.py:120</span></li><li><code>get_request_handler.&lt;locals&gt;.app</code><span>routing.py:674</span></li><li><code>run_endpoint_function</code><span>routing.py:328</span></li><li><code>derender_completion</code><span>api_router.py:111</span></li><li><code>ServingDerender.derender_completion_stream_response</code><span>serving.py:375</span></li><li><code>OnlineDerenderer.derender_completion_stream</code><span>online_derenderer.py:721</span></li><li><code>make_async.&lt;locals&gt;._async_wrapper</code><span>async_utils.py:41</span></li><li><code>BaseEventLoop.run_in_executor</code><span>base_events.py:863</span></li><li><code>ThreadPoolExecutor.submit</code><span>thread.py:176</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-6">记录 6</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 6 → 1</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_worker_join.py:174</span></li><li><code>main</code><span>check_worker_join.py:142</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Capture.run</code><span>check_worker_join.py:119</span></li><li><code>Workload.run</code><span>derender.py:52</span></li><li><code>gather</code><span>tasks.py:831</span></li><li><code>ensure_future</code><span>tasks.py:695</span></li><li><code>BaseEventLoop.create_task</code><span>base_events.py:464</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>受影响版本的两个流式路由都在事件循环线程解码。已合并的修复把解码移到渲染器线程池。独立的 CPU 渲染器 CLI 实验中，并行 tokenize 请求的 p95 从原版 0.28.0 的 155 毫秒降到 57 毫秒，流式总吞吐从每秒 1,993 降到 1,753 个 token。两版都返回了预期文本。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>在修复版中，聊天和文本补全的解码工作线程有相同的物理栈。工作线程执行的 WorkItem 正是提交到线程池时记录的对象。用它把执行记录 5 和 8 接回提交记录 4 和 6，恢复两个路由各自的协程，再接回流任务创建记录 0 和 1。该方法为本轮 16 次分块解码都找到了实际路由。</dd></div><div><dt>适用范围与局限</dt><dd>拼接实验在 CPU 上用进程内 ASGI 调用实际 FastAPI 路由与本地 tokenizer，验证归属、线程位置和文本结果。性能数字来自独立的 TCP 对照，使用 20 条流和一个串行发请求的 tokenize 客户端，每版本运行一次。PR #57528 已合并并关闭 Issue。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

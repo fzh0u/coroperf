@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>Issue type</dt><dd>Performance problems</dd></div>
           <div><dt>Upstream status</dt><dd>Open</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>C++</dd></div>
           <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
           <div><dt>Diagnosis</dt><dd>Direct</dd></div>
         </dl>
@@ -52,39 +54,39 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
         <div class="join-contribution"><h3>What stitching revealed</h3><p>Two request entries use shared_lookup. The stopped sample&#x27;s owner and the recorded creator chain identify profile_entry as the origin of the blocked request.</p></div>
-        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
         <p class="provenance">Observation 158</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>75 → 87</code></a><a href="#join-1-point-2">Join point 2 <code>87 → 105</code></a><a href="#join-1-point-3">Join point 3 <code>105 → 158</code></a></nav>
-          <section class="stack " id="join-1-record-75"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 75</span><span class="record-instance">Instance from record 75</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
-          <p class="join-records"><a href="#join-1-record-75">Record 75</a><span aria-hidden="true">→</span><a href="#join-1-record-87">Record 87</a></p>
-          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
-
-          <p class="join-verification">Graph edge <code>coroutine_created_by · 87 → 75</code></p>
-        </aside><section class="stack " id="join-1-record-87"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 87</span><span class="record-instance">Instance from record 87</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>profile_entry</code></li></ol></section>
-        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">Join point 2</a><strong>Creator → child creation</strong></div>
-          <p class="join-records"><a href="#join-1-record-87">Record 87</a><span aria-hidden="true">→</span><a href="#join-1-record-105">Record 105</a></p>
-          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
-
-          <p class="join-verification">Graph edge <code>coroutine_created_by · 105 → 87</code></p>
-        </aside><section class="stack " id="join-1-record-105"><div class="stack-head"><h4>Creation stack</h4><span>Record 105</span><span class="record-instance">Instance from record 105</span></div><ol class="frames"><li><code>shared_lookup</code></li></ol></section>
-        <aside class="join-marker" id="join-1-point-3" aria-label="Join point 3">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-3">Join point 3</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-1-record-105">Record 105</a><span aria-hidden="true">→</span><a href="#join-1-record-158">Record 158</a></p>
-          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
-
-          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 105 → 158</code></p>
-        </aside><section class="stack observed" id="join-1-record-158"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 158 · stopped-native-thread</span><span class="record-instance">Instance from record 105</span></div><ol class="frames"><li><code>[unknown]</code></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 158 · stopped-native-thread</span></div><ol class="frames"><li><code>[unknown]</code></li></ol></section>
           <p class="small trace-note">Frames from record 158 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-3">Join point 3 <code>158 → 105</code></a><a href="#join-1-point-2">Join point 2 <code>105 → 87</code></a><a href="#join-1-point-1">Join point 1 <code>87 → 75</code></a></nav>
+          <section class="stack observed" id="join-1-record-158"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 158 · stopped-native-thread</span><span class="record-instance">Instance from record 105</span></div><ol class="frames"><li><code>[unknown]</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-3" aria-label="Join point 3">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-3">Join point 3</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-105">Record 105</a><span aria-hidden="true">→</span><a href="#join-1-record-158">Record 158</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 105 → 158</code></p>
+        </aside><section class="stack " id="join-1-record-105"><div class="stack-head"><h4>Creation stack</h4><span>Record 105</span><span class="record-instance">Instance from record 105</span></div><ol class="frames"><li><code>shared_lookup</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-87">Record 87</a><span aria-hidden="true">→</span><a href="#join-1-record-105">Record 105</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 105 → 87</code></p>
+        </aside><section class="stack " id="join-1-record-87"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 87</span><span class="record-instance">Instance from record 87</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>profile_entry</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-75">Record 75</a><span aria-hidden="true">→</span><a href="#join-1-record-87">Record 87</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 87 → 75</code></p>
+        </aside><section class="stack " id="join-1-record-75"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 75</span><span class="record-instance">Instance from record 75</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li></ol></section>
         </div>
       </div>
       </section>

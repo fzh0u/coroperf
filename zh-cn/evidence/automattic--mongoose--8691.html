@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
           <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>JavaScript / TypeScript</dd></div>
           <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
         </dl>
@@ -52,25 +54,25 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
         <div class="join-contribution"><h3>拼接补回了什么</h3><p>创建记录显示 Query.then 在内部启动 exec，并恢复错误栈里丢失的应用调用上下文。</p></div>
-        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
         <p class="provenance">观测记录 81</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>43 → 81</code></a></nav>
-          <section class="stack " id="join-1-record-43"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 43</span><span class="record-instance">实例首次见于记录 43</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>run_main_module:17</span></li><li><code>Function.executeUserEntryPoint [as runMain]</code><span>run_main:81</span></li><li><code>Function.Module._load</code><span>loader:822</span></li><li><code>Module.load</code><span>loader:981</span></li><li><code>Object.Module._extensions..js</code><span>loader:1153</span></li><li><code>Module._compile</code><span>loader:1101</span></li><li><code>Object.&lt;anonymous&gt;</code><span>queries.cjs:7</span></li><li><code>Promise.catch (&lt;anonymous&gt;)</code></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-1-record-43">记录 43</a><span aria-hidden="true">→</span><a href="#join-1-record-81">记录 81</a></p>
-          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
-
-          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 43 → 81</code></p>
-        </aside><section class="stack observed" id="join-1-record-81"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 81 · semantic_boundary</span><span class="record-instance">实例首次见于记录 43</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues:78</span></li><li><code>&lt;anonymous&gt;</code><span>index.js:369</span></li><li><code>model.Query._wrappedThunk [as _findOne]</code><span>wrapThunk.js:16</span></li><li><code>model.Query.&lt;anonymous&gt;</code><span>query.js:2117</span></li><li><code>model.Query.Query._castConditions</code><span>query.js:1862</span></li><li><code>model.Query.Query.cast</code><span>query.js:4690</span></li><li><code>cast</code><span>cast.js:315</span></li><li><code>ObjectId.SchemaType.castForQueryWrapper</code><span>schematype.js:1393</span></li><li><code>ObjectId.SchemaType.castForQuery</code><span>schematype.js:1414</span></li><li><code>ObjectId.SchemaType._castForQuery</code><span>schematype.js:1424</span></li><li><code>ObjectId.SchemaType.applySetters</code><span>schematype.js:1010</span></li><li><code>ObjectId.cast</code><span>objectid.js:269</span></li><li><code>new CastError</code><span>cast.js:39</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 81 · semantic_boundary</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues:78</span></li><li><code>&lt;anonymous&gt;</code><span>index.js:369</span></li><li><code>model.Query._wrappedThunk [as _findOne]</code><span>wrapThunk.js:16</span></li><li><code>model.Query.&lt;anonymous&gt;</code><span>query.js:2117</span></li><li><code>model.Query.Query._castConditions</code><span>query.js:1862</span></li><li><code>model.Query.Query.cast</code><span>query.js:4690</span></li><li><code>cast</code><span>cast.js:315</span></li><li><code>ObjectId.SchemaType.castForQueryWrapper</code><span>schematype.js:1393</span></li><li><code>ObjectId.SchemaType.castForQuery</code><span>schematype.js:1414</span></li><li><code>ObjectId.SchemaType._castForQuery</code><span>schematype.js:1424</span></li><li><code>ObjectId.SchemaType.applySetters</code><span>schematype.js:1010</span></li><li><code>ObjectId.cast</code><span>objectid.js:269</span></li><li><code>new CastError</code><span>cast.js:39</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 81 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>81 → 43</code></a></nav>
+          <section class="stack observed" id="join-1-record-81"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 81 · semantic_boundary</span><span class="record-instance">实例首次见于记录 43</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues:78</span></li><li><code>&lt;anonymous&gt;</code><span>index.js:369</span></li><li><code>model.Query._wrappedThunk [as _findOne]</code><span>wrapThunk.js:16</span></li><li><code>model.Query.&lt;anonymous&gt;</code><span>query.js:2117</span></li><li><code>model.Query.Query._castConditions</code><span>query.js:1862</span></li><li><code>model.Query.Query.cast</code><span>query.js:4690</span></li><li><code>cast</code><span>cast.js:315</span></li><li><code>ObjectId.SchemaType.castForQueryWrapper</code><span>schematype.js:1393</span></li><li><code>ObjectId.SchemaType.castForQuery</code><span>schematype.js:1414</span></li><li><code>ObjectId.SchemaType._castForQuery</code><span>schematype.js:1424</span></li><li><code>ObjectId.SchemaType.applySetters</code><span>schematype.js:1010</span></li><li><code>ObjectId.cast</code><span>objectid.js:269</span></li><li><code>new CastError</code><span>cast.js:39</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-43">记录 43</a><span aria-hidden="true">→</span><a href="#join-1-record-81">记录 81</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 43 → 81</code></p>
+        </aside><section class="stack " id="join-1-record-43"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 43</span><span class="record-instance">实例首次见于记录 43</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>run_main_module:17</span></li><li><code>Function.executeUserEntryPoint [as runMain]</code><span>run_main:81</span></li><li><code>Function.Module._load</code><span>loader:822</span></li><li><code>Module.load</code><span>loader:981</span></li><li><code>Object.Module._extensions..js</code><span>loader:1153</span></li><li><code>Module._compile</code><span>loader:1101</span></li><li><code>Object.&lt;anonymous&gt;</code><span>queries.cjs:7</span></li><li><code>Promise.catch (&lt;anonymous&gt;)</code></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
         </div>
       </div>
       </section>

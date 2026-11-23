@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import re
 
-from copy_text import ISSUE_KINDS
+from copy_text import CASE_LANGUAGES, FIX_STATES, ISSUE_KINDS
 
 
 HERE = Path(__file__).resolve().parents[1]
@@ -19,6 +19,7 @@ PARENT_WITNESSES = {
     "scheduled-handle-running-at-task-creation", "actual-rpc-handler-and-submitted-work-item",
     "same-dequeued-request-in-work-item", "buffered-result-object", "stored-exception-object-handoff",
     "same-frozen-result-object", "same-singleflight-call-result-channel", "same-pool-holder-release-future",
+    "same-batch-request-future",
 }
 CREATE = {"create", "creation"}
 OBSERVATION = {"sample", "cpu_sample", "diagnostic_stacktrace", "task_snapshot"}
@@ -267,6 +268,12 @@ def main():
         kind = review.get("kind")
         if kind not in ISSUE_KINDS:
             raise ValueError(f"{identifier}: expected a reviewed issue type")
+        language = review.get("language")
+        if language not in CASE_LANGUAGES:
+            raise ValueError(f"{identifier}: expected a reviewed case language")
+        fix = review.get("fix")
+        if fix and (fix.get("state") not in FIX_STATES or not fix.get("url", "").startswith("https://github.com/")):
+            raise ValueError(f"{identifier}: invalid fix evidence")
         if review.get("case_file"):
             row = read_json(workspace / review["case_file"])
             if row["id"] != identifier:
@@ -298,6 +305,8 @@ def main():
             "url": item["url"],
             "upstream_reference": upstream_reference,
             "kind": kind,
+            "language": language,
+            "fix": fix,
             "reproduction": evidence["reproduction"],
             "diagnosis": evidence["diagnosis"],
             "findings": findings,

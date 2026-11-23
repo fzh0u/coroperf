@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>问题类型</dt><dd>性能问题</dd></div>
           <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>上游修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Go</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
         </dl>
@@ -52,44 +54,44 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
         <div class="join-contribution"><h3>拼接补回了什么</h3><p>用补拨信号在同一通道中的 FIFO 顺序和实际拨号区间，将两条相同的拨号栈分别接回丢弃连接的调用者。</p></div>
-        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
         <p class="provenance">观测记录 3</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 3</code></a></nav>
-          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:174</span></li><li><code>main.discardProfile</code><span>replay.go:86</span></li><li><code>main.discard</code><span>replay.go:81</span></li><li><code>database/sql.(*Conn).Raw</code><span>sql.go:2056</span></li><li><code>database/sql.(*Conn).Raw.func1</code><span>sql.go:2051</span></li><li><code>database/sql.(*Conn).closemuRUnlockCondReleaseConn</code><span>sql.go:2082</span></li><li><code>database/sql.(*Conn).close</code><span>sql.go:2100</span></li><li><code>database/sql.(*driverConn).releaseConn</code><span>sql.go:528</span></li><li><code>database/sql.(*DB).putConn</code><span>sql.go:1478</span></li><li><code>database/sql.(*driverConn).Close</code><span>sql.go:624</span></li><li><code>database/sql.(*driverConn).finalClose</code><span>sql.go:651</span></li><li><code>database/sql.(*DB).maybeOpenNewConnections</code><span>sql.go:1213</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-3">记录 3</a></p>
-          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
-          <p>采样落在一次拨号区间内。对应的接收和发送在同一个 opener 通道上处于相同的 FIFO 队列位置。</p>
-          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 3</code></p>
-        </aside><section class="stack observed" id="join-1-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:140</span></li><li><code>database/sql.OpenDB</code><span>sql.go:794</span></li><li><code>created by database/sql.OpenDB</code><span>sql.go:792</span></li><li><code>database/sql.(*DB).connectionOpener</code><span>sql.go:1225</span></li><li><code>database/sql.(*DB).openNewConnection</code><span>sql.go:1236</span></li><li><code>main.(*gatedConnector).Connect</code><span>replay.go:39</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:140</span></li><li><code>database/sql.OpenDB</code><span>sql.go:794</span></li><li><code>created by database/sql.OpenDB</code><span>sql.go:792</span></li><li><code>database/sql.(*DB).connectionOpener</code><span>sql.go:1225</span></li><li><code>database/sql.(*DB).openNewConnection</code><span>sql.go:1236</span></li><li><code>main.(*gatedConnector).Connect</code><span>replay.go:39</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
         </div>
-      </div><details class="extra more-trace"><summary>观测记录 6</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>1 → 6</code></a></nav>
-          <section class="stack " id="join-2-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:174</span></li><li><code>main.discardInventory</code><span>replay.go:89</span></li><li><code>main.discard</code><span>replay.go:81</span></li><li><code>database/sql.(*Conn).Raw</code><span>sql.go:2056</span></li><li><code>database/sql.(*Conn).Raw.func1</code><span>sql.go:2051</span></li><li><code>database/sql.(*Conn).closemuRUnlockCondReleaseConn</code><span>sql.go:2082</span></li><li><code>database/sql.(*Conn).close</code><span>sql.go:2100</span></li><li><code>database/sql.(*driverConn).releaseConn</code><span>sql.go:528</span></li><li><code>database/sql.(*DB).putConn</code><span>sql.go:1478</span></li><li><code>database/sql.(*driverConn).Close</code><span>sql.go:624</span></li><li><code>database/sql.(*driverConn).finalClose</code><span>sql.go:651</span></li><li><code>database/sql.(*DB).maybeOpenNewConnections</code><span>sql.go:1213</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-6">记录 6</a></p>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>3 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:140</span></li><li><code>database/sql.OpenDB</code><span>sql.go:794</span></li><li><code>created by database/sql.OpenDB</code><span>sql.go:792</span></li><li><code>database/sql.(*DB).connectionOpener</code><span>sql.go:1225</span></li><li><code>database/sql.(*DB).openNewConnection</code><span>sql.go:1236</span></li><li><code>main.(*gatedConnector).Connect</code><span>replay.go:39</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-3">记录 3</a></p>
           <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
           <p>采样落在一次拨号区间内。对应的接收和发送在同一个 opener 通道上处于相同的 FIFO 队列位置。</p>
-          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 6</code></p>
-        </aside><section class="stack observed" id="join-2-record-6"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 6</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:140</span></li><li><code>database/sql.OpenDB</code><span>sql.go:794</span></li><li><code>created by database/sql.OpenDB</code><span>sql.go:792</span></li><li><code>database/sql.(*DB).connectionOpener</code><span>sql.go:1225</span></li><li><code>database/sql.(*DB).openNewConnection</code><span>sql.go:1236</span></li><li><code>main.(*gatedConnector).Connect</code><span>replay.go:39</span></li></ol></section>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 3</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:174</span></li><li><code>main.discardProfile</code><span>replay.go:86</span></li><li><code>main.discard</code><span>replay.go:81</span></li><li><code>database/sql.(*Conn).Raw</code><span>sql.go:2056</span></li><li><code>database/sql.(*Conn).Raw.func1</code><span>sql.go:2051</span></li><li><code>database/sql.(*Conn).closemuRUnlockCondReleaseConn</code><span>sql.go:2082</span></li><li><code>database/sql.(*Conn).close</code><span>sql.go:2100</span></li><li><code>database/sql.(*driverConn).releaseConn</code><span>sql.go:528</span></li><li><code>database/sql.(*DB).putConn</code><span>sql.go:1478</span></li><li><code>database/sql.(*driverConn).Close</code><span>sql.go:624</span></li><li><code>database/sql.(*driverConn).finalClose</code><span>sql.go:651</span></li><li><code>database/sql.(*DB).maybeOpenNewConnections</code><span>sql.go:1213</span></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>观测记录 6</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 6</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:140</span></li><li><code>database/sql.OpenDB</code><span>sql.go:794</span></li><li><code>created by database/sql.OpenDB</code><span>sql.go:792</span></li><li><code>database/sql.(*DB).connectionOpener</code><span>sql.go:1225</span></li><li><code>database/sql.(*DB).openNewConnection</code><span>sql.go:1236</span></li><li><code>main.(*gatedConnector).Connect</code><span>replay.go:39</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 6 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>6 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-6"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 6</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:140</span></li><li><code>database/sql.OpenDB</code><span>sql.go:794</span></li><li><code>created by database/sql.OpenDB</code><span>sql.go:792</span></li><li><code>database/sql.(*DB).connectionOpener</code><span>sql.go:1225</span></li><li><code>database/sql.(*DB).openNewConnection</code><span>sql.go:1236</span></li><li><code>main.(*gatedConnector).Connect</code><span>replay.go:39</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-6">记录 6</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采样落在一次拨号区间内。对应的接收和发送在同一个 opener 通道上处于相同的 FIFO 队列位置。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 6</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:174</span></li><li><code>main.discardInventory</code><span>replay.go:89</span></li><li><code>main.discard</code><span>replay.go:81</span></li><li><code>database/sql.(*Conn).Raw</code><span>sql.go:2056</span></li><li><code>database/sql.(*Conn).Raw.func1</code><span>sql.go:2051</span></li><li><code>database/sql.(*Conn).closemuRUnlockCondReleaseConn</code><span>sql.go:2082</span></li><li><code>database/sql.(*Conn).close</code><span>sql.go:2100</span></li><li><code>database/sql.(*driverConn).releaseConn</code><span>sql.go:528</span></li><li><code>database/sql.(*DB).putConn</code><span>sql.go:1478</span></li><li><code>database/sql.(*driverConn).Close</code><span>sql.go:624</span></li><li><code>database/sql.(*driverConn).finalClose</code><span>sql.go:651</span></li><li><code>database/sql.(*DB).maybeOpenNewConnections</code><span>sql.go:1213</span></li></ol></section>
         </div>
       </div></details>
       </section>

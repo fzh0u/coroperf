@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="哪个接收协程解除 TokenizerWorker 的暂停或继续等待？">
+  <title>sgl-project/sglang #39689 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/sgl-project--sglang--39689.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/sgl-project--sglang--39689.html" lang="en" hreflang="en">English</a><a href="sgl-project--sglang--39689.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">sgl-project/sglang #39689</p>
+        <h1>哪个接收协程解除 TokenizerWorker 的暂停或继续等待？</h1>
+        <div class="case-links"><a href="https://github.com/sgl-project/sglang/issues/39689">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>功能故障与正确性问题</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd><a href="https://github.com/sgl-project/sglang/pull/39693">候选修复已做本地对照 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>根据对照推断</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>用同一个 Future 将暂停或继续请求接到实际处理广播的任务，再从两个处理栈接回 initialize 创建接收循环的位置。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 20</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 20 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>receive</code><span>worker_report.py:20</span></li><li><code>_apply_pause_continue_broadcast</code><span>multi_tokenizer_mixin.py:727</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 20 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>20 → 11</code></a><a href="#join-1-point-1">拼接点 1 <code>11 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-20"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 20 · semantic_boundary</span><span class="record-instance">实例首次见于记录 11</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>receive</code><span>worker_report.py:20</span></li><li><code>_apply_pause_continue_broadcast</code><span>multi_tokenizer_mixin.py:727</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-11">记录 11</a><span aria-hidden="true">→</span><a href="#join-1-record-20">记录 20</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 11 → 20</code></p>
+        </aside><section class="stack " id="join-1-record-11"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 11</span><span class="record-instance">实例首次见于记录 11</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>attached</code><span>observe_sgl.py:13</span></li><li><code>main</code><span>worker_report.py:70</span></li><li><code>check</code><span>worker_report.py:40</span></li><li><code>initialize</code><span>worker_report.py:26</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-11">记录 11</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 11 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>attached</code><span>observe_sgl.py:12</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 44</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 44 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>receive</code><span>worker_report.py:20</span></li><li><code>_apply_pause_continue_broadcast</code><span>multi_tokenizer_mixin.py:727</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 44 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>44 → 35</code></a><a href="#join-2-point-1">拼接点 1 <code>35 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-44"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 44 · semantic_boundary</span><span class="record-instance">实例首次见于记录 35</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>receive</code><span>worker_report.py:20</span></li><li><code>_apply_pause_continue_broadcast</code><span>multi_tokenizer_mixin.py:727</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-35">记录 35</a><span aria-hidden="true">→</span><a href="#join-2-record-44">记录 44</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 35 → 44</code></p>
+        </aside><section class="stack " id="join-2-record-35"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 35</span><span class="record-instance">实例首次见于记录 35</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>attached</code><span>observe_sgl.py:13</span></li><li><code>main</code><span>worker_report.py:70</span></li><li><code>check</code><span>worker_report.py:40</span></li><li><code>initialize</code><span>worker_report.py:26</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-35">记录 35</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 35 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>attached</code><span>observe_sgl.py:12</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>SGLang 0.5.19 在原帖的组件实验中，冷启动时暂停和继续操作都超时，各留下一个未消费的广播。预先启动接收循环后，两项都能完成。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>记录 15 与 20、39 与 44 分别看到同一个 Future，连接了挂起的控制请求和处理广播的接收任务。接收执行栈再从 20 接回 11、从 44 接回 35，找到 initialize 创建接收循环的位置。冷启动记录 4 和 28 有未完成的 Future，且尚未设置事件循环。只替换两个控制方法为 PR 版本后，冷启动也能初始化接收循环。</dd></div><div><dt>适用范围与局限</dt><dd>CPU 局部实验使用实际的 TokenizerWorker 暂停、继续和广播处理方法，以内存队列和模拟接收循环代替完整服务。PR 的两个方法分别测试了冷启动和已初始化状态。原 Issue 因不活跃关闭，修复 PR 仍开放。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

@@ -1,6 +1,8 @@
 """English and Simplified Chinese text for the static atlas."""
 
 ISSUE_KINDS = ("functional", "performance", "profiling", "debugging")
+CASE_LANGUAGES = ("Python", "Go", "Rust", "Java", "C++", "C#", "JavaScript / TypeScript", "Kotlin", "Scala", "Dart")
+FIX_STATES = ("verified", "merged", "proposed", "guidance", "workaround")
 
 LABELS = {
     "atlas": ("Coroutine Evidence Atlas", "协程证据图谱"),
@@ -23,6 +25,16 @@ LABELS = {
     "tracker_unconfirmed_count": ("{count} unconfirmed", "{count} 个待核对"),
     "tracker_checked": ("Checked {time}", "核对时间 {time}"),
     "tracker_data": ("Download upstream status data", "下载上游状态数据"),
+    "fix_status": ("Upstream fix evidence", "上游修复证据"),
+    "fix_verified": ("Fixed in a tested comparison", "已在修复对照中验证"),
+    "fix_merged": ("Upstream change merged", "上游修复已合并"),
+    "fix_proposed": ("Proposed fix tested locally", "候选修复已做本地对照"),
+    "fix_guidance": ("Upstream documentation updated", "上游已更新文档"),
+    "fix_workaround": ("Application workaround tested locally", "应用侧替代方案已在本地验证"),
+    "fix_unconfirmed": ("Fix unconfirmed", "修复待核实"),
+    "case_language": ("Case language", "案例语言"),
+    "language_coverage": ("Language coverage", "语言覆盖"),
+    "any_case_language": ("All case languages", "全部案例语言"),
     "followup": ("Follow-up evidence ↗", "上游后续证据 ↗"),
     "reproduction": ("Reproduction", "复现范围"),
     "diagnosis": ("Diagnosis", "诊断依据"),
@@ -98,6 +110,10 @@ LABELS = {
         "The recorded graph identifies the asynchronous parent of this creation record.",
         "采集图记录了这条创建记录对应的异步父级。",
     ),
+    "batch_input_proof": (
+        "The batch holds the exact Future created by this request, at the same position as its input.",
+        "批次中保存的正是该请求创建的 Future，它和请求输入位于同一位置。",
+    ),
     "result_dependency_proof": (
         "DoChan registers the reader's exact result channel on the same singleflight call used by the producer. That call links the waiter to the producer's original launcher.",
         "DoChan 把等待者实际使用的结果通道登记到生产者执行的同一个 singleflight 调用。沿这个调用可以找到生产者的原始发起者。",
@@ -165,13 +181,16 @@ LABELS = {
     "join_tokio": ("Spawn → helper execution", "任务创建 → 任务体执行"),
     "join_parent": ("Creator → child creation", "创建者 → 子协程创建"),
     "join_async_parent": ("Async parent → child creation", "异步父级 → 子协程创建"),
+    "join_batch_input": ("Request creation → batch submission", "请求创建 → 批处理提交"),
+    "batch_submission_stack": ("Batch submission stack", "批处理提交栈"),
+    "batch_request_stack": ("Request creation stack", "请求创建栈"),
     "join_result_dependency": ("Producer launch → reader's result dependency", "生产者发起点 → 等待者的结果依赖"),
     "join_release_dependency": ("Connection acquisition → shutdown wait", "连接获取 → 关闭等待"),
     "edge": ("Graph edge", "采集图边"),
     "identity": ("Identity check", "身份核对"),
     "join_guide": (
-        "Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.",
-        "栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。",
+        "Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.",
+        "先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。",
     ),
     "observation_number": ("Observation {id}", "观测记录 {id}"),
     "suspended_duration": ("Suspended for {ms} ms", "挂起 {ms} 毫秒"),

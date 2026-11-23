@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
           <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>JavaScript / TypeScript</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>根据对照推断</dd></div>
         </dl>
@@ -52,44 +54,44 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
         <div class="join-contribution"><h3>拼接补回了什么</h3><p>用 Promise 和计时器身份核对超时现场，找出触发连接阶段时限的发起者。</p></div>
-        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
         <p class="provenance">观测记录 11</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>10 → 11</code></a></nav>
-          <section class="stack " id="join-1-record-10"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 10</span><span class="record-instance">实例首次见于记录 10</span></div><ol class="frames"><li><code>Object.downloadArtifact</code><span>index.js:65</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-1-record-10">记录 10</a><span aria-hidden="true">→</span><a href="#join-1-record-11">记录 11</a></p>
-          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
-
-          <p class="join-verification">采集图边 <code>base_to_sample · 10 → 11</code></p>
-        </aside><section class="stack observed" id="join-1-record-11"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 11 · running_sdk_await_continuation</span><span class="record-instance">实例首次见于记录 10</span></div><ol class="frames"><li><code>Object.downloadArtifact</code><span>index.js:117</span></li><li><code>promiseResolveHook</code><span>async_hooks:364</span></li><li><code>emitHook</code><span>async_hooks:235</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 11 · running_sdk_await_continuation</span></div><ol class="frames"><li><code>Object.downloadArtifact</code><span>index.js:117</span></li><li><code>promiseResolveHook</code><span>async_hooks:364</span></li><li><code>emitHook</code><span>async_hooks:235</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 11 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
         </div>
-      </div><details class="extra more-trace"><summary>观测记录 1</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>0 → 1</code></a></nav>
-          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>ClientRequest.&lt;anonymous&gt;</code><span>timed-out.js:84</span></li><li><code>timeConnect</code><span>timed-out.js:82</span></li><li><code>addTimeout</code><span>timed-out.js:26</span></li><li><code>setTimeout</code><span>node:timers:164</span></li><li><code>new Timeout</code><span>timers:198</span></li><li><code>initAsyncResource</code><span>timers:164</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-1">记录 1</a></p>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>11 → 10</code></a></nav>
+          <section class="stack observed" id="join-1-record-11"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 11 · running_sdk_await_continuation</span><span class="record-instance">实例首次见于记录 10</span></div><ol class="frames"><li><code>Object.downloadArtifact</code><span>index.js:117</span></li><li><code>promiseResolveHook</code><span>async_hooks:364</span></li><li><code>emitHook</code><span>async_hooks:235</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-10">记录 10</a><span aria-hidden="true">→</span><a href="#join-1-record-11">记录 11</a></p>
           <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
 
-          <p class="join-verification">采集图边 <code>base_to_sample · 0 → 1</code></p>
-        </aside><section class="stack observed" id="join-2-record-1"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1 · running_timer_at_request_destroy</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>process.processTimers</code><span>timers:512</span></li><li><code>listOnTimeout</code><span>timers:571</span></li><li><code>Timeout.timeoutHandler [as _onTimeout]</code><span>timed-out.js:36</span></li></ol></section>
+          <p class="join-verification">采集图边 <code>base_to_sample · 10 → 11</code></p>
+        </aside><section class="stack " id="join-1-record-10"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 10</span><span class="record-instance">实例首次见于记录 10</span></div><ol class="frames"><li><code>Object.downloadArtifact</code><span>index.js:65</span></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>观测记录 1</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1 · running_timer_at_request_destroy</span></div><ol class="frames"><li><code>process.processTimers</code><span>timers:512</span></li><li><code>listOnTimeout</code><span>timers:571</span></li><li><code>Timeout.timeoutHandler [as _onTimeout]</code><span>timed-out.js:36</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 1 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-1"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1 · running_timer_at_request_destroy</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>process.processTimers</code><span>timers:512</span></li><li><code>listOnTimeout</code><span>timers:571</span></li><li><code>Timeout.timeoutHandler [as _onTimeout]</code><span>timed-out.js:36</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-1">记录 1</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 0 → 1</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>ClientRequest.&lt;anonymous&gt;</code><span>timed-out.js:84</span></li><li><code>timeConnect</code><span>timed-out.js:82</span></li><li><code>addTimeout</code><span>timed-out.js:26</span></li><li><code>setTimeout</code><span>node:timers:164</span></li><li><code>new Timeout</code><span>timers:198</span></li><li><code>initAsyncResource</code><span>timers:164</span></li></ol></section>
         </div>
       </div></details>
       </section>

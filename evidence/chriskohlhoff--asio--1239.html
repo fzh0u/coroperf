@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
           <div><dt>Upstream status</dt><dd>Open</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>C++</dd></div>
           <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
           <div><dt>Diagnosis</dt><dd>Direct</dd></div>
         </dl>
@@ -52,58 +54,58 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
         <div class="join-contribution"><h3>What stitching revealed</h3><p>Asio&#x27;s live awaiter chain ends at the detached entry. Instruction dataflow recovers the timer&#x27;s active instance, and its two recorded creation edges lead back to launch_profile or launch_inventory.</p></div>
-        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
         <p class="provenance">Observation 15</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 5</code></a><a href="#join-1-point-2">Join point 2 <code>5 → 15</code></a></nav>
-          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>launch_profile</code><span>detached.cpp:39</span></li><li><code>boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;* std::__exchange&lt;boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;*, decltype</code><span>move.h:159</span></li><li><code>async_b</code><span>detached.cpp:27</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
-          <p class="join-records"><a href="#join-1-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-1-record-5">Record 5</a></p>
-          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
-
-          <p class="join-verification">Graph edge <code>coroutine_created_by · 5 → 1</code></p>
-        </aside><section class="stack " id="join-1-record-5"><div class="stack-head"><h4>Creation stack</h4><span>Record 5</span><span class="record-instance">Instance from record 5</span></div><ol class="frames"><li><code>boost::asio::detail::awaitable_frame_base&lt;boost::asio::any_io_executor&gt;::resume</code><span>awaitable.hpp:502</span></li><li><code>async_b</code><span>detached.cpp:29</span></li><li><code>async_c</code><span>detached.cpp:18</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-1-record-5">Record 5</a><span aria-hidden="true">→</span><a href="#join-1-record-15">Record 15</a></p>
-          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
-          <p>Machine-code dataflow recovers the resume function's frame argument from registers and stack bytes. The frame matches a live coroutine instance recorded at creation.</p>
-          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 5 → 15</code></p>
-        </aside><section class="stack observed" id="join-1-record-15"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 15 · selected-native-boundary</span><span class="record-instance">Instance from record 5</span></div><ol class="frames"><li><code>async_c</code><span>stdio2.h:112</span></li><li><code>after_timer_sample</code><span>detached.cpp:10</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 15 · selected-native-boundary</span></div><ol class="frames"><li><code>async_c</code><span>stdio2.h:112</span></li><li><code>after_timer_sample</code><span>detached.cpp:10</span></li></ol></section>
           <p class="small trace-note">Frames from record 15 alone. Each stack block lists frames from caller to callee.</p>
         </div>
-      </div><details class="extra more-trace"><summary>Observation 10</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>3 → 7</code></a><a href="#join-2-point-2">Join point 2 <code>7 → 10</code></a></nav>
-          <section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>launch_inventory</code><span>detached.cpp:44</span></li><li><code>boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;* std::__exchange&lt;boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;*, decltype</code><span>move.h:159</span></li><li><code>async_b</code><span>detached.cpp:27</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
-          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-7">Record 7</a></p>
-          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
-
-          <p class="join-verification">Graph edge <code>coroutine_created_by · 7 → 3</code></p>
-        </aside><section class="stack " id="join-2-record-7"><div class="stack-head"><h4>Creation stack</h4><span>Record 7</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>boost::asio::detail::awaitable_frame_base&lt;boost::asio::any_io_executor&gt;::resume</code><span>awaitable.hpp:502</span></li><li><code>async_b</code><span>detached.cpp:29</span></li><li><code>async_c</code><span>detached.cpp:18</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-2-record-7">Record 7</a><span aria-hidden="true">→</span><a href="#join-2-record-10">Record 10</a></p>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>15 → 5</code></a><a href="#join-1-point-1">Join point 1 <code>5 → 1</code></a></nav>
+          <section class="stack observed" id="join-1-record-15"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 15 · selected-native-boundary</span><span class="record-instance">Instance from record 5</span></div><ol class="frames"><li><code>async_c</code><span>stdio2.h:112</span></li><li><code>after_timer_sample</code><span>detached.cpp:10</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-5">Record 5</a><span aria-hidden="true">→</span><a href="#join-1-record-15">Record 15</a></p>
           <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
           <p>Machine-code dataflow recovers the resume function's frame argument from registers and stack bytes. The frame matches a live coroutine instance recorded at creation.</p>
-          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 7 → 10</code></p>
-        </aside><section class="stack observed" id="join-2-record-10"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 10 · selected-native-boundary</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>async_c</code><span>stdio2.h:112</span></li><li><code>after_timer_sample</code><span>detached.cpp:10</span></li></ol></section>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 5 → 15</code></p>
+        </aside><section class="stack " id="join-1-record-5"><div class="stack-head"><h4>Creation stack</h4><span>Record 5</span><span class="record-instance">Instance from record 5</span></div><ol class="frames"><li><code>boost::asio::detail::awaitable_frame_base&lt;boost::asio::any_io_executor&gt;::resume</code><span>awaitable.hpp:502</span></li><li><code>async_b</code><span>detached.cpp:29</span></li><li><code>async_c</code><span>detached.cpp:18</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-1-record-5">Record 5</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 5 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>launch_profile</code><span>detached.cpp:39</span></li><li><code>boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;* std::__exchange&lt;boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;*, decltype</code><span>move.h:159</span></li><li><code>async_b</code><span>detached.cpp:27</span></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>Observation 10</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 10 · selected-native-boundary</span></div><ol class="frames"><li><code>async_c</code><span>stdio2.h:112</span></li><li><code>after_timer_sample</code><span>detached.cpp:10</span></li></ol></section>
           <p class="small trace-note">Frames from record 10 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>10 → 7</code></a><a href="#join-2-point-1">Join point 1 <code>7 → 3</code></a></nav>
+          <section class="stack observed" id="join-2-record-10"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 10 · selected-native-boundary</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>async_c</code><span>stdio2.h:112</span></li><li><code>after_timer_sample</code><span>detached.cpp:10</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-7">Record 7</a><span aria-hidden="true">→</span><a href="#join-2-record-10">Record 10</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>Machine-code dataflow recovers the resume function's frame argument from registers and stack bytes. The frame matches a live coroutine instance recorded at creation.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 7 → 10</code></p>
+        </aside><section class="stack " id="join-2-record-7"><div class="stack-head"><h4>Creation stack</h4><span>Record 7</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>boost::asio::detail::awaitable_frame_base&lt;boost::asio::any_io_executor&gt;::resume</code><span>awaitable.hpp:502</span></li><li><code>async_b</code><span>detached.cpp:29</span></li><li><code>async_c</code><span>detached.cpp:18</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-7">Record 7</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 7 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>launch_inventory</code><span>detached.cpp:44</span></li><li><code>boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;* std::__exchange&lt;boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;*, decltype</code><span>move.h:159</span></li><li><code>async_b</code><span>detached.cpp:27</span></li></ol></section>
         </div>
       </div></details>
       </section>

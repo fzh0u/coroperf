@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
           <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Dart</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
         </dl>
@@ -52,44 +54,44 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
         <div class="join-contribution"><h3>拼接补回了什么</h3><p>异步栈只能追到共享的拦截器链。CoroPerf 用同一个 Future 监听器回调对象，将每次执行接回发起它的功能入口。</p></div>
-        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
         <p class="provenance">观测记录 2</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 2</code></a></nav>
-          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>_RawReceivePort._handleMessage</code><span>isolate_patch.dart:192</span></li><li><code>_delayEntrypointInvocation.&lt;anonymous closure&gt;</code><span>isolate_patch.dart:311</span></li><li><code>main</code><span>interceptors.dart:19</span></li><li><code>featureB</code><span>interceptors.dart:34</span></li><li><code>testFuture</code><span>interceptors.dart:38</span></li><li><code>Future.forEach</code><span>future.dart:693</span></li><li><code>Future.doWhile</code><span>future.dart:770</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
-          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
-          <p>Dart 的 identical 确认，当前 Future 监听器持有的正是发起栈中记录的 nextIteration 回调对象。</p>
-          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 2</code></p>
-        </aside><section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>testFuture</code><span>interceptors.dart:38</span></li><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>doWhile.&lt;anonymous closure&gt;</code><span>future.dart:753</span></li><li><code>forEach.&lt;anonymous closure&gt;</code><span>future.dart:695</span></li><li><code>testFuture.&lt;anonymous closure&gt;</code><span>interceptors.dart:41</span></li><li><code>CInterceptor.onRequest</code><span>interceptors.dart:70</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2</span></div><ol class="frames"><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>testFuture</code><span>interceptors.dart:38</span></li><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>doWhile.&lt;anonymous closure&gt;</code><span>future.dart:753</span></li><li><code>forEach.&lt;anonymous closure&gt;</code><span>future.dart:695</span></li><li><code>testFuture.&lt;anonymous closure&gt;</code><span>interceptors.dart:41</span></li><li><code>CInterceptor.onRequest</code><span>interceptors.dart:70</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 2 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
         </div>
-      </div><details class="extra more-trace"><summary>观测记录 3</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>0 → 3</code></a></nav>
-          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>_RawReceivePort._handleMessage</code><span>isolate_patch.dart:192</span></li><li><code>_delayEntrypointInvocation.&lt;anonymous closure&gt;</code><span>isolate_patch.dart:311</span></li><li><code>main</code><span>interceptors.dart:19</span></li><li><code>featureA</code><span>interceptors.dart:30</span></li><li><code>testFuture</code><span>interceptors.dart:38</span></li><li><code>Future.forEach</code><span>future.dart:693</span></li><li><code>Future.doWhile</code><span>future.dart:770</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>2 → 1</code></a></nav>
+          <section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>testFuture</code><span>interceptors.dart:38</span></li><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>doWhile.&lt;anonymous closure&gt;</code><span>future.dart:753</span></li><li><code>forEach.&lt;anonymous closure&gt;</code><span>future.dart:695</span></li><li><code>testFuture.&lt;anonymous closure&gt;</code><span>interceptors.dart:41</span></li><li><code>CInterceptor.onRequest</code><span>interceptors.dart:70</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
           <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
           <p>Dart 的 identical 确认，当前 Future 监听器持有的正是发起栈中记录的 nextIteration 回调对象。</p>
-          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 3</code></p>
-        </aside><section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>testFuture</code><span>interceptors.dart:38</span></li><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>doWhile.&lt;anonymous closure&gt;</code><span>future.dart:753</span></li><li><code>forEach.&lt;anonymous closure&gt;</code><span>future.dart:695</span></li><li><code>testFuture.&lt;anonymous closure&gt;</code><span>interceptors.dart:41</span></li><li><code>CInterceptor.onRequest</code><span>interceptors.dart:70</span></li></ol></section>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>_RawReceivePort._handleMessage</code><span>isolate_patch.dart:192</span></li><li><code>_delayEntrypointInvocation.&lt;anonymous closure&gt;</code><span>isolate_patch.dart:311</span></li><li><code>main</code><span>interceptors.dart:19</span></li><li><code>featureB</code><span>interceptors.dart:34</span></li><li><code>testFuture</code><span>interceptors.dart:38</span></li><li><code>Future.forEach</code><span>future.dart:693</span></li><li><code>Future.doWhile</code><span>future.dart:770</span></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>观测记录 3</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span></div><ol class="frames"><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>testFuture</code><span>interceptors.dart:38</span></li><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>doWhile.&lt;anonymous closure&gt;</code><span>future.dart:753</span></li><li><code>forEach.&lt;anonymous closure&gt;</code><span>future.dart:695</span></li><li><code>testFuture.&lt;anonymous closure&gt;</code><span>interceptors.dart:41</span></li><li><code>CInterceptor.onRequest</code><span>interceptors.dart:70</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>3 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>testFuture</code><span>interceptors.dart:38</span></li><li><code>&lt;asynchronous suspension&gt;</code></li><li><code>doWhile.&lt;anonymous closure&gt;</code><span>future.dart:753</span></li><li><code>forEach.&lt;anonymous closure&gt;</code><span>future.dart:695</span></li><li><code>testFuture.&lt;anonymous closure&gt;</code><span>interceptors.dart:41</span></li><li><code>CInterceptor.onRequest</code><span>interceptors.dart:70</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>Dart 的 identical 确认，当前 Future 监听器持有的正是发起栈中记录的 nextIteration 回调对象。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>_RawReceivePort._handleMessage</code><span>isolate_patch.dart:192</span></li><li><code>_delayEntrypointInvocation.&lt;anonymous closure&gt;</code><span>isolate_patch.dart:311</span></li><li><code>main</code><span>interceptors.dart:19</span></li><li><code>featureA</code><span>interceptors.dart:30</span></li><li><code>testFuture</code><span>interceptors.dart:38</span></li><li><code>Future.forEach</code><span>future.dart:693</span></li><li><code>Future.doWhile</code><span>future.dart:770</span></li></ol></section>
         </div>
       </div></details>
       </section>

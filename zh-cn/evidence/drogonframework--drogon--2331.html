@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>问题类型</dt><dd>性能问题</dd></div>
           <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>上游修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>C++</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
         </dl>
@@ -52,39 +54,39 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
         <div class="join-contribution"><h3>拼接补回了什么</h3><p>两个请求入口都使用 shared_lookup。将停止现场归到具体协程后，沿创建关系可以确认卡住的是由 profile_entry 发起的请求。</p></div>
-        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
         <p class="provenance">观测记录 158</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>75 → 87</code></a><a href="#join-1-point-2">拼接点 2 <code>87 → 105</code></a><a href="#join-1-point-3">拼接点 3 <code>105 → 158</code></a></nav>
-          <section class="stack " id="join-1-record-75"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 75</span><span class="record-instance">实例首次见于记录 75</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
-          <p class="join-records"><a href="#join-1-record-75">记录 75</a><span aria-hidden="true">→</span><a href="#join-1-record-87">记录 87</a></p>
-          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
-
-          <p class="join-verification">采集图边 <code>coroutine_created_by · 87 → 75</code></p>
-        </aside><section class="stack " id="join-1-record-87"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 87</span><span class="record-instance">实例首次见于记录 87</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>profile_entry</code></li></ol></section>
-        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
-          <p class="join-records"><a href="#join-1-record-87">记录 87</a><span aria-hidden="true">→</span><a href="#join-1-record-105">记录 105</a></p>
-          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
-
-          <p class="join-verification">采集图边 <code>coroutine_created_by · 105 → 87</code></p>
-        </aside><section class="stack " id="join-1-record-105"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 105</span><span class="record-instance">实例首次见于记录 105</span></div><ol class="frames"><li><code>shared_lookup</code></li></ol></section>
-        <aside class="join-marker" id="join-1-point-3" aria-label="拼接点 3">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-3">拼接点 3</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-1-record-105">记录 105</a><span aria-hidden="true">→</span><a href="#join-1-record-158">记录 158</a></p>
-          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
-
-          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 105 → 158</code></p>
-        </aside><section class="stack observed" id="join-1-record-158"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 158 · stopped-native-thread</span><span class="record-instance">实例首次见于记录 105</span></div><ol class="frames"><li><code>[unknown]</code></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 158 · stopped-native-thread</span></div><ol class="frames"><li><code>[unknown]</code></li></ol></section>
           <p class="small trace-note">这里只显示记录 158 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-3">拼接点 3 <code>158 → 105</code></a><a href="#join-1-point-2">拼接点 2 <code>105 → 87</code></a><a href="#join-1-point-1">拼接点 1 <code>87 → 75</code></a></nav>
+          <section class="stack observed" id="join-1-record-158"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 158 · stopped-native-thread</span><span class="record-instance">实例首次见于记录 105</span></div><ol class="frames"><li><code>[unknown]</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-3" aria-label="拼接点 3">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-3">拼接点 3</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-105">记录 105</a><span aria-hidden="true">→</span><a href="#join-1-record-158">记录 158</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 105 → 158</code></p>
+        </aside><section class="stack " id="join-1-record-105"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 105</span><span class="record-instance">实例首次见于记录 105</span></div><ol class="frames"><li><code>shared_lookup</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-87">记录 87</a><span aria-hidden="true">→</span><a href="#join-1-record-105">记录 105</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 105 → 87</code></p>
+        </aside><section class="stack " id="join-1-record-87"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 87</span><span class="record-instance">实例首次见于记录 87</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li><li><code>profile_entry</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-75">记录 75</a><span aria-hidden="true">→</span><a href="#join-1-record-87">记录 87</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 87 → 75</code></p>
+        </aside><section class="stack " id="join-1-record-75"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 75</span><span class="record-instance">实例首次见于记录 75</span></div><ol class="frames"><li><code>void drogon::internal::HttpBinder&lt;drogon::Task&lt;std::shared_ptr&lt;drogon::HttpResponse&gt; &gt; </code></li></ol></section>
         </div>
       </div>
       </section>

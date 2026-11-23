@@ -7,7 +7,7 @@ from html import escape
 import json
 from pathlib import Path
 
-from copy_text import COPY, FEATURES, ISSUE_KINDS
+from copy_text import CASE_LANGUAGES, COPY, FEATURES, ISSUE_KINDS
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -124,6 +124,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "tokio": "task_proof",
         "parent": "parent_proof",
         "async_parent": "async_parent_proof",
+        "batch_input": "batch_input_proof",
         "result_dependency": "result_dependency_proof",
         "release_dependency": "release_dependency_proof",
     }[relation]
@@ -147,7 +148,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
     ) else ""
     return f"""
         <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#{prefix}-point-{number}">{text["join_number"].format(n=number)}</a><strong>{text[f"join_{relation}"]}</strong></div>
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#{prefix}-point-{number}">{text["join_number"].format(n=number)}</a><strong>{text[f"join_{relation}"]}</strong></div>
           <p class="join-records"><a href="#{prefix}-record-{source_id}">{record_label(source, text)}</a><span aria-hidden="true">→</span><a href="#{prefix}-record-{target_id}">{record_label(target, text)}</a></p>
           <p>{text[proof]}</p>
           {identity_detail}
@@ -158,15 +159,18 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
 def trace(join, number, text):
     creation, observation = join["creation"], join["observation"]
     ancestors = join["ancestors"]
-    origin_title = text["origin_stack"]
+    batch_submission = ancestors and ancestors[-1].get("link_evidence") == "same-batch-request-future"
+    origin_title = text["batch_submission_stack" if batch_submission else "origin_stack"]
     task_snapshot = observation["sample_kind"] == "task_snapshot"
     observation_title = text["task_snapshot" if task_snapshot else "execution_observation"]
     raw_title = text["raw_task_snapshot" if task_snapshot else "raw_stack"]
 
-    blocks = []
+    anchor = f'join-{number}-record-{escape(observation["id"])}'
+    blocks = [stack(observation, observation_title, text, anchor, "observed")]
     links = []
     path = [*ancestors, creation, observation]
-    for index, (parent, child) in enumerate(zip(path, path[1:]), start=1):
+    for index in range(len(path) - 1, 0, -1):
+        parent, child = path[index - 1:index + 1]
         ancestor_link = index <= len(ancestors)
         kind = parent["link_to_child"] if ancestor_link else join["edge"]
         identity = parent.get("link_evidence") if ancestor_link else join.get("identity_kind")
@@ -177,6 +181,9 @@ def trace(join, number, text):
         elif ancestor_link and identity == "same-pool-holder-release-future":
             relation = "release_dependency"
             title = text["acquiring_task_stack"]
+        elif ancestor_link and identity == "same-batch-request-future":
+            relation = "batch_input"
+            title = text["batch_request_stack"]
         elif ancestor_link:
             relation = "async_parent" if kind == "parent_to_create" else "parent"
             title = text["async_ancestor_stack" if relation == "async_parent" else "ancestor_stack"]
@@ -186,28 +193,26 @@ def trace(join, number, text):
         else:
             title = origin_title
             relation = "tokio" if kind == "runtime_task_id" else "creation"
-        blocks.append(stack(parent, title, text, anchor))
         if relation == "creation" and join.get("interval_attribution") and identity not in {"live-child-node", "go-opener-signal"}:
             identity = "execution-interval"
         blocks.append(join_marker(parent, child, kind, relation, number, index, text, identity))
+        blocks.append(stack(parent, title, text, anchor))
         label = text["join_number"].format(n=index)
         links.append(f'<a href="#join-{number}-point-{index}">{label} '
-                     f'<code>{escape(parent["id"])} → {escape(child["id"])}</code></a>')
-    anchor = f'join-{number}-record-{escape(observation["id"])}'
-    blocks.append(stack(observation, observation_title, text, anchor, "observed"))
+                     f'<code>{escape(child["id"])} → {escape(parent["id"])}</code></a>')
 
     original = {key: value for key, value in observation.items() if key != "instance"}
     return f"""
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>{text["connected"]}</h3>
-          <nav class="join-links" aria-label="{text["jump_joins"]}">{"".join(links)}</nav>
-          {"".join(blocks)}
-        </div>
         <div class="trace-pane">
           <h3>{raw_title}</h3>
           {stack(original, observation_title, text, extra_class="observed")}
           <p class="small trace-note">{text["raw_note"].format(id=escape(original["id"]))}</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>{text["connected"]}</h3>
+          <nav class="join-links" aria-label="{text["jump_joins"]}">{"".join(links)}</nav>
+          {"".join(blocks)}
         </div>
       </div>"""
 
@@ -233,8 +238,12 @@ def case_page(case, language):
     content = "".join(displays)
 
     source = ""
-    if case["upstream_reference"] and case["upstream_reference"] != case["url"]:
+    fix = case["fix"] or {}
+    if case["upstream_reference"] and case["upstream_reference"] not in {case["url"], fix.get("url")}:
         source = f'<a href="{escape(case["upstream_reference"])}">{text["followup"]}</a>'
+    fix_label = text["fix_" + fix.get("state", "unconfirmed")]
+    if fix:
+        fix_label = f'<a href="{escape(fix["url"])}">{fix_label} ↗</a>'
     data = case["findings_zh"] if language == "zh-CN" else case["findings"]
     findings = "".join(
         f'<div><dt>{text[key]}</dt><dd>{escape(data[key])}</dd></div>'
@@ -250,6 +259,8 @@ def case_page(case, language):
         <dl class="case-status">
           <div><dt>{text["issue_kind"]}</dt><dd>{text[case["kind"]]}</dd></div>
           <div><dt>{text["tracker_status"]}</dt><dd>{text["tracker_" + case["tracker_status"]]}</dd></div>
+          <div><dt>{text["fix_status"]}</dt><dd>{fix_label}</dd></div>
+          <div><dt>{text["case_language"]}</dt><dd>{escape(case["language"])}</dd></div>
           <div><dt>{text["reproduction"]}</dt><dd>{text[case["reproduction"]]}</dd></div>
           <div><dt>{text["diagnosis"]}</dt><dd>{text[case["diagnosis"]]}</dd></div>
         </dl>
@@ -282,8 +293,8 @@ def table_row(case, text, language):
     state = case["tracker_status"]
     other_language = "en" if language == "zh-CN" else "zh-CN"
     return f"""
-      <tr data-scope="{scope}" data-kind="{escape(case["kind"])}" data-tracker-status="{state}" data-title-alt="{escape(case_title(case, other_language))}">
-        <th scope="row"><a href="evidence/{escape(case["id"])}.html"><span>{escape(case["reference"])}</span>{escape(case_title(case, language))}</a><small class="case-kind">{text[case["kind"]]} · {text["tracker_" + state]}</small></th>
+      <tr data-scope="{scope}" data-kind="{escape(case["kind"])}" data-tracker-status="{state}" data-case-language="{escape(case["language"])}" data-title-alt="{escape(case_title(case, other_language))}">
+        <th scope="row"><a href="evidence/{escape(case["id"])}.html"><span>{escape(case["reference"])}</span>{escape(case_title(case, language))}</a><small class="case-kind">{text[case["kind"]]} · {escape(case["language"])} · {text["tracker_" + state]}</small></th>
         <td>{escape(contribution(case, language))}</td><td>{text[case["reproduction"]]}</td>
       </tr>"""
 
@@ -335,6 +346,10 @@ def index_page(snapshot, language):
         (sum(len(join["ancestors"]) + 1 for join in joins), "stat_joins"),
     ]
     numbers = "".join(f"<div><dd>{count:,}</dd><dt>{text[key]}</dt></div>" for count, key in stats)
+    language_counts = Counter(case["language"] for case in cases)
+    coverage = "".join(f'<div><dt>{escape(name)}</dt><dd>{language_counts[name]}</dd></div>'
+                       for name in CASE_LANGUAGES if name in language_counts)
+    language_options = "".join(f'<option>{escape(name)}</option>' for name in CASE_LANGUAGES if name in language_counts)
     options = "".join(f'<option value="{key}">{text[key]}</option>' for key in SCOPES)
     issue_types = "".join(f'<option value="{key}">{text[key]}</option>' for key in ISSUE_KINDS)
     tracker_states = "".join(f'<option value="{state}">{text["tracker_" + state]}</option>' for state in TRACKER_STATES)
@@ -358,9 +373,9 @@ def index_page(snapshot, language):
       <figure class="specimen">
         <figcaption><span>{text["specimen"]}</span><a href="evidence/dotnet--runtime--60764.html#join-1-point-1">dotnet/runtime #60764 ↗</a></figcaption>
         <div class="specimen-body">
-          <div class="specimen-block"><span>{text["create"]} · {record_label(example["creation"], text)}</span><code>{escape(top)}</code><code>{escape(example["creation"]["frames"][-1]["function"])}</code></div>
-          <div class="specimen-edge">↓ &nbsp; {text["specimen_join"]}</div>
           <div class="specimen-block"><span>{text["sample"]} · {record_label(example["observation"], text)}</span><code>Program.Foo [MoveNext]</code><code>{escape(leaf)}</code></div>
+          <div class="specimen-edge">↑ &nbsp; {text["specimen_join"]}</div>
+          <div class="specimen-block"><span>{text["create"]} · {record_label(example["creation"], text)}</span><code>{escape(top)}</code><code>{escape(example["creation"]["frames"][-1]["function"])}</code></div>
         </div>
         <div class="specimen-foot">{text["specimen_foot"]}</div>
       </figure>
@@ -368,6 +383,8 @@ def index_page(snapshot, language):
     <section class="wrap block" aria-labelledby="coverage">
       <div class="section-head"><h2 id="coverage">{text["coverage"]}</h2><span class="small">{text["snapshot"]} · <time>{escape(snapshot["corpus_date"])}</time></span></div>
       <dl class="stats">{numbers}</dl>
+      <h3 id="language-coverage">{text["language_coverage"]}</h3>
+      <dl class="language-counts">{coverage}</dl>
     </section>
     {outcomes(cases, text)}
     <section class="wrap block" aria-labelledby="selected">
@@ -381,6 +398,7 @@ def index_page(snapshot, language):
       <div class="filters" hidden>
         <div><label for="query">{text["search"]}</label><input type="search" id="query" placeholder="{text["placeholder"]}"></div>
         <div><label for="kind">{text["issue_kind"]}</label><select id="kind"><option value="">{text["any_issue_kind"]}</option>{issue_types}</select></div>
+        <div><label for="case-language">{text["case_language"]}</label><select id="case-language"><option value="">{text["any_case_language"]}</option>{language_options}</select></div>
         <div><label for="tracker-status">{text["tracker_status"]}</label><select id="tracker-status"><option value="">{text["any_tracker_status"]}</option>{tracker_states}</select></div>
         <div><label for="scope">{text["reproduction"]}</label><select id="scope"><option value="">{text["any_scope"]}</option>{options}</select></div>
       </div>

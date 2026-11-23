@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
           <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>上游修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
         </dl>
@@ -52,25 +54,25 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
         <div class="join-contribution"><h3>拼接补回了什么</h3><p>把取消现场连回任务的创建位置，区分执行路径相似的两个任务，定位无响应的一侧。</p></div>
-        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
         <p class="provenance">观测记录 4</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 4</code></a></nav>
-          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1 · create</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:101</span></li><li><code>run</code><span>_run.py:1288</span></li><li><code>run_impl</code><span>_run.py:1402</span></li><li><code>pair</code><span>workload.py:83</span></li><li><code>start_profile</code><span>workload.py:73</span></li><li><code>spawn</code><span>_run.py:279</span></li><li><code>spawn_impl</code><span>_run.py:777</span></li><li><code>instrument</code><span>_run.py:1157</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
-          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
-
-          <p class="join-verification">采集图边 <code>base_to_sample · 1 → 4</code></p>
-        </aside><section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · cancelled</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>read_socket</code><span>workload.py:62</span></li><li><code>wrapper</code><span>_socket.py:644</span></li><li><code>_nonblocking_helper</code><span>_socket.py:633</span></li><li><code>wait_socket_readable</code><span>__init__.py:55</span></li><li><code>wait_readable</code><span>_io_epoll.py:121</span></li><li><code>_epoll_wait</code><span>_io_epoll.py:116</span></li><li><code>wrapper</code><span>_traps.py:22</span></li><li><code>yield_indefinitely</code><span>_traps.py:157</span></li><li><code>unwrap</code><span>_result.py:119</span></li><li><code>capture</code><span>_result.py:33</span></li><li><code>raise_cancel</code><span>_run.py:506</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · cancelled</span></div><ol class="frames"><li><code>read_socket</code><span>workload.py:62</span></li><li><code>wrapper</code><span>_socket.py:644</span></li><li><code>_nonblocking_helper</code><span>_socket.py:633</span></li><li><code>wait_socket_readable</code><span>__init__.py:55</span></li><li><code>wait_readable</code><span>_io_epoll.py:121</span></li><li><code>_epoll_wait</code><span>_io_epoll.py:116</span></li><li><code>wrapper</code><span>_traps.py:22</span></li><li><code>yield_indefinitely</code><span>_traps.py:157</span></li><li><code>unwrap</code><span>_result.py:119</span></li><li><code>capture</code><span>_result.py:33</span></li><li><code>raise_cancel</code><span>_run.py:506</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>4 → 1</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · cancelled</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>read_socket</code><span>workload.py:62</span></li><li><code>wrapper</code><span>_socket.py:644</span></li><li><code>_nonblocking_helper</code><span>_socket.py:633</span></li><li><code>wait_socket_readable</code><span>__init__.py:55</span></li><li><code>wait_readable</code><span>_io_epoll.py:121</span></li><li><code>_epoll_wait</code><span>_io_epoll.py:116</span></li><li><code>wrapper</code><span>_traps.py:22</span></li><li><code>yield_indefinitely</code><span>_traps.py:157</span></li><li><code>unwrap</code><span>_result.py:119</span></li><li><code>capture</code><span>_result.py:33</span></li><li><code>raise_cancel</code><span>_run.py:506</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 1 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1 · create</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:101</span></li><li><code>run</code><span>_run.py:1288</span></li><li><code>run_impl</code><span>_run.py:1402</span></li><li><code>pair</code><span>workload.py:83</span></li><li><code>start_profile</code><span>workload.py:73</span></li><li><code>spawn</code><span>_run.py:279</span></li><li><code>spawn_impl</code><span>_run.py:777</span></li><li><code>instrument</code><span>_run.py:1157</span></li></ol></section>
         </div>
       </div>
       </section>

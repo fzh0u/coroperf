@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which receiver unblocks a tokenizer pause or continue request?">
+  <title>sgl-project/sglang #39689 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/sgl-project--sglang--39689.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="sgl-project--sglang--39689.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/sgl-project--sglang--39689.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">sgl-project/sglang #39689</p>
+        <h1>Which receiver unblocks a tokenizer pause or continue request?</h1>
+        <div class="case-links"><a href="https://github.com/sgl-project/sglang/issues/39689">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd><a href="https://github.com/sgl-project/sglang/pull/39693">Proposed fix tested locally ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The same pending Future connects each pause or continue call to the Task that processes its broadcast. Both processing stacks lead back to receive-loop creation in initialize.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 20</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 20 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>receive</code><span>worker_report.py:20</span></li><li><code>_apply_pause_continue_broadcast</code><span>multi_tokenizer_mixin.py:727</span></li></ol></section>
+          <p class="small trace-note">Frames from record 20 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>20 → 11</code></a><a href="#join-1-point-1">Join point 1 <code>11 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-20"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 20 · semantic_boundary</span><span class="record-instance">Instance from record 11</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>receive</code><span>worker_report.py:20</span></li><li><code>_apply_pause_continue_broadcast</code><span>multi_tokenizer_mixin.py:727</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-11">Record 11</a><span aria-hidden="true">→</span><a href="#join-1-record-20">Record 20</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 11 → 20</code></p>
+        </aside><section class="stack " id="join-1-record-11"><div class="stack-head"><h4>Creation stack</h4><span>Record 11</span><span class="record-instance">Instance from record 11</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>attached</code><span>observe_sgl.py:13</span></li><li><code>main</code><span>worker_report.py:70</span></li><li><code>check</code><span>worker_report.py:40</span></li><li><code>initialize</code><span>worker_report.py:26</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-11">Record 11</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 11 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>attached</code><span>observe_sgl.py:12</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 44</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 44 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>receive</code><span>worker_report.py:20</span></li><li><code>_apply_pause_continue_broadcast</code><span>multi_tokenizer_mixin.py:727</span></li></ol></section>
+          <p class="small trace-note">Frames from record 44 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>44 → 35</code></a><a href="#join-2-point-1">Join point 1 <code>35 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-44"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 44 · semantic_boundary</span><span class="record-instance">Instance from record 35</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>receive</code><span>worker_report.py:20</span></li><li><code>_apply_pause_continue_broadcast</code><span>multi_tokenizer_mixin.py:727</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-35">Record 35</a><span aria-hidden="true">→</span><a href="#join-2-record-44">Record 44</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 35 → 44</code></p>
+        </aside><section class="stack " id="join-2-record-35"><div class="stack-head"><h4>Creation stack</h4><span>Record 35</span><span class="record-instance">Instance from record 35</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>attached</code><span>observe_sgl.py:13</span></li><li><code>main</code><span>worker_report.py:70</span></li><li><code>check</code><span>worker_report.py:40</span></li><li><code>initialize</code><span>worker_report.py:26</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-2-record-35">Record 35</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 35 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe_sgl.py:23</span></li><li><code>run_path:286:&lt;frozen runpy&gt;</code></li><li><code>_run_module_code:98:&lt;frozen runpy&gt;</code></li><li><code>_run_code:88:&lt;frozen runpy&gt;</code></li><li><code>&lt;module&gt;</code><span>worker_report.py:74</span></li><li><code>observed</code><span>observe_sgl.py:14</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>attached</code><span>observe_sgl.py:12</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On SGLang 0.5.19 both cold operations time out in the reporter&#x27;s component fixture. Each leaves one broadcast unread. Starting the receive loop before the operation lets both broadcasts complete.</dd></div><div><dt>What CoroPerf showed</dt><dd>The suspended control calls at records 15 and 39 hold the exact Futures seen by the receive Tasks at records 20 and 44. Those receive stacks join to creation records 11 and 35, where initialize started the simulated receive loop. Cold records 4 and 28 show pending Futures before the worker has an event loop. Changing only the two methods to the proposed versions makes them initialize the receiver for cold workers.</dd></div><div><dt>Scope and limits</dt><dd>The CPU-only fixture uses real TokenizerWorker pause, continue and broadcast methods, a local asyncio queue, and a simulated receiver. The proposed two-method change was tested for both operations in cold and warm conditions. The issue closed due to inactivity. The linked proposal remains open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

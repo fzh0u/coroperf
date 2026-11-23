@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>问题类型</dt><dd>功能故障与正确性问题</dd></div>
           <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Go</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
         </dl>
@@ -52,58 +54,58 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
         <div class="join-contribution"><h3>拼接补回了什么</h3><p>两个等待者的栈完全相同。CoroPerf 沿各自的结果通道找到对应的共享调用，再接回未发送结果就退出的生产者的原始发起者。</p></div>
-        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
         <p class="provenance">观测记录 9</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 2</code></a><a href="#join-1-point-2">拼接点 2 <code>2 → 9</code></a></nav>
-          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>结果生产者的发起栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:163</span></li><li><code>main.launchProfile</code><span>replay.go:78</span></li><li><code>golang.org/x/sync/singleflight.(*Group).DoChan</code><span>singleflight.go:134</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>生产者发起点 → 等待者的结果依赖</strong></div>
-          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
-          <p>DoChan 把等待者实际使用的结果通道登记到生产者执行的同一个 singleflight 调用。沿这个调用可以找到生产者的原始发起者。</p>
-
-          <p class="join-verification">采集图边 <code>parent_to_create · 0 → 2</code></p>
-        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:168</span></li><li><code>main.startReader</code><span>replay.go:105</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-9">记录 9</a></p>
-          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
-          <p>读取协程的创建记录和阻塞快照指向同一进程里的同一个 goroutine。</p>
-          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 2 → 9</code></p>
-        </aside><section class="stack observed" id="join-1-record-9"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 9 · task_snapshot</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>原始任务栈快照</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 9 · task_snapshot</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 9 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
         </div>
-      </div><details class="extra more-trace"><summary>观测记录 11</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>3 → 5</code></a><a href="#join-2-point-2">拼接点 2 <code>5 → 11</code></a></nav>
-          <section class="stack " id="join-2-record-3"><div class="stack-head"><h4>结果生产者的发起栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:163</span></li><li><code>main.launchInventory</code><span>replay.go:82</span></li><li><code>golang.org/x/sync/singleflight.(*Group).DoChan</code><span>singleflight.go:134</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>生产者发起点 → 等待者的结果依赖</strong></div>
-          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
-          <p>DoChan 把等待者实际使用的结果通道登记到生产者执行的同一个 singleflight 调用。沿这个调用可以找到生产者的原始发起者。</p>
-
-          <p class="join-verification">采集图边 <code>parent_to_create · 3 → 5</code></p>
-        </aside><section class="stack " id="join-2-record-5"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:168</span></li><li><code>main.startReader</code><span>replay.go:105</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-2-record-5">记录 5</a><span aria-hidden="true">→</span><a href="#join-2-record-11">记录 11</a></p>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>9 → 2</code></a><a href="#join-1-point-1">拼接点 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-9"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 9 · task_snapshot</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-9">记录 9</a></p>
           <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
           <p>读取协程的创建记录和阻塞快照指向同一进程里的同一个 goroutine。</p>
-          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 5 → 11</code></p>
-        </aside><section class="stack observed" id="join-2-record-11"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 11 · task_snapshot</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 2 → 9</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:168</span></li><li><code>main.startReader</code><span>replay.go:105</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>生产者发起点 → 等待者的结果依赖</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>DoChan 把等待者实际使用的结果通道登记到生产者执行的同一个 singleflight 调用。沿这个调用可以找到生产者的原始发起者。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>结果生产者的发起栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:163</span></li><li><code>main.launchProfile</code><span>replay.go:78</span></li><li><code>golang.org/x/sync/singleflight.(*Group).DoChan</code><span>singleflight.go:134</span></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>观测记录 11</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>原始任务栈快照</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 11 · task_snapshot</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 11 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>11 → 5</code></a><a href="#join-2-point-1">拼接点 1 <code>5 → 3</code></a></nav>
+          <section class="stack observed" id="join-2-record-11"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 11 · task_snapshot</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-5">记录 5</a><span aria-hidden="true">→</span><a href="#join-2-record-11">记录 11</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>读取协程的创建记录和阻塞快照指向同一进程里的同一个 goroutine。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 5 → 11</code></p>
+        </aside><section class="stack " id="join-2-record-5"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:168</span></li><li><code>main.startReader</code><span>replay.go:105</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>生产者发起点 → 等待者的结果依赖</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>DoChan 把等待者实际使用的结果通道登记到生产者执行的同一个 singleflight 调用。沿这个调用可以找到生产者的原始发起者。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>结果生产者的发起栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:163</span></li><li><code>main.launchInventory</code><span>replay.go:82</span></li><li><code>golang.org/x/sync/singleflight.(*Group).DoChan</code><span>singleflight.go:134</span></li></ol></section>
         </div>
       </div></details>
       </section>

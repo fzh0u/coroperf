@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
           <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>JavaScript / TypeScript</dd></div>
           <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
         </dl>
@@ -52,25 +54,25 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
         <div class="join-contribution"><h3>拼接补回了什么</h3><p>受影响版本的 MySQL 异常栈起于驱动代码，缺少 myNamedFunction1234。用返回 Promise 的身份拼回发起者，并能把它和读取该异常的测试回调区分开。</p></div>
-        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
         <p class="provenance">观测记录 2</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 2</code></a></nav>
-          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues:103</span></li><li><code>&lt;anonymous&gt;</code><span>runnable.js:371</span></li><li><code>done</code><span>runnable.js:310</span></li><li><code>cbHookRun</code><span>runner.js:592</span></li><li><code>next</code><span>runner.js:527</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:644</span></li><li><code>next</code><span>runner.js:634</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:842</span></li><li><code>Runner.runTest</code><span>runner.js:719</span></li><li><code>Test.Runnable.run</code><span>runnable.js:354</span></li><li><code>callFn</code><span>runnable.js:366</span></li><li><code>Context.&lt;anonymous&gt;</code><span>error-stack-trace.test.ts:45</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>error-stack-trace.test.ts:61</span></li><li><code>myNamedFunction1234</code><span>error-stack-trace.test.ts:46</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
-          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
-
-          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 2</code></p>
-        </aside><section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2 · diagnostic</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>Pipe.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>Pipe.onStreamRead</code><span>stream_base_commons:189</span></li><li><code>Socket.Readable.push</code><span>readable:392</span></li><li><code>readableAddChunkPushByteMode</code><span>readable:512</span></li><li><code>addChunk</code><span>readable:561</span></li><li><code>Socket.emit</code><span>node:events:519</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:109</span></li><li><code>PacketParser.executeStart</code><span>packet_parser.js:75</span></li><li><code>PacketParser.onPacket</code><span>connection.js:102</span></li><li><code>PoolConnection.handlePacket</code><span>connection.js:552</span></li><li><code>Query.execute</code><span>command.js:36</span></li><li><code>Query.onResult</code><span>MysqlQueryRunner.ts:262</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2 · diagnostic</span></div><ol class="frames"><li><code>Pipe.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>Pipe.onStreamRead</code><span>stream_base_commons:189</span></li><li><code>Socket.Readable.push</code><span>readable:392</span></li><li><code>readableAddChunkPushByteMode</code><span>readable:512</span></li><li><code>addChunk</code><span>readable:561</span></li><li><code>Socket.emit</code><span>node:events:519</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:109</span></li><li><code>PacketParser.executeStart</code><span>packet_parser.js:75</span></li><li><code>PacketParser.onPacket</code><span>connection.js:102</span></li><li><code>PoolConnection.handlePacket</code><span>connection.js:552</span></li><li><code>Query.execute</code><span>command.js:36</span></li><li><code>Query.onResult</code><span>MysqlQueryRunner.ts:262</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 2 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2 · diagnostic</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>Pipe.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>Pipe.onStreamRead</code><span>stream_base_commons:189</span></li><li><code>Socket.Readable.push</code><span>readable:392</span></li><li><code>readableAddChunkPushByteMode</code><span>readable:512</span></li><li><code>addChunk</code><span>readable:561</span></li><li><code>Socket.emit</code><span>node:events:519</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:109</span></li><li><code>PacketParser.executeStart</code><span>packet_parser.js:75</span></li><li><code>PacketParser.onPacket</code><span>connection.js:102</span></li><li><code>PoolConnection.handlePacket</code><span>connection.js:552</span></li><li><code>Query.execute</code><span>command.js:36</span></li><li><code>Query.onResult</code><span>MysqlQueryRunner.ts:262</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues:103</span></li><li><code>&lt;anonymous&gt;</code><span>runnable.js:371</span></li><li><code>done</code><span>runnable.js:310</span></li><li><code>cbHookRun</code><span>runner.js:592</span></li><li><code>next</code><span>runner.js:527</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:644</span></li><li><code>next</code><span>runner.js:634</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:842</span></li><li><code>Runner.runTest</code><span>runner.js:719</span></li><li><code>Test.Runnable.run</code><span>runnable.js:354</span></li><li><code>callFn</code><span>runnable.js:366</span></li><li><code>Context.&lt;anonymous&gt;</code><span>error-stack-trace.test.ts:45</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>error-stack-trace.test.ts:61</span></li><li><code>myNamedFunction1234</code><span>error-stack-trace.test.ts:46</span></li></ol></section>
         </div>
       </div>
       </section>

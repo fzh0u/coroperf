@@ -41,10 +41,12 @@
       <header class="case-header">
         <p class="eyebrow">sqlalchemy/sqlalchemy #13689</p>
         <h1>Which async caller filled the cache entry that later failed?</h1>
-        <div class="case-links"><a href="https://github.com/sqlalchemy/sqlalchemy/issues/13689">Upstream report ↗</a><a href="https://github.com/sqlalchemy/sqlalchemy/commit/7ca9b3d88a2d47a079c7c14fa37f254c48ab1cf2">Follow-up evidence ↗</a></div>
+        <div class="case-links"><a href="https://github.com/sqlalchemy/sqlalchemy/issues/13689">Upstream report ↗</a></div>
         <dl class="case-status">
           <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
           <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd><a href="https://github.com/sqlalchemy/sqlalchemy/commit/7ca9b3d88a2d47a079c7c14fa37f254c48ab1cf2">Fixed in a tested comparison ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
           <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
           <div><dt>Diagnosis</dt><dd>Direct</dd></div>
         </dl>
@@ -52,58 +54,58 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
         <div class="join-contribution"><h3>What stitching revealed</h3><p>The allocation and read errors look identical for both entries. The exact FrozenResult connects each read to the async caller that filled its cache entry, even after the writer Task has been collected.</p></div>
-        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
         <p class="provenance">Observation 20</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 17</code></a><a href="#join-1-point-2">Join point 2 <code>17 → 20</code></a></nav>
-          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>dispatch_writer</code><span>repro.py:94</span></li><li><code>start_import</code><span>repro.py:57</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
-          <p class="join-records"><a href="#join-1-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-1-record-17">Record 17</a></p>
-          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
-          <p>The reader Task receives the exact FrozenResult object recorded when the writer filled the cache.</p>
-          <p class="join-verification">Graph edge <code>parent_to_create · 1 → 17</code></p>
-        </aside><section class="stack " id="join-1-record-17"><div class="stack-head"><h4>Creation stack</h4><span>Record 17</span><span class="record-instance">Instance from record 17</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>dispatch_reader</code><span>repro.py:86</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-1-record-17">Record 17</a><span aria-hidden="true">→</span><a href="#join-1-record-20">Record 20</a></p>
-          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
-          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
-          <p class="join-verification">Graph edge <code>base_to_sample · 17 → 20</code></p>
-        </aside><section class="stack observed" id="join-1-record-20"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 20 · semantic_boundary</span><span class="record-instance">Instance from record 17</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>consume</code><span>repro.py:78</span></li><li><code>__call__</code><span>result.py:1805</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 20 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>consume</code><span>repro.py:78</span></li><li><code>__call__</code><span>result.py:1805</span></li></ol></section>
           <p class="small trace-note">Frames from record 20 alone. Each stack block lists frames from caller to callee.</p>
         </div>
-      </div><details class="extra more-trace"><summary>Observation 22</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>2 → 18</code></a><a href="#join-2-point-2">Join point 2 <code>18 → 22</code></a></nav>
-          <section class="stack " id="join-2-record-2"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>dispatch_writer</code><span>repro.py:94</span></li><li><code>start_refresh</code><span>repro.py:61</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
-          <p class="join-records"><a href="#join-2-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-2-record-18">Record 18</a></p>
-          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
-          <p>The reader Task receives the exact FrozenResult object recorded when the writer filled the cache.</p>
-          <p class="join-verification">Graph edge <code>parent_to_create · 2 → 18</code></p>
-        </aside><section class="stack " id="join-2-record-18"><div class="stack-head"><h4>Creation stack</h4><span>Record 18</span><span class="record-instance">Instance from record 18</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>dispatch_reader</code><span>repro.py:86</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-2-record-18">Record 18</a><span aria-hidden="true">→</span><a href="#join-2-record-22">Record 22</a></p>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>20 → 17</code></a><a href="#join-1-point-1">Join point 1 <code>17 → 1</code></a></nav>
+          <section class="stack observed" id="join-1-record-20"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 20 · semantic_boundary</span><span class="record-instance">Instance from record 17</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>consume</code><span>repro.py:78</span></li><li><code>__call__</code><span>result.py:1805</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-17">Record 17</a><span aria-hidden="true">→</span><a href="#join-1-record-20">Record 20</a></p>
           <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
           <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
-          <p class="join-verification">Graph edge <code>base_to_sample · 18 → 22</code></p>
-        </aside><section class="stack observed" id="join-2-record-22"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 22 · semantic_boundary</span><span class="record-instance">Instance from record 18</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>consume</code><span>repro.py:78</span></li><li><code>__call__</code><span>result.py:1805</span></li></ol></section>
+          <p class="join-verification">Graph edge <code>base_to_sample · 17 → 20</code></p>
+        </aside><section class="stack " id="join-1-record-17"><div class="stack-head"><h4>Creation stack</h4><span>Record 17</span><span class="record-instance">Instance from record 17</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>dispatch_reader</code><span>repro.py:86</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-1-record-17">Record 17</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>The reader Task receives the exact FrozenResult object recorded when the writer filled the cache.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 1 → 17</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>dispatch_writer</code><span>repro.py:94</span></li><li><code>start_import</code><span>repro.py:57</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>Observation 22</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 22 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>consume</code><span>repro.py:78</span></li><li><code>__call__</code><span>result.py:1805</span></li></ol></section>
           <p class="small trace-note">Frames from record 22 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>22 → 18</code></a><a href="#join-2-point-1">Join point 1 <code>18 → 2</code></a></nav>
+          <section class="stack observed" id="join-2-record-22"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 22 · semantic_boundary</span><span class="record-instance">Instance from record 18</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>consume</code><span>repro.py:78</span></li><li><code>__call__</code><span>result.py:1805</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-18">Record 18</a><span aria-hidden="true">→</span><a href="#join-2-record-22">Record 22</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 18 → 22</code></p>
+        </aside><section class="stack " id="join-2-record-18"><div class="stack-head"><h4>Creation stack</h4><span>Record 18</span><span class="record-instance">Instance from record 18</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>dispatch_reader</code><span>repro.py:86</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-2-record-18">Record 18</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>The reader Task receives the exact FrozenResult object recorded when the writer filled the cache.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 2 → 18</code></p>
+        </aside><section class="stack " id="join-2-record-2"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:139</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1979</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>dispatch_writer</code><span>repro.py:94</span></li><li><code>start_refresh</code><span>repro.py:61</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
         </div>
       </div></details>
       </section>

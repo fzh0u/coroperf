@@ -1,6 +1,7 @@
 const filters = document.querySelector(".filters");
 const query = document.getElementById("query");
 const kind = document.getElementById("kind");
+const caseLanguage = document.getElementById("case-language");
 const trackerStatus = document.getElementById("tracker-status");
 const scope = document.getElementById("scope");
 const count = document.getElementById("results-count");
@@ -21,6 +22,7 @@ function filterIssues() {
   for (const { row, search } of rows) {
     const visible = terms.every(term => search.includes(term)) &&
       (!kind.value || kind.value === row.dataset.kind) &&
+      (!caseLanguage.value || caseLanguage.value === row.dataset.caseLanguage) &&
       (!trackerStatus.value || trackerStatus.value === row.dataset.trackerStatus) &&
       (!scope.value || scope.value === row.dataset.scope);
     row.hidden = !visible;

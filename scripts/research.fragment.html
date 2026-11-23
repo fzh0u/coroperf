@@ -8,6 +8,31 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>SGLang #29163 · Which prompts used the slow tokenizer in a shared batch?</h3>
+      <p>Four requests share one executor item and the same physical stack. The actual input object and result Future connect each worker observation to its request. In a CPU component test, the unmerged proposal reduces median batch time from 141 to 43 ms.</p>
+      <a href="evidence/sgl-project--sglang--29163.html#call-stack">Compare two requests inside the same batch ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Ray Serve #67404 · Which task merged the swapped features?</h3>
+      <p>Matching the live Task, coroutine and frame restores the creation site for two identical merge stacks. The selected records preserve the exact values each affected batch forwarded. The open PR restored all feature bindings in the local control.</p>
+      <a href="evidence/ray-project--ray--67404.html#call-stack">Compare both batch-task joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>vLLM #57350 · Which route submitted each detokenization call?</h3>
+      <p>The merged repair runs streaming detokenization on renderer threads. Matching the exact executor WorkItem separates identical worker stacks into chat and completion submissions and restores both stream Task creation stacks.</p>
+      <a href="evidence/vllm-project--vllm--57350.html#call-stack">Compare both worker-to-request joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>SGLang #39689 · Which receiver unblocks each control call?</h3>
+      <p>Cold pause and continue calls each leave one unread broadcast. In the warm controls, the exact Future connects the waiting call to the broadcast receiver. The processing stack then leads back to the receive-loop creation.</p>
+      <a href="evidence/sgl-project--sglang--39689.html#call-stack">Compare both receiver stacks and creation records ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Ray Data #51188 · Which tasks wrote rows after their blocks ended?</h3>
+      <p>The two block managers send end markers before their batch Tasks write rows. The exact Task used in each failed await connects the later row write to its manager and creation stack.</p>
+      <a href="evidence/ray-project--ray--51188.html#call-stack">Compare both late writes and their creation stacks ↗</a>
+    </div>
+    <div class="research-entry">
       <h3>asyncpg #547 · Who borrowed each connection that kept the pool open?</h3>
       <p>Both acquiring Tasks have been collected when shutdown gets stuck. Stock Task stacks and the allocation trace identify two pending release Futures at the same library line. CoroPerf matches each actual Future to its acquisition and recovers the application caller.</p>
       <a href="evidence/magicstack--asyncpg--547.html#call-stack">Compare both acquisition-to-shutdown joins ↗</a>

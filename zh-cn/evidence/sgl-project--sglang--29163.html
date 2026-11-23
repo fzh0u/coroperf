@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="同一个 SGLang 线程池批次中，哪些请求走了慢速分词路径？">
+  <title>sgl-project/sglang #29163 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/sgl-project--sglang--29163.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/sgl-project--sglang--29163.html" lang="en" hreflang="en">English</a><a href="sgl-project--sglang--29163.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">sgl-project/sglang #29163</p>
+        <h1>同一个 SGLang 线程池批次中，哪些请求走了慢速分词路径？</h1>
+        <div class="case-links"><a href="https://github.com/sgl-project/sglang/issues/29163">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd><a href="https://github.com/sgl-project/sglang/pull/29164">候选修复已做本地对照 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>同一批次的 tokenizer 工作线程栈相同。通过实际的 WorkItem、输入对象和结果 Future，找回每个请求的发起者。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 8</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.__call__</code><span>tokenization_utils_base.py:2514</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:761</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:702</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 8 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>8 → 4</code></a><a href="#join-1-point-1">拼接点 1 <code>4 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-8"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.__call__</code><span>tokenization_utils_base.py:2514</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:761</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:702</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-4">记录 4</a><span aria-hidden="true">→</span><a href="#join-1-record-8">记录 8</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>观测发生在工作线程执行同一个 WorkItem 时。该对象在事件循环线程创建时已记录。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 4 → 8</code></p>
+        </aside><section class="stack " id="join-1-record-4"><div class="stack-head"><h4>批处理提交栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batch.py:211</span></li><li><code>main</code><span>check_batch.py:204</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AsyncDynamicbatchTokenizer._dynamic_batch_loop</code><span>current.py:109</span></li><li><code>AsyncDynamicbatchTokenizer._process_dynamic_batch</code><span>current.py:132</span></li><li><code>BaseEventLoop.run_in_executor</code><span>base_events.py:863</span></li><li><code>ThreadPoolExecutor.submit</code><span>thread.py:176</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>请求创建 → 批处理提交</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>批次中保存的正是该请求创建的 Future，它和请求输入位于同一位置。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 0 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>请求创建栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batch.py:211</span></li><li><code>main</code><span>check_batch.py:204</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>verify</code><span>check_batch.py:144</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>Probe.trace</code><span>check_batch.py:121</span></li><li><code>Probe.trace.&lt;locals&gt;.inventory</code><span>check_batch.py:113</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 9</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 9</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.__call__</code><span>tokenization_utils_base.py:2514</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:761</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:702</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 9 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>9 → 5</code></a><a href="#join-2-point-1">拼接点 1 <code>5 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-9"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 9</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.__call__</code><span>tokenization_utils_base.py:2514</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:761</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:702</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-5">记录 5</a><span aria-hidden="true">→</span><a href="#join-2-record-9">记录 9</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>观测发生在工作线程执行同一个 WorkItem 时。该对象在事件循环线程创建时已记录。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 5 → 9</code></p>
+        </aside><section class="stack " id="join-2-record-5"><div class="stack-head"><h4>批处理提交栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batch.py:211</span></li><li><code>main</code><span>check_batch.py:204</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AsyncDynamicbatchTokenizer._dynamic_batch_loop</code><span>current.py:109</span></li><li><code>AsyncDynamicbatchTokenizer._process_dynamic_batch</code><span>current.py:132</span></li><li><code>BaseEventLoop.run_in_executor</code><span>base_events.py:863</span></li><li><code>ThreadPoolExecutor.submit</code><span>thread.py:176</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>请求创建 → 批处理提交</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>批次中保存的正是该请求创建的 Future，它和请求输入位于同一位置。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 1 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>请求创建栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batch.py:211</span></li><li><code>main</code><span>check_batch.py:204</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>verify</code><span>check_batch.py:144</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>Probe.trace</code><span>check_batch.py:121</span></li><li><code>Probe.trace.&lt;locals&gt;.profile</code><span>check_batch.py:116</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>四个并发的 Kimi-K2.5 输入各有 6,000 到 7,500 个 token，一起进入同一个线程池 WorkItem。原版对每个输入走 Python 分词路径，候选补丁改用直接 encode。预热后做十组配对计时，整批中位耗时从 141 毫秒降至 43 毫秒，token ID 完全一致。第二轮分别是 138 和 43 毫秒。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>四次 _encode_plus 的工作线程栈完全相同。实际运行的 WorkItem 里有同一个输入对象，批次又将这个输入和请求入队时记录的同一个结果 Future 放在同一位置。因此能找到正在等结果的 Task 及其发起栈。所选执行记录 8 和 9 分别接回批处理提交记录 4 和 5，再接到请求创建记录 0 和 1。</dd></div><div><dt>适用范围与局限</dt><dd>这是 CPU 上真实 tokenizer 和批处理组件的耗时，未运行模型推理。核对的主线提交和 PR 基准使用同一份批处理代码。Issue 和 PR 均因不活跃关闭。候选补丁对默认调用保留 TokenizerManager 使用的 token ID，同时省略原版返回的 attention_mask 字段。显式请求截断和 attention_mask 时，两版在本地对照中结果一致。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

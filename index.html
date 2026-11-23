@@ -46,16 +46,18 @@
       <figure class="specimen">
         <figcaption><span>From the issue evidence</span><a href="evidence/dotnet--runtime--60764.html#join-1-point-1">dotnet/runtime #60764 ↗</a></figcaption>
         <div class="specimen-body">
-          <div class="specimen-block"><span>Creation · Record 0</span><code>Program.Main</code><code>Program.Foo [MoveNext]</code></div>
-          <div class="specimen-edge">↓ &nbsp; Join point · Same state-machine instance</div>
           <div class="specimen-block"><span>Observation · Record 6</span><code>Program.Foo [MoveNext]</code><code>A..ctor</code></div>
+          <div class="specimen-edge">↑ &nbsp; Join point · Same state-machine instance</div>
+          <div class="specimen-block"><span>Creation · Record 0</span><code>Program.Main</code><code>Program.Foo [MoveNext]</code></div>
         </div>
         <div class="specimen-foot">Selected frames from the recorded join</div>
       </figure>
     </section>
     <section class="wrap block" aria-labelledby="coverage">
       <div class="section-head"><h2 id="coverage">Evidence coverage</h2><span class="small">Corpus snapshot · <time>2026-11-24</time></span></div>
-      <dl class="stats"><div><dd>66</dd><dt>Issue evidence pages</dt></div><div><dd>115</dd><dt>Matched execution observations</dt></div><div><dd>208</dd><dt>Verified join points</dt></div></dl>
+      <dl class="stats"><div><dd>71</dd><dt>Issue evidence pages</dt></div><div><dd>125</dd><dt>Matched execution observations</dt></div><div><dd>226</dd><dt>Verified join points</dt></div></dl>
+      <h3 id="language-coverage">Language coverage</h3>
+      <dl class="language-counts"><div><dt>Python</dt><dd>28</dd></div><div><dt>Go</dt><dd>2</dd></div><div><dt>Rust</dt><dd>7</dd></div><div><dt>Java</dt><dd>1</dd></div><div><dt>C++</dt><dd>5</dd></div><div><dt>C#</dt><dd>3</dd></div><div><dt>JavaScript / TypeScript</dt><dd>18</dd></div><div><dt>Kotlin</dt><dd>4</dd></div><div><dt>Scala</dt><dd>2</dd></div><div><dt>Dart</dt><dd>1</dd></div></dl>
     </section>
 
     <section class="wrap block" id="outcomes" aria-labelledby="outcomes-title">
@@ -63,14 +65,14 @@
       <p class="section-copy">Each previously reported issue counts once by its main symptom or diagnostic question. Every case has a checked stack join.</p>
       <div class="table-wrap summary-table">
         <table aria-labelledby="outcomes-title"><thead><tr><th scope="col">Issue type</th><th scope="col">Cases</th><th scope="col">Direct diagnosis</th></tr></thead>
-        <tbody><tr><th scope="row">Functional failures and correctness<small>Hangs, wrong results, premature cancellation, and cleanup failures.</small></th><td>17</td><td>14</td></tr><tr><th scope="row">Performance problems<small>Observed latency, extra CPU or allocations, and worker or connection contention.</small></th><td>14</td><td>13</td></tr><tr><th scope="row">Performance profiling<small>Attribution of CPU samples or suspended I/O time to an application caller.</small></th><td>2</td><td>2</td></tr><tr><th scope="row">Debugging and missing stacks<small>Recovery of the caller, failed operation, or task origin missing from a diagnostic.</small></th><td>33</td><td>31</td></tr></tbody></table>
+        <tbody><tr><th scope="row">Functional failures and correctness<small>Hangs, wrong results, premature cancellation, and cleanup failures.</small></th><td>20</td><td>16</td></tr><tr><th scope="row">Performance problems<small>Observed latency, extra CPU or allocations, and worker or connection contention.</small></th><td>16</td><td>15</td></tr><tr><th scope="row">Performance profiling<small>Attribution of CPU samples or suspended I/O time to an application caller.</small></th><td>2</td><td>2</td></tr><tr><th scope="row">Debugging and missing stacks<small>Recovery of the caller, failed operation, or task origin missing from a diagnostic.</small></th><td>33</td><td>31</td></tr></tbody></table>
       </div>
       <details class="extra">
         <summary id="evidence-matrix">Reproduction and diagnosis</summary>
         <p class="section-copy">Reproduction describes how much of the report the local experiment covers. Diagnosis describes whether the conclusion follows directly from observed evidence or relies on comparisons. Both describe the same cases counted above.</p>
         <div class="table-wrap summary-table">
           <table aria-labelledby="evidence-matrix"><thead><tr><th scope="col">Reproduction</th><th scope="col">Direct diagnosis</th><th scope="col">Inferred from controls</th></tr></thead>
-          <tbody><tr><th scope="row">Full local reproduction</th><td>25</td><td>4</td></tr><tr><th scope="row">Component reproduced</th><td>35</td><td>2</td></tr></tbody></table>
+          <tbody><tr><th scope="row">Full local reproduction</th><td>28</td><td>4</td></tr><tr><th scope="row">Component reproduced</th><td>36</td><td>3</td></tr></tbody></table>
         </div>
       </details>
     </section>
@@ -101,279 +103,300 @@
     <section class="wrap block" id="issues" aria-labelledby="issues-title">
       <div class="section-head"><h2 id="issues-title">Issue evidence</h2><a href="data/cases.json" download>Download snapshot data ↓</a></div>
       <p class="section-copy">Open an issue to see its original stack, each verified join point, the local findings, and the upstream report.</p>
-      <p class="tracker-summary" id="upstream-status"><strong>Upstream status · 16 open · 50 closed</strong><time datetime="2026-11-23T18:30:58+00:00">Checked 2026-11-23 18:30 UTC</time><a href="data/upstream-status.json" download>Download upstream status data</a></p>
+      <p class="tracker-summary" id="upstream-status"><strong>Upstream status · 17 open · 54 closed</strong><time datetime="2026-11-23T19:28:09+00:00">Checked 2026-11-23 19:28 UTC</time><a href="data/upstream-status.json" download>Download upstream status data</a></p>
       <div class="filters" hidden>
         <div><label for="query">Search issues</label><input type="search" id="query" placeholder="Project, issue number, or title"></div>
         <div><label for="kind">Issue type</label><select id="kind"><option value="">All issue types</option><option value="functional">Functional failures and correctness</option><option value="performance">Performance problems</option><option value="profiling">Performance profiling</option><option value="debugging">Debugging and missing stacks</option></select></div>
+        <div><label for="case-language">Case language</label><select id="case-language"><option value="">All case languages</option><option>Python</option><option>Go</option><option>Rust</option><option>Java</option><option>C++</option><option>C#</option><option>JavaScript / TypeScript</option><option>Kotlin</option><option>Scala</option><option>Dart</option></select></div>
         <div><label for="tracker-status">Upstream status</label><select id="tracker-status"><option value="">All upstream statuses</option><option value="open">Open</option><option value="closed">Closed</option><option value="unconfirmed">Unconfirmed</option></select></div>
         <div><label for="scope">Reproduction</label><select id="scope"><option value="">All reproduction scopes</option><option value="Full local reproduction">Full local reproduction</option><option value="Component reproduced">Component reproduced</option></select></div>
       </div>
-      <p class="results-count" id="results-count" role="status" data-format="{matches} of {total} issues" data-empty="No issues match these filters">66 issues</p>
+      <p class="results-count" id="results-count" role="status" data-format="{matches} of {total} issues" data-empty="No issues match these filters">71 issues</p>
       <div class="table-wrap">
         <table><thead><tr><th scope="col">Issue</th><th scope="col">What stitching revealed</th><th scope="col">Reproduction</th></tr></thead>
         <tbody id="case-rows">
-      <tr data-scope="Component reproduced" data-kind="profiling" data-tracker-status="closed" data-title-alt="哪个应用调用者等 I/O 等得更久？">
-        <th scope="row"><a href="evidence/python--cpython--115218.html"><span>python/cpython #115218</span>Which application caller spent longer waiting for I/O?</a><small class="case-kind">Performance profiling · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-case-language="Python" data-title-alt="同一个 SGLang 线程池批次中，哪些请求走了慢速分词路径？">
+        <th scope="row"><a href="evidence/sgl-project--sglang--29163.html"><span>sgl-project/sglang #29163</span>Which SGLang requests used the slow tokenizer inside one executor batch?</a><small class="case-kind">Performance problems · Python · Closed</small></th>
+        <td>The actual WorkItem, prompt object and result Future distinguish requests with the same worker stack inside one tokenizer batch.</td><td>Component reproduced</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="open" data-case-language="Python" data-title-alt="Ray Serve 的哪个批处理任务交换了请求参数？">
+        <th scope="row"><a href="evidence/ray-project--ray--67404.html"><span>ray-project/ray #67404</span>Which Ray Serve batch task swapped two request arguments?</a><small class="case-kind">Functional failures and correctness · Python · Open</small></th>
+        <td>The Task, coroutine and frame link each identical-looking merge stack to its own batch creation in _process_sub_batches. The selected batches retain the actual arguments that were swapped.</td><td>Full local reproduction</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="performance" data-tracker-status="closed" data-case-language="Python" data-title-alt="流式解码的 CPU 工作由哪些请求提交？">
+        <th scope="row"><a href="evidence/vllm-project--vllm--57350.html"><span>vllm-project/vllm #57350</span>Which requests submitted the CPU work behind streaming detokenization?</a><small class="case-kind">Performance problems · Python · Closed</small></th>
+        <td>The exact executor WorkItem connects two identical worker stacks to their separate chat and completion submissions and the creation of each stream Task.</td><td>Full local reproduction</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="哪个接收协程解除 TokenizerWorker 的暂停或继续等待？">
+        <th scope="row"><a href="evidence/sgl-project--sglang--39689.html"><span>sgl-project/sglang #39689</span>Which receiver unblocks a tokenizer pause or continue request?</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
+        <td>The same pending Future connects each pause or continue call to the Task that processes its broadcast. Both processing stacks lead back to receive-loop creation in initialize.</td><td>Component reproduced</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="Ray Data 提前结束分块后，哪些异步任务仍在发送数据？">
+        <th scope="row"><a href="evidence/ray-project--ray--51188.html"><span>ray-project/ray #51188</span>Which async Ray Data tasks sent rows after their blocks ended?</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
+        <td>The manager could not await two batch Tasks. Their later queue writes join to the original creations by Task generation, proving that both blocks ended before those rows arrived.</td><td>Full local reproduction</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="profiling" data-tracker-status="closed" data-case-language="Python" data-title-alt="哪个应用调用者等 I/O 等得更久？">
+        <th scope="row"><a href="evidence/python--cpython--115218.html"><span>python/cpython #115218</span>Which application caller spent longer waiting for I/O?</a><small class="case-kind">Performance profiling · Python · Closed</small></th>
         <td>The async-aware profile distinguishes the waiting Tasks. CoroPerf measures their actual suspensions and follows each dispatch Handle back to the application caller responsible for that wait.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="连接池等待归还的两条连接，分别由哪个请求借出？">
-        <th scope="row"><a href="evidence/magicstack--asyncpg--547.html"><span>MagicStack/asyncpg #547</span>Which cancelled request left the pool waiting for each connection?</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="连接池等待归还的两条连接，分别由哪个请求借出？">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--547.html"><span>MagicStack/asyncpg #547</span>Which cancelled request left the pool waiting for each connection?</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>Both shutdown waiters stop at the same line. The exact release Future on each holder connects that blocked stack to the original application request, even after the acquiring Task has been collected.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="每个等待者依赖的是哪个已经退出的 singleflight 生产者？">
-        <th scope="row"><a href="evidence/golang--go--52557.html"><span>golang/go #52557</span>Which exited singleflight producer left each reader waiting?</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-case-language="Go" data-title-alt="每个等待者依赖的是哪个已经退出的 singleflight 生产者？">
+        <th scope="row"><a href="evidence/golang--go--52557.html"><span>golang/go #52557</span>Which exited singleflight producer left each reader waiting?</a><small class="case-kind">Functional failures and correctness · Go · Closed</small></th>
         <td>Both waiters have the same stack. CoroPerf follows each result channel through the shared call to the original launcher of the producer that exited without sending a result.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="后来读取失败的缓存条目，最初由谁写入？">
-        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--13689.html"><span>sqlalchemy/sqlalchemy #13689</span>Which async caller filled the cache entry that later failed?</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="后来读取失败的缓存条目，最初由谁写入？">
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--13689.html"><span>sqlalchemy/sqlalchemy #13689</span>Which async caller filled the cache entry that later failed?</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>The allocation and read errors look identical for both entries. The exact FrozenResult connects each read to the async caller that filled its cache entry, even after the writer Task has been collected.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="TaskGroup 最终传播的异常来自哪一次取消请求？">
-        <th scope="row"><a href="evidence/python--cpython--157157.html"><span>python/cpython #157157</span>Which cancellation request reached the TaskGroup&#x27;s final error?</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="TaskGroup 最终传播的异常来自哪一次取消请求？">
+        <th scope="row"><a href="evidence/python--cpython--157157.html"><span>python/cpython #157157</span>Which cancellation request reached the TaskGroup&#x27;s final error?</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>The target Task accepts two cancellation requests. The recorded Task and completion Future identify the request behind the propagated error and the separate accepted request whose message was lost.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="注入新异步生成器的异常，最初来自哪个调用者？">
-        <th scope="row"><a href="evidence/nuitka--nuitka--4073.html"><span>Nuitka/Nuitka #4073</span>Who first raised the error injected into a fresh async generator?</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-case-language="Python" data-title-alt="注入新异步生成器的异常，最初来自哪个调用者？">
+        <th scope="row"><a href="evidence/nuitka--nuitka--4073.html"><span>Nuitka/Nuitka #4073</span>Who first raised the error injected into a fresh async generator?</a><small class="case-kind">Debugging and missing stacks · Python · Closed</small></th>
         <td>Both stored errors reach identical generator tracebacks. The same exception object connects each receiver Task to its distinct producer Task and the original launcher. The first-raise observations show the frame lost by the affected build.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="缓冲流处理一个结果时，哪个调用者的握手超时了？">
-        <th scope="row"><a href="evidence/rust-lang--futures-rs--2387.html"><span>rust-lang/futures-rs #2387</span>Which caller&#x27;s handshake timed out while the stream processed another result?</a><small class="case-kind">Performance problems · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-case-language="Rust" data-title-alt="缓冲流处理一个结果时，哪个调用者的握手超时了？">
+        <th scope="row"><a href="evidence/rust-lang--futures-rs--2387.html"><span>rust-lang/futures-rs #2387</span>Which caller&#x27;s handshake timed out while the stream processed another result?</a><small class="case-kind">Performance problems · Rust · Open</small></th>
         <td>One stream task drives two handshakes and the work between them. The poll intervals recover the caller of the delayed handshake. The exact result object recovers the other caller, whose result triggered the work that held the consumer.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="协程反复使用同一个帧地址时，每次调用来自哪里？">
-        <th scope="row"><a href="evidence/llvm--llvm-project--121092.html"><span>llvm/llvm-project #121092</span>Which caller launched each coroutine that reused the same frame address?</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-case-language="C++" data-title-alt="协程反复使用同一个帧地址时，每次调用来自哪里？">
+        <th scope="row"><a href="evidence/llvm--llvm-project--121092.html"><span>llvm/llvm-project #121092</span>Which caller launched each coroutine that reused the same frame address?</a><small class="case-kind">Debugging and missing stacks · C++ · Closed</small></th>
         <td>Four coroutine lifetimes share one address and one worker stack. Stripped instructions recover the active frame. Recorded creations and retirements identify the original caller of each lifetime.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="哪个调用者淘汰了另一个调用者正在等待的缓存结果？">
-        <th scope="row"><a href="evidence/aio-libs--async-lru--480.html"><span>aio-libs/async-lru #480</span>Which caller evicted the result another caller was waiting for?</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="哪个调用者淘汰了另一个调用者正在等待的缓存结果？">
+        <th scope="row"><a href="evidence/aio-libs--async-lru--480.html"><span>aio-libs/async-lru #480</span>Which caller evicted the result another caller was waiting for?</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>The actual result Future connects the cache eviction to the request left waiting. Two recorded dispatch Handles recover the distinct original callers that triggered the eviction and awaited the result.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="多层 await 的重复重抛分别来自哪个调用者？">
-        <th scope="row"><a href="evidence/dotnet--runtime--38904.html"><span>dotnet/runtime #38904</span>Which caller accounts for the repeated await-chain rethrows?</a><small class="case-kind">Performance problems · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-case-language="C#" data-title-alt="多层 await 的重复重抛分别来自哪个调用者？">
+        <th scope="row"><a href="evidence/dotnet--runtime--38904.html"><span>dotnet/runtime #38904</span>Which caller accounts for the repeated await-chain rethrows?</a><small class="case-kind">Performance problems · C# · Open</small></th>
         <td>Two fault chains interleave on one worker with identical rethrow stacks. The actual exception object in each root Task connects the rethrows to its original caller.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="Bun 嵌套轮询拖延的两个协程由谁发起？">
-        <th scope="row"><a href="evidence/oven-sh--bun--45020.html"><span>oven-sh/bun #45020</span>Which callers launched the continuations delayed by Bun&#x27;s nested poll?</a><small class="case-kind">Performance problems · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="Bun 嵌套轮询拖延的两个协程由谁发起？">
+        <th scope="row"><a href="evidence/oven-sh--bun--45020.html"><span>oven-sh/bun #45020</span>Which callers launched the continuations delayed by Bun&#x27;s nested poll?</a><small class="case-kind">Performance problems · JavaScript / TypeScript · Closed</small></th>
         <td>Two ready continuations share one long poll. Matching their Promise objects to their creation stacks recovers the two callers even when the second launch resumes first.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="同一个 SQL 连接协程执行的补拨，分别由谁触发？">
-        <th scope="row"><a href="evidence/golang--go--64614.html"><span>golang/go #64614</span>Who triggered each replacement dial on the shared SQL opener?</a><small class="case-kind">Performance problems · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-case-language="Go" data-title-alt="同一个 SQL 连接协程执行的补拨，分别由谁触发？">
+        <th scope="row"><a href="evidence/golang--go--64614.html"><span>golang/go #64614</span>Who triggered each replacement dial on the shared SQL opener?</a><small class="case-kind">Performance problems · Go · Open</small></th>
         <td>Matching a buffered opener signal&#x27;s FIFO position and the actual dial interval connects identical opener stacks to the two callers that invalidated connections.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="哪个功能入口发起了这条拦截器链？">
-        <th scope="row"><a href="evidence/dart-lang--sdk--61585.html"><span>dart-lang/sdk #61585</span>Which feature launched the interceptor chain?</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-case-language="Dart" data-title-alt="哪个功能入口发起了这条拦截器链？">
+        <th scope="row"><a href="evidence/dart-lang--sdk--61585.html"><span>dart-lang/sdk #61585</span>Which feature launched the interceptor chain?</a><small class="case-kind">Debugging and missing stacks · Dart · Closed</small></th>
         <td>The async stack reaches the shared interceptor chain. The identical Future listener callback connects each invocation to the distinct feature that launched it.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="哪个调用者引发了额外的协程帧分配？">
-        <th scope="row"><a href="evidence/llvm--llvm-project--56972.html"><span>llvm/llvm-project #56972</span>Which caller incurred the extra coroutine-frame allocation?</a><small class="case-kind">Performance problems · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-case-language="C++" data-title-alt="哪个调用者引发了额外的协程帧分配？">
+        <th scope="row"><a href="evidence/llvm--llvm-project--56972.html"><span>llvm/llvm-project #56972</span>Which caller incurred the extra coroutine-frame allocation?</a><small class="case-kind">Performance problems · C++ · Closed</small></th>
         <td>Two extra frame allocations return the same child address. Instruction dataflow recovers the two distinct active parent frames and connects the allocation sites to their original application callers.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="哪个调用者的重试让已就绪任务迟迟无法运行？">
-        <th scope="row"><a href="evidence/rust-lang--futures-rs--2047.html"><span>rust-lang/futures-rs #2047</span>Which caller&#x27;s retries kept a ready task waiting?</a><small class="case-kind">Performance problems · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-case-language="Rust" data-title-alt="哪个调用者的重试让已就绪任务迟迟无法运行？">
+        <th scope="row"><a href="evidence/rust-lang--futures-rs--2047.html"><span>rust-lang/futures-rs #2047</span>Which caller&#x27;s retries kept a ready task waiting?</a><small class="case-kind">Performance problems · Rust · Closed</small></th>
         <td>Identical retry stacks hid which caller kept a ready heartbeat waiting. The actual child poll interval and original push stack attribute 96 retries to one caller and six to the other.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="哪个调用者越过排队的任务，重新拿到了信号量？">
-        <th scope="row"><a href="evidence/python--cpython--90155.html"><span>python/cpython #90155</span>Which caller reacquired the semaphore ahead of its queued waiter?</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="哪个调用者越过排队的任务，重新拿到了信号量？">
+        <th scope="row"><a href="evidence/python--cpython--90155.html"><span>python/cpython #90155</span>Which caller reacquired the semaphore ahead of its queued waiter?</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>The woken waiter and the next permit recipient are different Tasks on 3.10.3. The matching dispatch Handles restore the separate application callers.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="两条失败的 ZIO fiber 分别从哪个 unsafeRun 发起？">
-        <th scope="row"><a href="evidence/zio--zio--1003.html"><span>zio/zio #1003</span>Which unsafeRun call started each failed ZIO fiber?</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-case-language="Scala" data-title-alt="两条失败的 ZIO fiber 分别从哪个 unsafeRun 发起？">
+        <th scope="row"><a href="evidence/zio--zio--1003.html"><span>zio/zio #1003</span>Which unsafeRun call started each failed ZIO fiber?</a><small class="case-kind">Debugging and missing stacks · Scala · Closed</small></th>
         <td>The two worker failures have the same native trace. Matching each FiberContext receiver to its construction recovers the precise unsafeRun caller.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="哪个调用者占用了 asyncio 地址解析需要的线程？">
-        <th scope="row"><a href="evidence/python--cpython--112169.html"><span>python/cpython #112169</span>Which caller occupied the worker needed by asyncio&#x27;s resolver?</a><small class="case-kind">Performance problems · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-case-language="Python" data-title-alt="哪个调用者占用了 asyncio 地址解析需要的线程？">
+        <th scope="row"><a href="evidence/python--cpython--112169.html"><span>python/cpython #112169</span>Which caller occupied the worker needed by asyncio&#x27;s resolver?</a><small class="case-kind">Performance problems · Python · Closed</small></th>
         <td>Matching the blocked worker to its exact executor WorkItem and the broker&#x27;s earlier queue request identifies which application caller occupied the DNS worker.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="open" data-title-alt="任务追踪卡住的两个子 Future 分别由谁提交？">
-        <th scope="row"><a href="evidence/tokio-rs--tokio--8434.html"><span>tokio-rs/tokio #8434</span>Which callers submitted the child futures stranded by task tracing?</a><small class="case-kind">Functional failures and correctness · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="open" data-case-language="Rust" data-title-alt="任务追踪卡住的两个子 Future 分别由谁提交？">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8434.html"><span>tokio-rs/tokio #8434</span>Which callers submitted the child futures stranded by task tracing?</a><small class="case-kind">Functional failures and correctness · Rust · Open</small></th>
         <td>The stock trace shows the two lock operations. The actual FuturesUnordered child poll intervals link those samples to the application callers that submitted them.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="open" data-title-alt="请求 ID 在线程池丢失时，是哪个异步拦截器路径发起的？">
-        <th scope="row"><a href="evidence/grpc--grpc--37881.html"><span>grpc/grpc #37881</span>Which async interceptor led to the worker that lost the request ID?</a><small class="case-kind">Functional failures and correctness · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="open" data-case-language="Python" data-title-alt="请求 ID 在线程池丢失时，是哪个异步拦截器路径发起的？">
+        <th scope="row"><a href="evidence/grpc--grpc--37881.html"><span>grpc/grpc #37881</span>Which async interceptor led to the worker that lost the request ID?</a><small class="case-kind">Functional failures and correctness · Python · Open</small></th>
         <td>The two workers have identical stacks and both lose the request ID. Joining the active WorkItem to its submission and the exact per-RPC handler restores the original interceptor route.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="asyncio.gather() 失败后，仍在运行的任务是谁发起的？">
-        <th scope="row"><a href="evidence/python--cpython--157213.html"><span>python/cpython #157213</span>Who started the tasks that outlived a failed asyncio.gather()?</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-case-language="Python" data-title-alt="asyncio.gather() 失败后，仍在运行的任务是谁发起的？">
+        <th scope="row"><a href="evidence/python--cpython--157213.html"><span>python/cpython #157213</span>Who started the tasks that outlived a failed asyncio.gather()?</a><small class="case-kind">Debugging and missing stacks · Python · Closed</small></th>
         <td>The fixed await graph shows who still waits. Matching each survivor Task to the Handle that dispatched its creation recovers who originally launched it.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="open" data-title-alt="Foo 恢复后，物理调用栈里找不到 Main">
-        <th scope="row"><a href="evidence/dotnet--runtime--60764.html"><span>dotnet/runtime #60764</span>Main disappears from the physical stack after Foo resumes</a><small class="case-kind">Debugging and missing stacks · Open</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="open" data-case-language="C#" data-title-alt="Foo 恢复后，物理调用栈里找不到 Main">
+        <th scope="row"><a href="evidence/dotnet--runtime--60764.html"><span>dotnet/runtime #60764</span>Main disappears from the physical stack after Foo resumes</a><small class="case-kind">Debugging and missing stacks · C# · Open</small></th>
         <td>The constructor stack begins on a timer worker. Joining it to creation recovers Program.Main as the initiator of this Foo state machine.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-title-alt="找回同步转发 Task 的原始调用者">
-        <th scope="row"><a href="evidence/dotnet--runtime--125417.html"><span>dotnet/runtime #125417</span>Recovering the caller behind a synchronous Task forwarder</a><small class="case-kind">Debugging and missing stacks · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-case-language="C#" data-title-alt="找回同步转发 Task 的原始调用者">
+        <th scope="row"><a href="evidence/dotnet--runtime--125417.html"><span>dotnet/runtime #125417</span>Recovering the caller behind a synchronous Task forwarder</a><small class="case-kind">Debugging and missing stacks · C# · Open</small></th>
         <td>The same callee runs for two synchronous forwarders. TPL execution intervals and recorded task creation stacks connect each worker observation to its original caller.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="Drogon 在数据库事件循环上执行同步 SQL，导致请求超时">
-        <th scope="row"><a href="evidence/drogonframework--drogon--2331.html"><span>drogonframework/drogon #2331</span>Synchronous SQL on Drogon’s database loop times out the profile request</a><small class="case-kind">Performance problems · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-case-language="C++" data-title-alt="Drogon 在数据库事件循环上执行同步 SQL，导致请求超时">
+        <th scope="row"><a href="evidence/drogonframework--drogon--2331.html"><span>drogonframework/drogon #2331</span>Synchronous SQL on Drogon’s database loop times out the profile request</a><small class="case-kind">Performance problems · C++ · Open</small></th>
         <td>Two request entries use shared_lookup. The stopped sample&#x27;s owner and the recorded creator chain identify profile_entry as the origin of the blocked request.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="报出旧线程 ID 的协程由哪个调用者发起？">
-        <th scope="row"><a href="evidence/llvm--llvm-project--37601.html"><span>llvm/llvm-project #37601</span>Which caller launched the coroutine that reported the stale thread ID?</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-case-language="C++" data-title-alt="报出旧线程 ID 的协程由哪个调用者发起？">
+        <th scope="row"><a href="evidence/llvm--llvm-project--37601.html"><span>llvm/llvm-project #37601</span>Which caller launched the coroutine that reported the stale thread ID?</a><small class="case-kind">Functional failures and correctness · C++ · Closed</small></th>
         <td>The same worker stack and stale thread ID describe two instances. The stripped machine code identifies the frame at each resume, and its recorded creation stack restores the launcher.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="Tokio 的 LIFO 槽位保留了一个没有及时轮询的任务">
-        <th scope="row"><a href="evidence/tokio-rs--tokio--6315.html"><span>tokio-rs/tokio #6315</span>A spawned task remains in the local LIFO slot when its worker blocks</a><small class="case-kind">Performance problems · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-case-language="Rust" data-title-alt="Tokio 的 LIFO 槽位保留了一个没有及时轮询的任务">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--6315.html"><span>tokio-rs/tokio #6315</span>A spawned task remains in the local LIFO slot when its worker blocks</a><small class="case-kind">Performance problems · Rust · Open</small></th>
         <td>The matched spawn and helper-body stacks identify which parent launched the delayed task in the controlled LIFO-slot run.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="额外的 interval 定时器清理由哪些调用者触发？">
-        <th scope="row"><a href="evidence/tokio-rs--tokio--8760.html"><span>tokio-rs/tokio #8760</span>Which callers incurred the extra interval timer clears?</a><small class="case-kind">Performance problems · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-case-language="Rust" data-title-alt="额外的 interval 定时器清理由哪些调用者触发？">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8760.html"><span>tokio-rs/tokio #8760</span>Which callers incurred the extra interval timer clears?</a><small class="case-kind">Performance problems · Rust · Closed</small></th>
         <td>Both callers produce the same timer-clear stack. The poll interval identifies the running task, and its creation stack identifies which application entry launched it.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="performance" data-tracker-status="closed" data-title-alt="通过报告评论作者公开的 Quarkus Todo 示例向真实 PostgreSQL 写入，2 批共 18 次 HTTP 创建均返回 201，独立 SQL 查询核对了已提交的数据行">
-        <th scope="row"><a href="evidence/pgjdbc--pgjdbc--1951.html"><span>pgjdbc/pgjdbc #1951</span>A Quarkus request pinned in Hibernate while waiting on PostgreSQL</a><small class="case-kind">Performance problems · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="performance" data-tracker-status="closed" data-case-language="Java" data-title-alt="通过报告评论作者公开的 Quarkus Todo 示例向真实 PostgreSQL 写入，2 批共 18 次 HTTP 创建均返回 201，独立 SQL 查询核对了已提交的数据行">
+        <th scope="row"><a href="evidence/pgjdbc--pgjdbc--1951.html"><span>pgjdbc/pgjdbc #1951</span>A Quarkus request pinned in Hibernate while waiting on PostgreSQL</a><small class="case-kind">Performance problems · Java · Closed</small></th>
         <td>Stock JFR shows the JDBC pin and the virtual thread&#x27;s own entry. Joining the pin to the factory&#x27;s creation record by JVM thread ID recovers the earlier Quarkus caller.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Node 18 原例的 sub 在 sleep 后打印栈时缺少 main">
-        <th scope="row"><a href="evidence/nodejs--node--36126.html"><span>nodejs/node #36126</span>A stack captured after sleep omits the function that started sub</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="Node 18 原例的 sub 在 sleep 后打印栈时缺少 main">
+        <th scope="row"><a href="evidence/nodejs--node--36126.html"><span>nodejs/node #36126</span>A stack captured after sleep omits the function that started sub</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>The resumed diagnostic contains sub. The Promise creation stack restores its synchronous initiator, main.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="原始 Node 程序经间接调用后，默认栈丢失异步上层">
-        <th scope="row"><a href="evidence/nodejs--node--48511.html"><span>nodejs/node #48511</span>An indirect call hides the async caller in Node’s default stack</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="原始 Node 程序经间接调用后，默认栈丢失异步上层">
+        <th scope="row"><a href="evidence/nodejs--node--48511.html"><span>nodejs/node #48511</span>An indirect call hides the async caller in Node’s default stack</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>The early post-await diagnostic in foo omits main and indirectCall. The matching Promise creation record retains both.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="原作者四函数示例在 CPython 3.12.4 和 3.14.3 均等待十秒后返回 42">
-        <th scope="row"><a href="evidence/python--cpython--91048.html"><span>python/cpython #91048</span>Recovering the creator and the current waiter of a sleeping asyncio task</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="Python" data-title-alt="原作者四函数示例在 CPython 3.12.4 和 3.14.3 均等待十秒后返回 42">
+        <th scope="row"><a href="evidence/python--cpython--91048.html"><span>python/cpython #91048</span>Recovering the creator and the current waiter of a sleeping asyncio task</a><small class="case-kind">Debugging and missing stacks · Python · Closed</small></th>
         <td>The suspended task is linked to the task creation in f2. The crossed-await control checks creator and current waiter independently.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-title-alt="流清理改写异常栈后，找回真正失败的读取">
-        <th scope="row"><a href="evidence/python--cpython--156278.html"><span>python/cpython #156278</span>Recovering the read that failed before stream cleanup rewrote its traceback</a><small class="case-kind">Debugging and missing stacks · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-case-language="Python" data-title-alt="流清理改写异常栈后，找回真正失败的读取">
+        <th scope="row"><a href="evidence/python--cpython--156278.html"><span>python/cpython #156278</span>Recovering the read that failed before stream cleanup rewrote its traceback</a><small class="case-kind">Debugging and missing stacks · Python · Open</small></th>
         <td>Two final tracebacks point to stream cleanup. The saved first-raise stacks identify the two failed reads, and their Task creation records identify the distinct callers.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="孤立 Future 上等待的 Task 在触发 GC 后被销毁；保留强引用时没有销毁诊断">
-        <th scope="row"><a href="evidence/python--cpython--88831.html"><span>python/cpython #88831</span>Garbage collection destroys a pending task waiting on an isolated Future</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="孤立 Future 上等待的 Task 在触发 GC 后被销毁；保留强引用时没有销毁诊断">
+        <th scope="row"><a href="evidence/python--cpython--88831.html"><span>python/cpython #88831</span>Garbage collection destroys a pending task waiting on an isolated Future</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>Finalization evidence identifies the pending task, and the identity-matched capture traces the task to its creation.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="原作者的 inspect.stack 示例在发布版和作者分支的父提交只打印 bar">
-        <th scope="row"><a href="evidence/aio-libs--async-lru--528.html"><span>aio-libs/async-lru #528</span>A cached async call loses its caller from the live stack</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="Python" data-title-alt="原作者的 inspect.stack 示例在发布版和作者分支的父提交只打印 bar">
+        <th scope="row"><a href="evidence/aio-libs--async-lru--528.html"><span>aio-libs/async-lru #528</span>A cached async call loses its caller from the live stack</a><small class="case-kind">Debugging and missing stacks · Python · Closed</small></th>
         <td>The active stack shows bar. Its child-task creation stack recovers foo and main and identifies the first caller among several waiters.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="原始 Starlette 应用在客户端断开后取消仍在运行的后台任务">
-        <th scope="row"><a href="evidence/kludex--starlette--1438.html"><span>kludex/starlette #1438</span>Starlette cancels a background task after the client disconnects</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="原始 Starlette 应用在客户端断开后取消仍在运行的后台任务">
+        <th scope="row"><a href="evidence/kludex--starlette--1438.html"><span>kludex/starlette #1438</span>Starlette cancels a background task after the client disconnects</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>The task creation link connects the request middleware to the background execution that received cancellation.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="原始 WebSocket 示例停机时仍有 notifications_handler 在 subscribe 中等待">
-        <th scope="row"><a href="evidence/fastapi--fastapi--709.html"><span>fastapi/fastapi #709</span>A WebSocket subscription task remains pending at shutdown</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="原始 WebSocket 示例停机时仍有 notifications_handler 在 subscribe 中等待">
+        <th scope="row"><a href="evidence/fastapi--fastapi--709.html"><span>fastapi/fastapi #709</span>A WebSocket subscription task remains pending at shutdown</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>Joining the pending subscription stack to request-task creation identifies which request was still live at shutdown.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="SQLAlchemy 1.4.37 原始异步退出逻辑被取消后，真实 PostgreSQL 连接未归还池">
-        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--8145.html"><span>sqlalchemy/sqlalchemy #8145</span>Cancellation during async connection cleanup leaves a pool checkout outstanding</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="SQLAlchemy 1.4.37 原始异步退出逻辑被取消后，真实 PostgreSQL 连接未归还池">
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--8145.html"><span>sqlalchemy/sqlalchemy #8145</span>Cancellation during async connection cleanup leaves a pool checkout outstanding</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>The cleanup sample links back to the same Task created by main. Pool records then identify the matching checked-out connection left by the cancellation.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="同一 stub 的两个 sayHello 并发挂起调用可送出完全相同的 protobuf 请求">
-        <th scope="row"><a href="evidence/grpc--grpc-kotlin--299.html"><span>grpc/grpc-kotlin #299</span>Which Kotlin caller received the gRPC status exception?</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="Kotlin" data-title-alt="同一 stub 的两个 sayHello 并发挂起调用可送出完全相同的 protobuf 请求">
+        <th scope="row"><a href="evidence/grpc--grpc-kotlin--299.html"><span>grpc/grpc-kotlin #299</span>Which Kotlin caller received the gRPC status exception?</a><small class="case-kind">Debugging and missing stacks · Kotlin · Closed</small></th>
         <td>Captured Kotlin Job identities connect the two failure samples to their respective launch sites, even with identical messages and reversed reply order.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="原 JUnit 程序运行六项测试，普通与采集模式各失败两项，安装 DebugProbes 后六项全过">
-        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2327.html"><span>kotlin/kotlinx.coroutines #2327</span>Kotlin Future bridges lose the caller of a failed request</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="Kotlin" data-title-alt="原 JUnit 程序运行六项测试，普通与采集模式各失败两项，安装 DebugProbes 后六项全过">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2327.html"><span>kotlin/kotlinx.coroutines #2327</span>Kotlin Future bridges lose the caller of a failed request</a><small class="case-kind">Debugging and missing stacks · Kotlin · Closed</small></th>
         <td>Job lifecycle joins attribute the identical requestSuspend failures to the separate async and launch callers.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="原帖 JUnit 方法中，delay 恢复后的异常只显示 crashCall，断言要求的 secondCall 缺失">
-        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2604.html"><span>kotlin/kotlinx.coroutines #2604</span>A Kotlin exception after delay omits secondCall from the JVM stack</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="Kotlin" data-title-alt="原帖 JUnit 方法中，delay 恢复后的异常只显示 crashCall，断言要求的 secondCall 缺失">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2604.html"><span>kotlin/kotlinx.coroutines #2604</span>A Kotlin exception after delay omits secondCall from the JVM stack</a><small class="case-kind">Debugging and missing stacks · Kotlin · Closed</small></th>
         <td>The throw sample and its continuation chain are joined to the runBlocking Job; this recovers the caller path across suspension.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-title-alt="按发帖日期取 Trio 的当时源码和 Python 3.6.2">
-        <th scope="row"><a href="evidence/python-trio--trio--285.html"><span>python-trio/trio #285</span>Identical Trio socket-read frames obscure which child was cancelled</a><small class="case-kind">Debugging and missing stacks · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-case-language="Python" data-title-alt="按发帖日期取 Trio 的当时源码和 Python 3.6.2">
+        <th scope="row"><a href="evidence/python-trio--trio--285.html"><span>python-trio/trio #285</span>Identical Trio socket-read frames obscure which child was cancelled</a><small class="case-kind">Debugging and missing stacks · Python · Open</small></th>
         <td>Creation-to-cancellation attribution identifies which of two similarly executing tasks came from the unresponsive branch.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="相同 loopback HTTP 端点上的两条未迭代流产生一条客户端告警；修复版零条">
-        <th scope="row"><a href="evidence/huggingface--huggingface_hub--2521.html"><span>huggingface/huggingface_hub #2521</span>An uniterated inference stream leaves a client warning</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="相同 loopback HTTP 端点上的两条未迭代流产生一条客户端告警；修复版零条">
+        <th scope="row"><a href="evidence/huggingface--huggingface_hub--2521.html"><span>huggingface/huggingface_hub #2521</span>An uniterated inference stream leaves a client warning</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>Two requests shared a URL. The captured task lineage and response identities let the warning be attributed to submit_alpha.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="原帖的无效文档在 8.12.1 产生 ValidationError，其原始错误栈越过不了校验回调，缺失 runDemo 中的 doc.save 调用行；9.0.0 的原始错误栈保留该行及中间调用">
-        <th scope="row"><a href="evidence/automattic--mongoose--15317.html"><span>automattic/mongoose #15317</span>Mongoose validation errors lose the application’s save call</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="原帖的无效文档在 8.12.1 产生 ValidationError，其原始错误栈越过不了校验回调，缺失 runDemo 中的 doc.save 调用行；9.0.0 的原始错误栈保留该行及中间调用">
+        <th scope="row"><a href="evidence/automattic--mongoose--15317.html"><span>automattic/mongoose #15317</span>Mongoose validation errors lose the application’s save call</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>The validation stack starts at Document.invalidate. The Promise creation record recovers the originating model.save call in runDemo.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="直接 await Mongoose 查询时，非法 ObjectId 的转换错误缺少原始调用点">
-        <th scope="row"><a href="evidence/automattic--mongoose--8691.html"><span>automattic/mongoose #8691</span>Awaiting a Mongoose query hides the ObjectId cast caller</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="直接 await Mongoose 查询时，非法 ObjectId 的转换错误缺少原始调用点">
+        <th scope="row"><a href="evidence/automattic--mongoose--8691.html"><span>automattic/mongoose #8691</span>Awaiting a Mongoose query hides the ObjectId cast caller</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>The creation record shows Query.then starting exec internally and recovers the application context missing from the error.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="同一本地账单路由返回 HTTP 500">
-        <th scope="row"><a href="evidence/axios--axios--2387.html"><span>axios/axios #2387</span>Axios errors hide which application call issued a request</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="同一本地账单路由返回 HTTP 500">
+        <th scope="row"><a href="evidence/axios--axios--2387.html"><span>axios/axios #2387</span>Axios errors hide which application call issued a request</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>Matching Promise, Error, and ClientRequest identities lets the two reports be traced to separate axios.get callers.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="原帖代码对同一张缺失的 userss 表执行 SELECT，Bluebird 的 .then 栈保留 test 第 18 行，而 await 的未处理拒绝保留三段 previous event 却丢失 test">
-        <th scope="row"><a href="evidence/knex--knex--2500.html"><span>knex/knex #2500</span>Awaiting a Knex query drops the caller from its error stack</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="原帖代码对同一张缺失的 userss 表执行 SELECT，Bluebird 的 .then 栈保留 test 第 18 行，而 await 的未处理拒绝保留三段 previous event 却丢失 test">
+        <th scope="row"><a href="evidence/knex--knex--2500.html"><span>knex/knex #2500</span>Awaiting a Knex query drops the caller from its error stack</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>The rejection&#x27;s Promise identity identifies the creation stack in the application test where the missing async caller originated.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="原帖作者在评论中给出的重复用户名示例：直接 create 的错误栈止于 Query.formatError、Query.run 及微任务；相同唯一约束经 findOrCreate 时保留 model.save、Function.findOrCreate 和测试调用行">
-        <th scope="row"><a href="evidence/sequelize--sequelize--12044.html"><span>sequelize/sequelize #12044</span>A duplicate-key error loses its caller on Sequelize’s create path</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="原帖作者在评论中给出的重复用户名示例：直接 create 的错误栈止于 Query.formatError、Query.run 及微任务；相同唯一约束经 findOrCreate 时保留 model.save、Function.findOrCreate 和测试调用行">
+        <th scope="row"><a href="evidence/sequelize--sequelize--12044.html"><span>sequelize/sequelize #12044</span>A duplicate-key error loses its caller on Sequelize’s create path</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>Stitching the second create call to its catch reconnects the lost application call site to the driver-error path.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="两个应用入口经同一 helper 访问不存在的表，mysql2 原生错误栈没有查询入口">
-        <th scope="row"><a href="evidence/sidorares--node-mysql2--530.html"><span>sidorares/node-mysql2 #530</span>A MySQL query error loses its async caller</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="两个应用入口经同一 helper 访问不存在的表，mysql2 原生错误栈没有查询入口">
+        <th scope="row"><a href="evidence/sidorares--node-mysql2--530.html"><span>sidorares/node-mysql2 #530</span>A MySQL query error loses its async caller</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>The two query Promise identities tie similar failures to readAccount and readInvoice separately.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="两个调用点同时通过已发布的 Electron 下载器发起 HTTPS GET，只给其中一路设置 200 ms 连接限时，另一路 2000 ms">
-        <th scope="row"><a href="evidence/sindresorhus--got--2277.html"><span>sindresorhus/got #2277</span>Got’s connection timeout stack omits the downloader’s application caller</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="两个调用点同时通过已发布的 Electron 下载器发起 HTTPS GET，只给其中一路设置 200 ms 连接限时，另一路 2000 ms">
+        <th scope="row"><a href="evidence/sindresorhus--got--2277.html"><span>sindresorhus/got #2277</span>Got’s connection timeout stack omits the downloader’s application caller</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>Promise and timer identities recover which initiating caller hit its connect-phase deadline in the timing control.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="真实 SQL Server 的 YYY int NOT NULL 列收到参数 NULL，报 515、EREQUEST">
-        <th scope="row"><a href="evidence/typeorm--typeorm--11499.html"><span>typeorm/typeorm #11499</span>TypeORM’s SQL Server error stack starts in the query runner</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="真实 SQL Server 的 YYY int NOT NULL 列收到参数 NULL，报 515、EREQUEST">
+        <th scope="row"><a href="evidence/typeorm--typeorm--11499.html"><span>typeorm/typeorm #11499</span>TypeORM’s SQL Server error stack starts in the query runner</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>The same SQL produces the same error text in two callers. Matching each Promise and await continuation distinguishes importOrders from refreshCatalog.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="通过 Objection QueryBuilder 执行坏 SQL 后，两个调用者在原生异常栈中消失">
-        <th scope="row"><a href="evidence/vincit--objection.js--1618.html"><span>vincit/objection.js #1618</span>Objection’s QueryBuilder loses application callers from async error stacks</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="通过 Objection QueryBuilder 执行坏 SQL 后，两个调用者在原生异常栈中消失">
+        <th scope="row"><a href="evidence/vincit--objection.js--1618.html"><span>vincit/objection.js #1618</span>Objection’s QueryBuilder loses application callers from async error stacks</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>At the custom thenable boundary, query-object identity reconnects each rejection to its own application creation site.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="提交并重新打开数据库，主键 1 的名称确已更新；原评论的 &gt;0 分支在返回 2 时会把另一项目当作目标">
-        <th scope="row"><a href="evidence/omnilib--aiosqlite--87.html"><span>omnilib/aiosqlite #87</span>An upsert can leave lastrowid pointing to another project</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="提交并重新打开数据库，主键 1 的名称确已更新；原评论的 &gt;0 分支在返回 2 时会把另一项目当作目标">
+        <th scope="row"><a href="evidence/omnilib--aiosqlite--87.html"><span>omnilib/aiosqlite #87</span>An upsert can leave lastrowid pointing to another project</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>Task joins identify which concurrent gather callers received each lastrowid observation, so the reported values can be compared with the correct committed rows.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="两个异步调用同时为同一商品键指定不同值">
-        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2060.html"><span>tortoise/tortoise-orm #2060</span>Concurrent update_or_create returns the other caller’s value</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="两个异步调用同时为同一商品键指定不同值">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2060.html"><span>tortoise/tortoise-orm #2060</span>Concurrent update_or_create returns the other caller’s value</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>The join identifies the gather caller whose defaults were lost and traces its task to the conflict-handling path that returned the competing caller&#x27;s value.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="open" data-title-alt="在 Node 22.2.0 上原样执行报告中的 ESM 文件">
-        <th scope="row"><a href="evidence/nodejs--node--53858.html"><span>nodejs/node #53858</span>A Node DNS error omits the awaiting read call</a><small class="case-kind">Debugging and missing stacks · Open</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="open" data-case-language="JavaScript / TypeScript" data-title-alt="在 Node 22.2.0 上原样执行报告中的 ESM 文件">
+        <th scope="row"><a href="evidence/nodejs--node--53858.html"><span>nodejs/node #53858</span>A Node DNS error omits the awaiting read call</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Open</small></th>
         <td>The default diagnostic omits reader.read() on line 10. In three stock Inspector runs with async ancestry enabled, the debugger shows the DNS connect from line 4 and still omits the later read. The matched read Promise reconnects line 10 to the error.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="原报告的测试和 Page Object 在真实浏览器中因颜色断言失败，基线异常丢失外层 shouldBeCorrect">
-        <th scope="row"><a href="evidence/microsoft--playwright--40141.html"><span>microsoft/playwright #40141</span>Nested Playwright steps lose the outer page-object method from an assertion stack</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="原报告的测试和 Page Object 在真实浏览器中因颜色断言失败，基线异常丢失外层 shouldBeCorrect">
+        <th scope="row"><a href="evidence/microsoft--playwright--40141.html"><span>microsoft/playwright #40141</span>Nested Playwright steps lose the outer page-object method from an assertion stack</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>The affected runner&#x27;s assertion stack omits its outer page-object method. Matching the returned step Promises recovers shouldBeCorrect and separates two inner step launches with identical error stacks.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="启用 Bluebird 长栈后，两条真实缺表查询均返回 42P01；直接 await 的错误没有 test1，链式 catch 再抛出的错误保留 test2 的查询行">
-        <th scope="row"><a href="evidence/knex--knex--2419.html"><span>knex/knex #2419</span>Await and catch expose different Knex query stacks</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="启用 Bluebird 长栈后，两条真实缺表查询均返回 42P01；直接 await 的错误没有 test1，链式 catch 再抛出的错误保留 test2 的查询行">
+        <th scope="row"><a href="evidence/knex--knex--2419.html"><span>knex/knex #2419</span>Await and catch expose different Knex query stacks</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>Even with Bluebird long-stack traces enabled, direct await omits the test1 query line. Matching each query continuation reconnects the database error to test1 or test2.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="在初报 MySQL 5.6 环境和后续 PostgreSQL 方言上，公开的原始路由在预编译时丢失调用行">
-        <th scope="row"><a href="evidence/knex--knex--4531.html"><span>knex/knex #4531</span>An undefined binding hides the Knex query-builder call site</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="在初报 MySQL 5.6 环境和后续 PostgreSQL 方言上，公开的原始路由在预编译时丢失调用行">
+        <th scope="row"><a href="evidence/knex--knex--4531.html"><span>knex/knex #4531</span>An undefined binding hides the Knex query-builder call site</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>The rejection stack starts in Knex query compilation. Matching the rejected Promise recovers the runCase dispatch line before the await boundary.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="MySQL 拒绝第二次插入相同主键时，父提交的 QueryFailedError 栈从 Query.onResult 开始，缺失调用 repository.insert 的 myNamedFunction1234">
-        <th scope="row"><a href="evidence/typeorm--typeorm--11271.html"><span>typeorm/typeorm #11271</span>MySQL’s duplicate-key error loses the TypeORM insert caller</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="MySQL 拒绝第二次插入相同主键时，父提交的 QueryFailedError 栈从 Query.onResult 开始，缺失调用 repository.insert 的 myNamedFunction1234">
+        <th scope="row"><a href="evidence/typeorm--typeorm--11271.html"><span>typeorm/typeorm #11271</span>MySQL’s duplicate-key error loses the TypeORM insert caller</a><small class="case-kind">Debugging and missing stacks · JavaScript / TypeScript · Closed</small></th>
         <td>The affected MySQL error stack starts in driver code and omits myNamedFunction1234. The returned Promise identity recovers that initiator and distinguishes it from the test callback reading the error.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="performance" data-tracker-status="open" data-title-alt="PostgreSQL 14 和 asyncpg 0.29.0 上同时执行两个五行游标，只让其中一个后端在第三行等待">
-        <th scope="row"><a href="evidence/magicstack--asyncpg--1149.html"><span>magicstack/asyncpg #1149</span>Cursor prefetch delays delivery of rows that are already available</a><small class="case-kind">Performance problems · Open</small></th>
+      <tr data-scope="Full local reproduction" data-kind="performance" data-tracker-status="open" data-case-language="Python" data-title-alt="PostgreSQL 14 和 asyncpg 0.29.0 上同时执行两个五行游标，只让其中一个后端在第三行等待">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--1149.html"><span>magicstack/asyncpg #1149</span>Cursor prefetch delays delivery of rows that are already available</a><small class="case-kind">Performance problems · Python · Open</small></th>
         <td>The sample shows consume blocked in _bind_exec. Joining it to start_export identifies the export cursor task in the two-cursor performance control. Protocol records independently establish that rows had arrived before delivery to the application.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="profiling" data-tracker-status="closed" data-title-alt="两个调用者共享同一个 CPU 热点，普通采样看不到发起者">
-        <th scope="row"><a href="evidence/nodejs--node--50056.html"><span>nodejs/node #50056</span>V8 CPU samples lose the launcher of a shared callee after await</a><small class="case-kind">Performance profiling · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="profiling" data-tracker-status="closed" data-case-language="JavaScript / TypeScript" data-title-alt="两个调用者共享同一个 CPU 热点，普通采样看不到发起者">
+        <th scope="row"><a href="evidence/nodejs--node--50056.html"><span>nodejs/node #50056</span>V8 CPU samples lose the launcher of a shared callee after await</a><small class="case-kind">Performance profiling · JavaScript / TypeScript · Closed</small></th>
         <td>The two callers share one sampled CPU stack after await. CoroPerf joins the active Promise generation to its creation so the same callee is attributed separately to launchProfile and launchInventory.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="同一个 CPU 调用栈掩盖了拖慢读事件的两个发起者">
-        <th scope="row"><a href="evidence/tokio-rs--tokio--8085.html"><span>tokio-rs/tokio #8085</span>Identical hot-poll stacks hide the two callers delaying socket reads</a><small class="case-kind">Performance problems · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-case-language="Rust" data-title-alt="同一个 CPU 调用栈掩盖了拖慢读事件的两个发起者">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8085.html"><span>tokio-rs/tokio #8085</span>Identical hot-poll stacks hide the two callers delaying socket reads</a><small class="case-kind">Performance problems · Rust · Open</small></th>
         <td>The physical hot stack and the stock spawn location are identical. The poll-interval join connects the same CPU callee to its two distinct callers, launch_profile and launch_inventory.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="切换调度器后，异常栈失去尾调用的调用者">
-        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--1660.html"><span>Kotlin/kotlinx.coroutines #1660</span>A dispatcher switch hides the exception’s tail caller</a><small class="case-kind">Debugging and missing stacks · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-case-language="Kotlin" data-title-alt="切换调度器后，异常栈失去尾调用的调用者">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--1660.html"><span>Kotlin/kotlinx.coroutines #1660</span>A dispatcher switch hides the exception’s tail caller</a><small class="case-kind">Debugging and missing stacks · Kotlin · Closed</small></th>
         <td>The same worker exception stack can come from profileCaller or inventoryCaller. The Job taken from the throwing continuation links that exception to the correct caller at DispatchedCoroutine creation.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="open" data-title-alt="只有 WAITING、没有调用栈的 fiber 是谁启动的？">
-        <th scope="row"><a href="evidence/typelevel--cats-effect--2620.html"><span>typelevel/cats-effect #2620</span>Who started the fibers waiting with no stack trace?</a><small class="case-kind">Debugging and missing stacks · Open</small></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="open" data-case-language="Scala" data-title-alt="只有 WAITING、没有调用栈的 fiber 是谁启动的？">
+        <th scope="row"><a href="evidence/typelevel--cats-effect--2620.html"><span>typelevel/cats-effect #2620</span>Who started the fibers waiting with no stack trace?</a><small class="case-kind">Debugging and missing stacks · Scala · Open</small></th>
         <td>The stock monitor gives four WAITING rows with no frames. CoroPerf joins each worker&#x27;s wait registration to its creation and then to the application&#x27;s dispatcher initialization at AppLoader.scala:32.</td><td>Full local reproduction</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="排队慢的阻塞任务来自哪个异步调用者？">
-        <th scope="row"><a href="evidence/tokio-rs--tokio--8527.html"><span>tokio-rs/tokio #8527</span>Which async callers submitted the blocking jobs with long queue waits?</a><small class="case-kind">Performance problems · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-case-language="Rust" data-title-alt="排队慢的阻塞任务来自哪个异步调用者？">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8527.html"><span>tokio-rs/tokio #8527</span>Which async callers submitted the blocking jobs with long queue waits?</a><small class="case-kind">Performance problems · Rust · Closed</small></th>
         <td>Two delayed blocking jobs have the same worker stack and stock submit location. Following each blocking span through its creation and its async producer recovers the original application caller, launch_profile or launch_inventory.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-title-alt="Asio 的 detached spawn 隐去了原始调用者">
-        <th scope="row"><a href="evidence/chriskohlhoff--asio--1239.html"><span>chriskohlhoff/asio #1239</span>The original caller disappears across a detached Asio spawn</a><small class="case-kind">Debugging and missing stacks · Open</small></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-case-language="C++" data-title-alt="Asio 的 detached spawn 隐去了原始调用者">
+        <th scope="row"><a href="evidence/chriskohlhoff--asio--1239.html"><span>chriskohlhoff/asio #1239</span>The original caller disappears across a detached Asio spawn</a><small class="case-kind">Debugging and missing stacks · C++ · Open</small></th>
         <td>Asio&#x27;s live awaiter chain ends at the detached entry. Instruction dataflow recovers the timer&#x27;s active instance, and its two recorded creation edges lead back to launch_profile or launch_inventory.</td><td>Component reproduced</td>
       </tr>
-      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="跨线程的 Future 已取消，asyncio Task 仍在清理">
-        <th scope="row"><a href="evidence/python--cpython--105836.html"><span>python/cpython #105836</span>The bridge Future is cancelled while its asyncio Task is still cleaning up</a><small class="case-kind">Functional failures and correctness · Closed</small></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-case-language="Python" data-title-alt="跨线程的 Future 已取消，asyncio Task 仍在清理">
+        <th scope="row"><a href="evidence/python--cpython--105836.html"><span>python/cpython #105836</span>The bridge Future is cancelled while its asyncio Task is still cleaning up</a><small class="case-kind">Functional failures and correctness · Python · Closed</small></th>
         <td>Both cancelled bridge Futures conceal the same pending cleanup path. The recorded Task-to-Future object relationship connects each Task snapshot to the original cross-thread submitter.</td><td>Component reproduced</td>
       </tr></tbody></table>
       </div>

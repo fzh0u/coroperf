@@ -41,10 +41,12 @@
       <header class="case-header">
         <p class="eyebrow">aio-libs/async-lru #480</p>
         <h1>哪个调用者淘汰了另一个调用者正在等待的缓存结果？</h1>
-        <div class="case-links"><a href="https://github.com/aio-libs/async-lru/issues/480">上游报告 ↗</a><a href="https://github.com/aio-libs/async-lru/pull/481">上游后续证据 ↗</a></div>
+        <div class="case-links"><a href="https://github.com/aio-libs/async-lru/issues/480">上游报告 ↗</a></div>
         <dl class="case-status">
           <div><dt>问题类型</dt><dd>功能故障与正确性问题</dd></div>
           <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd><a href="https://github.com/aio-libs/async-lru/pull/481">已在修复对照中验证 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
         </dl>
@@ -52,58 +54,58 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
         <div class="join-contribution"><h3>拼接补回了什么</h3><p>用实际结果 Future 对上缓存淘汰和仍在等待的请求，再沿各自记录的调度 Handle，分别找回触发淘汰和等待结果的原始调用者。</p></div>
-        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
         <p class="provenance">观测记录 52</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>6 → 26</code></a><a href="#join-1-point-2">拼接点 2 <code>26 → 52</code></a></nav>
-          <section class="stack " id="join-1-record-6"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 6</span><span class="record-instance">实例首次见于记录 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>replay</code><span>repro.py:155</span></li><li><code>&lt;listcomp&gt;</code><span>repro.py:155</span></li><li><code>launch_inventory</code><span>repro.py:29</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
-          <p class="join-records"><a href="#join-1-record-6">记录 6</a><span aria-hidden="true">→</span><a href="#join-1-record-26">记录 26</a></p>
-          <p>采集图记录了这条创建记录对应的异步父级。</p>
-          <p>dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。</p>
-          <p class="join-verification">采集图边 <code>parent_to_create · 6 → 26</code></p>
-        </aside><section class="stack " id="join-1-record-26"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 26</span><span class="record-instance">实例首次见于记录 26</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:41</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>dispatch</code><span>repro.py:17</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>record_task</code><span>callback_capture.py:46</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-1-record-26">记录 26</a><span aria-hidden="true">→</span><a href="#join-1-record-52">记录 52</a></p>
-          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
-          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
-          <p class="join-verification">采集图边 <code>base_to_sample · 26 → 52</code></p>
-        </aside><section class="stack observed" id="join-1-record-52"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 52 · semantic_boundary</span><span class="record-instance">实例首次见于记录 26</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request</code><span>repro.py:21</span></li><li><code>__call__</code><span>__init__.py:215</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 52 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request</code><span>repro.py:21</span></li><li><code>__call__</code><span>__init__.py:215</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 52 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
         </div>
-      </div><details class="extra more-trace"><summary>观测记录 141</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>1 → 21</code></a><a href="#join-2-point-2">拼接点 2 <code>21 → 141</code></a></nav>
-          <section class="stack " id="join-2-record-1"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>replay</code><span>repro.py:155</span></li><li><code>&lt;listcomp&gt;</code><span>repro.py:155</span></li><li><code>launch_profile</code><span>repro.py:25</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
-          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-21">记录 21</a></p>
-          <p>采集图记录了这条创建记录对应的异步父级。</p>
-          <p>dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。</p>
-          <p class="join-verification">采集图边 <code>parent_to_create · 1 → 21</code></p>
-        </aside><section class="stack " id="join-2-record-21"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 21</span><span class="record-instance">实例首次见于记录 21</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:41</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>dispatch</code><span>repro.py:17</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>record_task</code><span>callback_capture.py:46</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
-          <p class="join-records"><a href="#join-2-record-21">记录 21</a><span aria-hidden="true">→</span><a href="#join-2-record-141">记录 141</a></p>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>52 → 26</code></a><a href="#join-1-point-1">拼接点 1 <code>26 → 6</code></a></nav>
+          <section class="stack observed" id="join-1-record-52"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 52 · semantic_boundary</span><span class="record-instance">实例首次见于记录 26</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request</code><span>repro.py:21</span></li><li><code>__call__</code><span>__init__.py:215</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-26">记录 26</a><span aria-hidden="true">→</span><a href="#join-1-record-52">记录 52</a></p>
           <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
           <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
-          <p class="join-verification">采集图边 <code>base_to_sample · 21 → 141</code></p>
-        </aside><section class="stack observed" id="join-2-record-141"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 141 · task_snapshot</span><span class="record-instance">实例首次见于记录 21</span></div><ol class="frames"><li><code>request</code><span>repro.py:21</span></li><li><code>__call__</code><span>__init__.py:218</span></li></ol></section>
+          <p class="join-verification">采集图边 <code>base_to_sample · 26 → 52</code></p>
+        </aside><section class="stack " id="join-1-record-26"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 26</span><span class="record-instance">实例首次见于记录 26</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:41</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>dispatch</code><span>repro.py:17</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>record_task</code><span>callback_capture.py:46</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-6">记录 6</a><span aria-hidden="true">→</span><a href="#join-1-record-26">记录 26</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+          <p>dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。</p>
+          <p class="join-verification">采集图边 <code>parent_to_create · 6 → 26</code></p>
+        </aside><section class="stack " id="join-1-record-6"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 6</span><span class="record-instance">实例首次见于记录 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>replay</code><span>repro.py:155</span></li><li><code>&lt;listcomp&gt;</code><span>repro.py:155</span></li><li><code>launch_inventory</code><span>repro.py:29</span></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>观测记录 141</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>原始任务栈快照</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 141 · task_snapshot</span></div><ol class="frames"><li><code>request</code><span>repro.py:21</span></li><li><code>__call__</code><span>__init__.py:218</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 141 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>141 → 21</code></a><a href="#join-2-point-1">拼接点 1 <code>21 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-141"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 141 · task_snapshot</span><span class="record-instance">实例首次见于记录 21</span></div><ol class="frames"><li><code>request</code><span>repro.py:21</span></li><li><code>__call__</code><span>__init__.py:218</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-21">记录 21</a><span aria-hidden="true">→</span><a href="#join-2-record-141">记录 141</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 21 → 141</code></p>
+        </aside><section class="stack " id="join-2-record-21"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 21</span><span class="record-instance">实例首次见于记录 21</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:41</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>dispatch</code><span>repro.py:17</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>record_task</code><span>callback_capture.py:46</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-21">记录 21</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+          <p>dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。</p>
+          <p class="join-verification">采集图边 <code>parent_to_create · 1 → 21</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>replay</code><span>repro.py:155</span></li><li><code>&lt;listcomp&gt;</code><span>repro.py:155</span></li><li><code>launch_profile</code><span>repro.py:25</span></li></ol></section>
         </div>
       </div></details>
       </section>

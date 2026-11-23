@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
           <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>JavaScript / TypeScript</dd></div>
           <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
           <div><dt>Diagnosis</dt><dd>Direct</dd></div>
         </dl>
@@ -52,25 +54,25 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
         <div class="join-contribution"><h3>What stitching revealed</h3><p>The affected MySQL error stack starts in driver code and omits myNamedFunction1234. The returned Promise identity recovers that initiator and distinguishes it from the test callback reading the error.</p></div>
-        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
         <p class="provenance">Observation 2</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>0 → 2</code></a></nav>
-          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues:103</span></li><li><code>&lt;anonymous&gt;</code><span>runnable.js:371</span></li><li><code>done</code><span>runnable.js:310</span></li><li><code>cbHookRun</code><span>runner.js:592</span></li><li><code>next</code><span>runner.js:527</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:644</span></li><li><code>next</code><span>runner.js:634</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:842</span></li><li><code>Runner.runTest</code><span>runner.js:719</span></li><li><code>Test.Runnable.run</code><span>runnable.js:354</span></li><li><code>callFn</code><span>runnable.js:366</span></li><li><code>Context.&lt;anonymous&gt;</code><span>error-stack-trace.test.ts:45</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>error-stack-trace.test.ts:61</span></li><li><code>myNamedFunction1234</code><span>error-stack-trace.test.ts:46</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
-          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
-
-          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 0 → 2</code></p>
-        </aside><section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>Pipe.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>Pipe.onStreamRead</code><span>stream_base_commons:189</span></li><li><code>Socket.Readable.push</code><span>readable:392</span></li><li><code>readableAddChunkPushByteMode</code><span>readable:512</span></li><li><code>addChunk</code><span>readable:561</span></li><li><code>Socket.emit</code><span>node:events:519</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:109</span></li><li><code>PacketParser.executeStart</code><span>packet_parser.js:75</span></li><li><code>PacketParser.onPacket</code><span>connection.js:102</span></li><li><code>PoolConnection.handlePacket</code><span>connection.js:552</span></li><li><code>Query.execute</code><span>command.js:36</span></li><li><code>Query.onResult</code><span>MysqlQueryRunner.ts:262</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic</span></div><ol class="frames"><li><code>Pipe.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>Pipe.onStreamRead</code><span>stream_base_commons:189</span></li><li><code>Socket.Readable.push</code><span>readable:392</span></li><li><code>readableAddChunkPushByteMode</code><span>readable:512</span></li><li><code>addChunk</code><span>readable:561</span></li><li><code>Socket.emit</code><span>node:events:519</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:109</span></li><li><code>PacketParser.executeStart</code><span>packet_parser.js:75</span></li><li><code>PacketParser.onPacket</code><span>connection.js:102</span></li><li><code>PoolConnection.handlePacket</code><span>connection.js:552</span></li><li><code>Query.execute</code><span>command.js:36</span></li><li><code>Query.onResult</code><span>MysqlQueryRunner.ts:262</span></li></ol></section>
           <p class="small trace-note">Frames from record 2 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>Pipe.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>Pipe.onStreamRead</code><span>stream_base_commons:189</span></li><li><code>Socket.Readable.push</code><span>readable:392</span></li><li><code>readableAddChunkPushByteMode</code><span>readable:512</span></li><li><code>addChunk</code><span>readable:561</span></li><li><code>Socket.emit</code><span>node:events:519</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:109</span></li><li><code>PacketParser.executeStart</code><span>packet_parser.js:75</span></li><li><code>PacketParser.onPacket</code><span>connection.js:102</span></li><li><code>PoolConnection.handlePacket</code><span>connection.js:552</span></li><li><code>Query.execute</code><span>command.js:36</span></li><li><code>Query.onResult</code><span>MysqlQueryRunner.ts:262</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues:103</span></li><li><code>&lt;anonymous&gt;</code><span>runnable.js:371</span></li><li><code>done</code><span>runnable.js:310</span></li><li><code>cbHookRun</code><span>runner.js:592</span></li><li><code>next</code><span>runner.js:527</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:644</span></li><li><code>next</code><span>runner.js:634</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:842</span></li><li><code>Runner.runTest</code><span>runner.js:719</span></li><li><code>Test.Runnable.run</code><span>runnable.js:354</span></li><li><code>callFn</code><span>runnable.js:366</span></li><li><code>Context.&lt;anonymous&gt;</code><span>error-stack-trace.test.ts:45</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>error-stack-trace.test.ts:61</span></li><li><code>myNamedFunction1234</code><span>error-stack-trace.test.ts:46</span></li></ol></section>
         </div>
       </div>
       </section>

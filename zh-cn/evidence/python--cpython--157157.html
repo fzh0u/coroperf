@@ -41,10 +41,12 @@
       <header class="case-header">
         <p class="eyebrow">python/cpython #157157</p>
         <h1>TaskGroup 最终传播的异常来自哪一次取消请求？</h1>
-        <div class="case-links"><a href="https://github.com/python/cpython/issues/157157">上游报告 ↗</a><a href="https://github.com/python/cpython/pull/157158">上游后续证据 ↗</a></div>
+        <div class="case-links"><a href="https://github.com/python/cpython/issues/157157">上游报告 ↗</a></div>
         <dl class="case-status">
           <div><dt>问题类型</dt><dd>功能故障与正确性问题</dd></div>
           <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd><a href="https://github.com/python/cpython/pull/157158">上游修复已合并 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
         </dl>
@@ -52,44 +54,44 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
         <div class="join-contribution"><h3>拼接补回了什么</h3><p>同一个 Task 接受两次取消。记录实际 Task 和完成 Future 后，可以区分最终异常来自哪次取消，以及是哪次已接受的取消丢失了消息。</p></div>
-        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
         <p class="provenance">观测记录 5</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>2 → 5</code></a></nav>
-          <section class="stack " id="join-1-record-2"><div class="stack-head"><h4>取消请求的调用栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:47</span></li><li><code>cancel_inside</code><span>stock.py:19</span></li><li><code>cancel</code><span>taskgroups.py:334</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>取消请求 → 目标任务观测</strong></div>
-          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-5">记录 5</a></p>
-          <p>请求和观测都关联到同一个目标 Task，分处该 Task 已记录的取消过程中的两个位置。</p>
-          <p>内部请求先设置待取消标志。随后 TaskGroup 等待的第一个完成 Future 交付了参数为空的 CancelledError。</p>
-          <p class="join-verification">采集图边 <code>cancel_request_to_observation · 2 → 5</code></p>
-        </aside><section class="stack observed" id="join-1-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5 · diagnostic_stacktrace</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:43</span></li><li><code>__aexit__</code><span>taskgroups.py:75</span></li><li><code>_aexit</code><span>taskgroups.py:125</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5 · diagnostic_stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:43</span></li><li><code>__aexit__</code><span>taskgroups.py:75</span></li><li><code>_aexit</code><span>taskgroups.py:125</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
         </div>
-      </div><details class="extra more-trace"><summary>观测记录 8</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf 拼接调用栈</h3>
-          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>4 → 8</code></a></nav>
-          <section class="stack " id="join-2-record-4"><div class="stack-head"><h4>取消请求的调用栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>main</code><span>observe.py:104</span></li><li><code>trial</code><span>stock.py:70</span></li><li><code>cancel_profile</code><span>stock.py:11</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>取消请求 → 目标任务观测</strong></div>
-          <p class="join-records"><a href="#join-2-record-4">记录 4</a><span aria-hidden="true">→</span><a href="#join-2-record-8">记录 8</a></p>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>5 → 2</code></a></nav>
+          <section class="stack observed" id="join-1-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5 · diagnostic_stacktrace</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:43</span></li><li><code>__aexit__</code><span>taskgroups.py:75</span></li><li><code>_aexit</code><span>taskgroups.py:125</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>取消请求 → 目标任务观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-5">记录 5</a></p>
           <p>请求和观测都关联到同一个目标 Task，分处该 Task 已记录的取消过程中的两个位置。</p>
-          <p>探针记录已接受的外部请求，将它的消息与 TaskGroup 后来传播的异常进行对照。</p>
-          <p class="join-verification">采集图边 <code>cancel_request_to_observation · 4 → 8</code></p>
-        </aside><section class="stack observed" id="join-2-record-8"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8 · diagnostic_stacktrace</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:43</span></li><li><code>__aexit__</code><span>taskgroups.py:75</span></li><li><code>_aexit</code><span>taskgroups.py:165</span></li></ol></section>
+          <p>内部请求先设置待取消标志。随后 TaskGroup 等待的第一个完成 Future 交付了参数为空的 CancelledError。</p>
+          <p class="join-verification">采集图边 <code>cancel_request_to_observation · 2 → 5</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>取消请求的调用栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:47</span></li><li><code>cancel_inside</code><span>stock.py:19</span></li><li><code>cancel</code><span>taskgroups.py:334</span></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>观测记录 8</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>原始物理调用栈</h3>
           <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8 · diagnostic_stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:43</span></li><li><code>__aexit__</code><span>taskgroups.py:75</span></li><li><code>_aexit</code><span>taskgroups.py:165</span></li></ol></section>
           <p class="small trace-note">这里只显示记录 8 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>8 → 4</code></a></nav>
+          <section class="stack observed" id="join-2-record-8"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8 · diagnostic_stacktrace</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:43</span></li><li><code>__aexit__</code><span>taskgroups.py:75</span></li><li><code>_aexit</code><span>taskgroups.py:165</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>取消请求 → 目标任务观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-4">记录 4</a><span aria-hidden="true">→</span><a href="#join-2-record-8">记录 8</a></p>
+          <p>请求和观测都关联到同一个目标 Task，分处该 Task 已记录的取消过程中的两个位置。</p>
+          <p>探针记录已接受的外部请求，将它的消息与 TaskGroup 后来传播的异常进行对照。</p>
+          <p class="join-verification">采集图边 <code>cancel_request_to_observation · 4 → 8</code></p>
+        </aside><section class="stack " id="join-2-record-4"><div class="stack-head"><h4>取消请求的调用栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>main</code><span>observe.py:104</span></li><li><code>trial</code><span>stock.py:70</span></li><li><code>cancel_profile</code><span>stock.py:11</span></li></ol></section>
         </div>
       </div></details>
       </section>

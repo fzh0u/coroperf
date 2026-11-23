@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>Issue type</dt><dd>Performance profiling</dd></div>
           <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>JavaScript / TypeScript</dd></div>
           <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
           <div><dt>Diagnosis</dt><dd>Direct</dd></div>
         </dl>
@@ -52,44 +54,44 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
         <div class="join-contribution"><h3>What stitching revealed</h3><p>The two callers share one sampled CPU stack after await. CoroPerf joins the active Promise generation to its creation so the same callee is attributed separately to launchProfile and launchInventory.</p></div>
-        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
         <p class="provenance">Observation 18</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>4 → 18</code></a></nav>
-          <section class="stack " id="join-1-record-4"><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>Object.&lt;anonymous&gt;</code><span>fixture.cjs:34</span></li><li><code>exercise</code><span>fixture.cjs:30</span></li><li><code>launchProfile</code><span>fixture.cjs:21</span></li><li><code>sharedService</code><span>fixture.cjs:13</span></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-1-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-1-record-18">Record 18</a></p>
-          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
-          <p>The observation falls inside this instance's recorded execution interval on the sampled thread. That interval supplies the owner used to select the creation record.</p>
-          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 4 → 18</code></p>
-        </aside><section class="stack observed" id="join-1-record-18"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 18 · cpu_profile</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>sharedService</code><span>fixture.cjs:12</span></li><li><code>busySpin</code><span>fixture.cjs:7</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 18 · cpu_profile</span></div><ol class="frames"><li><code>sharedService</code><span>fixture.cjs:12</span></li><li><code>busySpin</code><span>fixture.cjs:7</span></li></ol></section>
           <p class="small trace-note">Frames from record 18 alone. Each stack block lists frames from caller to callee.</p>
         </div>
-      </div><details class="extra more-trace"><summary>Observation 126</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>8 → 126</code></a></nav>
-          <section class="stack " id="join-2-record-8"><div class="stack-head"><h4>Creation stack</h4><span>Record 8</span><span class="record-instance">Instance from record 8</span></div><ol class="frames"><li><code>Object.&lt;anonymous&gt;</code><span>fixture.cjs:34</span></li><li><code>exercise</code><span>fixture.cjs:30</span></li><li><code>launchInventory</code><span>fixture.cjs:25</span></li><li><code>sharedService</code><span>fixture.cjs:13</span></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-2-record-8">Record 8</a><span aria-hidden="true">→</span><a href="#join-2-record-126">Record 126</a></p>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>18 → 4</code></a></nav>
+          <section class="stack observed" id="join-1-record-18"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 18 · cpu_profile</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>sharedService</code><span>fixture.cjs:12</span></li><li><code>busySpin</code><span>fixture.cjs:7</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-1-record-18">Record 18</a></p>
           <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
           <p>The observation falls inside this instance's recorded execution interval on the sampled thread. That interval supplies the owner used to select the creation record.</p>
-          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 8 → 126</code></p>
-        </aside><section class="stack observed" id="join-2-record-126"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 126 · cpu_profile</span><span class="record-instance">Instance from record 8</span></div><ol class="frames"><li><code>sharedService</code><span>fixture.cjs:12</span></li><li><code>busySpin</code><span>fixture.cjs:7</span></li><li><code>now</code><span>performance:137</span></li><li><code>now</code></li></ol></section>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 4 → 18</code></p>
+        </aside><section class="stack " id="join-1-record-4"><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>Object.&lt;anonymous&gt;</code><span>fixture.cjs:34</span></li><li><code>exercise</code><span>fixture.cjs:30</span></li><li><code>launchProfile</code><span>fixture.cjs:21</span></li><li><code>sharedService</code><span>fixture.cjs:13</span></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>Observation 126</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 126 · cpu_profile</span></div><ol class="frames"><li><code>sharedService</code><span>fixture.cjs:12</span></li><li><code>busySpin</code><span>fixture.cjs:7</span></li><li><code>now</code><span>performance:137</span></li><li><code>now</code></li></ol></section>
           <p class="small trace-note">Frames from record 126 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>126 → 8</code></a></nav>
+          <section class="stack observed" id="join-2-record-126"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 126 · cpu_profile</span><span class="record-instance">Instance from record 8</span></div><ol class="frames"><li><code>sharedService</code><span>fixture.cjs:12</span></li><li><code>busySpin</code><span>fixture.cjs:7</span></li><li><code>now</code><span>performance:137</span></li><li><code>now</code></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-8">Record 8</a><span aria-hidden="true">→</span><a href="#join-2-record-126">Record 126</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The observation falls inside this instance's recorded execution interval on the sampled thread. That interval supplies the owner used to select the creation record.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 8 → 126</code></p>
+        </aside><section class="stack " id="join-2-record-8"><div class="stack-head"><h4>Creation stack</h4><span>Record 8</span><span class="record-instance">Instance from record 8</span></div><ol class="frames"><li><code>Object.&lt;anonymous&gt;</code><span>fixture.cjs:34</span></li><li><code>exercise</code><span>fixture.cjs:30</span></li><li><code>launchInventory</code><span>fixture.cjs:25</span></li><li><code>sharedService</code><span>fixture.cjs:13</span></li></ol></section>
         </div>
       </div></details>
       </section>

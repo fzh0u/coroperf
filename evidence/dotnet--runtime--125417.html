@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
           <div><dt>Upstream status</dt><dd>Open</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>C#</dd></div>
           <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
           <div><dt>Diagnosis</dt><dd>Direct</dd></div>
         </dl>
@@ -52,44 +54,44 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
         <div class="join-contribution"><h3>What stitching revealed</h3><p>The same callee runs for two synchronous forwarders. TPL execution intervals and recorded task creation stacks connect each worker observation to its original caller.</p></div>
-        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
         <p class="provenance">Observation 5</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>2 → 5</code></a></nav>
-          <section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>Program.Main</code><span>Capture.cs:143</span></li><li><code>Program.Outer</code><span>Capture.cs:94</span></li><li><code>Program.LaunchInventory</code><span>Capture.cs:106</span></li><li><code>System.Runtime.CompilerServices.AsyncHelpers.FinalizeTaskReturningThunk</code></li><li><code>System.Threading.Tasks.TplEventSource.TraceOperationBegin</code></li><li><code>System.Diagnostics.Tracing.EventSource.WriteEventWithRelatedActivityIdCore</code></li><li><code>System.Diagnostics.Tracing.EventSource.DispatchToAllListeners</code></li><li><code>Trace.OnEventWritten</code><span>Capture.cs:45</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-5">Record 5</a></p>
-          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
-          <p>The observation falls inside this instance's recorded execution interval on the sampled thread. That interval supplies the owner used to select the creation record.</p>
-          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 2 → 5</code></p>
-        </aside><section class="stack observed" id="join-1-record-5"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · resumed_stack</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>System.Threading.Thread.StartCallback</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerDoWork</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.System.Threading.IThreadPoolWorkItem.Execute</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.&lt;&gt;c.&lt;OutputWaitEtwEvents&gt;b__12_0</code></li><li><code>Program.Callee</code><span>Capture.cs:87</span></li><li><code>Trace.Snapshot</code><span>Capture.cs:59</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · resumed_stack</span></div><ol class="frames"><li><code>System.Threading.Thread.StartCallback</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerDoWork</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.System.Threading.IThreadPoolWorkItem.Execute</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.&lt;&gt;c.&lt;OutputWaitEtwEvents&gt;b__12_0</code></li><li><code>Program.Callee</code><span>Capture.cs:87</span></li><li><code>Trace.Snapshot</code><span>Capture.cs:59</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
           <p class="small trace-note">Frames from record 5 alone. Each stack block lists frames from caller to callee.</p>
         </div>
-      </div><details class="extra more-trace"><summary>Observation 10</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>0 → 10</code></a></nav>
-          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>Program.Main</code><span>Capture.cs:142</span></li><li><code>Program.Outer</code><span>Capture.cs:94</span></li><li><code>Program.LaunchProfile</code><span>Capture.cs:103</span></li><li><code>System.Runtime.CompilerServices.AsyncHelpers.FinalizeTaskReturningThunk</code></li><li><code>System.Threading.Tasks.TplEventSource.TraceOperationBegin</code></li><li><code>System.Diagnostics.Tracing.EventSource.WriteEventWithRelatedActivityIdCore</code></li><li><code>System.Diagnostics.Tracing.EventSource.DispatchToAllListeners</code></li><li><code>Trace.OnEventWritten</code><span>Capture.cs:45</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-2-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-2-record-10">Record 10</a></p>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>5 → 2</code></a></nav>
+          <section class="stack observed" id="join-1-record-5"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · resumed_stack</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>System.Threading.Thread.StartCallback</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerDoWork</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.System.Threading.IThreadPoolWorkItem.Execute</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.&lt;&gt;c.&lt;OutputWaitEtwEvents&gt;b__12_0</code></li><li><code>Program.Callee</code><span>Capture.cs:87</span></li><li><code>Trace.Snapshot</code><span>Capture.cs:59</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-5">Record 5</a></p>
           <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
           <p>The observation falls inside this instance's recorded execution interval on the sampled thread. That interval supplies the owner used to select the creation record.</p>
-          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 0 → 10</code></p>
-        </aside><section class="stack observed" id="join-2-record-10"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 10 · resumed_stack</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>System.Threading.Thread.StartCallback</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerDoWork</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.System.Threading.IThreadPoolWorkItem.Execute</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.&lt;&gt;c.&lt;OutputWaitEtwEvents&gt;b__12_0</code></li><li><code>Program.Callee</code><span>Capture.cs:87</span></li><li><code>Trace.Snapshot</code><span>Capture.cs:59</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 2 → 5</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>Program.Main</code><span>Capture.cs:143</span></li><li><code>Program.Outer</code><span>Capture.cs:94</span></li><li><code>Program.LaunchInventory</code><span>Capture.cs:106</span></li><li><code>System.Runtime.CompilerServices.AsyncHelpers.FinalizeTaskReturningThunk</code></li><li><code>System.Threading.Tasks.TplEventSource.TraceOperationBegin</code></li><li><code>System.Diagnostics.Tracing.EventSource.WriteEventWithRelatedActivityIdCore</code></li><li><code>System.Diagnostics.Tracing.EventSource.DispatchToAllListeners</code></li><li><code>Trace.OnEventWritten</code><span>Capture.cs:45</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>Observation 10</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 10 · resumed_stack</span></div><ol class="frames"><li><code>System.Threading.Thread.StartCallback</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerDoWork</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.System.Threading.IThreadPoolWorkItem.Execute</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.&lt;&gt;c.&lt;OutputWaitEtwEvents&gt;b__12_0</code></li><li><code>Program.Callee</code><span>Capture.cs:87</span></li><li><code>Trace.Snapshot</code><span>Capture.cs:59</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
           <p class="small trace-note">Frames from record 10 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>10 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-10"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 10 · resumed_stack</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>System.Threading.Thread.StartCallback</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerDoWork</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.System.Threading.IThreadPoolWorkItem.Execute</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.&lt;&gt;c.&lt;OutputWaitEtwEvents&gt;b__12_0</code></li><li><code>Program.Callee</code><span>Capture.cs:87</span></li><li><code>Trace.Snapshot</code><span>Capture.cs:59</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-2-record-10">Record 10</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The observation falls inside this instance's recorded execution interval on the sampled thread. That interval supplies the owner used to select the creation record.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 0 → 10</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>Program.Main</code><span>Capture.cs:142</span></li><li><code>Program.Outer</code><span>Capture.cs:94</span></li><li><code>Program.LaunchProfile</code><span>Capture.cs:103</span></li><li><code>System.Runtime.CompilerServices.AsyncHelpers.FinalizeTaskReturningThunk</code></li><li><code>System.Threading.Tasks.TplEventSource.TraceOperationBegin</code></li><li><code>System.Diagnostics.Tracing.EventSource.WriteEventWithRelatedActivityIdCore</code></li><li><code>System.Diagnostics.Tracing.EventSource.DispatchToAllListeners</code></li><li><code>Trace.OnEventWritten</code><span>Capture.cs:45</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
         </div>
       </div></details>
       </section>

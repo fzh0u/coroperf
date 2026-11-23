@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which Ray Serve batch task swapped two request arguments?">
+  <title>ray-project/ray #67404 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/ray-project--ray--67404.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="ray-project--ray--67404.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/ray-project--ray--67404.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #67404</p>
+        <h1>Which Ray Serve batch task swapped two request arguments?</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/67404">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Open</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd><a href="https://github.com/ray-project/ray/pull/67405">Proposed fix tested locally ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The Task, coroutine and frame link each identical-looking merge stack to its own batch creation in _process_sub_batches. The selected batches retain the actual arguments that were swapped.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:586</span></li><li><code>_batch_args_kwargs</code><span>batching.py:119</span></li></ol></section>
+          <p class="small trace-note">Frames from record 1 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:586</span></li><li><code>_batch_args_kwargs</code><span>batching.py:119</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">Record 1</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_sub_batches</code><span>batching.py:540</span></li><li><code>create_task</code><span>tasks.py:414</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 13</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 13</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:586</span></li><li><code>_batch_args_kwargs</code><span>batching.py:119</span></li></ol></section>
+          <p class="small trace-note">Frames from record 13 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>13 → 12</code></a></nav>
+          <section class="stack observed" id="join-2-record-13"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 13</span><span class="record-instance">Instance from record 12</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:586</span></li><li><code>_batch_args_kwargs</code><span>batching.py:119</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-12">Record 12</a><span aria-hidden="true">→</span><a href="#join-2-record-13">Record 13</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 12 → 13</code></p>
+        </aside><section class="stack " id="join-2-record-12"><div class="stack-head"><h4>Creation stack</h4><span>Record 12</span><span class="record-instance">Instance from record 12</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1014</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1043</span></li><li><code>Thread.run</code><span>threading.py:994</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3746</span></li><li><code>_BatchQueue._process_sub_batches</code><span>batching.py:540</span></li><li><code>create_task</code><span>tasks.py:414</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reporter’s two requests supply (1, 10) and (2, 20). The affected nightly returns (1, 10) and (20, 2). In a separate Iris classifier, mixed keyword order reverses 30 of 60 feature pairs and changes 16 predictions. The proposed batching change restores all 60 feature pairs and the correctly bound model’s 56 correct predictions.</dd></div><div><dt>What CoroPerf showed</dt><dd>The merge records carry the active Task, coroutine and coroutine frame. The same three identities link the echo merge (record 1) and the classifier merge (record 13) to their own creation records 0 and 12 in _process_sub_batches. The physical merge stacks share the same frames. The joined records identify the particular scheduled batch and preserve its arguments before and after the swap. In the selected classifier batch, the second row enters as sepal=46 and petal=15 and leaves as sepal=15 and petal=46.</dd></div><div><dt>Scope and limits</dt><dd>The reporter’s Serve program and the classifier ran on a local CPU cluster using the same Ray nightly commit as the original report. The Linux comparison replaces only batching.py with the tested PR revision. Two independent runs verify 95 creation-to-merge matches per variant. The proposal remains open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

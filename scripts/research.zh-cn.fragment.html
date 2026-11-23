@@ -8,6 +8,31 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>SGLang #29163 · 同一批次里，哪些请求走了慢速分词？</h3>
+      <p>四个请求共用一个线程池工作项，物理栈也相同。通过实际输入对象和结果 Future，可以把每次观测接回各自的请求。CPU 组件对照中，未合并的候选补丁将整批中位耗时从 141 毫秒降至 43 毫秒。</p>
+      <a href="evidence/sgl-project--sglang--29163.html#call-stack">比较同一批次内的两条请求栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Ray Serve #67404 · 哪个批处理任务交换了特征？</h3>
+      <p>匹配实际的 Task、协程和协程帧，把两个相同的合并栈分别接到创建位置。记录也保留了每批实际传入和传出的参数。仍开放的 PR 在本地对照中恢复了全部特征绑定。</p>
+      <a href="evidence/ray-project--ray--67404.html#call-stack">比较两条批处理任务的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>vLLM #57350 · 每次流式解码由哪个路由提交？</h3>
+      <p>已合并的修复在渲染器线程池执行流式解码。用线程池的实际 WorkItem，可以把相同的工作线程栈分别接回聊天与文本补全请求的提交位置及各自的创建栈。</p>
+      <a href="evidence/vllm-project--vllm--57350.html#call-stack">比较两条从工作线程到请求的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>SGLang #39689 · 哪个接收任务解除控制请求的等待？</h3>
+      <p>冷启动的暂停和继续操作各留下一个未读广播。启动接收循环后，按实际 Future 可找到对应的广播接收者，再从执行栈接回接收循环的创建位置。</p>
+      <a href="evidence/sgl-project--sglang--39689.html#call-stack">比较两条接收执行栈及其创建记录 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Ray Data #51188 · 分块结束后，哪些任务仍在写入数据？</h3>
+      <p>两个分块管理协程先发出结束标记，批任务随后才写入。用等待失败时见到的 Task 对象，可以把后续写入接回对应的管理协程和创建栈。</p>
+      <a href="evidence/ray-project--ray--51188.html#call-stack">比较两条延迟写入及其创建栈 ↗</a>
+    </div>
+    <div class="research-entry">
       <h3>asyncpg #547 · 哪些请求借出了让连接池无法关闭的连接？</h3>
       <p>关闭连接池卡住时，两个原始请求的 Task 都已回收。任务栈与分配追踪显示两个归还 Future 都来自同一行库代码。CoroPerf 根据实际的 Future 找到各自的连接获取记录，再接回应用调用者。</p>
       <a href="evidence/magicstack--asyncpg--547.html#call-stack">比较两条从连接获取到关闭等待的拼接栈 ↗</a>

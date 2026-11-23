@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which SGLang requests used the slow tokenizer inside one executor batch?">
+  <title>sgl-project/sglang #29163 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/sgl-project--sglang--29163.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="sgl-project--sglang--29163.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/sgl-project--sglang--29163.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">sgl-project/sglang #29163</p>
+        <h1>Which SGLang requests used the slow tokenizer inside one executor batch?</h1>
+        <div class="case-links"><a href="https://github.com/sgl-project/sglang/issues/29163">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd><a href="https://github.com/sgl-project/sglang/pull/29164">Proposed fix tested locally ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The actual WorkItem, prompt object and result Future distinguish requests with the same worker stack inside one tokenizer batch.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 8</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.__call__</code><span>tokenization_utils_base.py:2514</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:761</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:702</span></li></ol></section>
+          <p class="small trace-note">Frames from record 8 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>8 → 4</code></a><a href="#join-1-point-1">Join point 1 <code>4 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-8"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.__call__</code><span>tokenization_utils_base.py:2514</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:761</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:702</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-1-record-8">Record 8</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The observed worker was executing the same WorkItem recorded when it was created on the event-loop thread.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 4 → 8</code></p>
+        </aside><section class="stack " id="join-1-record-4"><div class="stack-head"><h4>Batch submission stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batch.py:211</span></li><li><code>main</code><span>check_batch.py:204</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AsyncDynamicbatchTokenizer._dynamic_batch_loop</code><span>current.py:109</span></li><li><code>AsyncDynamicbatchTokenizer._process_dynamic_batch</code><span>current.py:132</span></li><li><code>BaseEventLoop.run_in_executor</code><span>base_events.py:863</span></li><li><code>ThreadPoolExecutor.submit</code><span>thread.py:176</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Request creation → batch submission</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-4">Record 4</a></p>
+          <p>The batch holds the exact Future created by this request, at the same position as its input.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 0 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Request creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batch.py:211</span></li><li><code>main</code><span>check_batch.py:204</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>verify</code><span>check_batch.py:144</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>Probe.trace</code><span>check_batch.py:121</span></li><li><code>Probe.trace.&lt;locals&gt;.inventory</code><span>check_batch.py:113</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 9</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.__call__</code><span>tokenization_utils_base.py:2514</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:761</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:702</span></li></ol></section>
+          <p class="small trace-note">Frames from record 9 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>9 → 5</code></a><a href="#join-2-point-1">Join point 1 <code>5 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-9"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9</span><span class="record-instance">Instance from record 5</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.__call__</code><span>tokenization_utils_base.py:2514</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:761</span></li><li><code>PythonBackend._encode_plus</code><span>tokenization_python.py:702</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-5">Record 5</a><span aria-hidden="true">→</span><a href="#join-2-record-9">Record 9</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The observed worker was executing the same WorkItem recorded when it was created on the event-loop thread.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 5 → 9</code></p>
+        </aside><section class="stack " id="join-2-record-5"><div class="stack-head"><h4>Batch submission stack</h4><span>Record 5</span><span class="record-instance">Instance from record 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batch.py:211</span></li><li><code>main</code><span>check_batch.py:204</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AsyncDynamicbatchTokenizer._dynamic_batch_loop</code><span>current.py:109</span></li><li><code>AsyncDynamicbatchTokenizer._process_dynamic_batch</code><span>current.py:132</span></li><li><code>BaseEventLoop.run_in_executor</code><span>base_events.py:863</span></li><li><code>ThreadPoolExecutor.submit</code><span>thread.py:176</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Request creation → batch submission</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-5">Record 5</a></p>
+          <p>The batch holds the exact Future created by this request, at the same position as its input.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 1 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Request creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batch.py:211</span></li><li><code>main</code><span>check_batch.py:204</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>verify</code><span>check_batch.py:144</span></li><li><code>wait_for</code><span>tasks.py:520</span></li><li><code>Probe.trace</code><span>check_batch.py:121</span></li><li><code>Probe.trace.&lt;locals&gt;.profile</code><span>check_batch.py:116</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Four concurrent Kimi-K2.5 prompts of 6,000 to 7,500 tokens share one executor WorkItem. The stock dynamic batcher uses the Python tokenizer path for each input. The proposed change uses direct encode for these inputs. Median wall time for the four-request batch falls from 141 to 43 ms across ten timed pairs after warmup, with the same token IDs. A second run gives 138 and 43 ms.</dd></div><div><dt>What CoroPerf showed</dt><dd>The four _encode_plus worker stacks are identical. The current prompt is the same object as an input in the active WorkItem. The batch pairs that input with the exact result Future seen when the request entered the queue. This identifies the waiting Task and its launch stack. The selected observations 8 and 9 go back to batch submission records 4 and 5, then to separate request creations 0 and 1.</dd></div><div><dt>Scope and limits</dt><dd>This CPU component run measures the batcher and real tokenizer, without model inference. The checked main revision contains the same batcher as the proposal base. The issue and PR closed for inactivity. For default calls the proposal preserves the token IDs used by TokenizerManager and omits the stock attention_mask key. Explicit truncation and attention-mask requests produced equal results in the tested comparison.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -45,6 +45,8 @@
         <dl class="case-status">
           <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
           <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Upstream fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>JavaScript / TypeScript</dd></div>
           <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
           <div><dt>Diagnosis</dt><dd>Direct</dd></div>
         </dl>
@@ -52,44 +54,44 @@
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
         <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
         <div class="join-contribution"><h3>What stitching revealed</h3><p>Matching Promise, Error, and ClientRequest identities lets the two reports be traced to separate axios.get callers.</p></div>
-        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
         <p class="provenance">Observation 112</p>
       <div class="trace-grid">
-        <div class="trace-pane stitched">
-          <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>6 → 112</code></a></nav>
-          <section class="stack " id="join-1-record-6"><div class="stack-head"><h4>Creation stack</h4><span>Record 6</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>Module.load</code><span>loader.js:643</span></li><li><code>Object.Module._extensions..js</code><span>loader.js:787</span></li><li><code>Module._compile</code><span>loader.js:776</span></li><li><code>Object.&lt;anonymous&gt;</code><span>axios.cjs:26</span></li><li><code>loadStatement</code><span>axios.cjs:12</span></li><li><code>Function.observedGet [as get]</code><span>axios-probe.cjs:20</span></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
-        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-1-record-6">Record 6</a><span aria-hidden="true">→</span><a href="#join-1-record-112">Record 112</a></p>
-          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
-
-          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 6 → 112</code></p>
-        </aside><section class="stack observed" id="join-1-record-112"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 112 · semantic_boundary</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues.js:77</span></li><li><code>endReadableNT</code><span>_stream_readable.js:1154</span></li><li><code>IncomingMessage.EventEmitter.emit</code><span>domain.js:471</span></li><li><code>IncomingMessage.emit</code><span>events.js:208</span></li><li><code>IncomingMessage.handleStreamEnd</code><span>http.js:237</span></li><li><code>settle</code><span>settle.js:17</span></li><li><code>createError</code><span>createError.js:16</span></li></ol></section>
-        </div>
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 112 · semantic_boundary</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues.js:77</span></li><li><code>endReadableNT</code><span>_stream_readable.js:1154</span></li><li><code>IncomingMessage.EventEmitter.emit</code><span>domain.js:471</span></li><li><code>IncomingMessage.emit</code><span>events.js:208</span></li><li><code>IncomingMessage.handleStreamEnd</code><span>http.js:237</span></li><li><code>settle</code><span>settle.js:17</span></li><li><code>createError</code><span>createError.js:16</span></li></ol></section>
           <p class="small trace-note">Frames from record 112 alone. Each stack block lists frames from caller to callee.</p>
         </div>
-      </div><details class="extra more-trace"><summary>Observation 186</summary>
-      <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf connected stack</h3>
-          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>14 → 186</code></a></nav>
-          <section class="stack " id="join-2-record-14"><div class="stack-head"><h4>Creation stack</h4><span>Record 14</span><span class="record-instance">Instance from record 14</span></div><ol class="frames"><li><code>Module.load</code><span>loader.js:643</span></li><li><code>Object.Module._extensions..js</code><span>loader.js:787</span></li><li><code>Module._compile</code><span>loader.js:776</span></li><li><code>Object.&lt;anonymous&gt;</code><span>axios.cjs:26</span></li><li><code>refreshStatement</code><span>axios.cjs:13</span></li><li><code>Function.observedGet [as get]</code><span>axios-probe.cjs:20</span></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
-        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
-          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
-          <p class="join-records"><a href="#join-2-record-14">Record 14</a><span aria-hidden="true">→</span><a href="#join-2-record-186">Record 186</a></p>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>112 → 6</code></a></nav>
+          <section class="stack observed" id="join-1-record-112"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 112 · semantic_boundary</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues.js:77</span></li><li><code>endReadableNT</code><span>_stream_readable.js:1154</span></li><li><code>IncomingMessage.EventEmitter.emit</code><span>domain.js:471</span></li><li><code>IncomingMessage.emit</code><span>events.js:208</span></li><li><code>IncomingMessage.handleStreamEnd</code><span>http.js:237</span></li><li><code>settle</code><span>settle.js:17</span></li><li><code>createError</code><span>createError.js:16</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-6">Record 6</a><span aria-hidden="true">→</span><a href="#join-1-record-112">Record 112</a></p>
           <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
 
-          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 14 → 186</code></p>
-        </aside><section class="stack observed" id="join-2-record-186"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 186 · semantic_boundary</span><span class="record-instance">Instance from record 14</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues.js:77</span></li><li><code>endReadableNT</code><span>_stream_readable.js:1154</span></li><li><code>IncomingMessage.EventEmitter.emit</code><span>domain.js:471</span></li><li><code>IncomingMessage.emit</code><span>events.js:208</span></li><li><code>IncomingMessage.handleStreamEnd</code><span>http.js:237</span></li><li><code>settle</code><span>settle.js:17</span></li><li><code>createError</code><span>createError.js:16</span></li></ol></section>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 6 → 112</code></p>
+        </aside><section class="stack " id="join-1-record-6"><div class="stack-head"><h4>Creation stack</h4><span>Record 6</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>Module.load</code><span>loader.js:643</span></li><li><code>Object.Module._extensions..js</code><span>loader.js:787</span></li><li><code>Module._compile</code><span>loader.js:776</span></li><li><code>Object.&lt;anonymous&gt;</code><span>axios.cjs:26</span></li><li><code>loadStatement</code><span>axios.cjs:12</span></li><li><code>Function.observedGet [as get]</code><span>axios-probe.cjs:20</span></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
         </div>
+      </div><details class="extra more-trace"><summary>Observation 186</summary>
+      <div class="trace-grid">
         <div class="trace-pane">
           <h3>Original physical stack</h3>
           <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 186 · semantic_boundary</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues.js:77</span></li><li><code>endReadableNT</code><span>_stream_readable.js:1154</span></li><li><code>IncomingMessage.EventEmitter.emit</code><span>domain.js:471</span></li><li><code>IncomingMessage.emit</code><span>events.js:208</span></li><li><code>IncomingMessage.handleStreamEnd</code><span>http.js:237</span></li><li><code>settle</code><span>settle.js:17</span></li><li><code>createError</code><span>createError.js:16</span></li></ol></section>
           <p class="small trace-note">Frames from record 186 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>186 → 14</code></a></nav>
+          <section class="stack observed" id="join-2-record-186"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 186 · semantic_boundary</span><span class="record-instance">Instance from record 14</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues.js:77</span></li><li><code>endReadableNT</code><span>_stream_readable.js:1154</span></li><li><code>IncomingMessage.EventEmitter.emit</code><span>domain.js:471</span></li><li><code>IncomingMessage.emit</code><span>events.js:208</span></li><li><code>IncomingMessage.handleStreamEnd</code><span>http.js:237</span></li><li><code>settle</code><span>settle.js:17</span></li><li><code>createError</code><span>createError.js:16</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-14">Record 14</a><span aria-hidden="true">→</span><a href="#join-2-record-186">Record 186</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 14 → 186</code></p>
+        </aside><section class="stack " id="join-2-record-14"><div class="stack-head"><h4>Creation stack</h4><span>Record 14</span><span class="record-instance">Instance from record 14</span></div><ol class="frames"><li><code>Module.load</code><span>loader.js:643</span></li><li><code>Object.Module._extensions..js</code><span>loader.js:787</span></li><li><code>Module._compile</code><span>loader.js:776</span></li><li><code>Object.&lt;anonymous&gt;</code><span>axios.cjs:26</span></li><li><code>refreshStatement</code><span>axios.cjs:13</span></li><li><code>Function.observedGet [as get]</code><span>axios-probe.cjs:20</span></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
         </div>
       </div></details>
       </section>
