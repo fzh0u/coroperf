@@ -8,6 +8,16 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>Ray Data #65038 · Which producer held the first chunk?</h3>
+      <p>The first-yield stacks join to the two batch Tasks and their bound inputs. The stock planner waits for all 12 chunks from the first producer. The local candidate delivers the first chunk after one yield and preserves the order of all 36 rows.</p>
+      <a href="evidence/ray-project--ray--65038.html#call-stack">Compare both batch creation joins</a>
+    </div>
+    <div class="research-entry">
+      <h3>Hugging Face Hub #5186 · Which request blocked the event loop?</h3>
+      <p>Two call paths reach the same queue poll. The affected poll joins back to its request Task, and the repaired poll reaches that Task through its executor WorkItem. With the merged fix, a separate Task runs 30 times during polling and the video bytes match.</p>
+      <a href="evidence/huggingface--huggingface_hub--5186.html#call-stack">Inspect the request and worker stacks</a>
+    </div>
+    <div class="research-entry">
       <h3>Ray Serve #53071 · Which queue serialized three batches?</h3>
       <p>All 24 request Futures were enqueued before the first batch finished. Three execution stacks connect to one queue Task created in the first enqueue. Enabling concurrency on the fixed release gives each batch a separate Task.</p>
       <a href="evidence/ray-project--ray--53071.html#call-stack">Inspect the serial queue Task and three batches</a>

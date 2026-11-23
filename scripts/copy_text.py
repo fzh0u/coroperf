@@ -6,7 +6,7 @@ CONTRIBUTION_KINDS = (
     "scheduling_contention", "cost_attribution",
 )
 CASE_LANGUAGES = ("Python", "Go", "Rust", "Java", "C++", "C#", "JavaScript / TypeScript", "Kotlin", "Scala", "Dart")
-FIX_STATES = ("verified", "merged", "proposed", "guidance", "workaround")
+FIX_STATES = ("verified", "merged", "proposed", "guidance", "workaround", "local")
 
 LABELS = {
     "atlas": ("Coroutine Evidence Atlas", "协程证据图谱"),
@@ -29,18 +29,20 @@ LABELS = {
     "tracker_unconfirmed_count": ("{count} unconfirmed", "{count} 个待核对"),
     "tracker_checked": ("Checked {time}", "核对时间 {time}"),
     "tracker_data": ("Download upstream status data", "下载上游状态数据"),
-    "fix_status": ("Upstream fix evidence", "上游修复证据"),
+    "fix_status": ("Fix evidence", "修复证据"),
     "fix_verified": ("Fixed in a tested comparison", "已在修复对照中验证"),
     "fix_merged": ("Upstream change merged", "上游修复已合并"),
     "fix_proposed": ("Proposed fix tested locally", "候选修复已做本地对照"),
     "fix_guidance": ("Upstream documentation updated", "上游已更新文档"),
     "fix_workaround": ("Application workaround tested locally", "应用侧替代方案已在本地验证"),
+    "fix_local": ("Local patch tested", "本地补丁已测试"),
     "fix_unconfirmed": ("Fix unconfirmed", "修复待核实"),
     "fix_short_verified": ("Repair verified", "修复已验证"),
     "fix_short_merged": ("Repair merged", "修复已合并"),
     "fix_short_proposed": ("Proposal tested", "候选补丁已验证"),
     "fix_short_guidance": ("Docs updated", "文档已更新"),
     "fix_short_workaround": ("Workaround tested", "替代方案已验证"),
+    "fix_short_local": ("Local patch tested", "本地补丁已测试"),
     "fix_short_unconfirmed": ("Fix unconfirmed", "修复待核实"),
     "case_language": ("Case language", "案例语言"),
     "language_coverage": ("Languages covered", "覆盖语言"),

@@ -243,7 +243,7 @@ def case_page(case, language):
     if case["upstream_reference"] and case["upstream_reference"] not in {case["url"], fix.get("url")}:
         source = f'<a href="{escape(case["upstream_reference"])}">{text["followup"]}</a>'
     fix_label = text["fix_" + fix.get("state", "unconfirmed")]
-    if fix:
+    if fix.get("url"):
         fix_label = f'<a href="{escape(fix["url"])}">{fix_label} ↗</a>'
     data = case["findings_zh"] if language == "zh-CN" else case["findings"]
     findings = "".join(
@@ -293,11 +293,12 @@ def featured_card(case, label, headline):
 def table_row(case, text, language):
     category = case["contribution_kind"]
     state = case["tracker_status"]
-    fix = case["fix"]
-    if fix:
-        fix_label = f'<a class="fix-label" href="{escape(fix["url"])}">{text["fix_short_" + fix["state"]]}</a>'
+    fix = case["fix"] or {}
+    fix_text = text["fix_short_" + fix.get("state", "unconfirmed")]
+    if fix.get("url"):
+        fix_label = f'<a class="fix-label" href="{escape(fix["url"])}">{fix_text}</a>'
     else:
-        fix_label = f'<span class="fix-label">{text["fix_short_unconfirmed"]}</span>'
+        fix_label = f'<span class="fix-label">{fix_text}</span>'
     other_language = "en" if language == "zh-CN" else "zh-CN"
     return f"""
       <tr class="issue-row" data-scope="{escape(case["reproduction"])}" data-kind="{case["kind"]}" data-contribution="{category}" data-tracker-status="{state}" data-title-alt="{escape(case_title(case, other_language))}">

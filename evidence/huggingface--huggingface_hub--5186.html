@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which inference request blocked the asyncio loop while polling?">
+  <title>huggingface/huggingface_hub #5186 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/huggingface--huggingface_hub--5186.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="huggingface--huggingface_hub--5186.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/huggingface--huggingface_hub--5186.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">huggingface/huggingface_hub #5186</p>
+        <h1>Which inference request blocked the asyncio loop while polling?</h1>
+        <div class="case-links"><a href="https://github.com/huggingface/huggingface_hub/issues/5186">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Scheduling and contention</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Closed</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/huggingface/huggingface_hub/pull/5200">Upstream change merged ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The status GET joins to the request Task on the affected event loop. After the merged change it joins through the exact executor WorkItem to the same request launcher.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_poll.py:148</span></li><li><code>main</code><span>check_poll.py:129</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>AsyncInferenceClient.text_to_video</code><span>_async_client.py:2696</span></li><li><code>FalAITextToVideoTask.get_response</code><span>fal_ai.py:189</span></li><li><code>FalAIQueueTask.get_response</code><span>fal_ai.py:82</span></li><li><code>Client.get</code><span>_client.py:1096</span></li></ol></section>
+          <p class="small trace-note">Frames from record 1 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_poll.py:148</span></li><li><code>main</code><span>check_poll.py:129</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>AsyncInferenceClient.text_to_video</code><span>_async_client.py:2696</span></li><li><code>FalAITextToVideoTask.get_response</code><span>fal_ai.py:189</span></li><li><code>FalAIQueueTask.get_response</code><span>fal_ai.py:82</span></li><li><code>Client.get</code><span>_client.py:1096</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">Record 1</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_poll.py:148</span></li><li><code>main</code><span>check_poll.py:129</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>Probe.run</code><span>check_poll.py:108</span></li><li><code>Probe.launch_export</code><span>check_poll.py:57</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_poll.py:148</span></li><li><code>main</code><span>check_poll.py:129</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>AsyncInferenceClient.text_to_video</code><span>_async_client.py:2696</span></li><li><code>FalAITextToVideoTask.get_response</code><span>fal_ai.py:189</span></li><li><code>FalAIQueueTask.get_response</code><span>fal_ai.py:82</span></li><li><code>Client.get</code><span>_client.py:1096</span></li></ol></section>
+          <p class="small trace-note">Frames from record 3 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>3 → 2</code></a></nav>
+          <section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_poll.py:148</span></li><li><code>main</code><span>check_poll.py:129</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>AsyncInferenceClient.text_to_video</code><span>_async_client.py:2696</span></li><li><code>FalAITextToVideoTask.get_response</code><span>fal_ai.py:189</span></li><li><code>FalAIQueueTask.get_response</code><span>fal_ai.py:82</span></li><li><code>Client.get</code><span>_client.py:1096</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-2-record-3">Record 3</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 2 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_poll.py:148</span></li><li><code>main</code><span>check_poll.py:129</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>Probe.run</code><span>check_poll.py:108</span></li><li><code>Probe.launch_preview</code><span>check_poll.py:60</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1002</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1045</span></li><li><code>Thread.run</code><span>threading.py:982</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>FalAITextToVideoTask.get_response</code><span>fal_ai.py:189</span></li><li><code>FalAIQueueTask.get_response</code><span>fal_ai.py:82</span></li><li><code>Client.get</code><span>_client.py:1096</span></li></ol></section>
+          <p class="small trace-note">Frames from record 6 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-3-point-2">Join point 2 <code>6 → 5</code></a><a href="#join-3-point-1">Join point 1 <code>5 → 4</code></a></nav>
+          <section class="stack observed" id="join-3-record-6"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6</span><span class="record-instance">Instance from record 5</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1002</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1045</span></li><li><code>Thread.run</code><span>threading.py:982</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>FalAITextToVideoTask.get_response</code><span>fal_ai.py:189</span></li><li><code>FalAIQueueTask.get_response</code><span>fal_ai.py:82</span></li><li><code>Client.get</code><span>_client.py:1096</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-3-record-5">Record 5</a><span aria-hidden="true">→</span><a href="#join-3-record-6">Record 6</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 5 → 6</code></p>
+        </aside><section class="stack " id="join-3-record-5"><div class="stack-head"><h4>Creation stack</h4><span>Record 5</span><span class="record-instance">Instance from record 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_poll.py:148</span></li><li><code>main</code><span>check_poll.py:129</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>AsyncInferenceClient.text_to_video</code><span>_async_client.py:2697</span></li><li><code>to_thread</code><span>threads.py:25</span></li><li><code>BaseEventLoop.run_in_executor</code><span>base_events.py:830</span></li><li><code>ThreadPoolExecutor.submit</code><span>thread.py:173</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-3-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-3-record-5">Record 5</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 5 → 4</code></p>
+        </aside><section class="stack " id="join-3-record-4"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_poll.py:148</span></li><li><code>main</code><span>check_poll.py:129</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>Probe.run</code><span>check_poll.py:108</span></li><li><code>Probe.launch_export</code><span>check_poll.py:57</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 9</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1002</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1045</span></li><li><code>Thread.run</code><span>threading.py:982</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>FalAITextToVideoTask.get_response</code><span>fal_ai.py:189</span></li><li><code>FalAIQueueTask.get_response</code><span>fal_ai.py:82</span></li><li><code>Client.get</code><span>_client.py:1096</span></li></ol></section>
+          <p class="small trace-note">Frames from record 9 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-4-point-2">Join point 2 <code>9 → 8</code></a><a href="#join-4-point-1">Join point 1 <code>8 → 7</code></a></nav>
+          <section class="stack observed" id="join-4-record-9"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9</span><span class="record-instance">Instance from record 8</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1002</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1045</span></li><li><code>Thread.run</code><span>threading.py:982</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>FalAITextToVideoTask.get_response</code><span>fal_ai.py:189</span></li><li><code>FalAIQueueTask.get_response</code><span>fal_ai.py:82</span></li><li><code>Client.get</code><span>_client.py:1096</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-4-record-8">Record 8</a><span aria-hidden="true">→</span><a href="#join-4-record-9">Record 9</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 8 → 9</code></p>
+        </aside><section class="stack " id="join-4-record-8"><div class="stack-head"><h4>Creation stack</h4><span>Record 8</span><span class="record-instance">Instance from record 8</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_poll.py:148</span></li><li><code>main</code><span>check_poll.py:129</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>AsyncInferenceClient.text_to_video</code><span>_async_client.py:2697</span></li><li><code>to_thread</code><span>threads.py:25</span></li><li><code>BaseEventLoop.run_in_executor</code><span>base_events.py:830</span></li><li><code>ThreadPoolExecutor.submit</code><span>thread.py:173</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-4-record-7">Record 7</a><span aria-hidden="true">→</span><a href="#join-4-record-8">Record 8</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 8 → 7</code></p>
+        </aside><section class="stack " id="join-4-record-7"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 7</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_poll.py:148</span></li><li><code>main</code><span>check_poll.py:129</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>Probe.run</code><span>check_poll.py:108</span></li><li><code>Probe.launch_preview</code><span>check_poll.py:60</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In four loopback runs, the pinned client makes three queue status requests and returns the same eight-frame video. During the 1.51 s polling window, the two affected runs give a separate heartbeat Task zero ticks. Both runs with the merged patch give it 30 ticks.</dd></div><div><dt>What CoroPerf showed</dt><dd>The matching Task joins the affected status GET at record 1 or 3 to the export or preview launch at record 0 or 2. In the repaired runs, a worker GET at record 6 or 9 joins to the exact executor WorkItem submission at record 5 or 8, then to the corresponding request creation at record 4 or 7. The same polling routine moves from the loop thread to the executor.</dd></div><div><dt>Scope and limits</dt><dd>Each trial sends one queued video request to a local Fal-compatible service backed by a tiny encoded clip. The measured change is event-loop responsiveness during polling. Polling duration and returned content stay comparable. PR #5200 merged.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

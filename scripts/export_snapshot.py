@@ -300,8 +300,13 @@ def main():
         if language not in CASE_LANGUAGES:
             raise ValueError(f"{identifier}: expected a reviewed case language")
         fix = review.get("fix")
-        if fix and (fix.get("state") not in FIX_STATES or not fix.get("url", "").startswith("https://github.com/")):
-            raise ValueError(f"{identifier}: invalid fix evidence")
+        if fix:
+            state = fix.get("state")
+            url = fix.get("url", "")
+            if state not in FIX_STATES or (state != "local" and not url.startswith("https://github.com/")):
+                raise ValueError(f"{identifier}: invalid fix evidence")
+            if state == "local" and url:
+                raise ValueError(f"{identifier}: local patch has an upstream URL")
         if review.get("case_file"):
             row = read_json(workspace / review["case_file"])
             if row["id"] != identifier:

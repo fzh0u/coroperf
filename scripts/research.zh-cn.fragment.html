@@ -8,6 +8,16 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>Ray Data #65038 · 哪个生产任务延迟了首块交付？</h3>
+      <p>两条首次 yield 的执行栈各自接回对应的批次 Task 和输入。原版等第一批生成全部 12 块才交付第一块，本地补丁在生成第一块后就交付，且保留 36 行结果的顺序。</p>
+      <a href="evidence/ray-project--ray--65038.html#call-stack">比较两条批次任务的拼接栈</a>
+    </div>
+    <div class="research-entry">
+      <h3>Hugging Face Hub #5186 · 哪次请求阻塞了事件循环？</h3>
+      <p>两条入口共用同一个队列轮询函数。受影响版本的轮询接回请求 Task，修复后则通过执行器 WorkItem 接回该 Task。合并修复后，独立任务在轮询期间运行了 30 次，返回的视频字节一致。</p>
+      <a href="evidence/huggingface--huggingface_hub--5186.html#call-stack">查看请求栈和工作线程栈</a>
+    </div>
+    <div class="research-entry">
       <h3>Ray Serve #53071 · 哪个队列串行执行了三批请求？</h3>
       <p>第一批完成前，24 条请求都已入队。三个执行栈接回首个请求入队时创建的同一个队列 Task。修复版打开并发后，每批各有一个执行 Task。</p>
       <a href="evidence/ray-project--ray--53071.html#call-stack">查看串行队列 Task 和三条批次栈</a>

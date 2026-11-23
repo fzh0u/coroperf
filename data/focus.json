@@ -1,4 +1,24 @@
 {
+  "ray-project--ray--65038": {
+    "contribution_kind": "scheduling_contention",
+    "language": "Python",
+    "kind": "performance",
+    "fix": {"state": "local"},
+    "case_file": "research/github-issue-discovery/ray-65038/case.json",
+    "records": [["0", "3"], ["1", "2"]],
+    "en": "Matching live producer Tasks distinguishes the first and second input batches at identical yield stacks. The first chunk waits for its own batch to be fully collected even with another producer already running.",
+    "zh": "通过实际生产 Task，在相同的 yield 栈中分辨第一批和第二批。即使另一个生产者已运行，第一块仍要等本批输出全部收集后才能交付。"
+  },
+  "huggingface--huggingface_hub--5186": {
+    "contribution_kind": "scheduling_contention",
+    "language": "Python",
+    "kind": "performance",
+    "fix": {"state": "merged", "url": "https://github.com/huggingface/huggingface_hub/pull/5200"},
+    "case_file": "research/github-issue-discovery/hf-hub-5186/case.json",
+    "records": [["0", "1"], ["2", "3"], ["5", "6"], ["8", "9"]],
+    "en": "The status GET joins to the request Task on the affected event loop. After the merged change it joins through the exact executor WorkItem to the same request launcher.",
+    "zh": "受影响版本的状态查询在事件循环中接回原请求 Task。上游修复后，查询通过实际执行器 WorkItem 接回同一个请求入口。"
+  },
   "ray-project--ray--53071": {
     "contribution_kind": "scheduling_contention",
     "kind": "performance",
