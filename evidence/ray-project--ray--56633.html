@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which Ray Serve task supplied the model context for later batches?">
+  <title>ray-project/ray #56633 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/ray-project--ray--56633.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="ray-project--ray--56633.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/ray-project--ray--56633.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #56633</p>
+        <h1>Which Ray Serve task supplied the model context for later batches?</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/56633">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Request and result handoffs</dd></div>
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>GitHub status</dt><dd>Closed</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/ray-project/ray/pull/59334">Fixed in a tested comparison · PR merged ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The two model-context reads join through different handler Tasks to the same queue Task first created by the first request. The later enqueue joins to its own request Task, making the context inherited by the handler visible.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 106</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 106 · semantic_boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>_process_batch</code><span>batching.py:353</span></li><li><code>_assign_func_results</code><span>batching.py:299</span></li><li><code>batched</code><span>multiplexing_issue.py:18</span></li><li><code>get_multiplexed_model_id</code><span>api.py:895</span></li></ol></section>
+          <p class="small trace-note">Frames from record 106 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-3">Join point 3 <code>106 → 101</code></a><a href="#join-1-point-2">Join point 2 <code>101 → 55</code></a><a href="#join-1-point-1">Join point 1 <code>55 → 53</code></a></nav>
+          <section class="stack observed" id="join-1-record-106"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 106 · semantic_boundary</span><span class="record-instance">Instance from record 101</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>_process_batch</code><span>batching.py:353</span></li><li><code>_assign_func_results</code><span>batching.py:299</span></li><li><code>batched</code><span>multiplexing_issue.py:18</span></li><li><code>get_multiplexed_model_id</code><span>api.py:895</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-3" aria-label="Join point 3">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-3">Join point 3</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-101">Record 101</a><span aria-hidden="true">→</span><a href="#join-1-record-106">Record 106</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 101 → 106</code></p>
+        </aside><section class="stack " id="join-1-record-101"><div class="stack-head"><h4>Creation stack</h4><span>Record 101</span><span class="record-instance">Instance from record 101</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>_process_batches</code><span>batching.py:312</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-55">Record 55</a><span aria-hidden="true">→</span><a href="#join-1-record-101">Record 101</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 101 → 55</code></p>
+        </aside><section class="stack " id="join-1-record-55"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 55</span><span class="record-instance">Instance from record 55</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>batch_wrapper</code><span>batching.py:704</span></li><li><code>enqueue_request</code><span>batching.py:690</span></li><li><code>queue</code><span>batching.py:415</span></li><li><code>__init__</code><span>batching.py:145</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-53">Record 53</a><span aria-hidden="true">→</span><a href="#join-1-record-55">Record 55</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 55 → 53</code></p>
+        </aside><section class="stack " id="join-1-record-53"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 53</span><span class="record-instance">Instance from record 53</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>callback</code><span>tasks.py:928</span></li><li><code>ensure_future</code><span>tasks.py:659</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 80</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 80 · semantic_boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>batch_wrapper</code><span>batching.py:704</span></li><li><code>enqueue_request</code><span>batching.py:693</span></li><li><code>put</code><span>batching.py:172</span></li></ol></section>
+          <p class="small trace-note">Frames from record 80 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>80 → 78</code></a></nav>
+          <section class="stack observed" id="join-2-record-80"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 80 · semantic_boundary</span><span class="record-instance">Instance from record 78</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>batch_wrapper</code><span>batching.py:704</span></li><li><code>enqueue_request</code><span>batching.py:693</span></li><li><code>put</code><span>batching.py:172</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-78">Record 78</a><span aria-hidden="true">→</span><a href="#join-2-record-80">Record 80</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 78 → 80</code></p>
+        </aside><section class="stack " id="join-2-record-78"><div class="stack-head"><h4>Creation stack</h4><span>Record 78</span><span class="record-instance">Instance from record 78</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>callback</code><span>tasks.py:928</span></li><li><code>ensure_future</code><span>tasks.py:659</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 68</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 68 · semantic_boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>_process_batch</code><span>batching.py:353</span></li><li><code>_assign_func_results</code><span>batching.py:299</span></li><li><code>batched</code><span>multiplexing_issue.py:18</span></li><li><code>get_multiplexed_model_id</code><span>api.py:895</span></li></ol></section>
+          <p class="small trace-note">Frames from record 68 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-3-point-3">Join point 3 <code>68 → 63</code></a><a href="#join-3-point-2">Join point 2 <code>63 → 55</code></a><a href="#join-3-point-1">Join point 1 <code>55 → 53</code></a></nav>
+          <section class="stack observed" id="join-3-record-68"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 68 · semantic_boundary</span><span class="record-instance">Instance from record 63</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>_process_batch</code><span>batching.py:353</span></li><li><code>_assign_func_results</code><span>batching.py:299</span></li><li><code>batched</code><span>multiplexing_issue.py:18</span></li><li><code>get_multiplexed_model_id</code><span>api.py:895</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-3" aria-label="Join point 3">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-3">Join point 3</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-3-record-63">Record 63</a><span aria-hidden="true">→</span><a href="#join-3-record-68">Record 68</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 63 → 68</code></p>
+        </aside><section class="stack " id="join-3-record-63"><div class="stack-head"><h4>Creation stack</h4><span>Record 63</span><span class="record-instance">Instance from record 63</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>_process_batches</code><span>batching.py:312</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-2">Join point 2</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-3-record-55">Record 55</a><span aria-hidden="true">→</span><a href="#join-3-record-63">Record 63</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 63 → 55</code></p>
+        </aside><section class="stack " id="join-3-record-55"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 55</span><span class="record-instance">Instance from record 55</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>batch_wrapper</code><span>batching.py:704</span></li><li><code>enqueue_request</code><span>batching.py:690</span></li><li><code>queue</code><span>batching.py:415</span></li><li><code>__init__</code><span>batching.py:145</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-3-record-53">Record 53</a><span aria-hidden="true">→</span><a href="#join-3-record-55">Record 55</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 55 → 53</code></p>
+        </aside><section class="stack " id="join-3-record-53"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 53</span><span class="record-instance">Instance from record 53</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>callback</code><span>tasks.py:928</span></li><li><code>ensure_future</code><span>tasks.py:659</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 56</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 56 · semantic_boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>batch_wrapper</code><span>batching.py:704</span></li><li><code>enqueue_request</code><span>batching.py:693</span></li><li><code>put</code><span>batching.py:172</span></li></ol></section>
+          <p class="small trace-note">Frames from record 56 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-4-point-1">Join point 1 <code>56 → 53</code></a></nav>
+          <section class="stack observed" id="join-4-record-56"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 56 · semantic_boundary</span><span class="record-instance">Instance from record 53</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>call_user_method</code><span>replica.py:1845</span></li><li><code>_call_func_or_gen</code><span>replica.py:1384</span></li><li><code>batch_wrapper</code><span>batching.py:704</span></li><li><code>enqueue_request</code><span>batching.py:693</span></li><li><code>put</code><span>batching.py:172</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-4-record-53">Record 53</a><span aria-hidden="true">→</span><a href="#join-4-record-56">Record 56</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 53 → 56</code></p>
+        </aside><section class="stack " id="join-4-record-53"><div class="stack-head"><h4>Creation stack</h4><span>Record 53</span><span class="record-instance">Instance from record 53</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:1002</span></li><li><code>_bootstrap_inner</code><span>threading.py:1045</span></li><li><code>run</code><span>threading.py:982</span></li><li><code>_run_user_code_event_loop</code><span>replica.py:1210</span></li><li><code>callback</code><span>tasks.py:928</span></li><li><code>ensure_future</code><span>tasks.py:659</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>In the archived original Ray Serve application, the first batched model ID determines later batched answers on 2.48.0. Each uninstrumented launch order produces three mismatches in six batched requests. Both ordinary requests are correct in each order. Ray 2.54.0 returns the expected model ID and item for all twelve batched requests across both orders.</dd></div><div><dt>What CoroPerf showed</dt><dd>Two model-ID lookups have the same execution frames and read the same first model ID. Their distinct handling Tasks connect along 68 → 63 → 55 → 53 and 106 → 101 → 55 → 53. Both descend from queue Task 55, created during the first request. The later enqueue runs in its own Task, 80 → 78. The fixed comparison records the model ID on each queued item and separates model IDs before invoking the batched method.</dd></div><div><dt>Scope and limits</dt><dd>The replay uses the reporter’s deployment with local strings as model values. The graph records one model replica. Serial HTTP request logs identify the client calls and independently check responses. The source comparison checks the model-ID grouping added by merged PR #59334. The fixture covers model selection and response ordering.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

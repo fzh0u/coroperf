@@ -8,6 +8,16 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>LlamaIndex #22369 · Which query delayed an already-created task?</h3>
+      <p>The second synchronous read occupies about 202 ms of the first query’s downstream Task wait. The open fix lets native async retrieval yield the event loop. A sync-only retriever still waits on the loop.</p>
+      <a href="evidence/run-llama--llama_index--22369.html#call-stack">Compare the two routers and downstream tasks</a>
+    </div>
+    <div class="research-entry">
+      <h3>Ray Serve #56633 · Which request supplied a later batch’s model ID?</h3>
+      <p>Two handling Tasks join to the queue Task from the first request. Reversing the first model reverses the affected selection. The fixed release returns all twelve expected model IDs and items.</p>
+      <a href="evidence/ray-project--ray--56633.html#call-stack">Trace both batch handlers to the shared queue</a>
+    </div>
+    <div class="research-entry">
       <h3>SGLang #44374 · Which sessions received the tokenizer worker results?</h3>
       <p>Identical collector stacks join through separate callbacks to the original request Tasks. Both drafts return exact reference token IDs. The waiting draft delivers each result to its own Future and reduces callback delay in the local CPU comparison.</p>
       <a href="evidence/sgl-project--sglang--44374.html#call-stack">Compare both request and result joins</a>

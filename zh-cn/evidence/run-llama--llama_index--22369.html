@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="LlamaIndex 的哪个查询拖延了另一个已创建的下游任务？">
+  <title>run-llama/llama_index #22369 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/run-llama--llama_index--22369.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/run-llama--llama_index--22369.html" lang="en" hreflang="en">English</a><a href="run-llama--llama_index--22369.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">run-llama/llama_index #22369</p>
+        <h1>LlamaIndex 的哪个查询拖延了另一个已创建的下游任务？</h1>
+        <div class="case-links"><a href="https://github.com/run-llama/llama_index/issues/22369">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>调度与资源争用定位</dd></div>
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>GitHub 状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/run-llama/llama_index/pull/22370">候选修复已做本地对照 · PR 开放 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>第二条阻塞读取和第一个已创建的下游任务属于不同调用者。拼接得到的 Task 归属和时间戳分辨了占住事件循环的读取，以及已就绪却等着运行的下游任务。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 38</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 38 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:378</span></li><li><code>retrieve</code><span>base.py:59</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>retrieve</code><span>base_retriever.py:216</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>_retrieve</code><span>retriever.py:115</span></li><li><code>_get_nodes_with_embeddings</code><span>retriever.py:231</span></li><li><code>query</code><span>base.py:1154</span></li><li><code>query_points</code><span>qdrant_client.py:423</span></li><li><code>query_points</code><span>qdrant_remote.py:583</span></li><li><code>query_points</code><span>search_api.py:783</span></li><li><code>_build_for_query_points</code><span>search_api.py:181</span></li><li><code>request</code><span>api_client.py:95</span></li><li><code>send</code><span>api_client.py:112</span></li><li><code>__call__</code><span>api_client.py:250</span></li><li><code>send_inner</code><span>api_client.py:134</span></li><li><code>send</code><span>_client.py:914</span></li><li><code>_send_handling_auth</code><span>_client.py:942</span></li><li><code>_send_handling_redirects</code><span>_client.py:979</span></li><li><code>_send_single_request</code><span>_client.py:1014</span></li><li><code>handle_request</code><span>default.py:250</span></li><li><code>handle_request</code><span>connection_pool.py:236</span></li><li><code>handle_request</code><span>connection.py:103</span></li><li><code>handle_request</code><span>http11.py:106</span></li><li><code>_receive_response_headers</code><span>http11.py:177</span></li><li><code>_receive_event</code><span>http11.py:217</span></li><li><code>read</code><span>sync.py:124</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 38 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>38 → 29</code></a><a href="#join-1-point-1">拼接点 1 <code>29 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-38"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 38 · semantic_boundary</span><span class="record-instance">实例首次见于记录 29</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:378</span></li><li><code>retrieve</code><span>base.py:59</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>retrieve</code><span>base_retriever.py:216</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>_retrieve</code><span>retriever.py:115</span></li><li><code>_get_nodes_with_embeddings</code><span>retriever.py:231</span></li><li><code>query</code><span>base.py:1154</span></li><li><code>query_points</code><span>qdrant_client.py:423</span></li><li><code>query_points</code><span>qdrant_remote.py:583</span></li><li><code>query_points</code><span>search_api.py:783</span></li><li><code>_build_for_query_points</code><span>search_api.py:181</span></li><li><code>request</code><span>api_client.py:95</span></li><li><code>send</code><span>api_client.py:112</span></li><li><code>__call__</code><span>api_client.py:250</span></li><li><code>send_inner</code><span>api_client.py:134</span></li><li><code>send</code><span>_client.py:914</span></li><li><code>_send_handling_auth</code><span>_client.py:942</span></li><li><code>_send_handling_redirects</code><span>_client.py:979</span></li><li><code>_send_single_request</code><span>_client.py:1014</span></li><li><code>handle_request</code><span>default.py:250</span></li><li><code>handle_request</code><span>connection_pool.py:236</span></li><li><code>handle_request</code><span>connection.py:103</span></li><li><code>handle_request</code><span>http11.py:106</span></li><li><code>_receive_response_headers</code><span>http11.py:177</span></li><li><code>_receive_event</code><span>http11.py:217</span></li><li><code>read</code><span>sync.py:124</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-29">记录 29</a><span aria-hidden="true">→</span><a href="#join-1-record-38">记录 38</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 29 → 38</code></p>
+        </aside><section class="stack " id="join-1-record-29"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 29</span><span class="record-instance">实例首次见于记录 29</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>query.py:55</span></li><li><code>&lt;listcomp&gt;</code><span>query.py:55</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-29">记录 29</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 29 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 44</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 44 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>retriever_query_engine.py:217</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 44 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-3">拼接点 3 <code>44 → 36</code></a><a href="#join-2-point-2">拼接点 2 <code>36 → 28</code></a><a href="#join-2-point-1">拼接点 1 <code>28 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-44"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 44 · semantic_boundary</span><span class="record-instance">实例首次见于记录 36</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>retriever_query_engine.py:217</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-3" aria-label="拼接点 3">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-3">拼接点 3</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-36">记录 36</a><span aria-hidden="true">→</span><a href="#join-2-record-44">记录 44</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 36 → 44</code></p>
+        </aside><section class="stack " id="join-2-record-36"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 36</span><span class="record-instance">实例首次见于记录 36</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:383</span></li><li><code>gather</code><span>tasks.py:827</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-28">记录 28</a><span aria-hidden="true">→</span><a href="#join-2-record-36">记录 36</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 36 → 28</code></p>
+        </aside><section class="stack " id="join-2-record-28"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 28</span><span class="record-instance">实例首次见于记录 28</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>query.py:55</span></li><li><code>&lt;listcomp&gt;</code><span>query.py:55</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-28">记录 28</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 28 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 31</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 31 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:378</span></li><li><code>retrieve</code><span>base.py:59</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>retrieve</code><span>base_retriever.py:216</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>_retrieve</code><span>retriever.py:115</span></li><li><code>_get_nodes_with_embeddings</code><span>retriever.py:231</span></li><li><code>query</code><span>base.py:1154</span></li><li><code>query_points</code><span>qdrant_client.py:423</span></li><li><code>query_points</code><span>qdrant_remote.py:583</span></li><li><code>query_points</code><span>search_api.py:783</span></li><li><code>_build_for_query_points</code><span>search_api.py:181</span></li><li><code>request</code><span>api_client.py:95</span></li><li><code>send</code><span>api_client.py:112</span></li><li><code>__call__</code><span>api_client.py:250</span></li><li><code>send_inner</code><span>api_client.py:134</span></li><li><code>send</code><span>_client.py:914</span></li><li><code>_send_handling_auth</code><span>_client.py:942</span></li><li><code>_send_handling_redirects</code><span>_client.py:979</span></li><li><code>_send_single_request</code><span>_client.py:1014</span></li><li><code>handle_request</code><span>default.py:250</span></li><li><code>handle_request</code><span>connection_pool.py:236</span></li><li><code>handle_request</code><span>connection.py:103</span></li><li><code>handle_request</code><span>http11.py:106</span></li><li><code>_receive_response_headers</code><span>http11.py:177</span></li><li><code>_receive_event</code><span>http11.py:217</span></li><li><code>read</code><span>sync.py:124</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 31 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-3-point-2">拼接点 2 <code>31 → 28</code></a><a href="#join-3-point-1">拼接点 1 <code>28 → 0</code></a></nav>
+          <section class="stack observed" id="join-3-record-31"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 31 · semantic_boundary</span><span class="record-instance">实例首次见于记录 28</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:378</span></li><li><code>retrieve</code><span>base.py:59</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>retrieve</code><span>base_retriever.py:216</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>_retrieve</code><span>retriever.py:115</span></li><li><code>_get_nodes_with_embeddings</code><span>retriever.py:231</span></li><li><code>query</code><span>base.py:1154</span></li><li><code>query_points</code><span>qdrant_client.py:423</span></li><li><code>query_points</code><span>qdrant_remote.py:583</span></li><li><code>query_points</code><span>search_api.py:783</span></li><li><code>_build_for_query_points</code><span>search_api.py:181</span></li><li><code>request</code><span>api_client.py:95</span></li><li><code>send</code><span>api_client.py:112</span></li><li><code>__call__</code><span>api_client.py:250</span></li><li><code>send_inner</code><span>api_client.py:134</span></li><li><code>send</code><span>_client.py:914</span></li><li><code>_send_handling_auth</code><span>_client.py:942</span></li><li><code>_send_handling_redirects</code><span>_client.py:979</span></li><li><code>_send_single_request</code><span>_client.py:1014</span></li><li><code>handle_request</code><span>default.py:250</span></li><li><code>handle_request</code><span>connection_pool.py:236</span></li><li><code>handle_request</code><span>connection.py:103</span></li><li><code>handle_request</code><span>http11.py:106</span></li><li><code>_receive_response_headers</code><span>http11.py:177</span></li><li><code>_receive_event</code><span>http11.py:217</span></li><li><code>read</code><span>sync.py:124</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-3-record-28">记录 28</a><span aria-hidden="true">→</span><a href="#join-3-record-31">记录 31</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 28 → 31</code></p>
+        </aside><section class="stack " id="join-3-record-28"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 28</span><span class="record-instance">实例首次见于记录 28</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>query.py:55</span></li><li><code>&lt;listcomp&gt;</code><span>query.py:55</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-3-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-3-record-28">记录 28</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 28 → 0</code></p>
+        </aside><section class="stack " id="join-3-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 46</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 46 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>retriever_query_engine.py:217</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 46 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-4-point-3">拼接点 3 <code>46 → 43</code></a><a href="#join-4-point-2">拼接点 2 <code>43 → 29</code></a><a href="#join-4-point-1">拼接点 1 <code>29 → 0</code></a></nav>
+          <section class="stack observed" id="join-4-record-46"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 46 · semantic_boundary</span><span class="record-instance">实例首次见于记录 43</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>retriever_query_engine.py:217</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-3" aria-label="拼接点 3">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-3">拼接点 3</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-4-record-43">记录 43</a><span aria-hidden="true">→</span><a href="#join-4-record-46">记录 46</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 43 → 46</code></p>
+        </aside><section class="stack " id="join-4-record-43"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 43</span><span class="record-instance">实例首次见于记录 43</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:383</span></li><li><code>gather</code><span>tasks.py:827</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-4-record-29">记录 29</a><span aria-hidden="true">→</span><a href="#join-4-record-43">记录 43</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 43 → 29</code></p>
+        </aside><section class="stack " id="join-4-record-29"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 29</span><span class="record-instance">实例首次见于记录 29</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>query.py:55</span></li><li><code>&lt;listcomp&gt;</code><span>query.py:55</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-4-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-4-record-29">记录 29</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 29 → 0</code></p>
+        </aside><section class="stack " id="join-4-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>存档中，原版 SDK 的两条本地向量查询都人为延迟应答 200 毫秒。两个同步读取在同一事件循环上串行。第二个路由任务读取结束后，第一个已经创建的下游查询才开始。未开启探针的同一组对照中，两个查询合计从约 416 毫秒降到提案版的 260 毫秒，返回节点一致。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两条相同的同步读取栈分别拼回 31 → 28 和 38 → 29。两个下游查询分别拼回 44 → 36 → 28 和 46 → 43 → 29。另一个路由 Task 开始读取时，第一个下游 Task 36 已经创建。按同期记录核对，第二条同步读取占了第一个下游 Task 从创建到执行间隔中的约 202 毫秒。</dd></div><div><dt>适用范围与局限</dt><dd>存档实验使用报告版本和带受控应答延迟的本地中继。新跑的纯 CPU 回归测试在当前路由源码上核对同一行修复。检索器实现异步 I/O 时，回调能在两个检索结束前运行；仍继承同步 fallback 的检索器依然会阻塞。两版工具查询返回值一致。Issue 和修复 PR 均仍开放。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

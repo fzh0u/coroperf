@@ -8,6 +8,16 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>LlamaIndex #22369 · 哪个查询拖延了已创建的下游任务？</h3>
+      <p>第二次同步读取占了第一个下游 Task 等待时间中的约 202 毫秒。仍开放的提案让支持异步的检索器释放事件循环。只支持同步的检索器仍在事件循环上等待。</p>
+      <a href="evidence/run-llama--llama_index--22369.html#call-stack">对照两个路由任务与下游任务</a>
+    </div>
+    <div class="research-entry">
+      <h3>Ray Serve #56633 · 后续批次沿用了哪个请求的模型 ID？</h3>
+      <p>两个批处理 Task 都拼回首个请求创建的队列。交换首个模型后，选错的模型也随之改变。修复版的十二条结果均返回正确的模型 ID 和输入项。</p>
+      <a href="evidence/ray-project--ray--56633.html#call-stack">将两个批处理任务拼回同一个队列</a>
+    </div>
+    <div class="research-entry">
       <h3>SGLang #44374 · 分词结果回到了哪个会话？</h3>
       <p>两条相同的收集栈通过各自回调接回原请求 Task。两版草案的 token ID 都与参考结果一致。使用 await 的草案通过各自 Future 交付结果，并缩短本地 CPU 对照中的回调延迟。</p>
       <a href="evidence/sgl-project--sglang--44374.html#call-stack">对照两条请求与结果的拼接栈</a>

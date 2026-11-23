@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which LlamaIndex query delayed a peer’s already-created downstream task?">
+  <title>run-llama/llama_index #22369 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/run-llama--llama_index--22369.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="run-llama--llama_index--22369.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/run-llama--llama_index--22369.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">run-llama/llama_index #22369</p>
+        <h1>Which LlamaIndex query delayed a peer’s already-created downstream task?</h1>
+        <div class="case-links"><a href="https://github.com/run-llama/llama_index/issues/22369">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Scheduling and contention</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/run-llama/llama_index/pull/22370">Proposed fix tested locally · PR open ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The second router’s blocking read and the first router’s delayed child have different callers. The joined Task identities and timestamps distinguish the read that occupies the loop from the child that is ready to run.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 38</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 38 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:378</span></li><li><code>retrieve</code><span>base.py:59</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>retrieve</code><span>base_retriever.py:216</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>_retrieve</code><span>retriever.py:115</span></li><li><code>_get_nodes_with_embeddings</code><span>retriever.py:231</span></li><li><code>query</code><span>base.py:1154</span></li><li><code>query_points</code><span>qdrant_client.py:423</span></li><li><code>query_points</code><span>qdrant_remote.py:583</span></li><li><code>query_points</code><span>search_api.py:783</span></li><li><code>_build_for_query_points</code><span>search_api.py:181</span></li><li><code>request</code><span>api_client.py:95</span></li><li><code>send</code><span>api_client.py:112</span></li><li><code>__call__</code><span>api_client.py:250</span></li><li><code>send_inner</code><span>api_client.py:134</span></li><li><code>send</code><span>_client.py:914</span></li><li><code>_send_handling_auth</code><span>_client.py:942</span></li><li><code>_send_handling_redirects</code><span>_client.py:979</span></li><li><code>_send_single_request</code><span>_client.py:1014</span></li><li><code>handle_request</code><span>default.py:250</span></li><li><code>handle_request</code><span>connection_pool.py:236</span></li><li><code>handle_request</code><span>connection.py:103</span></li><li><code>handle_request</code><span>http11.py:106</span></li><li><code>_receive_response_headers</code><span>http11.py:177</span></li><li><code>_receive_event</code><span>http11.py:217</span></li><li><code>read</code><span>sync.py:124</span></li></ol></section>
+          <p class="small trace-note">Frames from record 38 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>38 → 29</code></a><a href="#join-1-point-1">Join point 1 <code>29 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-38"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 38 · semantic_boundary</span><span class="record-instance">Instance from record 29</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:378</span></li><li><code>retrieve</code><span>base.py:59</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>retrieve</code><span>base_retriever.py:216</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>_retrieve</code><span>retriever.py:115</span></li><li><code>_get_nodes_with_embeddings</code><span>retriever.py:231</span></li><li><code>query</code><span>base.py:1154</span></li><li><code>query_points</code><span>qdrant_client.py:423</span></li><li><code>query_points</code><span>qdrant_remote.py:583</span></li><li><code>query_points</code><span>search_api.py:783</span></li><li><code>_build_for_query_points</code><span>search_api.py:181</span></li><li><code>request</code><span>api_client.py:95</span></li><li><code>send</code><span>api_client.py:112</span></li><li><code>__call__</code><span>api_client.py:250</span></li><li><code>send_inner</code><span>api_client.py:134</span></li><li><code>send</code><span>_client.py:914</span></li><li><code>_send_handling_auth</code><span>_client.py:942</span></li><li><code>_send_handling_redirects</code><span>_client.py:979</span></li><li><code>_send_single_request</code><span>_client.py:1014</span></li><li><code>handle_request</code><span>default.py:250</span></li><li><code>handle_request</code><span>connection_pool.py:236</span></li><li><code>handle_request</code><span>connection.py:103</span></li><li><code>handle_request</code><span>http11.py:106</span></li><li><code>_receive_response_headers</code><span>http11.py:177</span></li><li><code>_receive_event</code><span>http11.py:217</span></li><li><code>read</code><span>sync.py:124</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-29">Record 29</a><span aria-hidden="true">→</span><a href="#join-1-record-38">Record 38</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 29 → 38</code></p>
+        </aside><section class="stack " id="join-1-record-29"><div class="stack-head"><h4>Creation stack</h4><span>Record 29</span><span class="record-instance">Instance from record 29</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>query.py:55</span></li><li><code>&lt;listcomp&gt;</code><span>query.py:55</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-29">Record 29</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 29 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 44</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 44 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>retriever_query_engine.py:217</span></li></ol></section>
+          <p class="small trace-note">Frames from record 44 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-3">Join point 3 <code>44 → 36</code></a><a href="#join-2-point-2">Join point 2 <code>36 → 28</code></a><a href="#join-2-point-1">Join point 1 <code>28 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-44"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 44 · semantic_boundary</span><span class="record-instance">Instance from record 36</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>retriever_query_engine.py:217</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-3" aria-label="Join point 3">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-3">Join point 3</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-36">Record 36</a><span aria-hidden="true">→</span><a href="#join-2-record-44">Record 44</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 36 → 44</code></p>
+        </aside><section class="stack " id="join-2-record-36"><div class="stack-head"><h4>Creation stack</h4><span>Record 36</span><span class="record-instance">Instance from record 36</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:383</span></li><li><code>gather</code><span>tasks.py:827</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-28">Record 28</a><span aria-hidden="true">→</span><a href="#join-2-record-36">Record 36</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 36 → 28</code></p>
+        </aside><section class="stack " id="join-2-record-28"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 28</span><span class="record-instance">Instance from record 28</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>query.py:55</span></li><li><code>&lt;listcomp&gt;</code><span>query.py:55</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-2-record-28">Record 28</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 28 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 31</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 31 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:378</span></li><li><code>retrieve</code><span>base.py:59</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>retrieve</code><span>base_retriever.py:216</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>_retrieve</code><span>retriever.py:115</span></li><li><code>_get_nodes_with_embeddings</code><span>retriever.py:231</span></li><li><code>query</code><span>base.py:1154</span></li><li><code>query_points</code><span>qdrant_client.py:423</span></li><li><code>query_points</code><span>qdrant_remote.py:583</span></li><li><code>query_points</code><span>search_api.py:783</span></li><li><code>_build_for_query_points</code><span>search_api.py:181</span></li><li><code>request</code><span>api_client.py:95</span></li><li><code>send</code><span>api_client.py:112</span></li><li><code>__call__</code><span>api_client.py:250</span></li><li><code>send_inner</code><span>api_client.py:134</span></li><li><code>send</code><span>_client.py:914</span></li><li><code>_send_handling_auth</code><span>_client.py:942</span></li><li><code>_send_handling_redirects</code><span>_client.py:979</span></li><li><code>_send_single_request</code><span>_client.py:1014</span></li><li><code>handle_request</code><span>default.py:250</span></li><li><code>handle_request</code><span>connection_pool.py:236</span></li><li><code>handle_request</code><span>connection.py:103</span></li><li><code>handle_request</code><span>http11.py:106</span></li><li><code>_receive_response_headers</code><span>http11.py:177</span></li><li><code>_receive_event</code><span>http11.py:217</span></li><li><code>read</code><span>sync.py:124</span></li></ol></section>
+          <p class="small trace-note">Frames from record 31 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-3-point-2">Join point 2 <code>31 → 28</code></a><a href="#join-3-point-1">Join point 1 <code>28 → 0</code></a></nav>
+          <section class="stack observed" id="join-3-record-31"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 31 · semantic_boundary</span><span class="record-instance">Instance from record 28</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:378</span></li><li><code>retrieve</code><span>base.py:59</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>retrieve</code><span>base_retriever.py:216</span></li><li><code>wrapper</code><span>dispatcher.py:413</span></li><li><code>_retrieve</code><span>retriever.py:115</span></li><li><code>_get_nodes_with_embeddings</code><span>retriever.py:231</span></li><li><code>query</code><span>base.py:1154</span></li><li><code>query_points</code><span>qdrant_client.py:423</span></li><li><code>query_points</code><span>qdrant_remote.py:583</span></li><li><code>query_points</code><span>search_api.py:783</span></li><li><code>_build_for_query_points</code><span>search_api.py:181</span></li><li><code>request</code><span>api_client.py:95</span></li><li><code>send</code><span>api_client.py:112</span></li><li><code>__call__</code><span>api_client.py:250</span></li><li><code>send_inner</code><span>api_client.py:134</span></li><li><code>send</code><span>_client.py:914</span></li><li><code>_send_handling_auth</code><span>_client.py:942</span></li><li><code>_send_handling_redirects</code><span>_client.py:979</span></li><li><code>_send_single_request</code><span>_client.py:1014</span></li><li><code>handle_request</code><span>default.py:250</span></li><li><code>handle_request</code><span>connection_pool.py:236</span></li><li><code>handle_request</code><span>connection.py:103</span></li><li><code>handle_request</code><span>http11.py:106</span></li><li><code>_receive_response_headers</code><span>http11.py:177</span></li><li><code>_receive_event</code><span>http11.py:217</span></li><li><code>read</code><span>sync.py:124</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-3-record-28">Record 28</a><span aria-hidden="true">→</span><a href="#join-3-record-31">Record 31</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 28 → 31</code></p>
+        </aside><section class="stack " id="join-3-record-28"><div class="stack-head"><h4>Creation stack</h4><span>Record 28</span><span class="record-instance">Instance from record 28</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>query.py:55</span></li><li><code>&lt;listcomp&gt;</code><span>query.py:55</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-3-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-3-record-28">Record 28</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 28 → 0</code></p>
+        </aside><section class="stack " id="join-3-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 46</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 46 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>retriever_query_engine.py:217</span></li></ol></section>
+          <p class="small trace-note">Frames from record 46 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-4-point-3">Join point 3 <code>46 → 43</code></a><a href="#join-4-point-2">Join point 2 <code>43 → 29</code></a><a href="#join-4-point-1">Join point 1 <code>29 → 0</code></a></nav>
+          <section class="stack observed" id="join-4-record-46"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 46 · semantic_boundary</span><span class="record-instance">Instance from record 43</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>retriever_query_engine.py:217</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-3" aria-label="Join point 3">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-3">Join point 3</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-4-record-43">Record 43</a><span aria-hidden="true">→</span><a href="#join-4-record-46">Record 46</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 43 → 46</code></p>
+        </aside><section class="stack " id="join-4-record-43"><div class="stack-head"><h4>Creation stack</h4><span>Record 43</span><span class="record-instance">Instance from record 43</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>aquery</code><span>base_query_engine.py:56</span></li><li><code>async_wrapper</code><span>dispatcher.py:464</span></li><li><code>_aquery</code><span>router_query_engine.py:383</span></li><li><code>gather</code><span>tasks.py:827</span></li><li><code>_ensure_future</code><span>tasks.py:680</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-2">Join point 2</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-4-record-29">Record 29</a><span aria-hidden="true">→</span><a href="#join-4-record-43">Record 43</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 43 → 29</code></p>
+        </aside><section class="stack " id="join-4-record-29"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 29</span><span class="record-instance">Instance from record 29</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>run</code><span>query.py:55</span></li><li><code>&lt;listcomp&gt;</code><span>query.py:55</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-4-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-4-record-29">Record 29</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 29 → 0</code></p>
+        </aside><section class="stack " id="join-4-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>query.py:70</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The archived original SDK makes two loopback vector searches with equal 200 ms response holds. The reads serialize on the event-loop thread. The first downstream query starts after the second router task&#x27;s read returns. In a matched unprofiled run the same two queries complete in about 416 ms before the change and 260 ms with the open proposal. Returned nodes agree.</dd></div><div><dt>What CoroPerf showed</dt><dd>The identical synchronous read stacks join at 31 → 28 and 38 → 29. The downstream observations separately join at 44 → 36 → 28 and 46 → 43 → 29. Record 36 already exists during the read in the other router Task. The other read accounts for about 202 ms of the first downstream Task&#x27;s creation-to-entry interval. Both the Task identities and timestamp ordering are recorded.</dd></div><div><dt>Scope and limits</dt><dd>The archived run uses the reported SDK and a loopback relay with a controlled response hold. A fresh CPU-only regression checks the same one-line fix on the current router source. It lets a callback run before either retrieval finishes when the retriever implements asynchronous I/O. A retriever that inherits the synchronous base fallback still blocks. Both versions return the same tool results. The issue and proposal remain open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

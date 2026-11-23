@@ -1,4 +1,24 @@
 {
+  "run-llama--llama_index--22369": {
+    "contribution_kind": "scheduling_contention",
+    "language": "Python",
+    "kind": "performance",
+    "fix": {"state": "proposed", "url": "https://github.com/run-llama/llama_index/pull/22370"},
+    "case_file": "research/github-issue-discovery/llama-index-22369/case.json",
+    "records": [["29", "38"], ["36", "44"], ["28", "31"], ["43", "46"]],
+    "en": "The second router’s blocking read and the first router’s delayed child have different callers. The joined Task identities and timestamps distinguish the read that occupies the loop from the child that is ready to run.",
+    "zh": "第二条阻塞读取和第一个已创建的下游任务属于不同调用者。拼接得到的 Task 归属和时间戳分辨了占住事件循环的读取，以及已就绪却等着运行的下游任务。"
+  },
+  "ray-project--ray--56633": {
+    "contribution_kind": "request_handoff",
+    "language": "Python",
+    "kind": "functional",
+    "fix": {"state": "verified", "url": "https://github.com/ray-project/ray/pull/59334"},
+    "case_file": "research/github-issue-discovery/ray-56633/case.json",
+    "records": [["101", "106"], ["78", "80"], ["63", "68"], ["53", "56"]],
+    "en": "The two model-context reads join through different handler Tasks to the same queue Task first created by the first request. The later enqueue joins to its own request Task, making the context inherited by the handler visible.",
+    "zh": "两次模型上下文读取经过不同处理 Task，最终都拼回首个请求创建的同一个队列 Task。后续入队则拼回它自己的请求 Task，因此可以定位处理任务继承了哪条创建链。"
+  },
   "sgl-project--sglang--44374": {
     "contribution_kind": "request_handoff",
     "language": "Python",

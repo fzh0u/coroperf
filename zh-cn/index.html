@@ -55,28 +55,33 @@
     </section>
     <section class="wrap block" aria-labelledby="coverage">
       <div class="section-head"><h2 id="coverage">证据覆盖情况</h2><span class="small">语料快照 · <time>2026-11-24</time></span></div>
-      <dl class="stats"><div><dd>85</dd><dt>有证据的案例</dt></div><div><dd>172</dd><dt>已匹配的执行观测</dt></div><div><dd>294</dd><dt>已核实的拼接点</dt></div><div><dd>10</dd><dt>覆盖语言</dt></div></dl>
+      <dl class="stats"><div><dd>87</dd><dt>有证据的案例</dt></div><div><dd>180</dd><dt>已匹配的执行观测</dt></div><div><dd>312</dd><dt>已核实的拼接点</dt></div><div><dd>10</dd><dt>覆盖语言</dt></div></dl>
     </section>
     <section class="wrap block" id="issues" aria-labelledby="issues-title">
       <div class="section-head"><h2 id="issues-title">案例证据</h2><a href="../data/cases.json" download>下载快照数据</a></div>
       <p class="section-copy">打开案例，查看执行栈、创建栈以及每处拼接的证据。</p>
-      <p class="tracker-summary" id="upstream-status"><strong>GitHub 上 23 个开放 · 62 个关闭</strong><time datetime="2026-11-23T22:01:12+00:00">核对时间 2026-11-23 22:01 UTC</time><a href="../data/upstream-status.json" download>下载上游状态数据</a></p>
+      <p class="tracker-summary" id="upstream-status"><strong>GitHub 上 24 个开放 · 63 个关闭</strong><time datetime="2026-11-23T22:11:16+00:00">核对时间 2026-11-23 22:11 UTC</time><a href="../data/upstream-status.json" download>下载上游状态数据</a></p>
       <div class="filters" hidden>
         <div><label for="query">搜索案例</label><input type="search" id="query" placeholder="项目或案例编号"></div>
-        <div><label for="case-language">案例语言</label><select id="case-language"><option value="">全部案例语言</option><option value="Python">Python (42)</option><option value="Go">Go (2)</option><option value="Rust">Rust (7)</option><option value="Java">Java (1)</option><option value="C++">C++ (5)</option><option value="C#">C# (3)</option><option value="JavaScript / TypeScript">JavaScript / TypeScript (18)</option><option value="Kotlin">Kotlin (4)</option><option value="Scala">Scala (2)</option><option value="Dart">Dart (1)</option></select></div>
+        <div><label for="case-language">案例语言</label><select id="case-language"><option value="">全部案例语言</option><option value="Python">Python (44)</option><option value="Go">Go (2)</option><option value="Rust">Rust (7)</option><option value="Java">Java (1)</option><option value="C++">C++ (5)</option><option value="C#">C# (3)</option><option value="JavaScript / TypeScript">JavaScript / TypeScript (18)</option><option value="Kotlin">Kotlin (4)</option><option value="Scala">Scala (2)</option><option value="Dart">Dart (1)</option></select></div>
         <div><label for="tracker-status">GitHub 状态</label><select id="tracker-status"><option value="">全部上游状态</option><option value="open">开放</option><option value="closed">已关闭</option><option value="unconfirmed">待核对</option></select></div>
         <div><label for="contribution">CoroPerf 贡献</label><select id="contribution"><option value="">全部诊断贡献</option><option value="caller_recovery">补回调用来源</option><option value="request_handoff">请求与结果交接归因</option><option value="failure_lifecycle">异常、取消与任务生命周期</option><option value="scheduling_contention">调度与资源争用定位</option><option value="cost_attribution">性能开销归因</option></select></div>
         <div><label for="kind">问题类型</label><select id="kind"><option value="">全部问题类型</option><option value="functional">功能故障与正确性问题</option><option value="performance">性能问题</option><option value="profiling">性能剖析与归因</option><option value="debugging">调试与调用栈缺失</option></select></div>
         <div><label for="scope">复现范围</label><select id="scope"><option value="">全部复现范围</option><option value="Full local reproduction">本地完整复现</option><option value="Component reproduced">复现相关组件</option></select></div>
       </div>
-      <p class="results-count" id="results-count" role="status" data-format="共 {total} 个案例，符合条件的有 {matches} 个" data-empty="没有符合条件的案例" data-all="共 85 个案例">共 85 个案例</p>
+      <p class="results-count" id="results-count" role="status" data-format="共 {total} 个案例，符合条件的有 {matches} 个" data-empty="没有符合条件的案例" data-all="共 87 个案例">共 87 个案例</p>
       <div class="table-wrap">
         <table class="issue-table" id="case-rows" aria-labelledby="issues-title"><thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 贡献</th><th scope="col" class="table-state">GitHub 状态<small>修复证据</small></th></tr></thead>
 
     <tbody class="language-group" data-language="Python">
       <tr class="language-heading"><th colspan="3" scope="rowgroup">Python
-        <span data-language-count data-format="{count} 个案例">42 个案例</span>
+        <span data-language-count data-format="{count} 个案例">44 个案例</span>
       </th></tr>
+      <tr class="issue-row" data-scope="Full local reproduction" data-kind="performance" data-contribution="scheduling_contention" data-tracker-status="open" data-title-alt="Which LlamaIndex query delayed a peer’s already-created downstream task?">
+        <th scope="row"><a href="evidence/run-llama--llama_index--22369.html"><span>run-llama/llama_index #22369</span>LlamaIndex 的哪个查询拖延了另一个已创建的下游任务？</a></th>
+        <td class="row-contribution"><strong>调度与资源争用定位</strong><small class="case-kind">性能问题</small></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/run-llama/llama_index/issues/22369">开放</a><a class="fix-label" href="https://github.com/run-llama/llama_index/pull/22370">候选补丁已验证 · PR 开放</a></td>
+      </tr>
       <tr class="issue-row" data-scope="Component reproduced" data-kind="performance" data-contribution="request_handoff" data-tracker-status="open" data-title-alt="Which SGLang request received each tokenizer worker result?">
         <th scope="row"><a href="evidence/sgl-project--sglang--44374.html"><span>sgl-project/sglang #44374</span>SGLang 的分词 worker 结果分别交给了哪个请求？</a></th>
         <td class="row-contribution"><strong>请求与结果交接归因</strong><small class="case-kind">性能问题</small></td>
@@ -131,6 +136,11 @@
         <th scope="row"><a href="evidence/magicstack--asyncpg--1149.html"><span>magicstack/asyncpg #1149</span>游标预取让已到达的行迟迟无法交给调用者</a></th>
         <td class="row-contribution"><strong>调度与资源争用定位</strong><small class="case-kind">性能问题</small></td>
         <td class="row-status"><a class="state-pill state-open" href="https://github.com/MagicStack/asyncpg/issues/1149">开放</a><span class="fix-label">修复待核实</span></td>
+      </tr>
+      <tr class="issue-row" data-scope="Full local reproduction" data-kind="functional" data-contribution="request_handoff" data-tracker-status="closed" data-title-alt="Which Ray Serve task supplied the model context for later batches?">
+        <th scope="row"><a href="evidence/ray-project--ray--56633.html"><span>ray-project/ray #56633</span>Ray Serve 后续批次沿用了哪个任务的模型上下文？</a></th>
+        <td class="row-contribution"><strong>请求与结果交接归因</strong><small class="case-kind">功能故障与正确性问题</small></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/ray-project/ray/issues/56633">已关闭</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/59334">修复已验证 · PR 已合并</a></td>
       </tr>
       <tr class="issue-row" data-scope="Component reproduced" data-kind="performance" data-contribution="scheduling_contention" data-tracker-status="closed" data-title-alt="Which vLLM requests put image preprocessing on the event loop?">
         <th scope="row"><a href="evidence/vllm-project--vllm--49317.html"><span>vllm-project/vllm #49317</span>哪些 vLLM 请求在事件循环上做了图像预处理？</a></th>
@@ -556,13 +566,13 @@
       <p class="section-copy">每个 Issue 按经过核实的调用栈拼接所证明的主要事实计入一次。</p>
       <div class="table-wrap summary-table">
         <table aria-labelledby="outcomes-title"><thead><tr><th scope="col">CoroPerf 贡献</th><th scope="col">案例数</th><th scope="col">有直接诊断证据</th></tr></thead>
-        <tbody><tr><th scope="row">补回调用来源<small>补回异常栈、任务快照或原生栈中缺失的应用入口或调用路径。</small></th><td>28</td><td>26</td></tr><tr><th scope="row">请求与结果交接归因<small>沿队列、回调、批次或工作线程追踪请求或结果，确定它属于哪个调用者。</small></th><td>15</td><td>13</td></tr><tr><th scope="row">异常、取消与任务生命周期<small>定位首次失败，或追溯改变任务状态的取消、退出或清理。</small></th><td>15</td><td>13</td></tr><tr><th scope="row">调度与资源争用定位<small>将延迟任务接到造成等待的执行顺序、轮询区间或被占用的资源。</small></th><td>17</td><td>15</td></tr><tr><th scope="row">性能开销归因<small>将测得的 CPU 工作、分配开销或等待时间归到对应的应用调用者。</small></th><td>10</td><td>10</td></tr></tbody></table>
+        <tbody><tr><th scope="row">补回调用来源<small>补回异常栈、任务快照或原生栈中缺失的应用入口或调用路径。</small></th><td>28</td><td>26</td></tr><tr><th scope="row">请求与结果交接归因<small>沿队列、回调、批次或工作线程追踪请求或结果，确定它属于哪个调用者。</small></th><td>16</td><td>14</td></tr><tr><th scope="row">异常、取消与任务生命周期<small>定位首次失败，或追溯改变任务状态的取消、退出或清理。</small></th><td>15</td><td>13</td></tr><tr><th scope="row">调度与资源争用定位<small>将延迟任务接到造成等待的执行顺序、轮询区间或被占用的资源。</small></th><td>18</td><td>16</td></tr><tr><th scope="row">性能开销归因<small>将测得的 CPU 工作、分配开销或等待时间归到对应的应用调用者。</small></th><td>10</td><td>10</td></tr></tbody></table>
       </div>
       <details class="extra">
         <summary id="reported-breakdown">原始 Issue 类型统计</summary>
         <div class="table-wrap summary-table">
           <table aria-labelledby="reported-breakdown"><thead><tr><th scope="col">问题类型</th><th scope="col">案例数</th></tr></thead>
-          <tbody><tr><th scope="row">功能故障与正确性问题<small>卡住、错误结果、过早取消及资源清理等功能行为。</small></th><td>21</td></tr><tr><th scope="row">性能问题<small>观测到的延迟、额外 CPU 或分配开销，以及工作线程或连接争用。</small></th><td>29</td></tr><tr><th scope="row">性能剖析与归因<small>将 CPU 热点样本或 I/O 等待时间归到应用调用者。</small></th><td>2</td></tr><tr><th scope="row">调试与调用栈缺失<small>补回诊断中缺失的调用者、失败操作或任务来源。</small></th><td>33</td></tr></tbody></table>
+          <tbody><tr><th scope="row">功能故障与正确性问题<small>卡住、错误结果、过早取消及资源清理等功能行为。</small></th><td>22</td></tr><tr><th scope="row">性能问题<small>观测到的延迟、额外 CPU 或分配开销，以及工作线程或连接争用。</small></th><td>30</td></tr><tr><th scope="row">性能剖析与归因<small>将 CPU 热点样本或 I/O 等待时间归到应用调用者。</small></th><td>2</td></tr><tr><th scope="row">调试与调用栈缺失<small>补回诊断中缺失的调用者、失败操作或任务来源。</small></th><td>33</td></tr></tbody></table>
         </div>
       </details>
       <details class="extra">
@@ -570,7 +580,7 @@
         <p class="section-copy">复现范围说明本地实验覆盖原帖的哪些内容。诊断依据说明结论来自直接观测，还是需要结合对照实验。下表统计的是上面同一批案例。</p>
         <div class="table-wrap summary-table">
           <table aria-labelledby="evidence-matrix"><thead><tr><th scope="col">复现范围</th><th scope="col">有直接诊断证据</th><th scope="col">根据对照推断</th></tr></thead>
-          <tbody><tr><th scope="row">本地完整复现</th><td>32</td><td>4</td></tr><tr><th scope="row">复现相关组件</th><td>45</td><td>4</td></tr></tbody></table>
+          <tbody><tr><th scope="row">本地完整复现</th><td>34</td><td>4</td></tr><tr><th scope="row">复现相关组件</th><td>45</td><td>4</td></tr></tbody></table>
         </div>
       </details>
     </section>
