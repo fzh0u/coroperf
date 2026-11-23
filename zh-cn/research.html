@@ -45,6 +45,16 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>SGLang #44374 · 分词结果回到了哪个会话？</h3>
+      <p>两条相同的收集栈通过各自回调接回原请求 Task。两版草案的 token ID 都与参考结果一致。使用 await 的草案通过各自 Future 交付结果，并缩短本地 CPU 对照中的回调延迟。</p>
+      <a href="evidence/sgl-project--sglang--44374.html#call-stack">对照两条请求与结果的拼接栈</a>
+    </div>
+    <div class="research-entry">
+      <h3>vLLM #49317 · 哪些请求在事件循环上预处理图片？</h3>
+      <p>相同的 Qwen2-VL 执行栈接回两条独立的原始输入请求。上游修复将预处理移到 renderer 工作线程。CPU 实验中的回调延迟中位数从 30.3 毫秒降到 0.135 毫秒。</p>
+      <a href="evidence/vllm-project--vllm--49317.html#call-stack">对照修复前后的两个请求入口</a>
+    </div>
+    <div class="research-entry">
       <h3>Ray Data #67984 · 哪个输入转换拖延了另一个 UDF？</h3>
       <p>占住 Actor 事件循环的格式转换与等待恢复的 UDF 分别来自两个入口。仍开放的提案将转换移到工作线程。CPU 对照中，从完成回调入队到 UDF 恢复的中位数从 2.50 毫秒降至 0.082 毫秒。</p>
       <a href="evidence/ray-project--ray--67984.html#call-stack">对照修改前后的格式转换与 UDF 拼接栈</a>

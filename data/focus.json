@@ -1,4 +1,24 @@
 {
+  "sgl-project--sglang--44374": {
+    "contribution_kind": "request_handoff",
+    "language": "Python",
+    "kind": "performance",
+    "fix": {"state": "proposed", "url": "https://github.com/sgl-project/sglang/pull/44382"},
+    "case_file": "research/github-issue-discovery/sglang-44374/case.json",
+    "records": [["2", "3"], ["4", "5"], ["8", "10"], ["9", "11"]],
+    "en": "The collector stacks are identical. The actual submit callbacks connect both results to their original Tasks, and the matching Futures independently confirm delivery in the worker-pool draft.",
+    "zh": "两条结果的收集栈完全相同。实际提交回调将两个结果分别拼回原请求 Task，worker 草案中的对应 Future 进一步核实了交付归属。"
+  },
+  "vllm-project--vllm--49317": {
+    "contribution_kind": "scheduling_contention",
+    "language": "Python",
+    "kind": "performance",
+    "fix": {"state": "verified", "url": "https://github.com/vllm-project/vllm/pull/49608"},
+    "case_file": "research/github-issue-discovery/vllm-49317/case.json",
+    "records": [["0", "2"], ["1", "3"], ["6", "8"], ["7", "9"]],
+    "en": "The identical preprocessing stacks belong to different generate calls. The live Tasks identify each launcher on the original loop, and the exact executor WorkItems restore both launchers after preprocessing moves to a worker.",
+    "zh": "两条相同的图像预处理栈属于不同的 generate 请求。原版用实际 Task 找回两个入口，修复后用实际执行器 WorkItem 跨线程找回同样的两个入口。"
+  },
   "ray-project--ray--67984": {
     "contribution_kind": "scheduling_contention",
     "language": "Python",

@@ -45,6 +45,16 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>SGLang #44374 · Which sessions received the tokenizer worker results?</h3>
+      <p>Identical collector stacks join through separate callbacks to the original request Tasks. Both drafts return exact reference token IDs. The waiting draft delivers each result to its own Future and reduces callback delay in the local CPU comparison.</p>
+      <a href="evidence/sgl-project--sglang--44374.html#call-stack">Compare both request and result joins</a>
+    </div>
+    <div class="research-entry">
+      <h3>vLLM #49317 · Which requests preprocessed images on the loop?</h3>
+      <p>Identical Qwen2-VL stacks lead to two separate raw requests. The merged change moves preprocessing to a renderer worker. The median queued callback delay falls from 30.3 to 0.135 ms in the CPU fixture.</p>
+      <a href="evidence/vllm-project--vllm--49317.html#call-stack">Compare both request launchers before and after</a>
+    </div>
+    <div class="research-entry">
       <h3>Ray Data #67984 · Which input conversion delayed another UDF?</h3>
       <p>Separate launches lead to the formatter that holds the actor loop and the UDF waiting to resume. The open proposal moves formatting to a worker thread. The median queued-completion delay falls from 2.50 to 0.082 ms in the CPU comparison.</p>
       <a href="evidence/ray-project--ray--67984.html#call-stack">Compare the formatter and UDF joins before and after</a>
