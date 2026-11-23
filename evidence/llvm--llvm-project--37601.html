@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which caller launched the coroutine that reported the stale thread ID?">
+  <title>llvm/llvm-project #37601 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/llvm--llvm-project--37601.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="llvm--llvm-project--37601.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/llvm--llvm-project--37601.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">llvm/llvm-project #37601</p>
+        <h1>Which caller launched the coroutine that reported the stale thread ID?</h1>
+        <div class="case-links"><a href="https://github.com/llvm/llvm-project/issues/37601">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The same worker stack and stale thread ID describe two instances. The stripped machine code identifies the frame at each resume, and its recorded creation stack restores the launcher.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 3</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>2 → 3</code></a></nav>
+          <section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>main</code><span>driver.cpp:54</span></li><li><code>launch_inventory</code><span>driver.cpp:30</span></li><li><code>test</code><span>test.cpp:10</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-3">Record 3</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>Machine-code dataflow recovers the resume function's frame argument from registers and stack bytes. The frame matches a live coroutine instance recorded at creation.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 2 → 3</code></p>
+        </aside><section class="stack observed" id="join-1-record-3"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · selected-native-boundary</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>void* std::__1::__thread_proxy&lt;std::__1::tuple&lt;std::__1::unique_ptr&lt;std::__1::__thread_struct, std::__1::default_delete&lt;std::__1::__thread_struct&gt; &gt;, void </code><span>thread:352</span></li><li><code>worker_run</code><span>driver.cpp:43</span></li><li><code>resume_shared</code><span>driver.cpp:38</span></li><li><code>test</code><span>test.cpp:13</span></li><li><code>observe</code><span>driver.cpp:18</span></li><li><code>after_sample</code><span>driver.cpp:10</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · selected-native-boundary</span></div><ol class="frames"><li><code>void* std::__1::__thread_proxy&lt;std::__1::tuple&lt;std::__1::unique_ptr&lt;std::__1::__thread_struct, std::__1::default_delete&lt;std::__1::__thread_struct&gt; &gt;, void </code><span>thread:352</span></li><li><code>worker_run</code><span>driver.cpp:43</span></li><li><code>resume_shared</code><span>driver.cpp:38</span></li><li><code>test</code><span>test.cpp:13</span></li><li><code>observe</code><span>driver.cpp:18</span></li><li><code>after_sample</code><span>driver.cpp:10</span></li></ol></section>
+          <p class="small trace-note">Frames from record 3 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>1 → 4</code></a></nav>
+          <section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>main</code><span>driver.cpp:53</span></li><li><code>launch_profile</code><span>driver.cpp:24</span></li><li><code>test</code><span>test.cpp:10</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-4">Record 4</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>Machine-code dataflow recovers the resume function's frame argument from registers and stack bytes. The frame matches a live coroutine instance recorded at creation.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 1 → 4</code></p>
+        </aside><section class="stack observed" id="join-2-record-4"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · selected-native-boundary</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>void* std::__1::__thread_proxy&lt;std::__1::tuple&lt;std::__1::unique_ptr&lt;std::__1::__thread_struct, std::__1::default_delete&lt;std::__1::__thread_struct&gt; &gt;, void </code><span>thread:352</span></li><li><code>worker_run</code><span>driver.cpp:43</span></li><li><code>resume_shared</code><span>driver.cpp:38</span></li><li><code>test</code><span>test.cpp:13</span></li><li><code>observe</code><span>driver.cpp:18</span></li><li><code>after_sample</code><span>driver.cpp:10</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · selected-native-boundary</span></div><ol class="frames"><li><code>void* std::__1::__thread_proxy&lt;std::__1::tuple&lt;std::__1::unique_ptr&lt;std::__1::__thread_struct, std::__1::default_delete&lt;std::__1::__thread_struct&gt; &gt;, void </code><span>thread:352</span></li><li><code>worker_run</code><span>driver.cpp:43</span></li><li><code>resume_shared</code><span>driver.cpp:38</span></li><li><code>test</code><span>test.cpp:13</span></li><li><code>observe</code><span>driver.cpp:18</span></li><li><code>after_sample</code><span>driver.cpp:10</span></li></ol></section>
+          <p class="small trace-note">Frames from record 4 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With Clang 6.0.0 at -O2, two instances of the same coroutine resume on one worker and print the same stale pthread ID. The reference call and the Linux TID place both resumes on the worker. Symbolized GDB displays the same functions and PCs for both resumes and omits both launchers. The same-thread and -O0 controls report the current ID.</dd></div><div><dt>What CoroPerf showed</dt><dd>In this build, the creation code stores the first pthread_self result at frame offset 0x18, and the resume code reloads it for the diagnostic. CoroPerf uses instruction dataflow on the stripped binary to recover each resume&#x27;s frame argument from registers and stack bytes. It joins that live frame to its recorded creation stack. Record 2 → 3 identifies launch_inventory, and 1 → 4 identifies launch_profile. Removing either the resume model or creation history leaves both observations unattributed.</dd></div><div><dt>Scope and limits</dt><dd>A controlled two-caller extension of the archived Linux x86-64 Coroutines TS reproduction. The app uses frame-pointer omission, and its optimized ELF has application symbols and CFI removed. Numeric test anchors select where to capture. Debug symbols label PCs after the address-based graph is built. Two fresh batches each verify eight joins against the actual resumed handles.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

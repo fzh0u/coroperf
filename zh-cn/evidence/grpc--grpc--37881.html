@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="请求 ID 在线程池丢失时，是哪个异步拦截器路径发起的？">
+  <title>grpc/grpc #37881 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/grpc--grpc--37881.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/grpc--grpc--37881.html" lang="en" hreflang="en">English</a><a href="grpc--grpc--37881.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">grpc/grpc #37881</p>
+        <h1>请求 ID 在线程池丢失时，是哪个异步拦截器路径发起的？</h1>
+        <div class="case-links"><a href="https://github.com/grpc/grpc/issues/37881">上游报告 ↗</a><a href="https://github.com/grpc/grpc/pull/37892">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>功能故障与正确性问题</dd></div>
+          <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>两个工作线程的栈完全相同，请求 ID 也都丢失。用实际 WorkItem 接回提交栈，再按同一个 RPC 处理器对象拼接，就能找回最初的拦截器路径。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 12</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>7 → 11</code></a><a href="#join-1-point-2">拼接点 2 <code>11 → 12</code></a></nav>
+          <section class="stack " id="join-1-record-7"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 7</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:164</span></li><li><code>main</code><span>repro.py:158</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1897</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>intercept_service</code><span>repro.py:66</span></li><li><code>route_profile</code><span>repro.py:48</span></li><li><code>prepare_handler</code><span>repro.py:43</span></li><li><code>__init__</code><span>repro.py:25</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-7">记录 7</a><span aria-hidden="true">→</span><a href="#join-1-record-11">记录 11</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+          <p>提交线程池工作时，WorkItem 持有的正是这个服务端 Task 在拦截器里创建的处理器对象。</p>
+          <p class="join-verification">采集图边 <code>parent_to_create · 7 → 11</code></p>
+        </aside><section class="stack " id="join-1-record-11"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 11</span><span class="record-instance">实例首次见于记录 11</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:164</span></li><li><code>main</code><span>repro.py:158</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1897</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run_in_executor</code><span>base_events.py:819</span></li><li><code>submit</code><span>thread.py:173</span></li><li><code>__init__</code><span>thread.py:51</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-11">记录 11</a><span aria-hidden="true">→</span><a href="#join-1-record-12">记录 12</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>观测发生在工作线程执行同一个 WorkItem 时。该对象在事件循环线程创建时已记录。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 11 → 12</code></p>
+        </aside><section class="stack observed" id="join-1-record-12"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 12 · semantic_boundary</span><span class="record-instance">实例首次见于记录 11</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>run</code><span>thread.py:58</span></li><li><code>__call__</code><span>repro.py:36</span></li><li><code>read_request_id</code><span>repro.py:28</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 12 · semantic_boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>run</code><span>thread.py:58</span></li><li><code>__call__</code><span>repro.py:36</span></li><li><code>read_request_id</code><span>repro.py:28</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 12 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 17</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>15 → 16</code></a><a href="#join-2-point-2">拼接点 2 <code>16 → 17</code></a></nav>
+          <section class="stack " id="join-2-record-15"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 15</span><span class="record-instance">实例首次见于记录 15</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:164</span></li><li><code>main</code><span>repro.py:158</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1897</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>intercept_service</code><span>repro.py:66</span></li><li><code>route_inventory</code><span>repro.py:52</span></li><li><code>prepare_handler</code><span>repro.py:43</span></li><li><code>__init__</code><span>repro.py:25</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-15">记录 15</a><span aria-hidden="true">→</span><a href="#join-2-record-16">记录 16</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+          <p>提交线程池工作时，WorkItem 持有的正是这个服务端 Task 在拦截器里创建的处理器对象。</p>
+          <p class="join-verification">采集图边 <code>parent_to_create · 15 → 16</code></p>
+        </aside><section class="stack " id="join-2-record-16"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 16</span><span class="record-instance">实例首次见于记录 16</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:164</span></li><li><code>main</code><span>repro.py:158</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1897</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run_in_executor</code><span>base_events.py:819</span></li><li><code>submit</code><span>thread.py:173</span></li><li><code>__init__</code><span>thread.py:51</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-16">记录 16</a><span aria-hidden="true">→</span><a href="#join-2-record-17">记录 17</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>观测发生在工作线程执行同一个 WorkItem 时。该对象在事件循环线程创建时已记录。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 16 → 17</code></p>
+        </aside><section class="stack observed" id="join-2-record-17"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 17 · semantic_boundary</span><span class="record-instance">实例首次见于记录 16</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>run</code><span>thread.py:58</span></li><li><code>__call__</code><span>repro.py:36</span></li><li><code>read_request_id</code><span>repro.py:28</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 17 · semantic_boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>run</code><span>thread.py:58</span></li><li><code>__call__</code><span>repro.py:36</span></li><li><code>read_request_id</code><span>repro.py:28</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 17 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>两条 RPC 使用同一个方法和相同载荷。报告中的 gRPC 版本在 asyncio Task 提交时仍有请求 ID，两个同步处理器在线程池里读取时都得到 None。提议的上下文复制改动可恢复该值。在两种构建中，工作线程栈和所查的 Task 诊断都没有显示两个拦截器路径。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>CoroPerf 用实际执行的 WorkItem，把工作线程中的 read_request_id 接回 run_in_executor 下的创建栈。提交时，该 WorkItem 持有的处理器就是同一个服务端 Task 在 route_profile 或 route_inventory 中创建的对象。去掉处理器到 WorkItem 的边之后，仍能接回提交栈，但更早的拦截器路径消失。</dd></div><div><dt>适用范围与局限</dt><dd>原始报告已有独立复现。下方展示报告使用的 gRPC Cython 构建和 CPython 3.9.18 上的双请求受控实验，使用定向 Task 和 WorkItem 探针。上下文复制对照使用了未合并的提案。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

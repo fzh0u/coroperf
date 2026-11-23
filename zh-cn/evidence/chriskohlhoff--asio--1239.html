@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Asio 的 detached spawn 隐去了原始调用者">
+  <title>chriskohlhoff/asio #1239 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/chriskohlhoff--asio--1239.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/chriskohlhoff--asio--1239.html" lang="en" hreflang="en">English</a><a href="chriskohlhoff--asio--1239.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">chriskohlhoff/asio #1239</p>
+        <h1>Asio 的 detached spawn 隐去了原始调用者</h1>
+        <div class="case-links"><a href="https://github.com/chriskohlhoff/asio/issues/1239">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>Asio 的实时 awaiter 链止于 detached 入口。指令数据流恢复定时器唤醒的实例，两处创建关系将它接回 launch_profile 或 launch_inventory。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 15</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 5</code></a><a href="#join-1-point-2">拼接点 2 <code>5 → 15</code></a></nav>
+          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>launch_profile</code><span>detached.cpp:39</span></li><li><code>boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;* std::__exchange&lt;boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;*, decltype</code><span>move.h:159</span></li><li><code>async_b</code><span>detached.cpp:27</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-5">记录 5</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 5 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-5"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>boost::asio::detail::awaitable_frame_base&lt;boost::asio::any_io_executor&gt;::resume</code><span>awaitable.hpp:502</span></li><li><code>async_b</code><span>detached.cpp:29</span></li><li><code>async_c</code><span>detached.cpp:18</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-5">记录 5</a><span aria-hidden="true">→</span><a href="#join-1-record-15">记录 15</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>CoroPerf 沿机器码的数据流，从寄存器和栈字节还原恢复函数接收的协程帧地址，再将它匹配到创建时记录且在采样时仍存活的实例。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 5 → 15</code></p>
+        </aside><section class="stack observed" id="join-1-record-15"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 15 · selected-native-boundary</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>async_c</code><span>stdio2.h:112</span></li><li><code>after_timer_sample</code><span>detached.cpp:10</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 15 · selected-native-boundary</span></div><ol class="frames"><li><code>async_c</code><span>stdio2.h:112</span></li><li><code>after_timer_sample</code><span>detached.cpp:10</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 15 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 10</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>3 → 7</code></a><a href="#join-2-point-2">拼接点 2 <code>7 → 10</code></a></nav>
+          <section class="stack " id="join-2-record-3"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>launch_inventory</code><span>detached.cpp:44</span></li><li><code>boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;* std::__exchange&lt;boost::asio::detail::awaitable_frame&lt;void, boost::asio::any_io_executor&gt;*, decltype</code><span>move.h:159</span></li><li><code>async_b</code><span>detached.cpp:27</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-7">记录 7</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 7 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-7"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 7</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>boost::asio::detail::awaitable_frame_base&lt;boost::asio::any_io_executor&gt;::resume</code><span>awaitable.hpp:502</span></li><li><code>async_b</code><span>detached.cpp:29</span></li><li><code>async_c</code><span>detached.cpp:18</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-7">记录 7</a><span aria-hidden="true">→</span><a href="#join-2-record-10">记录 10</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>CoroPerf 沿机器码的数据流，从寄存器和栈字节还原恢复函数接收的协程帧地址，再将它匹配到创建时记录且在采样时仍存活的实例。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 7 → 10</code></p>
+        </aside><section class="stack observed" id="join-2-record-10"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 10 · selected-native-boundary</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>async_c</code><span>stdio2.h:112</span></li><li><code>after_timer_sample</code><span>detached.cpp:10</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 10 · selected-native-boundary</span></div><ol class="frames"><li><code>async_c</code><span>stdio2.h:112</span></li><li><code>after_timer_sample</code><span>detached.cpp:10</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 10 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>带完整调试信息的 GDB 中，两次定时器恢复的物理函数栈相同。Asio 的 caller_ 从 async_c 连到 async_b，再到 co_spawn_entry_point，此处的 caller 指针为空。原生 handler tracking 能看到共用的库提交位置和定时器操作。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>CoroPerf 从去符号的可执行文件、寄存器和栈字节入手，用指令数据流识别活跃的 async_c 帧。先把样本接回 async_c 的创建，再沿创建者边接回 async_b 的创建栈。四轮共八个样本都找回了正确的 launch_profile 或 launch_inventory，交换发起顺序后结果仍然一致。</dd></div><div><dt>适用范围与局限</dt><dd>这是 GCC 11、Boost.Asio 1.83 和 Linux x86-64 下的定时器改编。采样点由实验指定，函数名来自重建完成后对照带调试信息的 ELF。上游应用运行于 macOS arm64。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

@@ -1,147 +1,439 @@
 {
+  "python--cpython--115218": {
+    "kind": "profiling",
+    "case_file": "research/github-issue-discovery/cpython-115218/case.json",
+    "records": [["2", "4"], ["3", "5"]],
+    "en": "The async-aware profile distinguishes the waiting Tasks. CoroPerf measures their actual suspensions and follows each dispatch Handle back to the application caller responsible for that wait.",
+    "zh": "原生异步采样能区分等待中的 Task。CoroPerf 测量实际挂起时间，并沿各自的调度 Handle 找回发起读取的应用调用者。"
+  },
+  "magicstack--asyncpg--547": {
+    "kind": "functional",
+    "case_file": "research/github-issue-discovery/asyncpg-547/case.json",
+    "records": [["6", "8"], ["7", "9"]],
+    "en": "Both shutdown waiters stop at the same line. The exact release Future on each holder connects that blocked stack to the original application request, even after the acquiring Task has been collected.",
+    "zh": "两个关闭等待者都停在同一行。按各连接槽的实际归还 Future 拼接，即使获取连接的 Task 已被回收，也能找回各自的原始请求。"
+  },
+  "golang--go--52557": {
+    "kind": "functional",
+    "case_file": "research/github-issue-discovery/go-52557/case.json",
+    "records": [["2", "9"], ["5", "11"]],
+    "en": "Both waiters have the same stack. CoroPerf follows each result channel through the shared call to the original launcher of the producer that exited without sending a result.",
+    "zh": "两个等待者的栈完全相同。CoroPerf 沿各自的结果通道找到对应的共享调用，再接回未发送结果就退出的生产者的原始发起者。"
+  },
+  "sqlalchemy--sqlalchemy--13689": {
+    "kind": "functional",
+    "case_file": "research/github-issue-discovery/sqlalchemy-13689/case.json",
+    "records": [["17", "20"], ["18", "22"]],
+    "en": "The allocation and read errors look identical for both entries. The exact FrozenResult connects each read to the async caller that filled its cache entry, even after the writer Task has been collected.",
+    "zh": "两个条目的分配位置和读取异常完全相同。按实际 FrozenResult 对象拼接，即使写入 Task 已被回收，也能找回各个缓存条目的原始写入者。"
+  },
+  "python--cpython--157157": {
+    "kind": "functional",
+    "case_file": "research/github-issue-discovery/cpython-157157/case.json",
+    "records": [["2", "5"], ["4", "8"]],
+    "en": "The target Task accepts two cancellation requests. The recorded Task and completion Future identify the request behind the propagated error and the separate accepted request whose message was lost.",
+    "zh": "同一个 Task 接受两次取消。记录实际 Task 和完成 Future 后，可以区分最终异常来自哪次取消，以及是哪次已接受的取消丢失了消息。"
+  },
+  "nuitka--nuitka--4073": {
+    "kind": "debugging",
+    "case_file": "research/github-issue-discovery/nuitka-4073/case.json",
+    "records": [["7", "9"], ["8", "10"], ["1", "3"], ["2", "4"]],
+    "en": "Both stored errors reach identical generator tracebacks. The same exception object connects each receiver Task to its distinct producer Task and the original launcher. The first-raise observations show the frame lost by the affected build.",
+    "zh": "两个保存的异常到达生成器后，回溯完全相同。按异常对象身份，将两个接收 Task 分别接回各自的生产者 Task 与原始发起者。首次抛出的观测显示了受影响版本丢掉的帧。"
+  },
+  "rust-lang--futures-rs--2387": {
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/futures-rs-2387/case.json",
+    "records": [["1", "23"], ["13", "15"]],
+    "en": "One stream task drives two handshakes and the work between them. The poll intervals recover the caller of the delayed handshake. The exact result object recovers the other caller, whose result triggered the work that held the consumer.",
+    "zh": "同一个流任务负责两次握手和中间的结果处理。轮询区间将超时握手接回原始调用者，同一个结果对象将占住消费循环的工作接回另一个调用者。"
+  },
+  "llvm--llvm-project--121092": {
+    "kind": "debugging",
+    "case_file": "research/github-issue-discovery/llvm-121092/case.json",
+    "records": [["1", "2"], ["4", "5"]],
+    "en": "Four coroutine lifetimes share one address and one worker stack. Stripped instructions recover the active frame. Recorded creations and retirements identify the original caller of each lifetime.",
+    "zh": "四个协程实例复用同一个帧地址，工作线程的栈也相同。CoroPerf 用去符号的指令恢复活动帧，再沿创建和销毁记录找回各次调用的原始发起者。"
+  },
+  "aio-libs--async-lru--480": {
+    "kind": "functional",
+    "case_file": "research/github-issue-discovery/async-lru-480/case.json",
+    "records": [["26", "52"], ["21", "141"]],
+    "en": "The actual result Future connects the cache eviction to the request left waiting. Two recorded dispatch Handles recover the distinct original callers that triggered the eviction and awaited the result.",
+    "zh": "用实际结果 Future 对上缓存淘汰和仍在等待的请求，再沿各自记录的调度 Handle，分别找回触发淘汰和等待结果的原始调用者。"
+  },
+  "dotnet--runtime--38904": {
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/dotnet-38904/case.json",
+    "records": [["1", "4"], ["0", "5"]],
+    "en": "Two fault chains interleave on one worker with identical rethrow stacks. The actual exception object in each root Task connects the rethrows to its original caller.",
+    "zh": "两条失败链在同一个工作线程交错执行，重抛栈相同。用根 Task 实际保存的异常对象，可以把重抛接回各自的原始调用者。"
+  },
+  "oven-sh--bun--45020": {
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/bun-45020/case.json",
+    "records": [["1", "2"], ["0", "3"]],
+    "en": "Two ready continuations share one long poll. Matching their Promise objects to their creation stacks recovers the two callers even when the second launch resumes first.",
+    "zh": "两个已就绪的协程被同一次长轮询拖延。按实际 Promise 对象拼回创建栈，即使后发起的协程先恢复，也能找出各自的调用者。"
+  },
+  "golang--go--64614": {
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/go-64614/case.json",
+    "records": [["0", "3"], ["1", "6"]],
+    "en": "Matching a buffered opener signal's FIFO position and the actual dial interval connects identical opener stacks to the two callers that invalidated connections.",
+    "zh": "用补拨信号在同一通道中的 FIFO 顺序和实际拨号区间，将两条相同的拨号栈分别接回丢弃连接的调用者。"
+  },
+  "dart-lang--sdk--61585": {
+    "kind": "debugging",
+    "case_file": "research/github-issue-discovery/dart-61585/case.json",
+    "records": [["1", "2"], ["0", "3"]],
+    "en": "The async stack reaches the shared interceptor chain. The identical Future listener callback connects each invocation to the distinct feature that launched it.",
+    "zh": "异步栈只能追到共享的拦截器链。CoroPerf 用同一个 Future 监听器回调对象，将每次执行接回发起它的功能入口。"
+  },
+  "llvm--llvm-project--56972": {
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/llvm-56972/case.json",
+    "records": [["1", "3"], ["2", "4"]],
+    "en": "Two extra frame allocations return the same child address. Instruction dataflow recovers the two distinct active parent frames and connects the allocation sites to their original application callers.",
+    "zh": "两次额外分配返回相同的子协程帧地址。用机器码数据流恢复两个不同的活动父协程帧，就能把分配现场分别接回最初的应用调用者。"
+  },
+  "rust-lang--futures-rs--2047": {
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/futures-rs-2047/case.json",
+    "records": [["0", "6"], ["1", "9"]],
+    "en": "Identical retry stacks hid which caller kept a ready heartbeat waiting. The actual child poll interval and original push stack attribute 96 retries to one caller and six to the other.",
+    "zh": "相同的重试栈看不出是谁让已就绪的心跳任务等待。CoroPerf 用实际子节点的轮询区间接回入队栈，将 96 次和 6 次重试分别归到两个调用者。"
+  },
+  "python--cpython--90155": {
+    "kind": "functional",
+    "case_file": "research/github-issue-discovery/cpython-90155/case.json",
+    "records": [["3", "6"], ["4", "7"]],
+    "en": "The woken waiter and the next permit recipient are different Tasks on 3.10.3. The matching dispatch Handles restore the separate application callers.",
+    "zh": "在 3.10.3 中，被唤醒的等待者和下一次实际获得许可的是不同 Task。用各自的调度 Handle 拼回创建栈，可以区分两个原始调用者。"
+  },
+  "zio--zio--1003": {
+    "kind": "debugging",
+    "case_file": "research/github-issue-discovery/zio-1003/case.json",
+    "records": [["0", "9"], ["1", "8"]],
+    "en": "The two worker failures have the same native trace. Matching each FiberContext receiver to its construction recovers the precise unsafeRun caller.",
+    "zh": "两条 worker 失败的原生栈相同。根据实际 FiberContext 对象拼回创建栈，可以找回每次 unsafeRun 的确切调用者。"
+  },
+  "python--cpython--112169": {
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/cpython-112169/case.json",
+    "records": [["10", "15"], ["11", "16"]],
+    "en": "Matching the blocked worker to its exact executor WorkItem and the broker's earlier queue request identifies which application caller occupied the DNS worker.",
+    "zh": "把被占用的工作线程接回实际 WorkItem，再沿调度器取出的同一个请求找到入队栈，可以辨认占用 DNS 工作线程的应用调用者。"
+  },
+  "tokio-rs--tokio--8434": {
+    "kind": "functional",
+    "case_file": "research/github-issue-discovery/tokio-8434/case.json",
+    "records": [["0", "7"], ["1", "10"]],
+    "en": "The stock trace shows the two lock operations. The actual FuturesUnordered child poll intervals link those samples to the application callers that submitted them.",
+    "zh": "原生追踪能看到两个锁操作。CoroPerf 用 FuturesUnordered 实际子节点的 poll 区间把采样连回提交它们的应用调用者。"
+  },
+  "grpc--grpc--37881": {
+    "kind": "functional",
+    "case_file": "research/github-issue-discovery/grpc-37881/case.json",
+    "records": [["11", "12"], ["16", "17"]],
+    "en": "The two workers have identical stacks and both lose the request ID. Joining the active WorkItem to its submission and the exact per-RPC handler restores the original interceptor route.",
+    "zh": "两个工作线程的栈完全相同，请求 ID 也都丢失。用实际 WorkItem 接回提交栈，再按同一个 RPC 处理器对象拼接，就能找回最初的拦截器路径。"
+  },
+  "python--cpython--157213": {
+    "kind": "debugging",
+    "case_file": "research/github-issue-discovery/cpython-157213/case.json",
+    "records": [["3", "12"], ["4", "13"]],
+    "en": "The fixed await graph shows who still waits. Matching each survivor Task to the Handle that dispatched its creation recovers who originally launched it.",
+    "zh": "修复后的等待图能显示谁仍在等待。CoroPerf 把每个存活 Task 接回触发其创建的 Handle，找出最初是谁发起的。"
+  },
   "dotnet--runtime--60764": {
+    "kind": "debugging",
     "records": [["0", "6"]],
     "en": "The constructor stack begins on a timer worker. Joining it to creation recovers Program.Main as the initiator of this Foo state machine.",
     "zh": "构造函数的物理栈起于计时器工作线程。拼回创建栈后，可以确定这次 Foo 状态机由 Program.Main 发起。"
   },
+  "dotnet--runtime--125417": {
+    "kind": "debugging",
+    "case_file": "research/github-issue-discovery/dotnet-125417/case.json",
+    "records": [["2", "5"], ["0", "10"]],
+    "en": "The same callee runs for two synchronous forwarders. TPL execution intervals and recorded task creation stacks connect each worker observation to its original caller.",
+    "zh": "两个同步转发方法调用同一个协程。CoroPerf 用 TPL 执行区间和已记录的任务创建栈，把每个工作线程观测分别连回原始调用者。"
+  },
   "drogonframework--drogon--2331": {
+    "kind": "performance",
     "records": [["105", "158"]],
     "en": "Two request entries use shared_lookup. The stopped sample's owner and the recorded creator chain identify profile_entry as the origin of the blocked request.",
     "zh": "两个请求入口都使用 shared_lookup。将停止现场归到具体协程后，沿创建关系可以确认卡住的是由 profile_entry 发起的请求。"
   },
+  "llvm--llvm-project--37601": {
+    "kind": "functional",
+    "case_file": "research/github-issue-discovery/llvm-37601/case.json",
+    "records": [["2", "3"], ["1", "4"]],
+    "en": "The same worker stack and stale thread ID describe two instances. The stripped machine code identifies the frame at each resume, and its recorded creation stack restores the launcher.",
+    "zh": "同一个工作线程的调用栈和旧线程 ID 对应两个不同的协程实例。CoroPerf 用去符号的机器码定位各自恢复的帧，再拼回创建栈找出原始调用者。"
+  },
   "tokio-rs--tokio--6315": {
+    "kind": "performance",
     "records": [["31", "52"]],
     "en": "The matched spawn and helper-body stacks identify which parent launched the delayed task in the controlled LIFO-slot run.",
     "zh": "在受控的 LIFO 槽位复现中，将任务创建栈和任务体执行栈对齐，能找到被延迟调度的任务由哪个父任务发起。"
   },
+  "tokio-rs--tokio--8760": {
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/tokio-8760/case.json",
+    "records": [["34", "159"], ["76", "161"]],
+    "en": "Both callers produce the same timer-clear stack. The poll interval identifies the running task, and its creation stack identifies which application entry launched it.",
+    "zh": "两条路径的工作线程只看到同一种定时器清理栈。用 poll 区间定位执行中的任务，拼回创建栈后就能找出发起该任务的应用入口。"
+  },
   "pgjdbc--pgjdbc--1951": {
+    "kind": "performance",
     "records": [["1", "3"]],
-    "en": "The pin sample locates the JDBC read. The matched virtual-thread start supplies the earlier application dispatch path.",
-    "zh": "JFR 钉住事件指出 JDBC 读取位置。用同一个虚拟线程 ID 拼回启动记录后，可以找到早先的应用请求分派路径。"
+    "en": "Stock JFR shows the JDBC pin and the virtual thread's own entry. Joining the pin to the factory's creation record by JVM thread ID recovers the earlier Quarkus caller.",
+    "zh": "原生 JFR 显示 JDBC 钉住位置和虚拟线程自己的入口。用 JVM 线程 ID 拼回工厂采集的创建记录后，才能看到更早的 Quarkus 请求分派调用者。"
   },
   "nodejs--node--36126": {
+    "kind": "debugging",
     "records": [["5", "13"]],
     "en": "The resumed diagnostic contains sub. The Promise creation stack restores its synchronous initiator, main.",
     "zh": "恢复后的诊断栈只有 sub。拼上对应 Promise 的创建栈后，可以找回同步发起者 main。"
   },
   "nodejs--node--48511": {
+    "kind": "debugging",
     "records": [["7", "12"]],
     "en": "The early post-await diagnostic in foo omits main and indirectCall. The matching Promise creation record retains both.",
     "zh": "foo 第一次 await 之后的诊断栈缺少 main 和 indirectCall。匹配到的 Promise 创建记录保留了这两个调用者。"
   },
-  "golang--go--22289": {
-    "records": [["11", "12"]],
-    "en": "Runtime creator IDs recover the chain from the blocked goroutine through its ancestors in the controlled fixture.",
-    "zh": "在受控程序里，用运行时创建者 ID 将阻塞的 goroutine 追溯到多级创建者。"
-  },
   "python--cpython--91048": {
+    "kind": "debugging",
     "records": [["1", "15"]],
     "en": "The suspended task is linked to the task creation in f2. The crossed-await control checks creator and current waiter independently.",
     "zh": "挂起现场被连回 f2 中的任务创建位置。交叉 await 对照对创建者和当前等待者做了独立核对。"
   },
+  "python--cpython--156278": {
+    "kind": "debugging",
+    "case_file": "research/github-issue-discovery/cpython-156278/case.json",
+    "records": [["5", "19"], ["10", "13"]],
+    "en": "Two final tracebacks point to stream cleanup. The saved first-raise stacks identify the two failed reads, and their Task creation records identify the distinct callers.",
+    "zh": "两条最终异常栈都指向流清理。首次抛出时保留的栈指出两个真正失败的读取，再拼回各自的 Task 创建栈，就能确定不同的发起者。"
+  },
   "python--cpython--88831": {
+    "kind": "functional",
     "records": [["3", "43"]],
     "en": "Finalization evidence identifies the pending task, and the identity-matched capture traces the task to its creation.",
     "zh": "终结现场识别出仍未完成的任务，再通过匹配实例的采集记录追溯它的创建位置。"
   },
   "aio-libs--async-lru--528": {
+    "kind": "debugging",
     "records": [["1", "2"]],
     "en": "The active stack shows bar. Its child-task creation stack recovers foo and main and identifies the first caller among several waiters.",
     "zh": "当前栈显示 bar。拼回子任务的创建栈后可恢复 foo 和 main，并从多个等待者中区分最早的发起者。"
   },
   "kludex--starlette--1438": {
+    "kind": "functional",
     "records": [["13", "65"]],
     "en": "The task creation link connects the request middleware to the background execution that received cancellation.",
     "zh": "任务创建关系把请求中间件和收到取消的后台执行连在一起。"
   },
   "fastapi--fastapi--709": {
+    "kind": "functional",
     "records": [["13", "554"]],
     "en": "Joining the pending subscription stack to request-task creation identifies which request was still live at shutdown.",
     "zh": "将仍在等待的订阅栈拼回请求任务的创建处，可以确定服务关闭时仍存活的是哪个请求。"
   },
   "sqlalchemy--sqlalchemy--8145": {
+    "kind": "functional",
     "records": [["1", "254"]],
     "en": "The cleanup sample links back to the same Task created by main. Pool records then identify the matching checked-out connection left by the cancellation.",
     "zh": "把清理现场连回 main 创建的同一个任务。连接池记录进一步核对出取消后遗留的已借出连接。"
   },
   "grpc--grpc-kotlin--299": {
+    "kind": "debugging",
     "records": [["4", "72"], ["5", "67"]],
     "en": "Captured Kotlin Job identities connect the two failure samples to their respective launch sites, even with identical messages and reversed reply order.",
     "zh": "用采集到的 Kotlin Job 身份，将两处失败分别匹配到各自的启动位置。消息相同、响应顺序反转时也能区分两次调用。"
   },
   "kotlin--kotlinx.coroutines--2327": {
+    "kind": "debugging",
     "records": [["81", "104"], ["5", "22"]],
     "en": "Job lifecycle joins attribute the identical requestSuspend failures to the separate async and launch callers.",
     "zh": "沿 Job 生命周期将两个相同的 requestSuspend 失败分别连回 async 和 launch 的发起者。"
   },
   "kotlin--kotlinx.coroutines--2604": {
+    "kind": "debugging",
     "records": [["0", "9"]],
     "en": "The throw sample and its continuation chain are joined to the runBlocking Job; this recovers the caller path across suspension.",
     "zh": "将抛异常时的续体栈连回 runBlocking 创建的 Job，恢复挂起前的调用路径。"
   },
   "python-trio--trio--285": {
+    "kind": "debugging",
     "records": [["1", "4"]],
     "en": "Creation-to-cancellation attribution identifies which of two similarly executing tasks came from the unresponsive branch.",
     "zh": "把取消现场连回任务的创建位置，区分执行路径相似的两个任务，定位无响应的一侧。"
   },
   "huggingface--huggingface_hub--2521": {
+    "kind": "functional",
     "records": [["43", "55"], ["3", "18"]],
     "en": "Two requests shared a URL. The captured task lineage and response identities let the warning be attributed to submit_alpha.",
     "zh": "两个请求使用同一 URL。沿任务创建关系并核对响应对象身份，可以将告警归到 submit_alpha。"
   },
   "automattic--mongoose--15317": {
+    "kind": "debugging",
     "records": [["70", "124"]],
     "en": "The validation stack starts at Document.invalidate. The Promise creation record recovers the originating model.save call in runDemo.",
     "zh": "校验栈起于 Document.invalidate。拼上 Promise 创建记录可以找回 runDemo 中发起的 model.save。"
   },
   "automattic--mongoose--8691": {
+    "kind": "debugging",
     "records": [["43", "81"]],
     "en": "The creation record shows Query.then starting exec internally and recovers the application context missing from the error.",
     "zh": "创建记录显示 Query.then 在内部启动 exec，并恢复错误栈里丢失的应用调用上下文。"
   },
   "axios--axios--2387": {
+    "kind": "debugging",
     "records": [["6", "112"], ["14", "186"]],
     "en": "Matching Promise, Error, and ClientRequest identities lets the two reports be traced to separate axios.get callers.",
     "zh": "对齐 Promise、Error 和 ClientRequest 身份后，可以把两条错误记录分别追溯到对应的 axios.get 调用者。"
   },
   "knex--knex--2500": {
+    "kind": "debugging",
     "records": [["1", "74"]],
     "en": "The rejection's Promise identity identifies the creation stack in the application test where the missing async caller originated.",
     "zh": "通过发生拒绝的 Promise 身份，可以恢复应用测试中缺失的异步调用者。"
   },
   "sequelize--sequelize--12044": {
+    "kind": "debugging",
     "records": [["705", "870"]],
     "en": "Stitching the second create call to its catch reconnects the lost application call site to the driver-error path.",
     "zh": "将第二次 create 的创建栈拼到 catch 现场，把错误栈中缺失的应用调用行连到驱动报错路径。"
   },
   "sidorares--node-mysql2--530": {
+    "kind": "debugging",
     "records": [["75", "98"], ["77", "120"]],
     "en": "The two query Promise identities tie similar failures to readAccount and readInvoice separately.",
     "zh": "两次查询的 Promise 身份将相似的错误分别归到 readAccount 和 readInvoice。"
   },
   "sindresorhus--got--2277": {
+    "kind": "debugging",
     "records": [["10", "11"], ["0", "1"]],
     "en": "Promise and timer identities recover which initiating caller hit its connect-phase deadline in the timing control.",
     "zh": "用 Promise 和计时器身份核对超时现场，找出触发连接阶段时限的发起者。"
   },
   "typeorm--typeorm--11499": {
+    "kind": "debugging",
     "records": [["0", "1"], ["2", "3"]],
     "en": "The same SQL produces the same error text in two callers. Matching each Promise and await continuation distinguishes importOrders from refreshCatalog.",
     "zh": "两个调用者执行相同 SQL 并得到相同报错。拼接各自 Promise 的创建栈和 await 恢复栈，可以区分 importOrders 和 refreshCatalog。"
   },
   "vincit--objection.js--1618": {
+    "kind": "debugging",
     "records": [["0", "2"], ["1", "4"]],
     "en": "At the custom thenable boundary, query-object identity reconnects each rejection to its own application creation site.",
     "zh": "在自定义 thenable 边界，用查询对象身份将各次拒绝连回对应的应用创建位置。"
   },
   "omnilib--aiosqlite--87": {
+    "kind": "functional",
     "records": [["6", "156"], ["7", "189"], ["9", "205"]],
     "en": "Task joins identify which concurrent gather callers received each lastrowid observation, so the reported values can be compared with the correct committed rows.",
     "zh": "通过任务拼接找出每次 lastrowid 观测来自哪个 gather 子任务，进而用正确的已提交数据行核对返回值。"
   },
   "tortoise--tortoise-orm--2060": {
+    "kind": "functional",
     "records": [["6", "95"]],
     "en": "The join identifies the gather caller whose defaults were lost and traces its task to the conflict-handling path that returned the competing caller's value.",
     "zh": "拼接确定了 gather 中哪一个调用者的默认值丢失，并将它的任务追溯到返回竞争方数据的冲突处理路径。"
+  },
+  "nodejs--node--53858": {
+    "kind": "debugging",
+    "records": [["370", "502"]],
+    "en": "The default diagnostic omits reader.read() on line 10. In three stock Inspector runs with async ancestry enabled, the debugger shows the DNS connect from line 4 and still omits the later read. The matched read Promise reconnects line 10 to the error.",
+    "zh": "默认异常栈缺少第 10 行的 reader.read()。三次开启异步归属的原生 Inspector 对照都看到了第 4 行的 DNS connect，却依然缺少后续的 read。匹配读取 Promise 后，CoroPerf 把第 10 行接回出错现场。"
+  },
+  "microsoft--playwright--40141": {
+    "kind": "debugging",
+    "records": [["17", "26"], ["20", "24"], ["21", "28"]],
+    "en": "The affected runner's assertion stack omits its outer page-object method. Matching the returned step Promises recovers shouldBeCorrect and separates two inner step launches with identical error stacks.",
+    "zh": "受影响版本的断言栈缺少外层页面对象方法。匹配各 test.step 返回的 Promise 后，可以找回 shouldBeCorrect，并区分异常栈完全相同的两次内层调用。"
+  },
+  "knex--knex--2419": {
+    "kind": "debugging",
+    "records": [["11", "132"], ["17", "107"]],
+    "en": "Even with Bluebird long-stack traces enabled, direct await omits the test1 query line. Matching each query continuation reconnects the database error to test1 or test2.",
+    "zh": "开启 Bluebird 长栈后，直接 await 的异常栈还是缺少 test1 的查询行。拼回各查询续体的创建栈后，数据库报错可以分别归到 test1 和 test2。"
+  },
+  "knex--knex--4531": {
+    "kind": "debugging",
+    "records": [["9", "21"]],
+    "en": "The rejection stack starts in Knex query compilation. Matching the rejected Promise recovers the runCase dispatch line before the await boundary.",
+    "zh": "拒绝发生时的栈起于 Knex 查询编译。匹配被拒绝的 Promise 后，可以补回 await 之前 runCase 发起查询的代码行。"
+  },
+  "typeorm--typeorm--11271": {
+    "kind": "debugging",
+    "records": [["0", "2"]],
+    "en": "The affected MySQL error stack starts in driver code and omits myNamedFunction1234. The returned Promise identity recovers that initiator and distinguishes it from the test callback reading the error.",
+    "zh": "受影响版本的 MySQL 异常栈起于驱动代码，缺少 myNamedFunction1234。用返回 Promise 的身份拼回发起者，并能把它和读取该异常的测试回调区分开。"
+  },
+  "magicstack--asyncpg--1149": {
+    "kind": "performance",
+    "records": [["2", "29"]],
+    "en": "The sample shows consume blocked in _bind_exec. Joining it to start_export identifies the export cursor task in the two-cursor performance control. Protocol records independently establish that rows had arrived before delivery to the application.",
+    "zh": "物理栈看到 consume 等在 _bind_exec。把采样接回 start_export 后，可在双游标性能对照中确认等待的是导出游标任务。协议记录独立验证了数据行已到达而应用仍未收到。"
+  },
+  "nodejs--node--50056": {
+    "kind": "profiling",
+    "case_file": "research/github-issue-discovery/node-50056/case.json",
+    "records": [["4", "18"], ["8", "126"]],
+    "en": "The two callers share one sampled CPU stack after await. CoroPerf joins the active Promise generation to its creation so the same callee is attributed separately to launchProfile and launchInventory.",
+    "zh": "两个调用者在 await 后的热点调用栈相同。CoroPerf 先确定当时活跃的 Promise 实例，再拼回其创建栈，把同一个被调用者分别连到 launchProfile 和 launchInventory。"
+  },
+  "tokio-rs--tokio--8085": {
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/tokio-8085/case.json",
+    "records": [
+      [
+        "3",
+        "7"
+      ],
+      [
+        "14",
+        "18"
+      ]
+    ],
+    "en": "The physical hot stack and the stock spawn location are identical. The poll-interval join connects the same CPU callee to its two distinct callers, launch_profile and launch_inventory.",
+    "zh": "物理热点栈和 Tokio 自带的 spawn 位置完全相同。根据实际 poll 区间拼回创建栈，可把同一个 CPU 被调用者分别连回 launch_profile 和 launch_inventory。"
+  },
+  "kotlin--kotlinx.coroutines--1660": {
+    "kind": "debugging",
+    "case_file": "research/github-issue-discovery/kotlin-1660/case.json",
+    "records": [["4", "32"], ["9", "18"]],
+    "en": "The same worker exception stack can come from profileCaller or inventoryCaller. The Job taken from the throwing continuation links that exception to the correct caller at DispatchedCoroutine creation.",
+    "zh": "同一个 worker 异常栈可能来自 profileCaller 或 inventoryCaller。从抛出异常的 continuation 取到的 Job，把异常接回 DispatchedCoroutine 创建时的正确调用者。"
+  },
+  "typelevel--cats-effect--2620": {
+    "kind": "debugging",
+    "case_file": "research/github-issue-discovery/cats-effect-2620/case.json",
+    "records": [["1", "8"], ["2", "13"], ["3", "6"], ["4", "7"]],
+    "en": "The stock monitor gives four WAITING rows with no frames. CoroPerf joins each worker's wait registration to its creation and then to the application's dispatcher initialization at AppLoader.scala:32.",
+    "zh": "原生监控器显示四条没有栈帧的 WAITING 记录。CoroPerf 把各 worker 的等待登记接回自己的创建栈，再接回应用在 AppLoader.scala:32 初始化 Dispatcher 的位置。"
+  },
+  "tokio-rs--tokio--8527": {
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/tokio-8527/case.json",
+    "records": [["3130", "30036"], ["1264", "29932"]],
+    "en": "Two delayed blocking jobs have the same worker stack and stock submit location. Following each blocking span through its creation and its async producer recovers the original application caller, launch_profile or launch_inventory.",
+    "zh": "两个排队慢的阻塞任务拥有相同的 worker 栈和原生提交位置。CoroPerf 沿各自的阻塞 span、创建栈和异步创建者，找回最初的应用调用者 launch_profile 或 launch_inventory。"
+  },
+  "chriskohlhoff--asio--1239": {
+    "kind": "debugging",
+    "case_file": "research/github-issue-discovery/asio-1239/case.json",
+    "records": [["5", "15"], ["7", "10"]],
+    "en": "Asio's live awaiter chain ends at the detached entry. Instruction dataflow recovers the timer's active instance, and its two recorded creation edges lead back to launch_profile or launch_inventory.",
+    "zh": "Asio 的实时 awaiter 链止于 detached 入口。指令数据流恢复定时器唤醒的实例，两处创建关系将它接回 launch_profile 或 launch_inventory。"
+  },
+  "python--cpython--105836": {
+    "kind": "functional",
+    "case_file": "research/github-issue-discovery/cpython-105836/case.json",
+    "records": [["2", "10"], ["3", "9"]],
+    "en": "Both cancelled bridge Futures conceal the same pending cleanup path. The recorded Task-to-Future object relationship connects each Task snapshot to the original cross-thread submitter.",
+    "zh": "两个外层 Future 已取消，内层 Task 都停在同一段清理路径。通过记录下来的 Task 与 Future 对象关系，各自的清理快照可以接回真正的跨线程提交者。"
   }
 }

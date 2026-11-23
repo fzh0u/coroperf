@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which async interceptor led to the worker that lost the request ID?">
+  <title>grpc/grpc #37881 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/grpc--grpc--37881.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="grpc--grpc--37881.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/grpc--grpc--37881.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">grpc/grpc #37881</p>
+        <h1>Which async interceptor led to the worker that lost the request ID?</h1>
+        <div class="case-links"><a href="https://github.com/grpc/grpc/issues/37881">Upstream report ↗</a><a href="https://github.com/grpc/grpc/pull/37892">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Open</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The two workers have identical stacks and both lose the request ID. Joining the active WorkItem to its submission and the exact per-RPC handler restores the original interceptor route.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 12</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>7 → 11</code></a><a href="#join-1-point-2">Join point 2 <code>11 → 12</code></a></nav>
+          <section class="stack " id="join-1-record-7"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 7</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:164</span></li><li><code>main</code><span>repro.py:158</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1897</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>intercept_service</code><span>repro.py:66</span></li><li><code>route_profile</code><span>repro.py:48</span></li><li><code>prepare_handler</code><span>repro.py:43</span></li><li><code>__init__</code><span>repro.py:25</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-7">Record 7</a><span aria-hidden="true">→</span><a href="#join-1-record-11">Record 11</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>At thread-pool submission, the WorkItem holds the same handler object this server Task created inside the interceptor.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 7 → 11</code></p>
+        </aside><section class="stack " id="join-1-record-11"><div class="stack-head"><h4>Creation stack</h4><span>Record 11</span><span class="record-instance">Instance from record 11</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:164</span></li><li><code>main</code><span>repro.py:158</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1897</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run_in_executor</code><span>base_events.py:819</span></li><li><code>submit</code><span>thread.py:173</span></li><li><code>__init__</code><span>thread.py:51</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-11">Record 11</a><span aria-hidden="true">→</span><a href="#join-1-record-12">Record 12</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The observed worker was executing the same WorkItem recorded when it was created on the event-loop thread.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 11 → 12</code></p>
+        </aside><section class="stack observed" id="join-1-record-12"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 12 · semantic_boundary</span><span class="record-instance">Instance from record 11</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>run</code><span>thread.py:58</span></li><li><code>__call__</code><span>repro.py:36</span></li><li><code>read_request_id</code><span>repro.py:28</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 12 · semantic_boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>run</code><span>thread.py:58</span></li><li><code>__call__</code><span>repro.py:36</span></li><li><code>read_request_id</code><span>repro.py:28</span></li></ol></section>
+          <p class="small trace-note">Frames from record 12 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 17</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>15 → 16</code></a><a href="#join-2-point-2">Join point 2 <code>16 → 17</code></a></nav>
+          <section class="stack " id="join-2-record-15"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 15</span><span class="record-instance">Instance from record 15</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:164</span></li><li><code>main</code><span>repro.py:158</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1897</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>intercept_service</code><span>repro.py:66</span></li><li><code>route_inventory</code><span>repro.py:52</span></li><li><code>prepare_handler</code><span>repro.py:43</span></li><li><code>__init__</code><span>repro.py:25</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-15">Record 15</a><span aria-hidden="true">→</span><a href="#join-2-record-16">Record 16</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>At thread-pool submission, the WorkItem holds the same handler object this server Task created inside the interceptor.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 15 → 16</code></p>
+        </aside><section class="stack " id="join-2-record-16"><div class="stack-head"><h4>Creation stack</h4><span>Record 16</span><span class="record-instance">Instance from record 16</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:164</span></li><li><code>main</code><span>repro.py:158</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:634</span></li><li><code>run_forever</code><span>base_events.py:601</span></li><li><code>_run_once</code><span>base_events.py:1897</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>run_in_executor</code><span>base_events.py:819</span></li><li><code>submit</code><span>thread.py:173</span></li><li><code>__init__</code><span>thread.py:51</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-16">Record 16</a><span aria-hidden="true">→</span><a href="#join-2-record-17">Record 17</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The observed worker was executing the same WorkItem recorded when it was created on the event-loop thread.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 16 → 17</code></p>
+        </aside><section class="stack observed" id="join-2-record-17"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · semantic_boundary</span><span class="record-instance">Instance from record 16</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>run</code><span>thread.py:58</span></li><li><code>__call__</code><span>repro.py:36</span></li><li><code>read_request_id</code><span>repro.py:28</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 17 · semantic_boundary</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:937</span></li><li><code>_bootstrap_inner</code><span>threading.py:980</span></li><li><code>run</code><span>threading.py:917</span></li><li><code>_worker</code><span>thread.py:83</span></li><li><code>run</code><span>thread.py:58</span></li><li><code>__call__</code><span>repro.py:36</span></li><li><code>read_request_id</code><span>repro.py:28</span></li></ol></section>
+          <p class="small trace-note">Frames from record 17 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Two RPCs call the same method with the same payload. On the reported gRPC build, the request ID is present when each asyncio server Task submits its work, and both sync handlers read None on the worker threads. The proposed context-copy change restores the ID. On both builds, the inspected worker stacks and Task diagnostics omit both interceptor routes.</dd></div><div><dt>What CoroPerf showed</dt><dd>The active WorkItem connects the worker&#x27;s read_request_id stack to its creation under run_in_executor. At submission, that WorkItem holds the exact handler created earlier by the same server Task inside route_profile or route_inventory. Both boundaries are recorded. Removing the handler-to-WorkItem edge keeps the worker-to-submission join and loses the earlier route.</dd></div><div><dt>Scope and limits</dt><dd>The original report was reproduced separately. The stacks below use a controlled two-request replay on the reported gRPC Cython build and CPython 3.9.18, with a selected Task and WorkItem probe. The context-copy comparison uses the unmerged proposal.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

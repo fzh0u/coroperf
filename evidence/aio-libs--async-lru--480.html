@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which caller evicted the result another caller was waiting for?">
+  <title>aio-libs/async-lru #480 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/aio-libs--async-lru--480.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="aio-libs--async-lru--480.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/aio-libs--async-lru--480.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">aio-libs/async-lru #480</p>
+        <h1>Which caller evicted the result another caller was waiting for?</h1>
+        <div class="case-links"><a href="https://github.com/aio-libs/async-lru/issues/480">Upstream report ↗</a><a href="https://github.com/aio-libs/async-lru/pull/481">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The actual result Future connects the cache eviction to the request left waiting. Two recorded dispatch Handles recover the distinct original callers that triggered the eviction and awaited the result.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 52</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>6 → 26</code></a><a href="#join-1-point-2">Join point 2 <code>26 → 52</code></a></nav>
+          <section class="stack " id="join-1-record-6"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 6</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>replay</code><span>repro.py:155</span></li><li><code>&lt;listcomp&gt;</code><span>repro.py:155</span></li><li><code>launch_inventory</code><span>repro.py:29</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-6">Record 6</a><span aria-hidden="true">→</span><a href="#join-1-record-26">Record 26</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 6 → 26</code></p>
+        </aside><section class="stack " id="join-1-record-26"><div class="stack-head"><h4>Creation stack</h4><span>Record 26</span><span class="record-instance">Instance from record 26</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:41</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>dispatch</code><span>repro.py:17</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>record_task</code><span>callback_capture.py:46</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-26">Record 26</a><span aria-hidden="true">→</span><a href="#join-1-record-52">Record 52</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 26 → 52</code></p>
+        </aside><section class="stack observed" id="join-1-record-52"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 52 · semantic_boundary</span><span class="record-instance">Instance from record 26</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request</code><span>repro.py:21</span></li><li><code>__call__</code><span>__init__.py:215</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 52 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request</code><span>repro.py:21</span></li><li><code>__call__</code><span>__init__.py:215</span></li></ol></section>
+          <p class="small trace-note">Frames from record 52 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 141</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>1 → 21</code></a><a href="#join-2-point-2">Join point 2 <code>21 → 141</code></a></nav>
+          <section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:37</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>replay</code><span>repro.py:155</span></li><li><code>&lt;listcomp&gt;</code><span>repro.py:155</span></li><li><code>launch_profile</code><span>repro.py:25</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-21">Record 21</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 1 → 21</code></p>
+        </aside><section class="stack " id="join-2-record-21"><div class="stack-head"><h4>Creation stack</h4><span>Record 21</span><span class="record-instance">Instance from record 21</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:213</span></li><li><code>main</code><span>repro.py:207</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>record_dispatch</code><span>callback_capture.py:41</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>dispatch</code><span>repro.py:17</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>record_task</code><span>callback_capture.py:46</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-21">Record 21</a><span aria-hidden="true">→</span><a href="#join-2-record-141">Record 141</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 21 → 141</code></p>
+        </aside><section class="stack observed" id="join-2-record-141"><div class="stack-head"><h4>Observed task stack</h4><span>Record 141 · task_snapshot</span><span class="record-instance">Instance from record 21</span></div><ol class="frames"><li><code>request</code><span>repro.py:21</span></li><li><code>__call__</code><span>__init__.py:218</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 141 · task_snapshot</span></div><ol class="frames"><li><code>request</code><span>repro.py:21</span></li><li><code>__call__</code><span>__init__.py:218</span></li></ol></section>
+          <p class="small trace-note">Frames from record 141 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With async-lru 2.0.2, all 20 cache computations finish. Fifteen completion callbacks raise KeyError and leave fifteen requests waiting. The stock asyncio debug traceback identifies the callback and the missing key. The surviving Task stacks, Task creation tracebacks, and coroutine origins omit both original launchers. On 2.0.3 the same evictions occur and all twenty results are delivered.</dd></div><div><dt>What CoroPerf showed</dt><dd>In the displayed replay, the request for key 5 evicts key 0. The eviction (record 52), failing callback (97), and still-waiting Task (141) all hold the same cache result Future. CoroPerf separately joins 52 to the creation of key 5&#x27;s Task (26), then its dispatch Handle at launch_inventory (6). It joins 141 to the creation of key 0&#x27;s Task (21), then its dispatch Handle at launch_profile (1). The event-loop callback is a separate observation.</dd></div><div><dt>Scope and limits</dt><dd>This is a controlled two-caller extension of the upstream example on CPython 3.11.18. Two batches verify 480 caller joins across 240 eviction pairs on async-lru 2.0.2 and 2.0.3, with independently reversed submission and swapped callers. The scoped probes read Task, Handle, and Future identities from the running program. Withholding the Handle edges leaves both callers absent. The harness records pending requests after the workers and callbacks have run, then cancels them to exit.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

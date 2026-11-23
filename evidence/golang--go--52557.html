@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which exited singleflight producer left each reader waiting?">
+  <title>golang/go #52557 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/golang--go--52557.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="golang--go--52557.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/golang--go--52557.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">golang/go #52557</p>
+        <h1>Which exited singleflight producer left each reader waiting?</h1>
+        <div class="case-links"><a href="https://github.com/golang/go/issues/52557">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Both waiters have the same stack. CoroPerf follows each result channel through the shared call to the original launcher of the producer that exited without sending a result.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 9</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>0 → 2</code></a><a href="#join-1-point-2">Join point 2 <code>2 → 9</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Result producer&#x27;s launch stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:163</span></li><li><code>main.launchProfile</code><span>replay.go:78</span></li><li><code>golang.org/x/sync/singleflight.(*Group).DoChan</code><span>singleflight.go:134</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Producer launch → reader's result dependency</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>DoChan registers the reader's exact result channel on the same singleflight call used by the producer. That call links the waiter to the producer's original launcher.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:168</span></li><li><code>main.startReader</code><span>replay.go:105</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-9">Record 9</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The reader's creation record and blocked snapshot identify the same goroutine in the same process.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 2 → 9</code></p>
+        </aside><section class="stack observed" id="join-1-record-9"><div class="stack-head"><h4>Observed task stack</h4><span>Record 9 · task_snapshot</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 9 · task_snapshot</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+          <p class="small trace-note">Frames from record 9 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 11</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>3 → 5</code></a><a href="#join-2-point-2">Join point 2 <code>5 → 11</code></a></nav>
+          <section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Result producer&#x27;s launch stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:163</span></li><li><code>main.launchInventory</code><span>replay.go:82</span></li><li><code>golang.org/x/sync/singleflight.(*Group).DoChan</code><span>singleflight.go:134</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Producer launch → reader's result dependency</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">Record 5</a></p>
+          <p>DoChan registers the reader's exact result channel on the same singleflight call used by the producer. That call links the waiter to the producer's original launcher.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-5"><div class="stack-head"><h4>Creation stack</h4><span>Record 5</span><span class="record-instance">Instance from record 5</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:168</span></li><li><code>main.startReader</code><span>replay.go:105</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-5">Record 5</a><span aria-hidden="true">→</span><a href="#join-2-record-11">Record 11</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The reader's creation record and blocked snapshot identify the same goroutine in the same process.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 5 → 11</code></p>
+        </aside><section class="stack observed" id="join-2-record-11"><div class="stack-head"><h4>Observed task stack</h4><span>Record 11 · task_snapshot</span><span class="record-instance">Instance from record 5</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 11 · task_snapshot</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+          <p class="small trace-note">Frames from record 11 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Two singleflight producers call runtime.Goexit. All four readers remain blocked in the same awaitResult stack. Live goroutine dumps and profiles with traceback ancestors end at their shared reader launch site. The stock execution trace records both producer launch stacks and exits. The readers unblock only when the fixture later releases them for cleanup.</dd></div><div><dt>What CoroPerf showed</dt><dd>Each DoChan call registers its own result channel on a shared call object. The capture links that channel to the blocked reader and matches the shared call to the producing goroutine and its launch stack. Records 0 → 2 → 9 connect one duplicate reader to launchProfile. Records 3 → 5 → 11 connect the other to launchInventory. Removing the shared-call edges leaves both wait stacks linked only to their common reader launcher.</dd></div><div><dt>Scope and limits</dt><dd>This controlled two-producer extension uses Go 1.23.0 on Linux x86-64, with the golang.org/x/sync revision in the issue and v0.4.0. Two batches verify 32 blocked-reader joins across both launch orders. Normal-return controls verify 32 deliveries on the expected channels. The test uses a separate stop channel to release readers after the blocked snapshots.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

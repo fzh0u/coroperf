@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="每个等待者依赖的是哪个已经退出的 singleflight 生产者？">
+  <title>golang/go #52557 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/golang--go--52557.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/golang--go--52557.html" lang="en" hreflang="en">English</a><a href="golang--go--52557.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">golang/go #52557</p>
+        <h1>每个等待者依赖的是哪个已经退出的 singleflight 生产者？</h1>
+        <div class="case-links"><a href="https://github.com/golang/go/issues/52557">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>功能故障与正确性问题</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>两个等待者的栈完全相同。CoroPerf 沿各自的结果通道找到对应的共享调用，再接回未发送结果就退出的生产者的原始发起者。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 9</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 2</code></a><a href="#join-1-point-2">拼接点 2 <code>2 → 9</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>结果生产者的发起栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:163</span></li><li><code>main.launchProfile</code><span>replay.go:78</span></li><li><code>golang.org/x/sync/singleflight.(*Group).DoChan</code><span>singleflight.go:134</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>生产者发起点 → 等待者的结果依赖</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>DoChan 把等待者实际使用的结果通道登记到生产者执行的同一个 singleflight 调用。沿这个调用可以找到生产者的原始发起者。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:168</span></li><li><code>main.startReader</code><span>replay.go:105</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-9">记录 9</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>读取协程的创建记录和阻塞快照指向同一进程里的同一个 goroutine。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 2 → 9</code></p>
+        </aside><section class="stack observed" id="join-1-record-9"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 9 · task_snapshot</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 9 · task_snapshot</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 9 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 11</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>3 → 5</code></a><a href="#join-2-point-2">拼接点 2 <code>5 → 11</code></a></nav>
+          <section class="stack " id="join-2-record-3"><div class="stack-head"><h4>结果生产者的发起栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:163</span></li><li><code>main.launchInventory</code><span>replay.go:82</span></li><li><code>golang.org/x/sync/singleflight.(*Group).DoChan</code><span>singleflight.go:134</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>生产者发起点 → 等待者的结果依赖</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>DoChan 把等待者实际使用的结果通道登记到生产者执行的同一个 singleflight 调用。沿这个调用可以找到生产者的原始发起者。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-5"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>runtime.main</code><span>proc.go:272</span></li><li><code>main.main</code><span>replay.go:168</span></li><li><code>main.startReader</code><span>replay.go:105</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-5">记录 5</a><span aria-hidden="true">→</span><a href="#join-2-record-11">记录 11</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>读取协程的创建记录和阻塞快照指向同一进程里的同一个 goroutine。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 5 → 11</code></p>
+        </aside><section class="stack observed" id="join-2-record-11"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 11 · task_snapshot</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 11 · task_snapshot</span></div><ol class="frames"><li><code>main.startReader.func1</code><span>replay.go:109</span></li><li><code>main.awaitResult</code><span>replay.go:92</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 11 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>两个 singleflight 生产者调用 runtime.Goexit 后退出，四个读取协程仍然阻塞，且都停在相同的 awaitResult 调用栈。启用祖先栈后，goroutine dump 和 profile 只能将这些等待者追到同一个读取协程发起点。Go 原生执行追踪能看到两个生产者分别由谁发起、何时退出。读取协程直到实验清理时才被唤醒。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>每次 DoChan 都在共享调用对象上登记自己使用的结果通道。探针将实际结果通道与阻塞的读取协程匹配，再沿同一个共享调用找到生产者及其发起栈。记录 0 → 2 → 9 将一条重复请求的等待栈接回 launchProfile；3 → 5 → 11 将另一条接回 launchInventory。去掉共享调用这层关系后，两条阻塞栈只能接回共同的读取协程发起点。</dd></div><div><dt>适用范围与局限</dt><dd>这是原帖示例的双生产者扩展，使用 Linux x86-64 上的 Go 1.23.0，覆盖原帖的 golang.org/x/sync 版本和 v0.4.0。两批实验在两种发起顺序下共验证 32 条阻塞归因；正常返回对照验证了 32 次结果交付。实验在采集后使用独立的停止通道清理等待者。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

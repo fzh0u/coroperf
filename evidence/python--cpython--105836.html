@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="The bridge Future is cancelled while its asyncio Task is still cleaning up">
+  <title>python/cpython #105836 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/python--cpython--105836.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="python--cpython--105836.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/python--cpython--105836.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">python/cpython #105836</p>
+        <h1>The bridge Future is cancelled while its asyncio Task is still cleaning up</h1>
+        <div class="case-links"><a href="https://github.com/python/cpython/issues/105836">Upstream report ↗</a><a href="https://github.com/python/cpython/pull/142358">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Both cancelled bridge Futures conceal the same pending cleanup path. The recorded Task-to-Future object relationship connects each Task snapshot to the original cross-thread submitter.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 10</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>0 → 2</code></a><a href="#join-1-point-2">Join point 2 <code>2 → 10</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:156</span></li><li><code>main</code><span>repro.py:125</span></li><li><code>&lt;listcomp&gt;</code><span>repro.py:125</span></li><li><code>launch_profile</code><span>repro.py:43</span></li><li><code>submit_shared</code><span>repro.py:39</span></li><li><code>run_coroutine_threadsafe</code><span>tasks.py:880</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:973</span></li><li><code>_bootstrap_inner</code><span>threading.py:1016</span></li><li><code>run</code><span>threading.py:953</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1901</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>callback</code><span>tasks.py:884</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-10">Record 10</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 2 → 10</code></p>
+        </aside><section class="stack observed" id="join-1-record-10"><div class="stack-head"><h4>Observed task stack</h4><span>Record 10 · task_snapshot</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>run_job</code><span>repro.py:30</span></li><li><code>finish_cleanup</code><span>repro.py:21</span></li><li><code>wait</code><span>locks.py:214</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 10 · task_snapshot</span></div><ol class="frames"><li><code>run_job</code><span>repro.py:30</span></li><li><code>finish_cleanup</code><span>repro.py:21</span></li><li><code>wait</code><span>locks.py:214</span></li></ol></section>
+          <p class="small trace-note">Frames from record 10 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 9</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>1 → 3</code></a><a href="#join-2-point-2">Join point 2 <code>3 → 9</code></a></nav>
+          <section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>repro.py:156</span></li><li><code>main</code><span>repro.py:125</span></li><li><code>&lt;listcomp&gt;</code><span>repro.py:125</span></li><li><code>launch_inventory</code><span>repro.py:47</span></li><li><code>submit_shared</code><span>repro.py:39</span></li><li><code>run_coroutine_threadsafe</code><span>tasks.py:880</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">Record 3</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 1 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>_bootstrap</code><span>threading.py:973</span></li><li><code>_bootstrap_inner</code><span>threading.py:1016</span></li><li><code>run</code><span>threading.py:953</span></li><li><code>run_forever</code><span>base_events.py:603</span></li><li><code>_run_once</code><span>base_events.py:1901</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>callback</code><span>tasks.py:884</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-9">Record 9</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 3 → 9</code></p>
+        </aside><section class="stack observed" id="join-2-record-9"><div class="stack-head"><h4>Observed task stack</h4><span>Record 9 · task_snapshot</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>run_job</code><span>repro.py:30</span></li><li><code>finish_cleanup</code><span>repro.py:21</span></li><li><code>wait</code><span>locks.py:214</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 9 · task_snapshot</span></div><ol class="frames"><li><code>run_job</code><span>repro.py:30</span></li><li><code>finish_cleanup</code><span>repro.py:21</span></li><li><code>wait</code><span>locks.py:214</span></li></ol></section>
+          <p class="small trace-note">Frames from record 9 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Both bridge Futures reported cancellation while their Tasks were still pending in cleanup. On 3.10.12 neither Task had entered cleanup at the first loop checkpoint; on 3.14.3 both had. Stock debug traceback identified submitters while the handles were queued. After delivery, the Task traceback and coroutine origin omitted both submitters. The 3.14.3 call graph showed the same cleanup for both Tasks.</dd></div><div><dt>What CoroPerf showed</dt><dd>CoroPerf records the two actual objects passed to _chain_future. The Task snapshot links to its construction record, and the bridge Future links that construction across threads to launch_profile or launch_inventory. Independent Future and Task object checks agreed for all 16 observations across both releases and both launch orders.</dd></div><div><dt>Scope and limits</dt><dd>The displayed evidence is a controlled two-caller Linux replay on CPython 3.10.12. The same test exercises the checkpoint and diagnostics on 3.14.3. The fixture holds cleanup open for observation and then verifies that both Tasks finish cancelling.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

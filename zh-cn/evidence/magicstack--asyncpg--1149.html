@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="PostgreSQL 14 和 asyncpg 0.29.0 上同时执行两个五行游标，只让其中一个后端在第三行等待">
+  <title>magicstack/asyncpg #1149 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/magicstack--asyncpg--1149.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/magicstack--asyncpg--1149.html" lang="en" hreflang="en">English</a><a href="magicstack--asyncpg--1149.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">magicstack/asyncpg #1149</p>
+        <h1>PostgreSQL 14 和 asyncpg 0.29.0 上同时执行两个五行游标，只让其中一个后端在第三行等待</h1>
+        <div class="case-links"><a href="https://github.com/MagicStack/asyncpg/issues/1149">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>根据对照推断</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>物理栈看到 consume 等在 _bind_exec。把采样接回 start_export 后，可在双游标性能对照中确认等待的是导出游标任务。协议记录独立验证了数据行已到达而应用仍未收到。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 29</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 2</code></a><a href="#join-1-point-2">拼接点 2 <code>2 → 29</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 2 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:95</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>workload.py:61</span></li><li><code>start_export</code><span>workload.py:37</span></li><li><code>create_task</code><span>tasks.py:384</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-29">记录 29</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 29</code></p>
+        </aside><section class="stack observed" id="join-1-record-29"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 29 · task_snapshot</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>consume</code><span>workload.py:28</span></li><li><code>__anext__</code><span>cursor.py:234</span></li><li><code>_bind_exec</code><span>cursor.py:129</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 29 · task_snapshot</span></div><ol class="frames"><li><code>consume</code><span>workload.py:28</span></li><li><code>__anext__</code><span>cursor.py:234</span></li><li><code>_bind_exec</code><span>cursor.py:129</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 29 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>PostgreSQL 14 和 asyncpg 0.29.0 上同时执行两个五行游标，只让其中一个后端在第三行等待。prefetch=4 和默认值 50 都使应用在解锁前收到零行；prefetch=1 使应用先收到第 1、2 行。交换被阻塞的应用入口得到相同结果。同一时段另一个请求完整返回五行。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>coroPerf 把被阻塞的实例连回实际创建入口。四行模式停在 CursorIterator.__anext__ → _bind_exec；单行模式已交付两行，停在下一次 _exec。在同一版本的独立协议观测中，大行的第一条完整 DataRow 已交给未修改的 asyncpg 协议处理器，应用仍是零行。解锁后四行组先收到 PortalSuspended，随后才交付；默认 50 遇到五行结果的 CommandComplete 也能交付。16 字节小行对照在解锁前连整条 DataRow 都没到。设置 timeout 后抛出 TimeoutError，连接可复用，没有部分结果。</dd></div><div><dt>适用范围与局限</dt><dd>原帖给出游标 API 和所需行为，未指定 SQL、数据库、客户端版本或逐行延迟。本地选用发帖时已发布的客户端，用普通查询和一个协作锁稳定行的就绪顺序。这里只验证该版本游标的交付边界。观测器在协议处理器接收字节后记录已解码的报文类型、行号与长度；锁归属由服务端单独读取。单靠函数栈无法区分网络缓冲与客户端批量交付。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

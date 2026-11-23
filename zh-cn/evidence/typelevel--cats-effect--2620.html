@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="只有 WAITING、没有调用栈的 fiber 是谁启动的？">
+  <title>typelevel/cats-effect #2620 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/typelevel--cats-effect--2620.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/typelevel--cats-effect--2620.html" lang="en" hreflang="en">English</a><a href="typelevel--cats-effect--2620.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">typelevel/cats-effect #2620</p>
+        <h1>只有 WAITING、没有调用栈的 fiber 是谁启动的？</h1>
+        <div class="case-links"><a href="https://github.com/typelevel/cats-effect/issues/2620">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>原生监控器显示四条没有栈帧的 WAITING 记录。CoroPerf 把各 worker 的等待登记接回自己的创建栈，再接回应用在 AppLoader.scala:32 初始化 Dispatcher 的位置。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 8</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 1</code></a><a href="#join-1-point-2">拼接点 2 <code>1 → 8</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>play.core.server.ProdServerStart.main</code><span>ProdServerStart.scala</span></li><li><code>play.core.server.ProdServerStart$.main</code><span>ProdServerStart.scala:29</span></li><li><code>play.core.server.ProdServerStart$.start</code><span>ProdServerStart.scala:53</span></li><li><code>loader.AppLoader.load</code><span>AppLoader.scala:14</span></li><li><code>loader.AppComponents.&lt;init&gt;</code><span>AppLoader.scala:34</span></li><li><code>loader.AppComponents.dispatcher</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.dispatcher$lzycompute</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.x$2</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.x$2$lzycompute</code><span>AppLoader.scala:32</span></li><li><code>cats.effect.IOPlatform.unsafeRunSync</code><span>IOPlatform.scala:42</span></li><li><code>cats.effect.IOPlatform.unsafeRunTimed</code><span>IOPlatform.scala:76</span></li><li><code>cats.effect.IO.unsafeRunAsync</code><span>IO.scala:720</span></li><li><code>cats.effect.IO.unsafeRunFiber</code><span>IO.scala:822</span></li><li><code>cats.effect.IOFiber.&lt;init&gt;</code><span>IOFiber.scala:68</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">记录 1</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 1 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:443</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:124</span></li><li><code>cats.effect.IOFiber.execR</code><span>IOFiber.scala:1275</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:842</span></li><li><code>cats.effect.IOFiber.&lt;init&gt;</code><span>IOFiber.scala:68</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-8">记录 8</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>创建钩子登记实际运行时对象。采样时按对象引用身份从同一张弱引用表找到对应的令牌。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 8</code></p>
+        </aside><section class="stack observed" id="join-1-record-8"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8 · diagnostic</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:381</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:124</span></li><li><code>cats.effect.IOFiber.execR</code><span>IOFiber.scala:1275</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:757</span></li><li><code>cats.effect.IOFiber.monitor</code><span>IOFiber.scala:1078</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8 · diagnostic</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:381</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:124</span></li><li><code>cats.effect.IOFiber.execR</code><span>IOFiber.scala:1275</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:757</span></li><li><code>cats.effect.IOFiber.monitor</code><span>IOFiber.scala:1078</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 8 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 13</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>0 → 2</code></a><a href="#join-2-point-2">拼接点 2 <code>2 → 13</code></a></nav>
+          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>play.core.server.ProdServerStart.main</code><span>ProdServerStart.scala</span></li><li><code>play.core.server.ProdServerStart$.main</code><span>ProdServerStart.scala:29</span></li><li><code>play.core.server.ProdServerStart$.start</code><span>ProdServerStart.scala:53</span></li><li><code>loader.AppLoader.load</code><span>AppLoader.scala:14</span></li><li><code>loader.AppComponents.&lt;init&gt;</code><span>AppLoader.scala:34</span></li><li><code>loader.AppComponents.dispatcher</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.dispatcher$lzycompute</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.x$2</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.x$2$lzycompute</code><span>AppLoader.scala:32</span></li><li><code>cats.effect.IOPlatform.unsafeRunSync</code><span>IOPlatform.scala:42</span></li><li><code>cats.effect.IOPlatform.unsafeRunTimed</code><span>IOPlatform.scala:76</span></li><li><code>cats.effect.IO.unsafeRunAsync</code><span>IO.scala:720</span></li><li><code>cats.effect.IO.unsafeRunFiber</code><span>IO.scala:822</span></li><li><code>cats.effect.IOFiber.&lt;init&gt;</code><span>IOFiber.scala:68</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-2">记录 2</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 2 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:443</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:124</span></li><li><code>cats.effect.IOFiber.execR</code><span>IOFiber.scala:1275</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:842</span></li><li><code>cats.effect.IOFiber.&lt;init&gt;</code><span>IOFiber.scala:68</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-2-record-13">记录 13</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>创建钩子登记实际运行时对象。采样时按对象引用身份从同一张弱引用表找到对应的令牌。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 2 → 13</code></p>
+        </aside><section class="stack observed" id="join-2-record-13"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 13 · diagnostic</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:443</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:125</span></li><li><code>cats.effect.IOFiber.asyncContinueSuccessfulR</code><span>IOFiber.scala:1281</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:757</span></li><li><code>cats.effect.IOFiber.monitor</code><span>IOFiber.scala:1078</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 13 · diagnostic</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:443</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:125</span></li><li><code>cats.effect.IOFiber.asyncContinueSuccessfulR</code><span>IOFiber.scala:1281</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:757</span></li><li><code>cats.effect.IOFiber.monitor</code><span>IOFiber.scala:1078</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 13 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-3-point-1">拼接点 1 <code>0 → 3</code></a><a href="#join-3-point-2">拼接点 2 <code>3 → 6</code></a></nav>
+          <section class="stack " id="join-3-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>play.core.server.ProdServerStart.main</code><span>ProdServerStart.scala</span></li><li><code>play.core.server.ProdServerStart$.main</code><span>ProdServerStart.scala:29</span></li><li><code>play.core.server.ProdServerStart$.start</code><span>ProdServerStart.scala:53</span></li><li><code>loader.AppLoader.load</code><span>AppLoader.scala:14</span></li><li><code>loader.AppComponents.&lt;init&gt;</code><span>AppLoader.scala:34</span></li><li><code>loader.AppComponents.dispatcher</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.dispatcher$lzycompute</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.x$2</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.x$2$lzycompute</code><span>AppLoader.scala:32</span></li><li><code>cats.effect.IOPlatform.unsafeRunSync</code><span>IOPlatform.scala:42</span></li><li><code>cats.effect.IOPlatform.unsafeRunTimed</code><span>IOPlatform.scala:76</span></li><li><code>cats.effect.IO.unsafeRunAsync</code><span>IO.scala:720</span></li><li><code>cats.effect.IO.unsafeRunFiber</code><span>IO.scala:822</span></li><li><code>cats.effect.IOFiber.&lt;init&gt;</code><span>IOFiber.scala:68</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-3-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-3-record-3">记录 3</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 3 → 0</code></p>
+        </aside><section class="stack " id="join-3-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:443</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:124</span></li><li><code>cats.effect.IOFiber.execR</code><span>IOFiber.scala:1275</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:842</span></li><li><code>cats.effect.IOFiber.&lt;init&gt;</code><span>IOFiber.scala:68</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-3-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-3-record-6">记录 6</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>创建钩子登记实际运行时对象。采样时按对象引用身份从同一张弱引用表找到对应的令牌。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 3 → 6</code></p>
+        </aside><section class="stack observed" id="join-3-record-6"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 6 · diagnostic</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:381</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:124</span></li><li><code>cats.effect.IOFiber.execR</code><span>IOFiber.scala:1275</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:757</span></li><li><code>cats.effect.IOFiber.monitor</code><span>IOFiber.scala:1078</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 6 · diagnostic</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:381</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:124</span></li><li><code>cats.effect.IOFiber.execR</code><span>IOFiber.scala:1275</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:757</span></li><li><code>cats.effect.IOFiber.monitor</code><span>IOFiber.scala:1078</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 6 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 7</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-4-point-1">拼接点 1 <code>0 → 4</code></a><a href="#join-4-point-2">拼接点 2 <code>4 → 7</code></a></nav>
+          <section class="stack " id="join-4-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>play.core.server.ProdServerStart.main</code><span>ProdServerStart.scala</span></li><li><code>play.core.server.ProdServerStart$.main</code><span>ProdServerStart.scala:29</span></li><li><code>play.core.server.ProdServerStart$.start</code><span>ProdServerStart.scala:53</span></li><li><code>loader.AppLoader.load</code><span>AppLoader.scala:14</span></li><li><code>loader.AppComponents.&lt;init&gt;</code><span>AppLoader.scala:34</span></li><li><code>loader.AppComponents.dispatcher</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.dispatcher$lzycompute</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.x$2</code><span>AppLoader.scala:32</span></li><li><code>loader.AppComponents.x$2$lzycompute</code><span>AppLoader.scala:32</span></li><li><code>cats.effect.IOPlatform.unsafeRunSync</code><span>IOPlatform.scala:42</span></li><li><code>cats.effect.IOPlatform.unsafeRunTimed</code><span>IOPlatform.scala:76</span></li><li><code>cats.effect.IO.unsafeRunAsync</code><span>IO.scala:720</span></li><li><code>cats.effect.IO.unsafeRunFiber</code><span>IO.scala:822</span></li><li><code>cats.effect.IOFiber.&lt;init&gt;</code><span>IOFiber.scala:68</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-4-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-4-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-4-record-4">记录 4</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 4 → 0</code></p>
+        </aside><section class="stack " id="join-4-record-4"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:443</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:124</span></li><li><code>cats.effect.IOFiber.execR</code><span>IOFiber.scala:1275</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:842</span></li><li><code>cats.effect.IOFiber.&lt;init&gt;</code><span>IOFiber.scala:68</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-4-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-4-record-4">记录 4</a><span aria-hidden="true">→</span><a href="#join-4-record-7">记录 7</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>创建钩子登记实际运行时对象。采样时按对象引用身份从同一张弱引用表找到对应的令牌。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 4 → 7</code></p>
+        </aside><section class="stack observed" id="join-4-record-7"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 7 · diagnostic</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:469</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:124</span></li><li><code>cats.effect.IOFiber.execR</code><span>IOFiber.scala:1275</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:757</span></li><li><code>cats.effect.IOFiber.monitor</code><span>IOFiber.scala:1078</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 7 · diagnostic</span></div><ol class="frames"><li><code>cats.effect.unsafe.WorkerThread.run</code><span>WorkerThread.scala:469</span></li><li><code>cats.effect.IOFiber.run</code><span>IOFiber.scala:124</span></li><li><code>cats.effect.IOFiber.execR</code><span>IOFiber.scala:1275</span></li><li><code>cats.effect.IOFiber.runLoop</code><span>IOFiber.scala:757</span></li><li><code>cats.effect.IOFiber.monitor</code><span>IOFiber.scala:1078</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 7 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>报告中的 Play 应用使用 Cats Effect 3.3.0。配置四个 worker 时，原生 /dump/fibers 显示四条没有栈帧的 WAITING 记录，开启完整追踪后仍然如此。另一个等待中的定时转储 fiber 有自己的栈帧。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>CoroPerf 用传给监控器的实际 IOFiber 对象，把等待登记和对象构造连起来，再沿记录的创建者边向上查。三轮里 10 条无栈 WAITING 记录都接回 AppLoader.scala:32 的 loader.AppComponents.dispatcher。带栈的定时转储 fiber 则接回 AppLoader.scala:36。</dd></div><div><dt>适用范围与局限</dt><dd>页面展示原始应用一次采集中的全部四条无栈记录。复跑配置了四个或两个 worker，均使用同一组历史版本。执行栈采于等待登记，后续原生转储核对同一对象确实出现在 WAITING 列表中。实验确定这些 fiber 在该应用中的来源。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

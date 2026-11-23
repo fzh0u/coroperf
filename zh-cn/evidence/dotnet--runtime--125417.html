@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="找回同步转发 Task 的原始调用者">
+  <title>dotnet/runtime #125417 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/dotnet--runtime--125417.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/dotnet--runtime--125417.html" lang="en" hreflang="en">English</a><a href="dotnet--runtime--125417.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">dotnet/runtime #125417</p>
+        <h1>找回同步转发 Task 的原始调用者</h1>
+        <div class="case-links"><a href="https://github.com/dotnet/runtime/issues/125417">上游报告 ↗</a><a href="https://github.com/dotnet/runtime/issues/125417#issuecomment-4185147226">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>两个同步转发方法调用同一个协程。CoroPerf 用 TPL 执行区间和已记录的任务创建栈，把每个工作线程观测分别连回原始调用者。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 5</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>2 → 5</code></a></nav>
+          <section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>Program.Main</code><span>Capture.cs:143</span></li><li><code>Program.Outer</code><span>Capture.cs:94</span></li><li><code>Program.LaunchInventory</code><span>Capture.cs:106</span></li><li><code>System.Runtime.CompilerServices.AsyncHelpers.FinalizeTaskReturningThunk</code></li><li><code>System.Threading.Tasks.TplEventSource.TraceOperationBegin</code></li><li><code>System.Diagnostics.Tracing.EventSource.WriteEventWithRelatedActivityIdCore</code></li><li><code>System.Diagnostics.Tracing.EventSource.DispatchToAllListeners</code></li><li><code>Trace.OnEventWritten</code><span>Capture.cs:45</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采样时间落在该实例于当前线程上的已记录执行区间内。CoroPerf 用这个区间确定采样归属，再定位对应的创建记录。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 2 → 5</code></p>
+        </aside><section class="stack observed" id="join-1-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5 · resumed_stack</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>System.Threading.Thread.StartCallback</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerDoWork</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.System.Threading.IThreadPoolWorkItem.Execute</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.&lt;&gt;c.&lt;OutputWaitEtwEvents&gt;b__12_0</code></li><li><code>Program.Callee</code><span>Capture.cs:87</span></li><li><code>Trace.Snapshot</code><span>Capture.cs:59</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5 · resumed_stack</span></div><ol class="frames"><li><code>System.Threading.Thread.StartCallback</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerDoWork</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.System.Threading.IThreadPoolWorkItem.Execute</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.&lt;&gt;c.&lt;OutputWaitEtwEvents&gt;b__12_0</code></li><li><code>Program.Callee</code><span>Capture.cs:87</span></li><li><code>Trace.Snapshot</code><span>Capture.cs:59</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 10</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>0 → 10</code></a></nav>
+          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>Program.Main</code><span>Capture.cs:142</span></li><li><code>Program.Outer</code><span>Capture.cs:94</span></li><li><code>Program.LaunchProfile</code><span>Capture.cs:103</span></li><li><code>System.Runtime.CompilerServices.AsyncHelpers.FinalizeTaskReturningThunk</code></li><li><code>System.Threading.Tasks.TplEventSource.TraceOperationBegin</code></li><li><code>System.Diagnostics.Tracing.EventSource.WriteEventWithRelatedActivityIdCore</code></li><li><code>System.Diagnostics.Tracing.EventSource.DispatchToAllListeners</code></li><li><code>Trace.OnEventWritten</code><span>Capture.cs:45</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-10">记录 10</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采样时间落在该实例于当前线程上的已记录执行区间内。CoroPerf 用这个区间确定采样归属，再定位对应的创建记录。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 10</code></p>
+        </aside><section class="stack observed" id="join-2-record-10"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 10 · resumed_stack</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>System.Threading.Thread.StartCallback</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerDoWork</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.System.Threading.IThreadPoolWorkItem.Execute</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.&lt;&gt;c.&lt;OutputWaitEtwEvents&gt;b__12_0</code></li><li><code>Program.Callee</code><span>Capture.cs:87</span></li><li><code>Trace.Snapshot</code><span>Capture.cs:59</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 10 · resumed_stack</span></div><ol class="frames"><li><code>System.Threading.Thread.StartCallback</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart</code></li><li><code>System.Threading.PortableThreadPool.WorkerThread.WorkerDoWork</code></li><li><code>System.Threading.ThreadPoolWorkQueue.Dispatch</code></li><li><code>System.Threading.Tasks.AwaitTaskContinuation.System.Threading.IThreadPoolWorkItem.Execute</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.&lt;&gt;c.&lt;OutputWaitEtwEvents&gt;b__12_0</code></li><li><code>Program.Callee</code><span>Capture.cs:87</span></li><li><code>Trace.Snapshot</code><span>Capture.cs:59</span></li><li><code>System.Environment.get_StackTrace</code></li></ol></section>
+          <p class="small trace-note">这里只显示记录 10 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>草案 CoreCLR 的异步栈模式在直接 await 时显示 Program.DirectOuter。经过同步 Task 转发后，两条恢复栈的业务方法都只有 Program.Callee。TPL 事件携带 Task ID，但操作名相同。标准 dotnet-trace 的 Speedscope 视图和启用任务追踪的 TraceEvent 工作线程栈也都缺少两个发起者。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>CoroPerf 在 TraceOperationBegin 记录物理创建栈。用采样线程上活跃的 TPL Execution 区间确定该采样所属的 Task，再按同一个 Task ID 找到创建记录。页面里，Task 4 的执行区间为记录 4–8，将观测 5 连回记录 2 中的 LaunchInventory。Task 1 的区间为记录 9–13，将观测 10 连回记录 0 中的 LaunchProfile。两种发起顺序共 8 次观测，均通过独立记录的 Task ID 和 await 后检查点核对。</dd></div><div><dt>适用范围与局限</dt><dd>这是按上游同步转发示例扩展的双调用者实验，运行于 Linux x64 和 CoreCLR 草案提交 7e2cfb7b13b5。采集依赖这版运行时的 TPL 创建和执行事件。采样分析对照使用 dotnet-trace 10.0.750501 和 TraceEvent 3.1.23，并在 await 后留出短暂采样窗口。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

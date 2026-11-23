@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="V8 CPU samples lose the launcher of a shared callee after await">
+  <title>nodejs/node #50056 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/nodejs--node--50056.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="nodejs--node--50056.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/nodejs--node--50056.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">nodejs/node #50056</p>
+        <h1>V8 CPU samples lose the launcher of a shared callee after await</h1>
+        <div class="case-links"><a href="https://github.com/nodejs/node/issues/50056">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Performance profiling</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The two callers share one sampled CPU stack after await. CoroPerf joins the active Promise generation to its creation so the same callee is attributed separately to launchProfile and launchInventory.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 18</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>4 → 18</code></a></nav>
+          <section class="stack " id="join-1-record-4"><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>Object.&lt;anonymous&gt;</code><span>fixture.cjs:34</span></li><li><code>exercise</code><span>fixture.cjs:30</span></li><li><code>launchProfile</code><span>fixture.cjs:21</span></li><li><code>sharedService</code><span>fixture.cjs:13</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-1-record-18">Record 18</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The observation falls inside this instance's recorded execution interval on the sampled thread. That interval supplies the owner used to select the creation record.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 4 → 18</code></p>
+        </aside><section class="stack observed" id="join-1-record-18"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 18 · cpu_profile</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>sharedService</code><span>fixture.cjs:12</span></li><li><code>busySpin</code><span>fixture.cjs:7</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 18 · cpu_profile</span></div><ol class="frames"><li><code>sharedService</code><span>fixture.cjs:12</span></li><li><code>busySpin</code><span>fixture.cjs:7</span></li></ol></section>
+          <p class="small trace-note">Frames from record 18 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 126</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>8 → 126</code></a></nav>
+          <section class="stack " id="join-2-record-8"><div class="stack-head"><h4>Creation stack</h4><span>Record 8</span><span class="record-instance">Instance from record 8</span></div><ol class="frames"><li><code>Object.&lt;anonymous&gt;</code><span>fixture.cjs:34</span></li><li><code>exercise</code><span>fixture.cjs:30</span></li><li><code>launchInventory</code><span>fixture.cjs:25</span></li><li><code>sharedService</code><span>fixture.cjs:13</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-8">Record 8</a><span aria-hidden="true">→</span><a href="#join-2-record-126">Record 126</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The observation falls inside this instance's recorded execution interval on the sampled thread. That interval supplies the owner used to select the creation record.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 8 → 126</code></p>
+        </aside><section class="stack observed" id="join-2-record-126"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 126 · cpu_profile</span><span class="record-instance">Instance from record 8</span></div><ol class="frames"><li><code>sharedService</code><span>fixture.cjs:12</span></li><li><code>busySpin</code><span>fixture.cjs:7</span></li><li><code>now</code><span>performance:137</span></li><li><code>now</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 126 · cpu_profile</span></div><ol class="frames"><li><code>sharedService</code><span>fixture.cjs:12</span></li><li><code>busySpin</code><span>fixture.cjs:7</span></li><li><code>now</code><span>performance:137</span></li><li><code>now</code></li></ol></section>
+          <p class="small trace-note">Frames from record 126 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>On Node 24.18.0, 603 profile-only samples from three controlled runs showed the sharedService → busySpin path without either application launcher. Both callers had samples in every run.</dd></div><div><dt>What CoroPerf showed</dt><dd>CoroPerf assigned 579 profiled observations to the active runtime generation using the observed async-hooks enter/leave interval. Joining each observation to creation recovered launchProfile or launchInventory. Independent fixture timing and request labels agreed for all 579 samples, including the run with reversed execution order.</dd></div><div><dt>Scope and limits</dt><dd>This is a two-caller adaptation of the missing asynchronous ancestry problem, using V8&#x27;s CPU profiler on Linux. The report&#x27;s fast-blocked-at watchdog and Node 20.5.1 environment were not replayed. Counts measure attribution, not collection overhead or production performance.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

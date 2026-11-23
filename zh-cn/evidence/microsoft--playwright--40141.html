@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="原报告的测试和 Page Object 在真实浏览器中因颜色断言失败，基线异常丢失外层 shouldBeCorrect">
+  <title>microsoft/playwright #40141 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/microsoft--playwright--40141.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/microsoft--playwright--40141.html" lang="en" hreflang="en">English</a><a href="microsoft--playwright--40141.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">microsoft/playwright #40141</p>
+        <h1>原报告的测试和 Page Object 在真实浏览器中因颜色断言失败，基线异常丢失外层 shouldBeCorrect</h1>
+        <div class="case-links"><a href="https://github.com/microsoft/playwright/issues/40141">上游报告 ↗</a><a href="https://github.com/microsoft/playwright/pull/40331/files#diff-c25604b59d232f7f66c86926ce10a3f1f991c04bed7726e02eca71742154842dR28">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>受影响版本的断言栈缺少外层页面对象方法。匹配各 test.step 返回的 Promise 后，可以找回 shouldBeCorrect，并区分异常栈完全相同的两次内层调用。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 26</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 1</code></a><a href="#join-1-point-2">拼接点 2 <code>1 → 3</code></a><a href="#join-1-point-3">拼接点 3 <code>3 → 5</code></a><a href="#join-1-point-4">拼接点 4 <code>5 → 7</code></a><a href="#join-1-point-5">拼接点 5 <code>7 → 9</code></a><a href="#join-1-point-6">拼接点 6 <code>9 → 15</code></a><a href="#join-1-point-7">拼接点 7 <code>15 → 17</code></a><a href="#join-1-point-8">拼接点 8 <code>17 → 26</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>channel.onread</code><span>child_process:635</span></li><li><code>handleMessage</code><span>child_process:965</span></li><li><code>process.nextTick</code><span>task_queues:143</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">记录 1</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 1 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>emit</code><span>child_process:949</span></li><li><code>process.emit</code><span>node:events:524</span></li><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:179</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-3">记录 3</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 3 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-3"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:180</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-3" aria-label="拼接点 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-3">拼接点 3</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-1-record-5">记录 5</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 5 → 3</code></p>
+        </aside><section class="stack " id="join-1-record-5"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:328</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:298</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-4" aria-label="拼接点 4">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-4">拼接点 4</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-5">记录 5</a><span aria-hidden="true">→</span><a href="#join-1-record-7">记录 7</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 7 → 5</code></p>
+        </aside><section class="stack " id="join-1-record-7"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 7</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:310</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-5" aria-label="拼接点 5">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-5">拼接点 5</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-7">记录 7</a><span aria-hidden="true">→</span><a href="#join-1-record-9">记录 9</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 9 → 7</code></p>
+        </aside><section class="stack " id="join-1-record-9"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 9</span><span class="record-instance">实例首次见于记录 9</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:312</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-6" aria-label="拼接点 6">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-6">拼接点 6</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-9">记录 9</a><span aria-hidden="true">→</span><a href="#join-1-record-15">记录 15</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 15 → 9</code></p>
+        </aside><section class="stack " id="join-1-record-15"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 15</span><span class="record-instance">实例首次见于记录 15</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:324</span></li><li><code>TestInfoImpl._runWithTimeout</code><span>testInfo.js:318</span></li><li><code>TimeoutManager.withRunnable</code><span>timeoutManager.js:76</span></li><li><code>&lt;anonymous&gt;</code><span>testInfo.js:320</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:326</span></li><li><code>&lt;anonymous&gt;</code><span>example.spec.ts:5</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-7" aria-label="拼接点 7">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-7">拼接点 7</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-15">记录 15</a><span aria-hidden="true">→</span><a href="#join-1-record-17">记录 17</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 17 → 15</code></p>
+        </aside><section class="stack " id="join-1-record-17"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 17</span><span class="record-instance">实例首次见于记录 17</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:324</span></li><li><code>TestInfoImpl._runWithTimeout</code><span>testInfo.js:318</span></li><li><code>TimeoutManager.withRunnable</code><span>timeoutManager.js:75</span></li><li><code>&lt;anonymous&gt;</code><span>testInfo.js:320</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:326</span></li><li><code>process.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>processImmediate</code><span>timers:459</span></li><li><code>runNextTicks</code><span>task_queues:65</span></li><li><code>&lt;anonymous&gt;</code><span>example.spec.ts:9</span></li><li><code>TestModel.shouldBeCorrect</code><span>playwright40141_source_oracle.cjs:31</span></li><li><code>AsyncLocalStorage.run</code><span>async_hooks:91</span></li><li><code>&lt;anonymous&gt;</code><span>playwright40141_source_oracle.cjs:31</span></li><li><code>TestModel.shouldBeCorrect</code><span>test.model.ts:16</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-8" aria-label="拼接点 8">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-8">拼接点 8</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-17">记录 17</a><span aria-hidden="true">→</span><a href="#join-1-record-26">记录 26</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 17 → 26</code></p>
+        </aside><section class="stack observed" id="join-1-record-26"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 26 · diagnostic</span><span class="record-instance">实例首次见于记录 17</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>test.model.ts:17</span></li><li><code>TestModel.shouldBeValidColor</code><span>test.model.ts:10</span></li><li><code>&lt;anonymous&gt;</code><span>test.model.ts:11</span></li><li><code>&lt;unknown&gt;</code></li><li><code>      - unexpected value &quot;rgb(0, 0, 0)&quot;</code></li><li><code>    9 × locator resolved to &lt;body&gt;controlled page&lt;/body&gt;</code></li><li><code>  - waiting for locator(&#x27;body&#x27;)</code></li><li><code>  - Expect &quot;toHaveCSS&quot; with timeout 5000ms</code></li><li><code>Call log:</code></li><li><code>&lt;unknown&gt;</code></li><li><code>Timeout:  5000ms</code></li><li><code>Received: &quot;rgb(0, 0, 0)&quot;</code></li><li><code>Expected: &quot;fffffff&quot;</code></li><li><code>Locator:  locator(&#x27;body&#x27;)</code></li><li><code>&lt;unknown&gt;</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 26 · diagnostic</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>test.model.ts:17</span></li><li><code>TestModel.shouldBeValidColor</code><span>test.model.ts:10</span></li><li><code>&lt;anonymous&gt;</code><span>test.model.ts:11</span></li><li><code>&lt;unknown&gt;</code></li><li><code>      - unexpected value &quot;rgb(0, 0, 0)&quot;</code></li><li><code>    9 × locator resolved to &lt;body&gt;controlled page&lt;/body&gt;</code></li><li><code>  - waiting for locator(&#x27;body&#x27;)</code></li><li><code>  - Expect &quot;toHaveCSS&quot; with timeout 5000ms</code></li><li><code>Call log:</code></li><li><code>&lt;unknown&gt;</code></li><li><code>Timeout:  5000ms</code></li><li><code>Received: &quot;rgb(0, 0, 0)&quot;</code></li><li><code>Expected: &quot;fffffff&quot;</code></li><li><code>Locator:  locator(&#x27;body&#x27;)</code></li><li><code>&lt;unknown&gt;</code></li></ol></section>
+          <p class="small trace-note">这里只显示记录 26 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 24</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>0 → 1</code></a><a href="#join-2-point-2">拼接点 2 <code>1 → 3</code></a><a href="#join-2-point-3">拼接点 3 <code>3 → 5</code></a><a href="#join-2-point-4">拼接点 4 <code>5 → 7</code></a><a href="#join-2-point-5">拼接点 5 <code>7 → 9</code></a><a href="#join-2-point-6">拼接点 6 <code>9 → 15</code></a><a href="#join-2-point-7">拼接点 7 <code>15 → 18</code></a><a href="#join-2-point-8">拼接点 8 <code>18 → 20</code></a><a href="#join-2-point-9">拼接点 9 <code>20 → 24</code></a></nav>
+          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>channel.onread</code><span>child_process:635</span></li><li><code>handleMessage</code><span>child_process:965</span></li><li><code>process.nextTick</code><span>task_queues:143</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-1">记录 1</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 1 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>emit</code><span>child_process:949</span></li><li><code>process.emit</code><span>node:events:524</span></li><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:179</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 3 → 1</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:180</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-3" aria-label="拼接点 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-3">拼接点 3</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 5 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-5"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:328</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:298</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-4" aria-label="拼接点 4">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-4">拼接点 4</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-5">记录 5</a><span aria-hidden="true">→</span><a href="#join-2-record-7">记录 7</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 7 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-7"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 7</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:310</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-5" aria-label="拼接点 5">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-5">拼接点 5</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-7">记录 7</a><span aria-hidden="true">→</span><a href="#join-2-record-9">记录 9</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 9 → 7</code></p>
+        </aside><section class="stack " id="join-2-record-9"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 9</span><span class="record-instance">实例首次见于记录 9</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:312</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-6" aria-label="拼接点 6">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-6">拼接点 6</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-9">记录 9</a><span aria-hidden="true">→</span><a href="#join-2-record-15">记录 15</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 15 → 9</code></p>
+        </aside><section class="stack " id="join-2-record-15"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 15</span><span class="record-instance">实例首次见于记录 15</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:324</span></li><li><code>TestInfoImpl._runWithTimeout</code><span>testInfo.js:318</span></li><li><code>TimeoutManager.withRunnable</code><span>timeoutManager.js:76</span></li><li><code>&lt;anonymous&gt;</code><span>testInfo.js:320</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:326</span></li><li><code>&lt;anonymous&gt;</code><span>example.spec.ts:5</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-7" aria-label="拼接点 7">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-7">拼接点 7</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-15">记录 15</a><span aria-hidden="true">→</span><a href="#join-2-record-18">记录 18</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 18 → 15</code></p>
+        </aside><section class="stack " id="join-2-record-18"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 18</span><span class="record-instance">实例首次见于记录 18</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:324</span></li><li><code>TestInfoImpl._runWithTimeout</code><span>testInfo.js:318</span></li><li><code>TimeoutManager.withRunnable</code><span>timeoutManager.js:75</span></li><li><code>&lt;anonymous&gt;</code><span>testInfo.js:320</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:326</span></li><li><code>processImmediate</code><span>timers:459</span></li><li><code>runNextTicks</code><span>task_queues:65</span></li><li><code>&lt;anonymous&gt;</code><span>example.spec.ts:9</span></li><li><code>TestModel.shouldBeCorrect</code><span>playwright40141_source_oracle.cjs:31</span></li><li><code>AsyncLocalStorage.run</code><span>async_hooks:91</span></li><li><code>&lt;anonymous&gt;</code><span>playwright40141_source_oracle.cjs:31</span></li><li><code>TestModel.shouldBeCorrect</code><span>test.model.ts:16</span></li><li><code>Function.step</code><span>playwright_step_probe.cjs:45</span></li><li><code>AsyncLocalStorage.run</code><span>async_hooks:91</span></li><li><code>&lt;anonymous&gt;</code><span>playwright_step_probe.cjs:45</span></li><li><code>TestTypeImpl._step</code><span>testType.js:239</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-8" aria-label="拼接点 8">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-8">拼接点 8</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-18">记录 18</a><span aria-hidden="true">→</span><a href="#join-2-record-20">记录 20</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 20 → 18</code></p>
+        </aside><section class="stack " id="join-2-record-20"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 20</span><span class="record-instance">实例首次见于记录 20</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:324</span></li><li><code>TestInfoImpl._runWithTimeout</code><span>testInfo.js:318</span></li><li><code>TimeoutManager.withRunnable</code><span>timeoutManager.js:75</span></li><li><code>&lt;anonymous&gt;</code><span>testInfo.js:320</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:326</span></li><li><code>&lt;anonymous&gt;</code><span>example.spec.ts:9</span></li><li><code>TestModel.shouldBeCorrect</code><span>test.model.ts:16</span></li><li><code>process.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>processImmediate</code><span>timers:459</span></li><li><code>runNextTicks</code><span>task_queues:65</span></li><li><code>TestTypeImpl._step</code><span>testType.js:241</span></li><li><code>Zone.run</code><span>zones.js:42</span></li><li><code>AsyncLocalStorage.run</code><span>async_hooks:91</span></li><li><code>&lt;anonymous&gt;</code><span>testType.js:244</span></li><li><code>raceAgainstDeadline</code><span>timeoutRunner.js:29</span></li><li><code>&lt;anonymous&gt;</code><span>testType.js:246</span></li><li><code>TestStepInfoImpl._runStepBody</code><span>testInfo.js:502</span></li><li><code>&lt;anonymous&gt;</code><span>test.model.ts:18</span></li><li><code>TestModel.shouldBeValidColor</code><span>playwright40141_source_oracle.cjs:31</span></li><li><code>AsyncLocalStorage.run</code><span>async_hooks:91</span></li><li><code>&lt;anonymous&gt;</code><span>playwright40141_source_oracle.cjs:31</span></li><li><code>TestModel.shouldBeValidColor</code><span>test.model.ts:10</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-9" aria-label="拼接点 9">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-9">拼接点 9</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-20">记录 20</a><span aria-hidden="true">→</span><a href="#join-2-record-24">记录 24</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 20 → 24</code></p>
+        </aside><section class="stack observed" id="join-2-record-24"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 24 · diagnostic</span><span class="record-instance">实例首次见于记录 20</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>test.model.ts:17</span></li><li><code>TestModel.shouldBeValidColor</code><span>test.model.ts:10</span></li><li><code>&lt;anonymous&gt;</code><span>test.model.ts:11</span></li><li><code>&lt;unknown&gt;</code></li><li><code>      - unexpected value &quot;rgb(0, 0, 0)&quot;</code></li><li><code>    9 × locator resolved to &lt;body&gt;controlled page&lt;/body&gt;</code></li><li><code>  - waiting for locator(&#x27;body&#x27;)</code></li><li><code>  - Expect &quot;toHaveCSS&quot; with timeout 5000ms</code></li><li><code>Call log:</code></li><li><code>&lt;unknown&gt;</code></li><li><code>Timeout:  5000ms</code></li><li><code>Received: &quot;rgb(0, 0, 0)&quot;</code></li><li><code>Expected: &quot;fffffff&quot;</code></li><li><code>Locator:  locator(&#x27;body&#x27;)</code></li><li><code>&lt;unknown&gt;</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 24 · diagnostic</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>test.model.ts:17</span></li><li><code>TestModel.shouldBeValidColor</code><span>test.model.ts:10</span></li><li><code>&lt;anonymous&gt;</code><span>test.model.ts:11</span></li><li><code>&lt;unknown&gt;</code></li><li><code>      - unexpected value &quot;rgb(0, 0, 0)&quot;</code></li><li><code>    9 × locator resolved to &lt;body&gt;controlled page&lt;/body&gt;</code></li><li><code>  - waiting for locator(&#x27;body&#x27;)</code></li><li><code>  - Expect &quot;toHaveCSS&quot; with timeout 5000ms</code></li><li><code>Call log:</code></li><li><code>&lt;unknown&gt;</code></li><li><code>Timeout:  5000ms</code></li><li><code>Received: &quot;rgb(0, 0, 0)&quot;</code></li><li><code>Expected: &quot;fffffff&quot;</code></li><li><code>Locator:  locator(&#x27;body&#x27;)</code></li><li><code>&lt;unknown&gt;</code></li></ol></section>
+          <p class="small trace-note">这里只显示记录 24 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 28</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-3-point-1">拼接点 1 <code>0 → 1</code></a><a href="#join-3-point-2">拼接点 2 <code>1 → 3</code></a><a href="#join-3-point-3">拼接点 3 <code>3 → 5</code></a><a href="#join-3-point-4">拼接点 4 <code>5 → 7</code></a><a href="#join-3-point-5">拼接点 5 <code>7 → 9</code></a><a href="#join-3-point-6">拼接点 6 <code>9 → 15</code></a><a href="#join-3-point-7">拼接点 7 <code>15 → 18</code></a><a href="#join-3-point-8">拼接点 8 <code>18 → 21</code></a><a href="#join-3-point-9">拼接点 9 <code>21 → 28</code></a></nav>
+          <section class="stack " id="join-3-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>channel.onread</code><span>child_process:635</span></li><li><code>handleMessage</code><span>child_process:965</span></li><li><code>process.nextTick</code><span>task_queues:143</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-3-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-3-record-1">记录 1</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 1 → 0</code></p>
+        </aside><section class="stack " id="join-3-record-1"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>emit</code><span>child_process:949</span></li><li><code>process.emit</code><span>node:events:524</span></li><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:179</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-3-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-3-record-3">记录 3</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 3 → 1</code></p>
+        </aside><section class="stack " id="join-3-record-3"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:180</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-3" aria-label="拼接点 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-3">拼接点 3</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-3-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-3-record-5">记录 5</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 5 → 3</code></p>
+        </aside><section class="stack " id="join-3-record-5"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:328</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:298</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-4" aria-label="拼接点 4">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-4">拼接点 4</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-3-record-5">记录 5</a><span aria-hidden="true">→</span><a href="#join-3-record-7">记录 7</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 7 → 5</code></p>
+        </aside><section class="stack " id="join-3-record-7"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 7</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:310</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-5" aria-label="拼接点 5">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-5">拼接点 5</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-3-record-7">记录 7</a><span aria-hidden="true">→</span><a href="#join-3-record-9">记录 9</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 9 → 7</code></p>
+        </aside><section class="stack " id="join-3-record-9"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 9</span><span class="record-instance">实例首次见于记录 9</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:312</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-6" aria-label="拼接点 6">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-6">拼接点 6</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-3-record-9">记录 9</a><span aria-hidden="true">→</span><a href="#join-3-record-15">记录 15</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 15 → 9</code></p>
+        </aside><section class="stack " id="join-3-record-15"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 15</span><span class="record-instance">实例首次见于记录 15</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:324</span></li><li><code>TestInfoImpl._runWithTimeout</code><span>testInfo.js:318</span></li><li><code>TimeoutManager.withRunnable</code><span>timeoutManager.js:76</span></li><li><code>&lt;anonymous&gt;</code><span>testInfo.js:320</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:326</span></li><li><code>&lt;anonymous&gt;</code><span>example.spec.ts:5</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-7" aria-label="拼接点 7">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-7">拼接点 7</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-3-record-15">记录 15</a><span aria-hidden="true">→</span><a href="#join-3-record-18">记录 18</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 18 → 15</code></p>
+        </aside><section class="stack " id="join-3-record-18"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 18</span><span class="record-instance">实例首次见于记录 18</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:324</span></li><li><code>TestInfoImpl._runWithTimeout</code><span>testInfo.js:318</span></li><li><code>TimeoutManager.withRunnable</code><span>timeoutManager.js:75</span></li><li><code>&lt;anonymous&gt;</code><span>testInfo.js:320</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:326</span></li><li><code>processImmediate</code><span>timers:459</span></li><li><code>runNextTicks</code><span>task_queues:65</span></li><li><code>&lt;anonymous&gt;</code><span>example.spec.ts:9</span></li><li><code>TestModel.shouldBeCorrect</code><span>playwright40141_source_oracle.cjs:31</span></li><li><code>AsyncLocalStorage.run</code><span>async_hooks:91</span></li><li><code>&lt;anonymous&gt;</code><span>playwright40141_source_oracle.cjs:31</span></li><li><code>TestModel.shouldBeCorrect</code><span>test.model.ts:16</span></li><li><code>Function.step</code><span>playwright_step_probe.cjs:45</span></li><li><code>AsyncLocalStorage.run</code><span>async_hooks:91</span></li><li><code>&lt;anonymous&gt;</code><span>playwright_step_probe.cjs:45</span></li><li><code>TestTypeImpl._step</code><span>testType.js:239</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-8" aria-label="拼接点 8">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-8">拼接点 8</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-3-record-18">记录 18</a><span aria-hidden="true">→</span><a href="#join-3-record-21">记录 21</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 21 → 18</code></p>
+        </aside><section class="stack " id="join-3-record-21"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 21</span><span class="record-instance">实例首次见于记录 21</span></div><ol class="frames"><li><code>process.&lt;anonymous&gt;</code><span>process.js:73</span></li><li><code>WorkerMain.runTestGroup</code><span>workerMain.js:203</span></li><li><code>WorkerMain._runTest</code><span>workerMain.js:297</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:324</span></li><li><code>TestInfoImpl._runWithTimeout</code><span>testInfo.js:318</span></li><li><code>TimeoutManager.withRunnable</code><span>timeoutManager.js:75</span></li><li><code>&lt;anonymous&gt;</code><span>testInfo.js:320</span></li><li><code>&lt;anonymous&gt;</code><span>workerMain.js:326</span></li><li><code>&lt;anonymous&gt;</code><span>example.spec.ts:9</span></li><li><code>TestModel.shouldBeCorrect</code><span>test.model.ts:16</span></li><li><code>process.callbackTrampoline</code><span>async_hooks:130</span></li><li><code>processImmediate</code><span>timers:459</span></li><li><code>runNextTicks</code><span>task_queues:65</span></li><li><code>TestTypeImpl._step</code><span>testType.js:241</span></li><li><code>Zone.run</code><span>zones.js:42</span></li><li><code>AsyncLocalStorage.run</code><span>async_hooks:91</span></li><li><code>&lt;anonymous&gt;</code><span>testType.js:244</span></li><li><code>raceAgainstDeadline</code><span>timeoutRunner.js:29</span></li><li><code>&lt;anonymous&gt;</code><span>testType.js:246</span></li><li><code>TestStepInfoImpl._runStepBody</code><span>testInfo.js:502</span></li><li><code>&lt;anonymous&gt;</code><span>test.model.ts:19</span></li><li><code>TestModel.shouldBeValidColor</code><span>playwright40141_source_oracle.cjs:31</span></li><li><code>AsyncLocalStorage.run</code><span>async_hooks:91</span></li><li><code>&lt;anonymous&gt;</code><span>playwright40141_source_oracle.cjs:31</span></li><li><code>TestModel.shouldBeValidColor</code><span>test.model.ts:10</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-9" aria-label="拼接点 9">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-9">拼接点 9</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-3-record-21">记录 21</a><span aria-hidden="true">→</span><a href="#join-3-record-28">记录 28</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 21 → 28</code></p>
+        </aside><section class="stack observed" id="join-3-record-28"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 28 · diagnostic</span><span class="record-instance">实例首次见于记录 21</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>test.model.ts:17</span></li><li><code>TestModel.shouldBeValidColor</code><span>test.model.ts:10</span></li><li><code>&lt;anonymous&gt;</code><span>test.model.ts:11</span></li><li><code>&lt;unknown&gt;</code></li><li><code>      - unexpected value &quot;rgb(0, 0, 0)&quot;</code></li><li><code>    9 × locator resolved to &lt;body&gt;controlled page&lt;/body&gt;</code></li><li><code>  - waiting for locator(&#x27;body&#x27;)</code></li><li><code>  - Expect &quot;toHaveCSS&quot; with timeout 5000ms</code></li><li><code>Call log:</code></li><li><code>&lt;unknown&gt;</code></li><li><code>Timeout:  5000ms</code></li><li><code>Received: &quot;rgb(0, 0, 0)&quot;</code></li><li><code>Expected: &quot;fffffff&quot;</code></li><li><code>Locator:  locator(&#x27;body&#x27;)</code></li><li><code>&lt;unknown&gt;</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 28 · diagnostic</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>test.model.ts:17</span></li><li><code>TestModel.shouldBeValidColor</code><span>test.model.ts:10</span></li><li><code>&lt;anonymous&gt;</code><span>test.model.ts:11</span></li><li><code>&lt;unknown&gt;</code></li><li><code>      - unexpected value &quot;rgb(0, 0, 0)&quot;</code></li><li><code>    9 × locator resolved to &lt;body&gt;controlled page&lt;/body&gt;</code></li><li><code>  - waiting for locator(&#x27;body&#x27;)</code></li><li><code>  - Expect &quot;toHaveCSS&quot; with timeout 5000ms</code></li><li><code>Call log:</code></li><li><code>&lt;unknown&gt;</code></li><li><code>Timeout:  5000ms</code></li><li><code>Received: &quot;rgb(0, 0, 0)&quot;</code></li><li><code>Expected: &quot;fffffff&quot;</code></li><li><code>Locator:  locator(&#x27;body&#x27;)</code></li><li><code>&lt;unknown&gt;</code></li></ol></section>
+          <p class="small trace-note">这里只显示记录 28 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>原报告的测试和 Page Object 在真实浏览器中因颜色断言失败，基线异常丢失外层 shouldBeCorrect。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>按实际 step 返回 Promise 核对三次错误观测，恢复外层及嵌套方法；只应用上游 raceAgainstDeadline 的 await 改动后，原生错误栈也能显示外层调用。</dd></div><div><dt>适用范围与局限</dt><dd>请求使用确定性的本地页面响应，原断言仍按预期失败；step 归属需要专用边界，物理回调栈与 step 树分别保留。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

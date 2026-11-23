@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
 """Build both versions of the static atlas from the public snapshot."""
 
+from collections import Counter
+from datetime import datetime
 from html import escape
 import json
 from pathlib import Path
 
-from copy_text import COPY, FEATURES
+from copy_text import COPY, FEATURES, ISSUE_KINDS
 
 
 ROOT = Path(__file__).resolve().parents[1]
 FEATURED = (
     "dotnet--runtime--60764",
     "drogonframework--drogon--2331",
-    "tokio-rs--tokio--6315",
+    "nodejs--node--50056",
     "grpc--grpc-kotlin--299",
 )
 SCOPES = ("Full local reproduction", "Component reproduced")
+TRACKER_STATES = ("open", "closed", "unconfirmed")
 
 
 def document(path, title, description, body, language):
@@ -25,15 +28,14 @@ def document(path, title, description, body, language):
     prefix = "../" * depth
     assets = "../" * (depth + chinese)
     alternate = assets + ("" if chinese else "zh-cn/") + path
-    alt_language, alt_name = ("en", "English") if chinese else ("zh-CN", "简体中文")
-    language_links = (
-        f'<a class="language-switch" id="language-switch" href="{alternate}" '
-        f'lang="{alt_language}" hreflang="{alt_language}">{alt_name}</a>'
-    )
-    if chinese:
-        language_links += '<span class="language-current" lang="zh-CN" aria-current="true">简体中文</span>'
-    else:
-        language_links = '<span class="language-current" lang="en" aria-current="true">English</span>' + language_links
+    alt_language = "en" if chinese else "zh-CN"
+    language_names = {"en": "English", "zh-CN": "简体中文"}
+    options = []
+    for code, name in language_names.items():
+        current = code == language
+        target = path.rsplit("/", 1)[-1] if current else alternate
+        mark = ' aria-current="page"' if current else ""
+        options.append(f'<a href="{target}" lang="{code}" hreflang="{code}"{mark}>{name}</a>')
     script = f'<script defer src="{assets}assets/filter.js"></script>' if path == "index.html" else ""
     output = f"""<!doctype html>
 <html lang="{language}">
@@ -53,13 +55,23 @@ def document(path, title, description, body, language):
   <a class="skip" href="#main">{text["skip"]}</a>
   <header class="site-header">
     <div class="wrap header-row">
-      <a class="brand" href="{prefix}index.html"><img class="brand-pony" src="{assets}assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
-      <nav aria-label="{text["navigation"]}">
+      <a class="brand" href="{prefix}index.html"><img class="brand-pony" src="{assets}assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="{text["navigation"]}">
         <a href="{prefix}index.html#issues">{text["issues"]}</a>
         <a href="{prefix}research.html">{text["research"]}</a>
         <a href="{prefix}index.html#method">{text["method"]}</a>
       </nav>
-      <div class="languages">{language_links}</div>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          {text["language_picker"]}
+        </span>
+        {"".join(options)}
+      </nav>
     </div>
   </header>
   <main id="main">{body}</main>
@@ -108,9 +120,12 @@ def stack(block, title, text, anchor="", extra_class=""):
 def join_marker(source, target, kind, relation, trace_number, number, text, identity_kind=None):
     proof = {
         "creation": "edge_proof",
+        "cancellation": "cancellation_proof",
         "tokio": "task_proof",
         "parent": "parent_proof",
         "async_parent": "async_parent_proof",
+        "result_dependency": "result_dependency_proof",
+        "release_dependency": "release_dependency_proof",
     }[relation]
     prefix = f"join-{trace_number}"
     source_id, target_id = escape(source["id"]), escape(target["id"])
@@ -122,7 +137,13 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         else f'{text["edge"]} <code>{escape(kind)} · {raw_from} → {raw_to}</code>'
     )
     identity_detail = f"<p>{text[identity_kind]}</p>" if identity_kind in (
-        "injected-value-token", "runtime-token-generation"
+        "execution-interval", "injected-value-token", "runtime-token-generation", "weak-identity-object-id",
+        "actor-entry-argument-dataflow", "scheduled-handle-running-at-task-creation",
+        "actual-rpc-handler-and-submitted-work-item", "active-work-item-object",
+        "live-child-node", "same-dequeued-request-in-work-item", "jdi-fiber-receiver", "dart-callback-object",
+        "go-opener-signal", "dotnet-task-fault-object", "buffered-result-object", "stored-exception-object-handoff",
+        "taskgroup-internal-cancel", "taskgroup-outer-cancel", "same-frozen-result-object", "captured-goroutine-id",
+        "asyncio-live-task-at-snapshot",
     ) else ""
     return f"""
         <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">
@@ -138,7 +159,9 @@ def trace(join, number, text):
     creation, observation = join["creation"], join["observation"]
     ancestors = join["ancestors"]
     origin_title = text["origin_stack"]
-    observation_title = text["execution_observation"]
+    task_snapshot = observation["sample_kind"] == "task_snapshot"
+    observation_title = text["task_snapshot" if task_snapshot else "execution_observation"]
+    raw_title = text["raw_task_snapshot" if task_snapshot else "raw_stack"]
 
     blocks = []
     links = []
@@ -146,15 +169,26 @@ def trace(join, number, text):
     for index, (parent, child) in enumerate(zip(path, path[1:]), start=1):
         ancestor_link = index <= len(ancestors)
         kind = parent["link_to_child"] if ancestor_link else join["edge"]
+        identity = parent.get("link_evidence") if ancestor_link else join.get("identity_kind")
         anchor = f'join-{number}-record-{escape(parent["id"])}'
-        if ancestor_link:
-            title = text["ancestor_stack"]
+        if ancestor_link and identity == "same-singleflight-call-result-channel":
+            relation = "result_dependency"
+            title = text["result_producer_stack"]
+        elif ancestor_link and identity == "same-pool-holder-release-future":
+            relation = "release_dependency"
+            title = text["acquiring_task_stack"]
+        elif ancestor_link:
             relation = "async_parent" if kind == "parent_to_create" else "parent"
+            title = text["async_ancestor_stack" if relation == "async_parent" else "ancestor_stack"]
+        elif kind == "cancel_request_to_observation":
+            relation = "cancellation"
+            title = text["cancellation_stack"]
         else:
             title = origin_title
             relation = "tokio" if kind == "runtime_task_id" else "creation"
         blocks.append(stack(parent, title, text, anchor))
-        identity = join.get("identity_kind") if relation == "creation" else None
+        if relation == "creation" and join.get("interval_attribution") and identity not in {"live-child-node", "go-opener-signal"}:
+            identity = "execution-interval"
         blocks.append(join_marker(parent, child, kind, relation, number, index, text, identity))
         label = text["join_number"].format(n=index)
         links.append(f'<a href="#join-{number}-point-{index}">{label} '
@@ -162,7 +196,7 @@ def trace(join, number, text):
     anchor = f'join-{number}-record-{escape(observation["id"])}'
     blocks.append(stack(observation, observation_title, text, anchor, "observed"))
 
-    physical = {key: value for key, value in observation.items() if key != "instance"}
+    original = {key: value for key, value in observation.items() if key != "instance"}
     return f"""
       <div class="trace-grid">
         <div class="trace-pane stitched">
@@ -171,9 +205,9 @@ def trace(join, number, text):
           {"".join(blocks)}
         </div>
         <div class="trace-pane">
-          <h3>{text["raw_stack"]}</h3>
-          {stack(physical, observation_title, text, extra_class="observed")}
-          <p class="small trace-note">{text["raw_note"].format(id=escape(physical["id"]))}</p>
+          <h3>{raw_title}</h3>
+          {stack(original, observation_title, text, extra_class="observed")}
+          <p class="small trace-note">{text["raw_note"].format(id=escape(original["id"]))}</p>
         </div>
       </div>"""
 
@@ -187,7 +221,10 @@ def case_page(case, language):
     title = case_title(case, language)
     displays = []
     for index, join in enumerate(case["joins"], start=1):
-        note = text["observation_number"].format(id=escape(join["observation"]["id"]))
+        observation = join["observation"]
+        note = text["observation_number"].format(id=escape(observation["id"]))
+        if duration := observation.get("wait_duration_ns"):
+            note += " · " + text["suspended_duration"].format(ms=f"{duration / 1_000_000:.1f}")
         content = trace(join, index, text)
         if index == 1:
             displays.append(f'<p class="provenance">{note}</p>{content}')
@@ -211,6 +248,8 @@ def case_page(case, language):
         <h1>{escape(title)}</h1>
         <div class="case-links"><a href="{escape(case["url"])}">{text["upstream"]}</a>{source}</div>
         <dl class="case-status">
+          <div><dt>{text["issue_kind"]}</dt><dd>{text[case["kind"]]}</dd></div>
+          <div><dt>{text["tracker_status"]}</dt><dd>{text["tracker_" + case["tracker_status"]]}</dd></div>
           <div><dt>{text["reproduction"]}</dt><dd>{text[case["reproduction"]]}</dd></div>
           <div><dt>{text["diagnosis"]}</dt><dd>{text[case["diagnosis"]]}</dd></div>
         </dl>
@@ -240,12 +279,44 @@ def featured_card(case, label, headline):
 
 def table_row(case, text, language):
     scope = escape(case["reproduction"])
+    state = case["tracker_status"]
     other_language = "en" if language == "zh-CN" else "zh-CN"
     return f"""
-      <tr data-scope="{scope}" data-title-alt="{escape(case_title(case, other_language))}">
-        <th scope="row"><a href="evidence/{escape(case["id"])}.html"><span>{escape(case["reference"])}</span>{escape(case_title(case, language))}</a></th>
+      <tr data-scope="{scope}" data-kind="{escape(case["kind"])}" data-tracker-status="{state}" data-title-alt="{escape(case_title(case, other_language))}">
+        <th scope="row"><a href="evidence/{escape(case["id"])}.html"><span>{escape(case["reference"])}</span>{escape(case_title(case, language))}</a><small class="case-kind">{text[case["kind"]]} · {text["tracker_" + state]}</small></th>
         <td>{escape(contribution(case, language))}</td><td>{text[case["reproduction"]]}</td>
       </tr>"""
+
+
+def outcomes(cases, text):
+    totals = Counter(case["kind"] for case in cases)
+    direct = Counter(case["kind"] for case in cases if case["diagnosis"] == "Direct")
+    by_scope = Counter((case["reproduction"], case["diagnosis"]) for case in cases)
+    kinds = "".join(
+        f'<tr><th scope="row">{text[kind]}<small>{text[kind + "_detail"]}</small></th>'
+        f'<td>{totals[kind]}</td><td>{direct[kind]}</td></tr>' for kind in ISSUE_KINDS
+    )
+    evidence = "".join(
+        f'<tr><th scope="row">{text[scope]}</th><td>{by_scope[scope, "Direct"]}</td>'
+        f'<td>{by_scope[scope, "Inferred from controls"]}</td></tr>' for scope in SCOPES
+    )
+    return f"""
+    <section class="wrap block" id="outcomes" aria-labelledby="outcomes-title">
+      <div class="section-head"><h2 id="outcomes-title">{text["outcomes"]}</h2></div>
+      <p class="section-copy">{text["outcomes_scope"]}</p>
+      <div class="table-wrap summary-table">
+        <table aria-labelledby="outcomes-title"><thead><tr><th scope="col">{text["issue_kind"]}</th><th scope="col">{text["case_count"]}</th><th scope="col">{text["direct_diagnosis"]}</th></tr></thead>
+        <tbody>{kinds}</tbody></table>
+      </div>
+      <details class="extra">
+        <summary id="evidence-matrix">{text["evidence_matrix"]}</summary>
+        <p class="section-copy">{text["evidence_matrix_help"]}</p>
+        <div class="table-wrap summary-table">
+          <table aria-labelledby="evidence-matrix"><thead><tr><th scope="col">{text["reproduction"]}</th><th scope="col">{text["direct_diagnosis"]}</th><th scope="col">{text["Inferred from controls"]}</th></tr></thead>
+          <tbody>{evidence}</tbody></table>
+        </div>
+      </details>
+    </section>"""
 
 
 def index_page(snapshot, language):
@@ -265,8 +336,17 @@ def index_page(snapshot, language):
     ]
     numbers = "".join(f"<div><dd>{count:,}</dd><dt>{text[key]}</dt></div>" for count, key in stats)
     options = "".join(f'<option value="{key}">{text[key]}</option>' for key in SCOPES)
+    issue_types = "".join(f'<option value="{key}">{text[key]}</option>' for key in ISSUE_KINDS)
+    tracker_states = "".join(f'<option value="{state}">{text["tracker_" + state]}</option>' for state in TRACKER_STATES)
+    tracker_counts = Counter(case["tracker_status"] for case in cases)
+    tracker_summary = text["tracker_summary"].format(opened=tracker_counts["open"], closed=tracker_counts["closed"])
+    if tracker_counts["unconfirmed"]:
+        tracker_summary += " · " + text["tracker_unconfirmed_count"].format(count=tracker_counts["unconfirmed"])
+    checked_at = snapshot["tracker_checked_at"]
+    checked = text["tracker_checked"].format(time=datetime.fromisoformat(checked_at).strftime("%Y-%m-%d %H:%M UTC"))
     rows = "".join(table_row(case, text, language) for case in cases)
     data = "../data/cases.json" if language == "zh-CN" else "data/cases.json"
+    status_data = "../data/upstream-status.json" if language == "zh-CN" else "data/upstream-status.json"
     body = f"""
     <section class="wrap hero" aria-labelledby="hero-title">
       <div>
@@ -289,6 +369,7 @@ def index_page(snapshot, language):
       <div class="section-head"><h2 id="coverage">{text["coverage"]}</h2><span class="small">{text["snapshot"]} · <time>{escape(snapshot["corpus_date"])}</time></span></div>
       <dl class="stats">{numbers}</dl>
     </section>
+    {outcomes(cases, text)}
     <section class="wrap block" aria-labelledby="selected">
       <div class="section-head"><h2 id="selected">{text["selected"]}</h2></div>
       <div class="features">{selected}</div>
@@ -296,8 +377,11 @@ def index_page(snapshot, language):
     <section class="wrap block" id="issues" aria-labelledby="issues-title">
       <div class="section-head"><h2 id="issues-title">{text["issues"]}</h2><a href="{data}" download>{text["download"]}</a></div>
       <p class="section-copy">{text["index_copy"]}</p>
+      <p class="tracker-summary" id="upstream-status"><strong>{tracker_summary}</strong><time datetime="{escape(checked_at)}">{checked}</time><a href="{status_data}" download>{text["tracker_data"]}</a></p>
       <div class="filters" hidden>
         <div><label for="query">{text["search"]}</label><input type="search" id="query" placeholder="{text["placeholder"]}"></div>
+        <div><label for="kind">{text["issue_kind"]}</label><select id="kind"><option value="">{text["any_issue_kind"]}</option>{issue_types}</select></div>
+        <div><label for="tracker-status">{text["tracker_status"]}</label><select id="tracker-status"><option value="">{text["any_tracker_status"]}</option>{tracker_states}</select></div>
         <div><label for="scope">{text["reproduction"]}</label><select id="scope"><option value="">{text["any_scope"]}</option>{options}</select></div>
       </div>
       <p class="results-count" id="results-count" role="status" data-format="{text["filtered_result"]}" data-empty="{text["no_result"]}">{text["result"].format(total=len(cases))}</p>
@@ -343,5 +427,11 @@ def build(snapshot, language):
 
 if __name__ == "__main__":
     snapshot = json.loads((ROOT / "data" / "cases.json").read_text(encoding="utf-8"))
+    tracker = json.loads((ROOT / "data" / "upstream-status.json").read_text(encoding="utf-8"))
+    snapshot["tracker_checked_at"] = tracker["checked_at"]
+    for case in snapshot["cases"]:
+        entry = tracker["issues"].get(case["id"], {})
+        state = entry.get("status")
+        case["tracker_status"] = state if entry.get("url") == case["url"] and state in TRACKER_STATES else "unconfirmed"
     for language in COPY:
         build(snapshot, language)

@@ -16,21 +16,31 @@
   <a class="skip" href="#main">跳到正文</a>
   <header class="site-header">
     <div class="wrap header-row">
-      <a class="brand" href="index.html"><img class="brand-pony" src="../assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
-      <nav aria-label="主导航">
+      <a class="brand" href="index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
         <a href="index.html#issues">案例证据</a>
         <a href="research.html">研究摘要</a>
         <a href="index.html#method">分析方法</a>
       </nav>
-      <div class="languages"><a class="language-switch" id="language-switch" href="../index.html" lang="en" hreflang="en">English</a><span class="language-current" lang="zh-CN" aria-current="true">简体中文</span></div>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../index.html" lang="en" hreflang="en">English</a><a href="index.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
     </div>
   </header>
   <main id="main">
     <section class="wrap hero" aria-labelledby="hero-title">
       <div>
         <p class="eyebrow">协程证据图谱</p>
-        <h1 id="hero-title">跨越挂起与恢复<br> <em>追踪调用栈</em></h1>
-        <p class="hero-copy">用已核实的栈拼接追溯协程的发起位置，并定位导致异常、阻塞或延迟的调用者。</p>
+        <h1 id="hero-title">把被调用者<br>连回 <em>原始调用者</em></h1>
+        <p class="hero-copy">协程挂起后，原始调用者可能从物理栈消失。CoroPerf 根据记录的协程身份，把后续执行接回创建或发出请求时的调用栈。</p>
         <div class="actions"><a class="button" href="#issues">查看案例证据 ↓</a><a href="research.html">阅读研究摘要 ↗</a></div>
       </div>
       <figure class="specimen">
@@ -44,8 +54,25 @@
       </figure>
     </section>
     <section class="wrap block" aria-labelledby="coverage">
-      <div class="section-head"><h2 id="coverage">证据覆盖情况</h2><span class="small">语料快照 · <time>2026-11-21</time></span></div>
-      <dl class="stats"><div><dd>29</dd><dt>案例证据页</dt></div><div><dd>39</dd><dt>已匹配创建栈的执行观测</dt></div><div><dd>73</dd><dt>已核实的拼接点</dt></div></dl>
+      <div class="section-head"><h2 id="coverage">证据覆盖情况</h2><span class="small">语料快照 · <time>2026-11-24</time></span></div>
+      <dl class="stats"><div><dd>66</dd><dt>案例证据页</dt></div><div><dd>115</dd><dt>已匹配的执行观测</dt></div><div><dd>208</dd><dt>已核实的拼接点</dt></div></dl>
+    </section>
+
+    <section class="wrap block" id="outcomes" aria-labelledby="outcomes-title">
+      <div class="section-head"><h2 id="outcomes-title">CoroPerf 帮助分析了什么</h2></div>
+      <p class="section-copy">每个已有报告的 Issue 按主要症状或诊断问题计入一次。每个案例都有经过核对的拼接。</p>
+      <div class="table-wrap summary-table">
+        <table aria-labelledby="outcomes-title"><thead><tr><th scope="col">问题类型</th><th scope="col">案例数</th><th scope="col">有直接诊断证据</th></tr></thead>
+        <tbody><tr><th scope="row">功能故障与正确性问题<small>卡住、错误结果、过早取消及资源清理等功能行为。</small></th><td>17</td><td>14</td></tr><tr><th scope="row">性能问题<small>观测到的延迟、额外 CPU 或分配开销，以及工作线程或连接争用。</small></th><td>14</td><td>13</td></tr><tr><th scope="row">性能剖析与归因<small>将 CPU 热点样本或 I/O 等待时间归到应用调用者。</small></th><td>2</td><td>2</td></tr><tr><th scope="row">调试与调用栈缺失<small>补回诊断中缺失的调用者、失败操作或任务来源。</small></th><td>33</td><td>31</td></tr></tbody></table>
+      </div>
+      <details class="extra">
+        <summary id="evidence-matrix">复现范围与诊断依据</summary>
+        <p class="section-copy">复现范围说明本地实验覆盖原帖的哪些内容。诊断依据说明结论来自直接观测，还是需要结合对照实验。下表统计的是上面同一批案例。</p>
+        <div class="table-wrap summary-table">
+          <table aria-labelledby="evidence-matrix"><thead><tr><th scope="col">复现范围</th><th scope="col">有直接诊断证据</th><th scope="col">根据对照推断</th></tr></thead>
+          <tbody><tr><th scope="row">本地完整复现</th><td>25</td><td>4</td></tr><tr><th scope="row">复现相关组件</th><td>35</td><td>2</td></tr></tbody></table>
+        </div>
+      </details>
     </section>
     <section class="wrap block" aria-labelledby="selected">
       <div class="section-head"><h2 id="selected">代表性案例</h2></div>
@@ -60,10 +87,10 @@
         <h3>从数据库阻塞现场追溯请求入口</h3>
         <span class="feature-ref">drogonframework/drogon #2331 <span aria-hidden="true">↗</span></span>
       </a>
-      <a class="feature" href="evidence/tokio-rs--tokio--6315.html#call-stack">
-        <span class="feature-label">调度性能</span>
-        <h3>把延迟执行的任务连回创建位置</h3>
-        <span class="feature-ref">tokio-rs/tokio #6315 <span aria-hidden="true">↗</span></span>
+      <a class="feature" href="evidence/nodejs--node--50056.html#call-stack">
+        <span class="feature-label">CPU 性能分析</span>
+        <h3>区分同一热点函数背后的调用者</h3>
+        <span class="feature-ref">nodejs/node #50056 <span aria-hidden="true">↗</span></span>
       </a>
       <a class="feature" href="evidence/grpc--grpc-kotlin--299.html#call-stack">
         <span class="feature-label">异常归属</span>
@@ -74,129 +101,280 @@
     <section class="wrap block" id="issues" aria-labelledby="issues-title">
       <div class="section-head"><h2 id="issues-title">案例证据</h2><a href="../data/cases.json" download>下载快照数据 ↓</a></div>
       <p class="section-copy">打开案例即可查看原始栈、已核实的拼接点、本地结论及上游报告。</p>
+      <p class="tracker-summary" id="upstream-status"><strong>上游状态 · 16 个开放 · 50 个已关闭</strong><time datetime="2026-11-23T18:30:58+00:00">核对时间 2026-11-23 18:30 UTC</time><a href="../data/upstream-status.json" download>下载上游状态数据</a></p>
       <div class="filters" hidden>
         <div><label for="query">搜索案例</label><input type="search" id="query" placeholder="项目、案例编号或标题"></div>
+        <div><label for="kind">问题类型</label><select id="kind"><option value="">全部问题类型</option><option value="functional">功能故障与正确性问题</option><option value="performance">性能问题</option><option value="profiling">性能剖析与归因</option><option value="debugging">调试与调用栈缺失</option></select></div>
+        <div><label for="tracker-status">上游状态</label><select id="tracker-status"><option value="">全部上游状态</option><option value="open">开放</option><option value="closed">已关闭</option><option value="unconfirmed">待核对</option></select></div>
         <div><label for="scope">复现范围</label><select id="scope"><option value="">全部复现范围</option><option value="Full local reproduction">本地完整复现</option><option value="Component reproduced">复现相关组件</option></select></div>
       </div>
-      <p class="results-count" id="results-count" role="status" data-format="共 {total} 个案例，符合条件的有 {matches} 个" data-empty="没有符合条件的案例">共 29 个案例</p>
+      <p class="results-count" id="results-count" role="status" data-format="共 {total} 个案例，符合条件的有 {matches} 个" data-empty="没有符合条件的案例">共 66 个案例</p>
       <div class="table-wrap">
         <table><thead><tr><th scope="col">案例</th><th scope="col">拼接补回了什么</th><th scope="col">复现范围</th></tr></thead>
         <tbody id="case-rows">
-      <tr data-scope="Full local reproduction" data-title-alt="Main disappears from the physical stack after Foo resumes">
-        <th scope="row"><a href="evidence/dotnet--runtime--60764.html"><span>dotnet/runtime #60764</span>Foo 恢复后，物理调用栈里找不到 Main</a></th>
+      <tr data-scope="Component reproduced" data-kind="profiling" data-tracker-status="closed" data-title-alt="Which application caller spent longer waiting for I/O?">
+        <th scope="row"><a href="evidence/python--cpython--115218.html"><span>python/cpython #115218</span>哪个应用调用者等 I/O 等得更久？</a><small class="case-kind">性能剖析与归因 · 已关闭</small></th>
+        <td>原生异步采样能区分等待中的 Task。CoroPerf 测量实际挂起时间，并沿各自的调度 Handle 找回发起读取的应用调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="Which cancelled request left the pool waiting for each connection?">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--547.html"><span>MagicStack/asyncpg #547</span>连接池等待归还的两条连接，分别由哪个请求借出？</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
+        <td>两个关闭等待者都停在同一行。按各连接槽的实际归还 Future 拼接，即使获取连接的 Task 已被回收，也能找回各自的原始请求。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="Which exited singleflight producer left each reader waiting?">
+        <th scope="row"><a href="evidence/golang--go--52557.html"><span>golang/go #52557</span>每个等待者依赖的是哪个已经退出的 singleflight 生产者？</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
+        <td>两个等待者的栈完全相同。CoroPerf 沿各自的结果通道找到对应的共享调用，再接回未发送结果就退出的生产者的原始发起者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="Which async caller filled the cache entry that later failed?">
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--13689.html"><span>sqlalchemy/sqlalchemy #13689</span>后来读取失败的缓存条目，最初由谁写入？</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
+        <td>两个条目的分配位置和读取异常完全相同。按实际 FrozenResult 对象拼接，即使写入 Task 已被回收，也能找回各个缓存条目的原始写入者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="Which cancellation request reached the TaskGroup&#x27;s final error?">
+        <th scope="row"><a href="evidence/python--cpython--157157.html"><span>python/cpython #157157</span>TaskGroup 最终传播的异常来自哪一次取消请求？</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
+        <td>同一个 Task 接受两次取消。记录实际 Task 和完成 Future 后，可以区分最终异常来自哪次取消，以及是哪次已接受的取消丢失了消息。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="Who first raised the error injected into a fresh async generator?">
+        <th scope="row"><a href="evidence/nuitka--nuitka--4073.html"><span>Nuitka/Nuitka #4073</span>注入新异步生成器的异常，最初来自哪个调用者？</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
+        <td>两个保存的异常到达生成器后，回溯完全相同。按异常对象身份，将两个接收 Task 分别接回各自的生产者 Task 与原始发起者。首次抛出的观测显示了受影响版本丢掉的帧。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="Which caller&#x27;s handshake timed out while the stream processed another result?">
+        <th scope="row"><a href="evidence/rust-lang--futures-rs--2387.html"><span>rust-lang/futures-rs #2387</span>缓冲流处理一个结果时，哪个调用者的握手超时了？</a><small class="case-kind">性能问题 · 开放</small></th>
+        <td>同一个流任务负责两次握手和中间的结果处理。轮询区间将超时握手接回原始调用者，同一个结果对象将占住消费循环的工作接回另一个调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="Which caller launched each coroutine that reused the same frame address?">
+        <th scope="row"><a href="evidence/llvm--llvm-project--121092.html"><span>llvm/llvm-project #121092</span>协程反复使用同一个帧地址时，每次调用来自哪里？</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
+        <td>四个协程实例复用同一个帧地址，工作线程的栈也相同。CoroPerf 用去符号的指令恢复活动帧，再沿创建和销毁记录找回各次调用的原始发起者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="Which caller evicted the result another caller was waiting for?">
+        <th scope="row"><a href="evidence/aio-libs--async-lru--480.html"><span>aio-libs/async-lru #480</span>哪个调用者淘汰了另一个调用者正在等待的缓存结果？</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
+        <td>用实际结果 Future 对上缓存淘汰和仍在等待的请求，再沿各自记录的调度 Handle，分别找回触发淘汰和等待结果的原始调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="Which caller accounts for the repeated await-chain rethrows?">
+        <th scope="row"><a href="evidence/dotnet--runtime--38904.html"><span>dotnet/runtime #38904</span>多层 await 的重复重抛分别来自哪个调用者？</a><small class="case-kind">性能问题 · 开放</small></th>
+        <td>两条失败链在同一个工作线程交错执行，重抛栈相同。用根 Task 实际保存的异常对象，可以把重抛接回各自的原始调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="Which callers launched the continuations delayed by Bun&#x27;s nested poll?">
+        <th scope="row"><a href="evidence/oven-sh--bun--45020.html"><span>oven-sh/bun #45020</span>Bun 嵌套轮询拖延的两个协程由谁发起？</a><small class="case-kind">性能问题 · 已关闭</small></th>
+        <td>两个已就绪的协程被同一次长轮询拖延。按实际 Promise 对象拼回创建栈，即使后发起的协程先恢复，也能找出各自的调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="Who triggered each replacement dial on the shared SQL opener?">
+        <th scope="row"><a href="evidence/golang--go--64614.html"><span>golang/go #64614</span>同一个 SQL 连接协程执行的补拨，分别由谁触发？</a><small class="case-kind">性能问题 · 开放</small></th>
+        <td>用补拨信号在同一通道中的 FIFO 顺序和实际拨号区间，将两条相同的拨号栈分别接回丢弃连接的调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="Which feature launched the interceptor chain?">
+        <th scope="row"><a href="evidence/dart-lang--sdk--61585.html"><span>dart-lang/sdk #61585</span>哪个功能入口发起了这条拦截器链？</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
+        <td>异步栈只能追到共享的拦截器链。CoroPerf 用同一个 Future 监听器回调对象，将每次执行接回发起它的功能入口。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="Which caller incurred the extra coroutine-frame allocation?">
+        <th scope="row"><a href="evidence/llvm--llvm-project--56972.html"><span>llvm/llvm-project #56972</span>哪个调用者引发了额外的协程帧分配？</a><small class="case-kind">性能问题 · 已关闭</small></th>
+        <td>两次额外分配返回相同的子协程帧地址。用机器码数据流恢复两个不同的活动父协程帧，就能把分配现场分别接回最初的应用调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="Which caller&#x27;s retries kept a ready task waiting?">
+        <th scope="row"><a href="evidence/rust-lang--futures-rs--2047.html"><span>rust-lang/futures-rs #2047</span>哪个调用者的重试让已就绪任务迟迟无法运行？</a><small class="case-kind">性能问题 · 已关闭</small></th>
+        <td>相同的重试栈看不出是谁让已就绪的心跳任务等待。CoroPerf 用实际子节点的轮询区间接回入队栈，将 96 次和 6 次重试分别归到两个调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="Which caller reacquired the semaphore ahead of its queued waiter?">
+        <th scope="row"><a href="evidence/python--cpython--90155.html"><span>python/cpython #90155</span>哪个调用者越过排队的任务，重新拿到了信号量？</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
+        <td>在 3.10.3 中，被唤醒的等待者和下一次实际获得许可的是不同 Task。用各自的调度 Handle 拼回创建栈，可以区分两个原始调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="Which unsafeRun call started each failed ZIO fiber?">
+        <th scope="row"><a href="evidence/zio--zio--1003.html"><span>zio/zio #1003</span>两条失败的 ZIO fiber 分别从哪个 unsafeRun 发起？</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
+        <td>两条 worker 失败的原生栈相同。根据实际 FiberContext 对象拼回创建栈，可以找回每次 unsafeRun 的确切调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="Which caller occupied the worker needed by asyncio&#x27;s resolver?">
+        <th scope="row"><a href="evidence/python--cpython--112169.html"><span>python/cpython #112169</span>哪个调用者占用了 asyncio 地址解析需要的线程？</a><small class="case-kind">性能问题 · 已关闭</small></th>
+        <td>把被占用的工作线程接回实际 WorkItem，再沿调度器取出的同一个请求找到入队栈，可以辨认占用 DNS 工作线程的应用调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="open" data-title-alt="Which callers submitted the child futures stranded by task tracing?">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8434.html"><span>tokio-rs/tokio #8434</span>任务追踪卡住的两个子 Future 分别由谁提交？</a><small class="case-kind">功能故障与正确性问题 · 开放</small></th>
+        <td>原生追踪能看到两个锁操作。CoroPerf 用 FuturesUnordered 实际子节点的 poll 区间把采样连回提交它们的应用调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="open" data-title-alt="Which async interceptor led to the worker that lost the request ID?">
+        <th scope="row"><a href="evidence/grpc--grpc--37881.html"><span>grpc/grpc #37881</span>请求 ID 在线程池丢失时，是哪个异步拦截器路径发起的？</a><small class="case-kind">功能故障与正确性问题 · 开放</small></th>
+        <td>两个工作线程的栈完全相同，请求 ID 也都丢失。用实际 WorkItem 接回提交栈，再按同一个 RPC 处理器对象拼接，就能找回最初的拦截器路径。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="Who started the tasks that outlived a failed asyncio.gather()?">
+        <th scope="row"><a href="evidence/python--cpython--157213.html"><span>python/cpython #157213</span>asyncio.gather() 失败后，仍在运行的任务是谁发起的？</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
+        <td>修复后的等待图能显示谁仍在等待。CoroPerf 把每个存活 Task 接回触发其创建的 Handle，找出最初是谁发起的。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="open" data-title-alt="Main disappears from the physical stack after Foo resumes">
+        <th scope="row"><a href="evidence/dotnet--runtime--60764.html"><span>dotnet/runtime #60764</span>Foo 恢复后，物理调用栈里找不到 Main</a><small class="case-kind">调试与调用栈缺失 · 开放</small></th>
         <td>构造函数的物理栈起于计时器工作线程。拼回创建栈后，可以确定这次 Foo 状态机由 Program.Main 发起。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Component reproduced" data-title-alt="Synchronous SQL on Drogon’s database loop times out the profile request">
-        <th scope="row"><a href="evidence/drogonframework--drogon--2331.html"><span>drogonframework/drogon #2331</span>Drogon 在数据库事件循环上执行同步 SQL，导致请求超时</a></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-title-alt="Recovering the caller behind a synchronous Task forwarder">
+        <th scope="row"><a href="evidence/dotnet--runtime--125417.html"><span>dotnet/runtime #125417</span>找回同步转发 Task 的原始调用者</a><small class="case-kind">调试与调用栈缺失 · 开放</small></th>
+        <td>两个同步转发方法调用同一个协程。CoroPerf 用 TPL 执行区间和已记录的任务创建栈，把每个工作线程观测分别连回原始调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="Synchronous SQL on Drogon’s database loop times out the profile request">
+        <th scope="row"><a href="evidence/drogonframework--drogon--2331.html"><span>drogonframework/drogon #2331</span>Drogon 在数据库事件循环上执行同步 SQL，导致请求超时</a><small class="case-kind">性能问题 · 开放</small></th>
         <td>两个请求入口都使用 shared_lookup。将停止现场归到具体协程后，沿创建关系可以确认卡住的是由 profile_entry 发起的请求。</td><td>复现相关组件</td>
       </tr>
-      <tr data-scope="Component reproduced" data-title-alt="A spawned task remains in the local LIFO slot when its worker blocks">
-        <th scope="row"><a href="evidence/tokio-rs--tokio--6315.html"><span>tokio-rs/tokio #6315</span>Tokio 的 LIFO 槽位保留了一个没有及时轮询的任务</a></th>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="Which caller launched the coroutine that reported the stale thread ID?">
+        <th scope="row"><a href="evidence/llvm--llvm-project--37601.html"><span>llvm/llvm-project #37601</span>报出旧线程 ID 的协程由哪个调用者发起？</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
+        <td>同一个工作线程的调用栈和旧线程 ID 对应两个不同的协程实例。CoroPerf 用去符号的机器码定位各自恢复的帧，再拼回创建栈找出原始调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="A spawned task remains in the local LIFO slot when its worker blocks">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--6315.html"><span>tokio-rs/tokio #6315</span>Tokio 的 LIFO 槽位保留了一个没有及时轮询的任务</a><small class="case-kind">性能问题 · 开放</small></th>
         <td>在受控的 LIFO 槽位复现中，将任务创建栈和任务体执行栈对齐，能找到被延迟调度的任务由哪个父任务发起。</td><td>复现相关组件</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="A Quarkus request pinned in Hibernate while waiting on PostgreSQL">
-        <th scope="row"><a href="evidence/pgjdbc--pgjdbc--1951.html"><span>pgjdbc/pgjdbc #1951</span>通过报告评论作者公开的 Quarkus Todo 示例向真实 PostgreSQL 写入，2 批共 18 次 HTTP 创建均返回 201，独立 SQL 查询核对了已提交的数据行</a></th>
-        <td>JFR 钉住事件指出 JDBC 读取位置。用同一个虚拟线程 ID 拼回启动记录后，可以找到早先的应用请求分派路径。</td><td>本地完整复现</td>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="Which callers incurred the extra interval timer clears?">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8760.html"><span>tokio-rs/tokio #8760</span>额外的 interval 定时器清理由哪些调用者触发？</a><small class="case-kind">性能问题 · 已关闭</small></th>
+        <td>两条路径的工作线程只看到同一种定时器清理栈。用 poll 区间定位执行中的任务，拼回创建栈后就能找出发起该任务的应用入口。</td><td>复现相关组件</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="A stack captured after sleep omits the function that started sub">
-        <th scope="row"><a href="evidence/nodejs--node--36126.html"><span>nodejs/node #36126</span>Node 18 原例的 sub 在 sleep 后打印栈时缺少 main</a></th>
+      <tr data-scope="Full local reproduction" data-kind="performance" data-tracker-status="closed" data-title-alt="A Quarkus request pinned in Hibernate while waiting on PostgreSQL">
+        <th scope="row"><a href="evidence/pgjdbc--pgjdbc--1951.html"><span>pgjdbc/pgjdbc #1951</span>通过报告评论作者公开的 Quarkus Todo 示例向真实 PostgreSQL 写入，2 批共 18 次 HTTP 创建均返回 201，独立 SQL 查询核对了已提交的数据行</a><small class="case-kind">性能问题 · 已关闭</small></th>
+        <td>原生 JFR 显示 JDBC 钉住位置和虚拟线程自己的入口。用 JVM 线程 ID 拼回工厂采集的创建记录后，才能看到更早的 Quarkus 请求分派调用者。</td><td>本地完整复现</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="A stack captured after sleep omits the function that started sub">
+        <th scope="row"><a href="evidence/nodejs--node--36126.html"><span>nodejs/node #36126</span>Node 18 原例的 sub 在 sleep 后打印栈时缺少 main</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>恢复后的诊断栈只有 sub。拼上对应 Promise 的创建栈后，可以找回同步发起者 main。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="An indirect call hides the async caller in Node’s default stack">
-        <th scope="row"><a href="evidence/nodejs--node--48511.html"><span>nodejs/node #48511</span>原始 Node 程序经间接调用后，默认栈丢失异步上层</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="An indirect call hides the async caller in Node’s default stack">
+        <th scope="row"><a href="evidence/nodejs--node--48511.html"><span>nodejs/node #48511</span>原始 Node 程序经间接调用后，默认栈丢失异步上层</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>foo 第一次 await 之后的诊断栈缺少 main 和 indirectCall。匹配到的 Promise 创建记录保留了这两个调用者。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="A goroutine dump omits creators that have already exited">
-        <th scope="row"><a href="evidence/golang--go--22289.html"><span>golang/go #22289</span>原始 Go 程序的末端 goroutine 阻塞在通道，普通栈省略已退出的祖先</a></th>
-        <td>在受控程序里，用运行时创建者 ID 将阻塞的 goroutine 追溯到多级创建者。</td><td>本地完整复现</td>
-      </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Recovering the creator and the current waiter of a sleeping asyncio task">
-        <th scope="row"><a href="evidence/python--cpython--91048.html"><span>python/cpython #91048</span>原作者四函数示例在 CPython 3.12.4 和 3.14.3 均等待十秒后返回 42</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Recovering the creator and the current waiter of a sleeping asyncio task">
+        <th scope="row"><a href="evidence/python--cpython--91048.html"><span>python/cpython #91048</span>原作者四函数示例在 CPython 3.12.4 和 3.14.3 均等待十秒后返回 42</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>挂起现场被连回 f2 中的任务创建位置。交叉 await 对照对创建者和当前等待者做了独立核对。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Component reproduced" data-title-alt="Garbage collection destroys a pending task waiting on an isolated Future">
-        <th scope="row"><a href="evidence/python--cpython--88831.html"><span>python/cpython #88831</span>孤立 Future 上等待的 Task 在触发 GC 后被销毁；保留强引用时没有销毁诊断</a></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-title-alt="Recovering the read that failed before stream cleanup rewrote its traceback">
+        <th scope="row"><a href="evidence/python--cpython--156278.html"><span>python/cpython #156278</span>流清理改写异常栈后，找回真正失败的读取</a><small class="case-kind">调试与调用栈缺失 · 开放</small></th>
+        <td>两条最终异常栈都指向流清理。首次抛出时保留的栈指出两个真正失败的读取，再拼回各自的 Task 创建栈，就能确定不同的发起者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="Garbage collection destroys a pending task waiting on an isolated Future">
+        <th scope="row"><a href="evidence/python--cpython--88831.html"><span>python/cpython #88831</span>孤立 Future 上等待的 Task 在触发 GC 后被销毁；保留强引用时没有销毁诊断</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
         <td>终结现场识别出仍未完成的任务，再通过匹配实例的采集记录追溯它的创建位置。</td><td>复现相关组件</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="A cached async call loses its caller from the live stack">
-        <th scope="row"><a href="evidence/aio-libs--async-lru--528.html"><span>aio-libs/async-lru #528</span>原作者的 inspect.stack 示例在发布版和作者分支的父提交只打印 bar</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="A cached async call loses its caller from the live stack">
+        <th scope="row"><a href="evidence/aio-libs--async-lru--528.html"><span>aio-libs/async-lru #528</span>原作者的 inspect.stack 示例在发布版和作者分支的父提交只打印 bar</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>当前栈显示 bar。拼回子任务的创建栈后可恢复 foo 和 main，并从多个等待者中区分最早的发起者。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Starlette cancels a background task after the client disconnects">
-        <th scope="row"><a href="evidence/kludex--starlette--1438.html"><span>kludex/starlette #1438</span>原始 Starlette 应用在客户端断开后取消仍在运行的后台任务</a></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="Starlette cancels a background task after the client disconnects">
+        <th scope="row"><a href="evidence/kludex--starlette--1438.html"><span>kludex/starlette #1438</span>原始 Starlette 应用在客户端断开后取消仍在运行的后台任务</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
         <td>任务创建关系把请求中间件和收到取消的后台执行连在一起。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="A WebSocket subscription task remains pending at shutdown">
-        <th scope="row"><a href="evidence/fastapi--fastapi--709.html"><span>fastapi/fastapi #709</span>原始 WebSocket 示例停机时仍有 notifications_handler 在 subscribe 中等待</a></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="A WebSocket subscription task remains pending at shutdown">
+        <th scope="row"><a href="evidence/fastapi--fastapi--709.html"><span>fastapi/fastapi #709</span>原始 WebSocket 示例停机时仍有 notifications_handler 在 subscribe 中等待</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
         <td>将仍在等待的订阅栈拼回请求任务的创建处，可以确定服务关闭时仍存活的是哪个请求。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Cancellation during async connection cleanup leaves a pool checkout outstanding">
-        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--8145.html"><span>sqlalchemy/sqlalchemy #8145</span>SQLAlchemy 1.4.37 原始异步退出逻辑被取消后，真实 PostgreSQL 连接未归还池</a></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="Cancellation during async connection cleanup leaves a pool checkout outstanding">
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--8145.html"><span>sqlalchemy/sqlalchemy #8145</span>SQLAlchemy 1.4.37 原始异步退出逻辑被取消后，真实 PostgreSQL 连接未归还池</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
         <td>把清理现场连回 main 创建的同一个任务。连接池记录进一步核对出取消后遗留的已借出连接。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Which Kotlin caller received the gRPC status exception?">
-        <th scope="row"><a href="evidence/grpc--grpc-kotlin--299.html"><span>grpc/grpc-kotlin #299</span>同一 stub 的两个 sayHello 并发挂起调用可送出完全相同的 protobuf 请求</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Which Kotlin caller received the gRPC status exception?">
+        <th scope="row"><a href="evidence/grpc--grpc-kotlin--299.html"><span>grpc/grpc-kotlin #299</span>同一 stub 的两个 sayHello 并发挂起调用可送出完全相同的 protobuf 请求</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>用采集到的 Kotlin Job 身份，将两处失败分别匹配到各自的启动位置。消息相同、响应顺序反转时也能区分两次调用。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Kotlin Future bridges lose the caller of a failed request">
-        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2327.html"><span>kotlin/kotlinx.coroutines #2327</span>原 JUnit 程序运行六项测试，普通与采集模式各失败两项，安装 DebugProbes 后六项全过</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Kotlin Future bridges lose the caller of a failed request">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2327.html"><span>kotlin/kotlinx.coroutines #2327</span>原 JUnit 程序运行六项测试，普通与采集模式各失败两项，安装 DebugProbes 后六项全过</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>沿 Job 生命周期将两个相同的 requestSuspend 失败分别连回 async 和 launch 的发起者。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="A Kotlin exception after delay omits secondCall from the JVM stack">
-        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2604.html"><span>kotlin/kotlinx.coroutines #2604</span>原帖 JUnit 方法中，delay 恢复后的异常只显示 crashCall，断言要求的 secondCall 缺失</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="A Kotlin exception after delay omits secondCall from the JVM stack">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--2604.html"><span>kotlin/kotlinx.coroutines #2604</span>原帖 JUnit 方法中，delay 恢复后的异常只显示 crashCall，断言要求的 secondCall 缺失</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>将抛异常时的续体栈连回 runBlocking 创建的 Job，恢复挂起前的调用路径。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Component reproduced" data-title-alt="Identical Trio socket-read frames obscure which child was cancelled">
-        <th scope="row"><a href="evidence/python-trio--trio--285.html"><span>python-trio/trio #285</span>按发帖日期取 Trio 的当时源码和 Python 3.6.2</a></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-title-alt="Identical Trio socket-read frames obscure which child was cancelled">
+        <th scope="row"><a href="evidence/python-trio--trio--285.html"><span>python-trio/trio #285</span>按发帖日期取 Trio 的当时源码和 Python 3.6.2</a><small class="case-kind">调试与调用栈缺失 · 开放</small></th>
         <td>把取消现场连回任务的创建位置，区分执行路径相似的两个任务，定位无响应的一侧。</td><td>复现相关组件</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="An uniterated inference stream leaves a client warning">
-        <th scope="row"><a href="evidence/huggingface--huggingface_hub--2521.html"><span>huggingface/huggingface_hub #2521</span>相同 loopback HTTP 端点上的两条未迭代流产生一条客户端告警；修复版零条</a></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="An uniterated inference stream leaves a client warning">
+        <th scope="row"><a href="evidence/huggingface--huggingface_hub--2521.html"><span>huggingface/huggingface_hub #2521</span>相同 loopback HTTP 端点上的两条未迭代流产生一条客户端告警；修复版零条</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
         <td>两个请求使用同一 URL。沿任务创建关系并核对响应对象身份，可以将告警归到 submit_alpha。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Mongoose validation errors lose the application’s save call">
-        <th scope="row"><a href="evidence/automattic--mongoose--15317.html"><span>automattic/mongoose #15317</span>原帖的无效文档在 8.12.1 产生 ValidationError，其原始错误栈越过不了校验回调，缺失 runDemo 中的 doc.save 调用行；9.0.0 的原始错误栈保留该行及中间调用</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Mongoose validation errors lose the application’s save call">
+        <th scope="row"><a href="evidence/automattic--mongoose--15317.html"><span>automattic/mongoose #15317</span>原帖的无效文档在 8.12.1 产生 ValidationError，其原始错误栈越过不了校验回调，缺失 runDemo 中的 doc.save 调用行；9.0.0 的原始错误栈保留该行及中间调用</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>校验栈起于 Document.invalidate。拼上 Promise 创建记录可以找回 runDemo 中发起的 model.save。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Awaiting a Mongoose query hides the ObjectId cast caller">
-        <th scope="row"><a href="evidence/automattic--mongoose--8691.html"><span>automattic/mongoose #8691</span>直接 await Mongoose 查询时，非法 ObjectId 的转换错误缺少原始调用点</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Awaiting a Mongoose query hides the ObjectId cast caller">
+        <th scope="row"><a href="evidence/automattic--mongoose--8691.html"><span>automattic/mongoose #8691</span>直接 await Mongoose 查询时，非法 ObjectId 的转换错误缺少原始调用点</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>创建记录显示 Query.then 在内部启动 exec，并恢复错误栈里丢失的应用调用上下文。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Axios errors hide which application call issued a request">
-        <th scope="row"><a href="evidence/axios--axios--2387.html"><span>axios/axios #2387</span>同一本地账单路由返回 HTTP 500</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Axios errors hide which application call issued a request">
+        <th scope="row"><a href="evidence/axios--axios--2387.html"><span>axios/axios #2387</span>同一本地账单路由返回 HTTP 500</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>对齐 Promise、Error 和 ClientRequest 身份后，可以把两条错误记录分别追溯到对应的 axios.get 调用者。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Awaiting a Knex query drops the caller from its error stack">
-        <th scope="row"><a href="evidence/knex--knex--2500.html"><span>knex/knex #2500</span>原帖代码对同一张缺失的 userss 表执行 SELECT，Bluebird 的 .then 栈保留 test 第 18 行，而 await 的未处理拒绝保留三段 previous event 却丢失 test</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Awaiting a Knex query drops the caller from its error stack">
+        <th scope="row"><a href="evidence/knex--knex--2500.html"><span>knex/knex #2500</span>原帖代码对同一张缺失的 userss 表执行 SELECT，Bluebird 的 .then 栈保留 test 第 18 行，而 await 的未处理拒绝保留三段 previous event 却丢失 test</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>通过发生拒绝的 Promise 身份，可以恢复应用测试中缺失的异步调用者。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="A duplicate-key error loses its caller on Sequelize’s create path">
-        <th scope="row"><a href="evidence/sequelize--sequelize--12044.html"><span>sequelize/sequelize #12044</span>原帖作者在评论中给出的重复用户名示例：直接 create 的错误栈止于 Query.formatError、Query.run 及微任务；相同唯一约束经 findOrCreate 时保留 model.save、Function.findOrCreate 和测试调用行</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="A duplicate-key error loses its caller on Sequelize’s create path">
+        <th scope="row"><a href="evidence/sequelize--sequelize--12044.html"><span>sequelize/sequelize #12044</span>原帖作者在评论中给出的重复用户名示例：直接 create 的错误栈止于 Query.formatError、Query.run 及微任务；相同唯一约束经 findOrCreate 时保留 model.save、Function.findOrCreate 和测试调用行</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>将第二次 create 的创建栈拼到 catch 现场，把错误栈中缺失的应用调用行连到驱动报错路径。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="A MySQL query error loses its async caller">
-        <th scope="row"><a href="evidence/sidorares--node-mysql2--530.html"><span>sidorares/node-mysql2 #530</span>两个应用入口经同一 helper 访问不存在的表，mysql2 原生错误栈没有查询入口</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="A MySQL query error loses its async caller">
+        <th scope="row"><a href="evidence/sidorares--node-mysql2--530.html"><span>sidorares/node-mysql2 #530</span>两个应用入口经同一 helper 访问不存在的表，mysql2 原生错误栈没有查询入口</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>两次查询的 Promise 身份将相似的错误分别归到 readAccount 和 readInvoice。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Component reproduced" data-title-alt="Got’s connection timeout stack omits the downloader’s application caller">
-        <th scope="row"><a href="evidence/sindresorhus--got--2277.html"><span>sindresorhus/got #2277</span>两个调用点同时通过已发布的 Electron 下载器发起 HTTPS GET，只给其中一路设置 200 ms 连接限时，另一路 2000 ms</a></th>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="Got’s connection timeout stack omits the downloader’s application caller">
+        <th scope="row"><a href="evidence/sindresorhus--got--2277.html"><span>sindresorhus/got #2277</span>两个调用点同时通过已发布的 Electron 下载器发起 HTTPS GET，只给其中一路设置 200 ms 连接限时，另一路 2000 ms</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>用 Promise 和计时器身份核对超时现场，找出触发连接阶段时限的发起者。</td><td>复现相关组件</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="TypeORM’s SQL Server error stack starts in the query runner">
-        <th scope="row"><a href="evidence/typeorm--typeorm--11499.html"><span>typeorm/typeorm #11499</span>真实 SQL Server 的 YYY int NOT NULL 列收到参数 NULL，报 515、EREQUEST</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="TypeORM’s SQL Server error stack starts in the query runner">
+        <th scope="row"><a href="evidence/typeorm--typeorm--11499.html"><span>typeorm/typeorm #11499</span>真实 SQL Server 的 YYY int NOT NULL 列收到参数 NULL，报 515、EREQUEST</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>两个调用者执行相同 SQL 并得到相同报错。拼接各自 Promise 的创建栈和 await 恢复栈，可以区分 importOrders 和 refreshCatalog。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Objection’s QueryBuilder loses application callers from async error stacks">
-        <th scope="row"><a href="evidence/vincit--objection.js--1618.html"><span>vincit/objection.js #1618</span>通过 Objection QueryBuilder 执行坏 SQL 后，两个调用者在原生异常栈中消失</a></th>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Objection’s QueryBuilder loses application callers from async error stacks">
+        <th scope="row"><a href="evidence/vincit--objection.js--1618.html"><span>vincit/objection.js #1618</span>通过 Objection QueryBuilder 执行坏 SQL 后，两个调用者在原生异常栈中消失</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
         <td>在自定义 thenable 边界，用查询对象身份将各次拒绝连回对应的应用创建位置。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="An upsert can leave lastrowid pointing to another project">
-        <th scope="row"><a href="evidence/omnilib--aiosqlite--87.html"><span>omnilib/aiosqlite #87</span>提交并重新打开数据库，主键 1 的名称确已更新；原评论的 &gt;0 分支在返回 2 时会把另一项目当作目标</a></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="An upsert can leave lastrowid pointing to another project">
+        <th scope="row"><a href="evidence/omnilib--aiosqlite--87.html"><span>omnilib/aiosqlite #87</span>提交并重新打开数据库，主键 1 的名称确已更新；原评论的 &gt;0 分支在返回 2 时会把另一项目当作目标</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
         <td>通过任务拼接找出每次 lastrowid 观测来自哪个 gather 子任务，进而用正确的已提交数据行核对返回值。</td><td>本地完整复现</td>
       </tr>
-      <tr data-scope="Full local reproduction" data-title-alt="Concurrent update_or_create returns the other caller’s value">
-        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2060.html"><span>tortoise/tortoise-orm #2060</span>两个异步调用同时为同一商品键指定不同值</a></th>
+      <tr data-scope="Full local reproduction" data-kind="functional" data-tracker-status="closed" data-title-alt="Concurrent update_or_create returns the other caller’s value">
+        <th scope="row"><a href="evidence/tortoise--tortoise-orm--2060.html"><span>tortoise/tortoise-orm #2060</span>两个异步调用同时为同一商品键指定不同值</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
         <td>拼接确定了 gather 中哪一个调用者的默认值丢失，并将它的任务追溯到返回竞争方数据的冲突处理路径。</td><td>本地完整复现</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="open" data-title-alt="A Node DNS error omits the awaiting read call">
+        <th scope="row"><a href="evidence/nodejs--node--53858.html"><span>nodejs/node #53858</span>在 Node 22.2.0 上原样执行报告中的 ESM 文件</a><small class="case-kind">调试与调用栈缺失 · 开放</small></th>
+        <td>默认异常栈缺少第 10 行的 reader.read()。三次开启异步归属的原生 Inspector 对照都看到了第 4 行的 DNS connect，却依然缺少后续的 read。匹配读取 Promise 后，CoroPerf 把第 10 行接回出错现场。</td><td>本地完整复现</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Nested Playwright steps lose the outer page-object method from an assertion stack">
+        <th scope="row"><a href="evidence/microsoft--playwright--40141.html"><span>microsoft/playwright #40141</span>原报告的测试和 Page Object 在真实浏览器中因颜色断言失败，基线异常丢失外层 shouldBeCorrect</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
+        <td>受影响版本的断言栈缺少外层页面对象方法。匹配各 test.step 返回的 Promise 后，可以找回 shouldBeCorrect，并区分异常栈完全相同的两次内层调用。</td><td>本地完整复现</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="Await and catch expose different Knex query stacks">
+        <th scope="row"><a href="evidence/knex--knex--2419.html"><span>knex/knex #2419</span>启用 Bluebird 长栈后，两条真实缺表查询均返回 42P01；直接 await 的错误没有 test1，链式 catch 再抛出的错误保留 test2 的查询行</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
+        <td>开启 Bluebird 长栈后，直接 await 的异常栈还是缺少 test1 的查询行。拼回各查询续体的创建栈后，数据库报错可以分别归到 test1 和 test2。</td><td>本地完整复现</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="An undefined binding hides the Knex query-builder call site">
+        <th scope="row"><a href="evidence/knex--knex--4531.html"><span>knex/knex #4531</span>在初报 MySQL 5.6 环境和后续 PostgreSQL 方言上，公开的原始路由在预编译时丢失调用行</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
+        <td>拒绝发生时的栈起于 Knex 查询编译。匹配被拒绝的 Promise 后，可以补回 await 之前 runCase 发起查询的代码行。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="closed" data-title-alt="MySQL’s duplicate-key error loses the TypeORM insert caller">
+        <th scope="row"><a href="evidence/typeorm--typeorm--11271.html"><span>typeorm/typeorm #11271</span>MySQL 拒绝第二次插入相同主键时，父提交的 QueryFailedError 栈从 Query.onResult 开始，缺失调用 repository.insert 的 myNamedFunction1234</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
+        <td>受影响版本的 MySQL 异常栈起于驱动代码，缺少 myNamedFunction1234。用返回 Promise 的身份拼回发起者，并能把它和读取该异常的测试回调区分开。</td><td>本地完整复现</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="performance" data-tracker-status="open" data-title-alt="Cursor prefetch delays delivery of rows that are already available">
+        <th scope="row"><a href="evidence/magicstack--asyncpg--1149.html"><span>magicstack/asyncpg #1149</span>PostgreSQL 14 和 asyncpg 0.29.0 上同时执行两个五行游标，只让其中一个后端在第三行等待</a><small class="case-kind">性能问题 · 开放</small></th>
+        <td>物理栈看到 consume 等在 _bind_exec。把采样接回 start_export 后，可在双游标性能对照中确认等待的是导出游标任务。协议记录独立验证了数据行已到达而应用仍未收到。</td><td>本地完整复现</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="profiling" data-tracker-status="closed" data-title-alt="V8 CPU samples lose the launcher of a shared callee after await">
+        <th scope="row"><a href="evidence/nodejs--node--50056.html"><span>nodejs/node #50056</span>两个调用者共享同一个 CPU 热点，普通采样看不到发起者</a><small class="case-kind">性能剖析与归因 · 已关闭</small></th>
+        <td>两个调用者在 await 后的热点调用栈相同。CoroPerf 先确定当时活跃的 Promise 实例，再拼回其创建栈，把同一个被调用者分别连到 launchProfile 和 launchInventory。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="open" data-title-alt="Identical hot-poll stacks hide the two callers delaying socket reads">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8085.html"><span>tokio-rs/tokio #8085</span>同一个 CPU 调用栈掩盖了拖慢读事件的两个发起者</a><small class="case-kind">性能问题 · 开放</small></th>
+        <td>物理热点栈和 Tokio 自带的 spawn 位置完全相同。根据实际 poll 区间拼回创建栈，可把同一个 CPU 被调用者分别连回 launch_profile 和 launch_inventory。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="closed" data-title-alt="A dispatcher switch hides the exception’s tail caller">
+        <th scope="row"><a href="evidence/kotlin--kotlinx.coroutines--1660.html"><span>Kotlin/kotlinx.coroutines #1660</span>切换调度器后，异常栈失去尾调用的调用者</a><small class="case-kind">调试与调用栈缺失 · 已关闭</small></th>
+        <td>同一个 worker 异常栈可能来自 profileCaller 或 inventoryCaller。从抛出异常的 continuation 取到的 Job，把异常接回 DispatchedCoroutine 创建时的正确调用者。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Full local reproduction" data-kind="debugging" data-tracker-status="open" data-title-alt="Who started the fibers waiting with no stack trace?">
+        <th scope="row"><a href="evidence/typelevel--cats-effect--2620.html"><span>typelevel/cats-effect #2620</span>只有 WAITING、没有调用栈的 fiber 是谁启动的？</a><small class="case-kind">调试与调用栈缺失 · 开放</small></th>
+        <td>原生监控器显示四条没有栈帧的 WAITING 记录。CoroPerf 把各 worker 的等待登记接回自己的创建栈，再接回应用在 AppLoader.scala:32 初始化 Dispatcher 的位置。</td><td>本地完整复现</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="performance" data-tracker-status="closed" data-title-alt="Which async callers submitted the blocking jobs with long queue waits?">
+        <th scope="row"><a href="evidence/tokio-rs--tokio--8527.html"><span>tokio-rs/tokio #8527</span>排队慢的阻塞任务来自哪个异步调用者？</a><small class="case-kind">性能问题 · 已关闭</small></th>
+        <td>两个排队慢的阻塞任务拥有相同的 worker 栈和原生提交位置。CoroPerf 沿各自的阻塞 span、创建栈和异步创建者，找回最初的应用调用者 launch_profile 或 launch_inventory。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="debugging" data-tracker-status="open" data-title-alt="The original caller disappears across a detached Asio spawn">
+        <th scope="row"><a href="evidence/chriskohlhoff--asio--1239.html"><span>chriskohlhoff/asio #1239</span>Asio 的 detached spawn 隐去了原始调用者</a><small class="case-kind">调试与调用栈缺失 · 开放</small></th>
+        <td>Asio 的实时 awaiter 链止于 detached 入口。指令数据流恢复定时器唤醒的实例，两处创建关系将它接回 launch_profile 或 launch_inventory。</td><td>复现相关组件</td>
+      </tr>
+      <tr data-scope="Component reproduced" data-kind="functional" data-tracker-status="closed" data-title-alt="The bridge Future is cancelled while its asyncio Task is still cleaning up">
+        <th scope="row"><a href="evidence/python--cpython--105836.html"><span>python/cpython #105836</span>跨线程的 Future 已取消，asyncio Task 仍在清理</a><small class="case-kind">功能故障与正确性问题 · 已关闭</small></th>
+        <td>两个外层 Future 已取消，内层 Task 都停在同一段清理路径。通过记录下来的 Task 与 Future 对象关系，各自的清理快照可以接回真正的跨线程提交者。</td><td>复现相关组件</td>
       </tr></tbody></table>
       </div>
     </section>
@@ -204,8 +382,8 @@
       <div class="wrap">
         <div class="section-head"><h2 id="method-title">如何阅读证据</h2></div>
         <div class="method-grid">
-          <div><h3>拼接是怎么得到的</h3><p>从创建到执行的拼接要求两个栈记录携带相同的实例标识，并有采集图边或已核对的运行时任务 ID 支持。如有额外的创建者关系边，页面会另外标出。</p></div>
-          <div><h3>案例入选标准</h3><p>每个入选案例都有经过身份核对的拼接，用来补回缺失的调用者，或区分观测结果属于哪个请求或任务。证据页逐条标明拼接补回的事实和对应记录。</p></div>
+          <div><h3>拼接是怎么得到的</h3><p>拼接把较早的创建栈或请求栈接到同一实例的后续观测。依据是采集图中的记录边或已核对的运行时任务 ID。创建者关系还可以连接不同的父、子实例。</p></div>
+          <div><h3>案例入选标准</h3><p>入选案例要求经过身份核实的拼接能补回普通诊断中缺失或无法区分的调用者或任务。证据页写明恢复了什么，并链接对应记录。</p></div>
           <div><h3>复现的范围</h3><p>证据页区分原问题的完整复现和组件的受控复现，并写明结论适用的程序与运行条件。</p></div>
         </div>
       </div>

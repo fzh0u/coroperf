@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="两条失败的 ZIO fiber 分别从哪个 unsafeRun 发起？">
+  <title>zio/zio #1003 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/zio--zio--1003.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/zio--zio--1003.html" lang="en" hreflang="en">English</a><a href="zio--zio--1003.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">zio/zio #1003</p>
+        <h1>两条失败的 ZIO fiber 分别从哪个 unsafeRun 发起？</h1>
+        <div class="case-links"><a href="https://github.com/zio/zio/issues/1003">上游报告 ↗</a><a href="https://github.com/zio/zio/commit/f704619df831af8d5e831c943af135494bceeeed">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>两条 worker 失败的原生栈相同。根据实际 FiberContext 对象拼回创建栈，可以找回每次 unsafeRun 的确切调用者。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 9</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 9</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>Gateways$$anon$2.run</code><span>Gateways.scala:50</span></li><li><code>Gateways$$$Lambda$30.644166178.apply</code></li><li><code>Gateways$.$anonfun$main$2</code><span>Gateways.scala:61</span></li><li><code>Gateways$.importOrders</code><span>Gateways.scala:42</span></li><li><code>Gateways$$anon$1.unsafeRun</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRun$</code><span>Runtime.scala:55</span></li><li><code>scalaz.zio.Runtime.unsafeRun</code><span>Runtime.scala:56</span></li><li><code>Gateways$$anon$1.unsafeRunSync</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRunSync$</code><span>Runtime.scala:64</span></li><li><code>scalaz.zio.Runtime.unsafeRunSync</code><span>Runtime.scala:67</span></li><li><code>Gateways$$anon$1.unsafeRunAsync</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRunAsync$</code><span>Runtime.scala:78</span></li><li><code>scalaz.zio.Runtime.unsafeRunAsync</code><span>Runtime.scala:89</span></li><li><code>scalaz.zio.internal.FiberContext.&lt;init&gt;</code><span>FiberContext.scala:34</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-9">记录 9</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>JDI 在创建现场与工作线程失败时的 captureTrace 中，记录了同一个 FiberContext 对象。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 0 → 9</code></p>
+        </aside><section class="stack observed" id="join-1-record-9"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 9 · selected-fiber-boundary</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:624</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1149</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$99.1204167249.run</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateLater$1</code><span>FiberContext.scala:579</span></li><li><code>scalaz.zio.internal.FiberContext.evaluateNow</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.ZIOFunctions$$Lambda$132.1391282511.apply</code></li><li><code>scalaz.zio.ZIOFunctions.$anonfun$fail$1</code><span>ZIO.scala:1168</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$135.1582646412.apply</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateNow$2</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.internal.FiberContext.captureTrace</code><span>FiberContext.scala:118</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 9 · selected-fiber-boundary</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:624</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1149</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$99.1204167249.run</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateLater$1</code><span>FiberContext.scala:579</span></li><li><code>scalaz.zio.internal.FiberContext.evaluateNow</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.ZIOFunctions$$Lambda$132.1391282511.apply</code></li><li><code>scalaz.zio.ZIOFunctions.$anonfun$fail$1</code><span>ZIO.scala:1168</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$135.1582646412.apply</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateNow$2</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.internal.FiberContext.captureTrace</code><span>FiberContext.scala:118</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 9 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 8</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>1 → 8</code></a></nav>
+          <section class="stack " id="join-2-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>Gateways$$anon$2.run</code><span>Gateways.scala:50</span></li><li><code>Gateways$$$Lambda$31.892529689.apply</code></li><li><code>Gateways$.$anonfun$main$3</code><span>Gateways.scala:62</span></li><li><code>Gateways$.refreshCatalog</code><span>Gateways.scala:45</span></li><li><code>Gateways$$anon$1.unsafeRun</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRun$</code><span>Runtime.scala:55</span></li><li><code>scalaz.zio.Runtime.unsafeRun</code><span>Runtime.scala:56</span></li><li><code>Gateways$$anon$1.unsafeRunSync</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRunSync$</code><span>Runtime.scala:64</span></li><li><code>scalaz.zio.Runtime.unsafeRunSync</code><span>Runtime.scala:67</span></li><li><code>Gateways$$anon$1.unsafeRunAsync</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRunAsync$</code><span>Runtime.scala:78</span></li><li><code>scalaz.zio.Runtime.unsafeRunAsync</code><span>Runtime.scala:89</span></li><li><code>scalaz.zio.internal.FiberContext.&lt;init&gt;</code><span>FiberContext.scala:34</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-8">记录 8</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>JDI 在创建现场与工作线程失败时的 captureTrace 中，记录了同一个 FiberContext 对象。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 1 → 8</code></p>
+        </aside><section class="stack observed" id="join-2-record-8"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8 · selected-fiber-boundary</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:624</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1149</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$99.1204167249.run</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateLater$1</code><span>FiberContext.scala:579</span></li><li><code>scalaz.zio.internal.FiberContext.evaluateNow</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.ZIOFunctions$$Lambda$132.1391282511.apply</code></li><li><code>scalaz.zio.ZIOFunctions.$anonfun$fail$1</code><span>ZIO.scala:1168</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$135.1582646412.apply</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateNow$2</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.internal.FiberContext.captureTrace</code><span>FiberContext.scala:118</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8 · selected-fiber-boundary</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:624</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1149</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$99.1204167249.run</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateLater$1</code><span>FiberContext.scala:579</span></li><li><code>scalaz.zio.internal.FiberContext.evaluateNow</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.ZIOFunctions$$Lambda$132.1391282511.apply</code></li><li><code>scalaz.zio.ZIOFunctions.$anonfun$fail$1</code><span>ZIO.scala:1168</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$135.1582646412.apply</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateNow$2</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.internal.FiberContext.captureTrace</code><span>FiberContext.scala:118</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 8 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>两个调用线程启动同一个 effect，随后两个工作线程上的 fiber 都报出相同的错误消息。在 Scalaz ZIO 1.0-RC5 上，原生追踪和失败报告只在 Fiber ID 上有区别。Java 全线程快照能看到两个正在等待的 unsafeRun，但无法把它们对应到各自的工作线程 fiber。应用上游修复后，原生追踪能显示每条 fiber 的 unsafeRun 调用行。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>CoroPerf 通过 JDI 对照创建时的 FiberContext 与工作线程上 captureTrace 使用的对象。用同一对象拼接后，分别找回 Gateways.scala 第 42 行的 importOrders 和第 45 行的 refreshCatalog。每组匹配都有独立记录的 Fiber ID 和工作线程作为核对。</dd></div><div><dt>适用范围与局限</dt><dd>上游问题针对诊断信息缺失。证据来自 Scala 2.12.8 和 JVM 8 上的双 fiber 受控实验，JDI 观测原始 1.0-RC5 运行时。Java 全线程快照记录在两个 unsafeRun 都还在等待时。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

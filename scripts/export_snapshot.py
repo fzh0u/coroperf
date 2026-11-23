@@ -7,10 +7,19 @@ import json
 from pathlib import Path
 import re
 
+from copy_text import ISSUE_KINDS
+
 
 HERE = Path(__file__).resolve().parents[1]
 BASE_EDGES = {"base_to_sample", "create_base_to_sample_stack", "base_to_sample_stack"}
+CANCELLATION_EDGE = "cancel_request_to_observation"
+CANCELLATION_STAGES = {"taskgroup-internal-cancel": "waiter-error", "taskgroup-outer-cancel": "propagated"}
 PARENT_EDGES = {"coroutine_created_by", "goroutine_created_by", "created_by", "parent_to_create"}
+PARENT_WITNESSES = {
+    "scheduled-handle-running-at-task-creation", "actual-rpc-handler-and-submitted-work-item",
+    "same-dequeued-request-in-work-item", "buffered-result-object", "stored-exception-object-handoff",
+    "same-frozen-result-object", "same-singleflight-call-result-channel", "same-pool-holder-release-future",
+}
 CREATE = {"create", "creation"}
 OBSERVATION = {"sample", "cpu_sample", "diagnostic_stacktrace", "task_snapshot"}
 DEFERRED_IDS = {"vllm-project--vllm--30343"}
@@ -25,6 +34,7 @@ INTERNAL_PATH = re.compile(
     r"[^\s<>\]'\"()]+"
 )
 ADDRESS = re.compile(r"\b0x[0-9a-f]{10,}\b", re.IGNORECASE)
+ANSI_COLOR = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]")
 TRACKERS = {"github.com", "code.djangoproject.com", "issues.apache.org", "sqlite.org"}
 CHINESE_HEADLINES = {
     "dotnet--runtime--60764": "Foo 恢复后，物理调用栈里找不到 Main",
@@ -34,7 +44,8 @@ CHINESE_HEADLINES = {
 
 
 def safe_text(value):
-    cleaned = INTERNAL_PATH.sub(lambda m: m.group().replace("\\", "/").rsplit("/", 1)[-1], str(value))
+    text = ANSI_COLOR.sub("", str(value))
+    cleaned = INTERNAL_PATH.sub(lambda m: m.group().replace("\\", "/").rsplit("/", 1)[-1], text)
     return ADDRESS.sub("[address]", cleaned)
 
 
@@ -62,12 +73,18 @@ def frame_list(segment, leaf_first=True):
 
 
 def block(segment, leaf_first):
-    return {
+    record = {
         "id": str(segment["id"]),
         "event": event(segment),
         "sample_kind": segment.get("sample_kind"),
         "frames": frame_list(segment, leaf_first),
     }
+    duration = segment.get("wait_duration_ns")
+    if duration is not None:
+        if type(duration) is not int or duration <= 0:
+            raise ValueError(f"Invalid wait duration for record {record['id']}")
+        record["wait_duration_ns"] = duration
+    return record
 
 
 def instance_labels(segments):
@@ -98,7 +115,8 @@ def raw_parent_edges(graph, segments):
             continue
         if framework_root(a) and edge.get("evidence") != "actual-ReactComponentInfo-owner-object":
             continue
-        parents[child].add((parent, kind))
+        witness = edge.get("evidence")
+        parents[child].add((parent, kind, witness if witness in PARENT_WITNESSES else ""))
     return parents
 
 
@@ -107,13 +125,15 @@ def ancestry(start, segments, parents, leaf_first):
     seen = {start}
     current = start
     while options := parents.get(current):
-        if len({parent for parent, _ in options}) != 1:
+        if len({parent for parent, _, _ in options}) != 1:
             break
-        parent, kind = min(options)
+        parent, kind, witness = min(options)
         if parent in seen or not segments[parent].get("frames"):
             break
         entry = block(segments[parent], leaf_first)
         entry["link_to_child"] = kind
+        if witness:
+            entry["link_evidence"] = witness
         chain.append(entry)
         current = parent
         seen.add(parent)
@@ -139,17 +159,40 @@ def audit_task_id_pair(followup, segments):
     return None
 
 
+def cancellation_witness(request, observation, edge):
+    witness = edge.get("evidence")
+    stage = CANCELLATION_STAGES.get(witness)
+    details = request.get("observation", {})
+    issuer = details.get("issuer")
+    internal = issuer == request.get("target_task")
+    if (stage and details.get("stage") == "cancel" and issuer
+            and internal == (witness == "taskgroup-internal-cancel")
+            and observation.get("observation", {}).get("stage") == stage
+            and request.get("target_task") and request["target_task"] == observation.get("target_task")
+            and request.get("process_id") and request["process_id"] == observation.get("process_id")
+            and request.get("thread_id") and request["thread_id"] == observation.get("thread_id")
+            and int(request["timestamp_ns"]) < int(observation["timestamp_ns"])):
+        return witness
+    return None
+
+
 def evidence_from_graph(graph, ledger, public, required_pairs):
     segments = {str(s["id"]): s for s in graph["segments"]}
     leaf_first = graph.get("frame_order") != "root_to_leaf"
     parents = raw_parent_edges(graph, segments)
     origin = public.get("origin") or {}
     candidates = defaultdict(dict)
+    cancellation = {}
     for edge in graph["edges"]:
-        if edge["kind"] not in BASE_EDGES:
-            continue
+        kind = edge["kind"]
         source, target = str(edge["from"]), str(edge["to"])
-        candidates[target][source] = edge["kind"]
+        if kind in BASE_EDGES:
+            candidates[target][source] = kind
+        elif kind == CANCELLATION_EDGE:
+            witness = cancellation_witness(segments[source], segments[target], edge)
+            if witness:
+                candidates[target][source] = kind
+                cancellation[source, target] = witness
     followup = origin.get("followup") or {}
     if followup.get("graph") == ledger.get("graph") and (task_pair := audit_task_id_pair(followup, segments)):
         source, target = task_pair
@@ -162,7 +205,8 @@ def evidence_from_graph(graph, ledger, public, required_pairs):
         sources = candidates[target]
         a, b = segments[source], segments[target]
         identity = a.get("coroutine_id")
-        if (set(sources) != {source} or event(a) not in CREATE or event(b) not in OBSERVATION
+        source_events = {"cancel_request"} if sources.get(source) == CANCELLATION_EDGE else CREATE
+        if (set(sources) != {source} or event(a) not in source_events or event(b) not in OBSERVATION
                 or not a.get("frames") or not b.get("frames") or identity not in labels
                 or identity != b.get("coroutine_id") or framework_root(a)):
             raise ValueError(f"{ledger['id']}: no verified coroutine join from {source} to {target}")
@@ -170,12 +214,18 @@ def evidence_from_graph(graph, ledger, public, required_pairs):
         ancestors = ancestry(source, segments, parents, leaf_first)
         for record in [*ancestors, creation, observation]:
             record["instance"] = labels[segments[record["id"]]["coroutine_id"]]
+        ownership = b.get("ownership_evidence")
+        identity_kind = producer.get("identity_kind")
+        if ownership in {"actor-entry-argument-dataflow", "active-work-item-object"}:
+            identity_kind = ownership
+        identity_kind = cancellation.get((source, target), identity_kind)
         joins.append({
             "creation": creation,
             "observation": observation,
             "edge": sources[source],
             "ancestors": ancestors,
-            "identity_kind": producer.get("identity_kind"),
+            "identity_kind": identity_kind,
+            "interval_attribution": ownership == "execution-interval",
         })
     return joins
 
@@ -186,7 +236,7 @@ def chinese_case(row):
         "interpretation": safe_text(row["reasoning_zh"]),
         "limits": safe_text(row["limits_zh"]),
     }
-    title = CHINESE_HEADLINES.get(row["id"])
+    title = row.get("title_zh") or CHINESE_HEADLINES.get(row["id"])
     if not title:
         sentences = re.split(r"[。！？\n]", findings["observation"])
         title = next((sentence.strip() for sentence in sentences if len(sentence.strip()) >= 12),
@@ -212,15 +262,26 @@ def main():
     deferred_urls = {row["issue_url"] for row in deferred}
 
     cases = []
+    snapshot_date = index["date"]
     for identifier, review in focus.items():
-        item = index_by_id[identifier]
+        kind = review.get("kind")
+        if kind not in ISSUE_KINDS:
+            raise ValueError(f"{identifier}: expected a reviewed issue type")
+        if review.get("case_file"):
+            row = read_json(workspace / review["case_file"])
+            if row["id"] != identifier:
+                raise ValueError(f"{identifier}: imported case ID differs from the catalog")
+            snapshot_date = max(snapshot_date, row["verified_on"])
+            item, evidence = row, row
+        else:
+            item = index_by_id[identifier]
+            row = by_id[identifier]
+            evidence = read_json(public / "evidence" / f"{identifier}.json")
         if identifier in deferred_ids or item["url"] in deferred_urls:
             raise ValueError(f"{identifier}: deferred from publication")
-        evidence = read_json(public / "evidence" / f"{identifier}.json")
         findings = {key: safe_text(value) for key, value in evidence["findings"].items()}
         if REVIEW.search(" ".join([item["title"], *findings.values()])):
             raise ValueError(f"{identifier}: review required before publication")
-        row = by_id[identifier]
         title_zh, findings_zh = chinese_case(row)
         graph = read_json(workspace / row["graph"])
         joins = evidence_from_graph(graph, row, evidence, review["records"])
@@ -236,6 +297,7 @@ def main():
             "title_zh": title_zh,
             "url": item["url"],
             "upstream_reference": upstream_reference,
+            "kind": kind,
             "reproduction": evidence["reproduction"],
             "diagnosis": evidence["diagnosis"],
             "findings": findings,
@@ -244,7 +306,7 @@ def main():
             "contribution": review["en"],
             "contribution_zh": review["zh"],
         })
-    snapshot = {"corpus_date": index["date"], "cases": cases}
+    snapshot = {"corpus_date": snapshot_date, "cases": cases}
     args.output.write_text(json.dumps(snapshot, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 
 

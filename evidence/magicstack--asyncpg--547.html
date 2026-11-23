@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which cancelled request left the pool waiting for each connection?">
+  <title>MagicStack/asyncpg #547 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/magicstack--asyncpg--547.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="magicstack--asyncpg--547.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/magicstack--asyncpg--547.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">MagicStack/asyncpg #547</p>
+        <h1>Which cancelled request left the pool waiting for each connection?</h1>
+        <div class="case-links"><a href="https://github.com/MagicStack/asyncpg/issues/547">Upstream report ↗</a><a href="https://github.com/MagicStack/asyncpg/pull/608">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Both shutdown waiters stop at the same line. The exact release Future on each holder connects that blocked stack to the original application request, even after the acquiring Task has been collected.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 8</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 3</code></a><a href="#join-1-point-2">Join point 2 <code>3 → 6</code></a><a href="#join-1-point-3">Join point 3 <code>6 → 8</code></a></nav>
+          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:156</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:570</span></li><li><code>run_forever</code><span>base_events.py:538</span></li><li><code>_run_once</code><span>base_events.py:1774</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>replay.py:92</span></li><li><code>&lt;listcomp&gt;</code><span>replay.py:92</span></li><li><code>start_refresh</code><span>replay.py:36</span></li><li><code>ensure_future</code><span>tasks.py:608</span></li><li><code>create_task</code><span>base_events.py:408</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-1-record-3">Record 3</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 3 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-3"><div class="stack-head"><h4>Connection acquisition Task&#x27;s creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:156</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:570</span></li><li><code>run_forever</code><span>base_events.py:538</span></li><li><code>_run_once</code><span>base_events.py:1774</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>use_connection</code><span>replay.py:27</span></li><li><code>__aenter__</code><span>pool.py:773</span></li><li><code>_acquire</code><span>pool.py:616</span></li><li><code>wait_for</code><span>tasks.py:429</span></li><li><code>ensure_future</code><span>tasks.py:608</span></li><li><code>create_task</code><span>base_events.py:408</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">Join point 2</a><strong>Connection acquisition → shutdown wait</strong></div>
+          <p class="join-records"><a href="#join-1-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-1-record-6">Record 6</a></p>
+          <p>The acquisition stores the holder's release Future. The shutdown Task later awaits that exact Future on the same holder.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 3 → 6</code></p>
+        </aside><section class="stack " id="join-1-record-6"><div class="stack-head"><h4>Creation stack</h4><span>Record 6</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:156</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:570</span></li><li><code>run_forever</code><span>base_events.py:538</span></li><li><code>_run_once</code><span>base_events.py:1774</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>close</code><span>pool.py:685</span></li><li><code>gather</code><span>tasks.py:746</span></li><li><code>ensure_future</code><span>tasks.py:608</span></li><li><code>create_task</code><span>base_events.py:408</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-3" aria-label="Join point 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-3">Join point 3</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-6">Record 6</a><span aria-hidden="true">→</span><a href="#join-1-record-8">Record 8</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The pending snapshot identifies the same asyncio Task recorded when the pool started waiting for this holder.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 6 → 8</code></p>
+        </aside><section class="stack observed" id="join-1-record-8"><div class="stack-head"><h4>Observed task stack</h4><span>Record 8 · task_snapshot</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>wait_until_released</code><span>pool.py:229</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 8 · task_snapshot</span></div><ol class="frames"><li><code>wait_until_released</code><span>pool.py:229</span></li></ol></section>
+          <p class="small trace-note">Frames from record 8 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 9</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>0 → 2</code></a><a href="#join-2-point-2">Join point 2 <code>2 → 7</code></a><a href="#join-2-point-3">Join point 3 <code>7 → 9</code></a></nav>
+          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:156</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:570</span></li><li><code>run_forever</code><span>base_events.py:538</span></li><li><code>_run_once</code><span>base_events.py:1774</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>replay.py:92</span></li><li><code>&lt;listcomp&gt;</code><span>replay.py:92</span></li><li><code>start_report</code><span>replay.py:32</span></li><li><code>ensure_future</code><span>tasks.py:608</span></li><li><code>create_task</code><span>base_events.py:408</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-2-record-2">Record 2</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 2 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-2"><div class="stack-head"><h4>Connection acquisition Task&#x27;s creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:156</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:570</span></li><li><code>run_forever</code><span>base_events.py:538</span></li><li><code>_run_once</code><span>base_events.py:1774</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>use_connection</code><span>replay.py:27</span></li><li><code>__aenter__</code><span>pool.py:773</span></li><li><code>_acquire</code><span>pool.py:616</span></li><li><code>wait_for</code><span>tasks.py:429</span></li><li><code>ensure_future</code><span>tasks.py:608</span></li><li><code>create_task</code><span>base_events.py:408</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">Join point 2</a><strong>Connection acquisition → shutdown wait</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-2-record-7">Record 7</a></p>
+          <p>The acquisition stores the holder's release Future. The shutdown Task later awaits that exact Future on the same holder.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 2 → 7</code></p>
+        </aside><section class="stack " id="join-2-record-7"><div class="stack-head"><h4>Creation stack</h4><span>Record 7</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:156</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:570</span></li><li><code>run_forever</code><span>base_events.py:538</span></li><li><code>_run_once</code><span>base_events.py:1774</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>close</code><span>pool.py:685</span></li><li><code>gather</code><span>tasks.py:746</span></li><li><code>ensure_future</code><span>tasks.py:608</span></li><li><code>create_task</code><span>base_events.py:408</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-3" aria-label="Join point 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-3">Join point 3</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-7">Record 7</a><span aria-hidden="true">→</span><a href="#join-2-record-9">Record 9</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The pending snapshot identifies the same asyncio Task recorded when the pool started waiting for this holder.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 7 → 9</code></p>
+        </aside><section class="stack observed" id="join-2-record-9"><div class="stack-head"><h4>Observed task stack</h4><span>Record 9 · task_snapshot</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>wait_until_released</code><span>pool.py:229</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 9 · task_snapshot</span></div><ol class="frames"><li><code>wait_until_released</code><span>pool.py:229</span></li></ol></section>
+          <p class="small trace-note">Frames from record 9 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Both timed acquisitions complete internally just before their requesting Tasks are cancelled. On 0.20.1 neither request enters its connection context, and the pool waits for both slots after both acquisition Tasks and requesting Tasks are collected. The native Task stacks and coroutine origins lead to the common shutdown path. Future creation traces and tracemalloc show the same release-Future allocation for both.</dd></div><div><dt>What CoroPerf showed</dt><dd>The probe records the same release Future and holder at acquisition and shutdown. It connects the blocked Task to the acquisition Task, then follows its creation to the original request. Records 1 → 3 → 6 → 8 recover start_refresh. Records 0 → 2 → 7 → 9 recover start_report. Without the release-Future edges both observed waits end at the common shutdown path.</dd></div><div><dt>Scope and limits</dt><dd>The replay uses a two-slot pool on CPython 3.7.6 and PostgreSQL 11.22. It schedules cancellation after both internal acquisitions complete, while the requests still await their results. Two batches verify eight blocked joins in both launch orders and 24 successful close controls, including 0.22.0 with the same cancellation schedule. The 150 ms wait is an observation bound.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

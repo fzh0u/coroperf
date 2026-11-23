@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Bun 嵌套轮询拖延的两个协程由谁发起？">
+  <title>oven-sh/bun #45020 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/oven-sh--bun--45020.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/oven-sh--bun--45020.html" lang="en" hreflang="en">English</a><a href="oven-sh--bun--45020.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">oven-sh/bun #45020</p>
+        <h1>Bun 嵌套轮询拖延的两个协程由谁发起？</h1>
+        <div class="case-links"><a href="https://github.com/oven-sh/bun/issues/45020">上游报告 ↗</a><a href="https://github.com/oven-sh/bun/pull/44833">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>两个已就绪的协程被同一次长轮询拖延。按实际 Promise 对象拼回创建栈，即使后发起的协程先恢复，也能找出各自的调用者。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 2</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 2</code></a></nav>
+          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>hops.test.ts:70</span></li><li><code>map</code><span>native:1</span></li><li><code>launchInventory</code><span>hops.test.ts:58</span></li><li><code>work</code><span>hops.test.ts:39</span></li><li><code>makeHop</code><span>hops.test.ts:27</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>创建钩子登记实际运行时对象。采样时按对象引用身份从同一张弱引用表找到对应的令牌。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 2</code></p>
+        </aside><section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>hops.test.ts:78</span></li><li><code>toEqual</code></li><li><code>work</code><span>hops.test.ts:42</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>hops.test.ts:78</span></li><li><code>toEqual</code></li><li><code>work</code><span>hops.test.ts:42</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 2 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>0 → 3</code></a></nav>
+          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>hops.test.ts:70</span></li><li><code>map</code><span>native:1</span></li><li><code>launchProfile</code><span>hops.test.ts:51</span></li><li><code>work</code><span>hops.test.ts:39</span></li><li><code>makeHop</code><span>hops.test.ts:27</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>创建钩子登记实际运行时对象。采样时按对象引用身份从同一张弱引用表找到对应的令牌。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 3</code></p>
+        </aside><section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>hops.test.ts:78</span></li><li><code>toEqual</code></li><li><code>work</code><span>hops.test.ts:42</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>hops.test.ts:78</span></li><li><code>toEqual</code></li><li><code>work</code><span>hops.test.ts:42</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>在展示的 Bun 1.4.3 运行中，两个 immediate 都已兑现各自的 Promise，随后同一次 epoll_pwait2 等了约 165 毫秒，返回 0 个事件。两个 await 都在这次轮询返回后才恢复。普通栈完全相同。原生 Inspector 能沿异步父栈追到 setImmediate 和共享调度位置，两条栈均缺少原始发起者。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>CoroPerf 在每一跳创建时登记实际 Promise 对象。恢复后，用刚才 await 的同一个对象查询 WeakMap，接回对应的创建栈。即使后发起的调用先恢复，记录 1 → 2 仍指向 launchInventory，0 → 3 仍指向 launchProfile。系统调用追踪中的兑现与恢复时间点把两条拼接栈都关联到同一次轮询。移除 Promise 身份后，两条采样均无法归属。</dd></div><div><dt>适用范围与局限</dt><dd>复现在 Linux x86-64 上运行，使用两个 immediate Promise 和一个本地回环监听 socket。实验将 GC 定时器间隔设为 180 毫秒。1.4.3 和 1.4.5 都出现长等，直接 await 和 canary dac8e3b0f 都很快恢复。探针在应用代码的观测点记录 Promise 对象。两批实验共核对 48 条拼接，覆盖 canary 对照，并分别交换发起和派发顺序。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

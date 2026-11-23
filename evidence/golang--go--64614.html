@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Who triggered each replacement dial on the shared SQL opener?">
+  <title>golang/go #64614 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/golang--go--64614.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="golang--go--64614.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/golang--go--64614.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">golang/go #64614</p>
+        <h1>Who triggered each replacement dial on the shared SQL opener?</h1>
+        <div class="case-links"><a href="https://github.com/golang/go/issues/64614">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>Upstream status</dt><dd>Open</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Matching a buffered opener signal&#x27;s FIFO position and the actual dial interval connects identical opener stacks to the two callers that invalidated connections.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 3</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>0 → 3</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:174</span></li><li><code>main.discardProfile</code><span>replay.go:86</span></li><li><code>main.discard</code><span>replay.go:81</span></li><li><code>database/sql.(*Conn).Raw</code><span>sql.go:2056</span></li><li><code>database/sql.(*Conn).Raw.func1</code><span>sql.go:2051</span></li><li><code>database/sql.(*Conn).closemuRUnlockCondReleaseConn</code><span>sql.go:2082</span></li><li><code>database/sql.(*Conn).close</code><span>sql.go:2100</span></li><li><code>database/sql.(*driverConn).releaseConn</code><span>sql.go:528</span></li><li><code>database/sql.(*DB).putConn</code><span>sql.go:1478</span></li><li><code>database/sql.(*driverConn).Close</code><span>sql.go:624</span></li><li><code>database/sql.(*driverConn).finalClose</code><span>sql.go:651</span></li><li><code>database/sql.(*DB).maybeOpenNewConnections</code><span>sql.go:1213</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-3">Record 3</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The sample falls within one dial interval. The corresponding receive and send occupy the same FIFO position on the recorded opener channel.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 0 → 3</code></p>
+        </aside><section class="stack observed" id="join-1-record-3"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:140</span></li><li><code>database/sql.OpenDB</code><span>sql.go:794</span></li><li><code>created by database/sql.OpenDB</code><span>sql.go:792</span></li><li><code>database/sql.(*DB).connectionOpener</code><span>sql.go:1225</span></li><li><code>database/sql.(*DB).openNewConnection</code><span>sql.go:1236</span></li><li><code>main.(*gatedConnector).Connect</code><span>replay.go:39</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:140</span></li><li><code>database/sql.OpenDB</code><span>sql.go:794</span></li><li><code>created by database/sql.OpenDB</code><span>sql.go:792</span></li><li><code>database/sql.(*DB).connectionOpener</code><span>sql.go:1225</span></li><li><code>database/sql.(*DB).openNewConnection</code><span>sql.go:1236</span></li><li><code>main.(*gatedConnector).Connect</code><span>replay.go:39</span></li></ol></section>
+          <p class="small trace-note">Frames from record 3 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>1 → 6</code></a></nav>
+          <section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:174</span></li><li><code>main.discardInventory</code><span>replay.go:89</span></li><li><code>main.discard</code><span>replay.go:81</span></li><li><code>database/sql.(*Conn).Raw</code><span>sql.go:2056</span></li><li><code>database/sql.(*Conn).Raw.func1</code><span>sql.go:2051</span></li><li><code>database/sql.(*Conn).closemuRUnlockCondReleaseConn</code><span>sql.go:2082</span></li><li><code>database/sql.(*Conn).close</code><span>sql.go:2100</span></li><li><code>database/sql.(*driverConn).releaseConn</code><span>sql.go:528</span></li><li><code>database/sql.(*DB).putConn</code><span>sql.go:1478</span></li><li><code>database/sql.(*driverConn).Close</code><span>sql.go:624</span></li><li><code>database/sql.(*driverConn).finalClose</code><span>sql.go:651</span></li><li><code>database/sql.(*DB).maybeOpenNewConnections</code><span>sql.go:1213</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-6">Record 6</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The sample falls within one dial interval. The corresponding receive and send occupy the same FIFO position on the recorded opener channel.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 1 → 6</code></p>
+        </aside><section class="stack observed" id="join-2-record-6"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:140</span></li><li><code>database/sql.OpenDB</code><span>sql.go:794</span></li><li><code>created by database/sql.OpenDB</code><span>sql.go:792</span></li><li><code>database/sql.(*DB).connectionOpener</code><span>sql.go:1225</span></li><li><code>database/sql.(*DB).openNewConnection</code><span>sql.go:1236</span></li><li><code>main.(*gatedConnector).Connect</code><span>replay.go:39</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6</span></div><ol class="frames"><li><code>main.main</code><span>replay.go:140</span></li><li><code>database/sql.OpenDB</code><span>sql.go:794</span></li><li><code>created by database/sql.OpenDB</code><span>sql.go:792</span></li><li><code>database/sql.(*DB).connectionOpener</code><span>sql.go:1225</span></li><li><code>database/sql.(*DB).openNewConnection</code><span>sql.go:1236</span></li><li><code>main.(*gatedConnector).Connect</code><span>replay.go:39</span></li></ol></section>
+          <p class="small trace-note">Frames from record 6 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The pool reports three open connections while the driver has zero live connections, and a fourth waiter times out. The first replacement dial is held while two subsequent opening signals enter the buffer. Go&#x27;s goroutine profile with ancestor stacks and the dial stacks identify the same opener created by OpenDB. The execution trace records a direct wake for the initial signal. The later buffered signals leave no opener transition identifying either caller.</dd></div><div><dt>What CoroPerf showed</dt><dd>The probe records completed sends and receives on the same opener channel. The pool mutex serializes the sends, and one goroutine receives them in FIFO order. A dial stack with no request ID falls between the receive and finish of one opening interval. The displayed joins connect that interval back to discardProfile (records 0 → 3) or discardInventory (1 → 6). Withholding the receive-to-finish intervals leaves both samples unassigned.</dd></div><div><dt>Scope and limits</dt><dd>This is a bounded standard-library replay on Linux x86-64 using Go 1.20.6 and 1.26.8 and a gated in-memory driver. The fixture returns ErrBadConn through Conn.Raw and controls dial completion. The probe leaves the channel and its empty payload unchanged. Two independent batches verify 16 caller joins across both releases and both discard orders.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

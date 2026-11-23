@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="哪个调用者引发了额外的协程帧分配？">
+  <title>llvm/llvm-project #56972 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/llvm--llvm-project--56972.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/llvm--llvm-project--56972.html" lang="en" hreflang="en">English</a><a href="llvm--llvm-project--56972.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">llvm/llvm-project #56972</p>
+        <h1>哪个调用者引发了额外的协程帧分配？</h1>
+        <div class="case-links"><a href="https://github.com/llvm/llvm-project/issues/56972">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>两次额外分配返回相同的子协程帧地址。用机器码数据流恢复两个不同的活动父协程帧，就能把分配现场分别接回最初的应用调用者。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 3</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 3</code></a></nav>
+          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:104</span></li><li><code>launch_profile</code><span>replay.cpp:73</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>CoroPerf 沿机器码的数据流，从寄存器和栈字节还原恢复函数接收的协程帧地址，再将它匹配到创建时记录且在采样时仍存活的实例。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 3</code></p>
+        </aside><section class="stack observed" id="join-1-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3 · selected-native-boundary</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:114</span></li><li><code>drain</code><span>replay.cpp:87</span></li><li><code>resume_shared</code><span>replay.cpp:82</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3 · selected-native-boundary</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:114</span></li><li><code>drain</code><span>replay.cpp:87</span></li><li><code>resume_shared</code><span>replay.cpp:82</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>2 → 4</code></a></nav>
+          <section class="stack " id="join-2-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:105</span></li><li><code>launch_inventory</code><span>replay.cpp:77</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-2-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>CoroPerf 沿机器码的数据流，从寄存器和栈字节还原恢复函数接收的协程帧地址，再将它匹配到创建时记录且在采样时仍存活的实例。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 2 → 4</code></p>
+        </aside><section class="stack observed" id="join-2-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · selected-native-boundary</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:114</span></li><li><code>drain</code><span>replay.cpp:87</span></li><li><code>resume_shared</code><span>replay.cpp:82</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · selected-native-boundary</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:114</span></li><li><code>drain</code><span>replay.cpp:87</span></li><li><code>resume_shared</code><span>replay.cpp:82</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>在 Clang 19 的 -O2 构建中，使用 await_resume 销毁子协程时，Bar 恢复期间会为 Baz 多做一次 48 字节的堆分配。析构函数对照把 Baz 的帧头初始化在 Bar 帧内偏移 24 字节的位置。执行两个请求时，两种写法分别调用分配函数 6 次和 4 次。在额外分配处，带符号的 GDB 对两个实例显示完全相同的内联 Baz、Bar 和调度栈，两者均缺少原始发起者。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>在去符号的 ELF 上，分配函数把新分配的内存指针放入 rax，随后指令在该地址写入 Baz 的恢复和销毁指针。CoroPerf 按机器码数据流，从 rbx 保存的恢复参数还原两个不同的活动 Bar 帧，再用各自存活的创建记录，接回 launch_profile 和 launch_inventory。展示运行中，分配器为两次 Baz 分配返回了同一个地址。去掉 Bar 的恢复模型或创建历史后，两次观测均无法归属。</dd></div><div><dt>适用范围与局限</dt><dd>本实验在同一线程调度旧档案中 C++20 示例的两个实例。Linux x86-64 的 Clang 19.1.7 构建省略帧指针。采样由指令地址触发，使用从去掉应用符号与展开表的 ELF 进程采得的寄存器和栈字节。构建地址图时不使用额外的函数边界文件或已记录的恢复区间，之后再添加调试名称。两批实验共核对 32 条拼接，覆盖两种帧布局，并分别交换创建和调度顺序。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

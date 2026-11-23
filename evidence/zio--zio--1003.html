@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which unsafeRun call started each failed ZIO fiber?">
+  <title>zio/zio #1003 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/zio--zio--1003.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="zio--zio--1003.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/zio--zio--1003.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">zio/zio #1003</p>
+        <h1>Which unsafeRun call started each failed ZIO fiber?</h1>
+        <div class="case-links"><a href="https://github.com/zio/zio/issues/1003">Upstream report ↗</a><a href="https://github.com/zio/zio/commit/f704619df831af8d5e831c943af135494bceeeed">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The two worker failures have the same native trace. Matching each FiberContext receiver to its construction recovers the precise unsafeRun caller.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 9</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>0 → 9</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>Gateways$$anon$2.run</code><span>Gateways.scala:50</span></li><li><code>Gateways$$$Lambda$30.644166178.apply</code></li><li><code>Gateways$.$anonfun$main$2</code><span>Gateways.scala:61</span></li><li><code>Gateways$.importOrders</code><span>Gateways.scala:42</span></li><li><code>Gateways$$anon$1.unsafeRun</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRun$</code><span>Runtime.scala:55</span></li><li><code>scalaz.zio.Runtime.unsafeRun</code><span>Runtime.scala:56</span></li><li><code>Gateways$$anon$1.unsafeRunSync</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRunSync$</code><span>Runtime.scala:64</span></li><li><code>scalaz.zio.Runtime.unsafeRunSync</code><span>Runtime.scala:67</span></li><li><code>Gateways$$anon$1.unsafeRunAsync</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRunAsync$</code><span>Runtime.scala:78</span></li><li><code>scalaz.zio.Runtime.unsafeRunAsync</code><span>Runtime.scala:89</span></li><li><code>scalaz.zio.internal.FiberContext.&lt;init&gt;</code><span>FiberContext.scala:34</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-9">Record 9</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>JDI records the same FiberContext object at construction and at captureTrace on the worker failure path.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 0 → 9</code></p>
+        </aside><section class="stack observed" id="join-1-record-9"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9 · selected-fiber-boundary</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:624</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1149</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$99.1204167249.run</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateLater$1</code><span>FiberContext.scala:579</span></li><li><code>scalaz.zio.internal.FiberContext.evaluateNow</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.ZIOFunctions$$Lambda$132.1391282511.apply</code></li><li><code>scalaz.zio.ZIOFunctions.$anonfun$fail$1</code><span>ZIO.scala:1168</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$135.1582646412.apply</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateNow$2</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.internal.FiberContext.captureTrace</code><span>FiberContext.scala:118</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9 · selected-fiber-boundary</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:624</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1149</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$99.1204167249.run</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateLater$1</code><span>FiberContext.scala:579</span></li><li><code>scalaz.zio.internal.FiberContext.evaluateNow</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.ZIOFunctions$$Lambda$132.1391282511.apply</code></li><li><code>scalaz.zio.ZIOFunctions.$anonfun$fail$1</code><span>ZIO.scala:1168</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$135.1582646412.apply</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateNow$2</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.internal.FiberContext.captureTrace</code><span>FiberContext.scala:118</span></li></ol></section>
+          <p class="small trace-note">Frames from record 9 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 8</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>1 → 8</code></a></nav>
+          <section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>Gateways$$anon$2.run</code><span>Gateways.scala:50</span></li><li><code>Gateways$$$Lambda$31.892529689.apply</code></li><li><code>Gateways$.$anonfun$main$3</code><span>Gateways.scala:62</span></li><li><code>Gateways$.refreshCatalog</code><span>Gateways.scala:45</span></li><li><code>Gateways$$anon$1.unsafeRun</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRun$</code><span>Runtime.scala:55</span></li><li><code>scalaz.zio.Runtime.unsafeRun</code><span>Runtime.scala:56</span></li><li><code>Gateways$$anon$1.unsafeRunSync</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRunSync$</code><span>Runtime.scala:64</span></li><li><code>scalaz.zio.Runtime.unsafeRunSync</code><span>Runtime.scala:67</span></li><li><code>Gateways$$anon$1.unsafeRunAsync</code><span>Gateways.scala:8</span></li><li><code>scalaz.zio.Runtime.unsafeRunAsync$</code><span>Runtime.scala:78</span></li><li><code>scalaz.zio.Runtime.unsafeRunAsync</code><span>Runtime.scala:89</span></li><li><code>scalaz.zio.internal.FiberContext.&lt;init&gt;</code><span>FiberContext.scala:34</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-8">Record 8</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>JDI records the same FiberContext object at construction and at captureTrace on the worker failure path.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 1 → 8</code></p>
+        </aside><section class="stack observed" id="join-2-record-8"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8 · selected-fiber-boundary</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:624</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1149</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$99.1204167249.run</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateLater$1</code><span>FiberContext.scala:579</span></li><li><code>scalaz.zio.internal.FiberContext.evaluateNow</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.ZIOFunctions$$Lambda$132.1391282511.apply</code></li><li><code>scalaz.zio.ZIOFunctions.$anonfun$fail$1</code><span>ZIO.scala:1168</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$135.1582646412.apply</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateNow$2</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.internal.FiberContext.captureTrace</code><span>FiberContext.scala:118</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8 · selected-fiber-boundary</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:750</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:624</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1149</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$99.1204167249.run</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateLater$1</code><span>FiberContext.scala:579</span></li><li><code>scalaz.zio.internal.FiberContext.evaluateNow</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.ZIOFunctions$$Lambda$132.1391282511.apply</code></li><li><code>scalaz.zio.ZIOFunctions.$anonfun$fail$1</code><span>ZIO.scala:1168</span></li><li><code>scalaz.zio.internal.FiberContext$$Lambda$135.1582646412.apply</code></li><li><code>scalaz.zio.internal.FiberContext.$anonfun$evaluateNow$2</code><span>FiberContext.scala:328</span></li><li><code>scalaz.zio.internal.FiberContext.captureTrace</code><span>FiberContext.scala:118</span></li></ol></section>
+          <p class="small trace-note">Frames from record 8 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Two caller threads launch the same effect, and both worker fibers fail with the same message. On Scalaz ZIO 1.0-RC5, the native trace and failure report differ only in Fiber ID. An all-thread Java stack snapshot shows both blocked unsafeRun calls but no link to a particular worker fiber. On the upstream fix, each native fiber trace includes its own unsafeRun source line.</dd></div><div><dt>What CoroPerf showed</dt><dd>CoroPerf matches the actual FiberContext receiver observed by JDI at construction to the receiver of captureTrace on the worker failure path. The two joins recover importOrders at Gateways.scala line 42 and refreshCatalog at line 45. Each pair is checked against the separately recorded runtime Fiber ID and worker thread.</dd></div><div><dt>Scope and limits</dt><dd>The issue reports missing diagnostics. This case uses a controlled two-fiber replay on Scala 2.12.8 and JVM 8, with JDI observing the original 1.0-RC5 runtime. The Java stack snapshot is taken while both unsafeRun calls are active.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="在初报 MySQL 5.6 环境和后续 PostgreSQL 方言上，公开的原始路由在预编译时丢失调用行">
+  <title>knex/knex #4531 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/knex--knex--4531.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/knex--knex--4531.html" lang="en" hreflang="en">English</a><a href="knex--knex--4531.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">knex/knex #4531</p>
+        <h1>在初报 MySQL 5.6 环境和后续 PostgreSQL 方言上，公开的原始路由在预编译时丢失调用行</h1>
+        <div class="case-links"><a href="https://github.com/knex/knex/issues/4531">上游报告 ↗</a><a href="https://github.com/knex/knex/issues/2253#issuecomment-1445331806">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>拒绝发生时的栈起于 Knex 查询编译。匹配被拒绝的 Promise 后，可以补回 await 之前 runCase 发起查询的代码行。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 21</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>9 → 21</code></a></nav>
+          <section class="stack " id="join-1-record-9"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 9</span><span class="record-instance">实例首次见于记录 9</span></div><ol class="frames"><li><code>Object.&lt;anonymous&gt;</code><span>repro.js:32</span></li><li><code>&lt;anonymous&gt;</code><span>repro.js:30</span></li><li><code>runCase</code><span>repro.js:21</span></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-9">记录 9</a><span aria-hidden="true">→</span><a href="#join-1-record-21">记录 21</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 9 → 21</code></p>
+        </aside><section class="stack observed" id="join-1-record-21"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 21 · diagnostic</span><span class="record-instance">实例首次见于记录 9</span></div><ol class="frames"><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Target.then</code><span>builder-interface-augmenter.js:24</span></li><li><code>knexWrapper.client.runner</code><span>original.cjs:21</span></li><li><code>Builder.toSQL</code><span>querybuilder.js:78</span></li><li><code>QueryCompiler_MySQL.toSQL</code><span>querycompiler.js:110</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 21 · diagnostic</span></div><ol class="frames"><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Target.then</code><span>builder-interface-augmenter.js:24</span></li><li><code>knexWrapper.client.runner</code><span>original.cjs:21</span></li><li><code>Builder.toSQL</code><span>querybuilder.js:78</span></li><li><code>QueryCompiler_MySQL.toSQL</code><span>querycompiler.js:110</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 21 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>在初报 MySQL 5.6 环境和后续 PostgreSQL 方言上，公开的原始路由在预编译时丢失调用行。报告者的路由加 wrapper 追踪，恢复关闭评论中公开回调的第 22 行。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>coroPerf 将两个未处理拒绝各自绑定到公开程序第 21 行创建的 Promise，异常经过 相应方言的 QueryCompiler.toSQL、路由和 Target.then。第 22 行的 builder 调用由 Knex 配置对照独立确认。另一组按截图执行三秒定时器与 FIRST 查询；有效绑定分别读回 reader/writer 行 17，无效绑定没有发送目标 SELECT。</dd></div><div><dt>适用范围与局限</dt><dd>关闭评论提供 SQLite 调用程序，此处原样保留回调并替换数据库工厂。定时器调用可见，私有 getRow 与 sql.ts 未公开，helper 为本地实现。复开的 PostgreSQL 实际版本未知，两库在同一实例，未模拟复制。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

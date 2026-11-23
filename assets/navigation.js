@@ -1,5 +1,4 @@
-const languageSwitch = document.getElementById("language-switch");
-const alternate = languageSwitch.getAttribute("href");
+const languageLinks = Array.from(document.querySelectorAll(".languages a"), link => [link, link.getAttribute("href")]);
 
 function revealFragment(hash, scroll) {
   const target = document.getElementById(hash.slice(1));
@@ -15,13 +14,20 @@ function revealFragment(hash, scroll) {
 }
 
 function followFragment() {
-  languageSwitch.setAttribute("href", alternate + location.hash);
+  for (const [link, path] of languageLinks) {
+    link.setAttribute("href", path + location.hash);
+  }
   revealFragment(location.hash, true);
 }
 
 window.addEventListener("pageshow", followFragment);
 window.addEventListener("hashchange", followFragment);
-languageSwitch.addEventListener("click", () => languageSwitch.setAttribute("href", alternate + location.hash));
+for (const [link, path] of languageLinks) {
+  link.addEventListener("click", () => {
+    link.setAttribute("href", path + location.hash);
+  });
+}
+
 document.addEventListener("click", event => {
   const link = event.target.closest("a[href^='#']");
   if (link) revealFragment(link.hash, link.hash === location.hash);

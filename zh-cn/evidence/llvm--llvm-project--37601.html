@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="报出旧线程 ID 的协程由哪个调用者发起？">
+  <title>llvm/llvm-project #37601 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/llvm--llvm-project--37601.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/llvm--llvm-project--37601.html" lang="en" hreflang="en">English</a><a href="llvm--llvm-project--37601.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">llvm/llvm-project #37601</p>
+        <h1>报出旧线程 ID 的协程由哪个调用者发起？</h1>
+        <div class="case-links"><a href="https://github.com/llvm/llvm-project/issues/37601">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>功能故障与正确性问题</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>同一个工作线程的调用栈和旧线程 ID 对应两个不同的协程实例。CoroPerf 用去符号的机器码定位各自恢复的帧，再拼回创建栈找出原始调用者。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 3</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>2 → 3</code></a></nav>
+          <section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>main</code><span>driver.cpp:54</span></li><li><code>launch_inventory</code><span>driver.cpp:30</span></li><li><code>test</code><span>test.cpp:10</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>CoroPerf 沿机器码的数据流，从寄存器和栈字节还原恢复函数接收的协程帧地址，再将它匹配到创建时记录且在采样时仍存活的实例。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 2 → 3</code></p>
+        </aside><section class="stack observed" id="join-1-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3 · selected-native-boundary</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>void* std::__1::__thread_proxy&lt;std::__1::tuple&lt;std::__1::unique_ptr&lt;std::__1::__thread_struct, std::__1::default_delete&lt;std::__1::__thread_struct&gt; &gt;, void </code><span>thread:352</span></li><li><code>worker_run</code><span>driver.cpp:43</span></li><li><code>resume_shared</code><span>driver.cpp:38</span></li><li><code>test</code><span>test.cpp:13</span></li><li><code>observe</code><span>driver.cpp:18</span></li><li><code>after_sample</code><span>driver.cpp:10</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3 · selected-native-boundary</span></div><ol class="frames"><li><code>void* std::__1::__thread_proxy&lt;std::__1::tuple&lt;std::__1::unique_ptr&lt;std::__1::__thread_struct, std::__1::default_delete&lt;std::__1::__thread_struct&gt; &gt;, void </code><span>thread:352</span></li><li><code>worker_run</code><span>driver.cpp:43</span></li><li><code>resume_shared</code><span>driver.cpp:38</span></li><li><code>test</code><span>test.cpp:13</span></li><li><code>observe</code><span>driver.cpp:18</span></li><li><code>after_sample</code><span>driver.cpp:10</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>1 → 4</code></a></nav>
+          <section class="stack " id="join-2-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>main</code><span>driver.cpp:53</span></li><li><code>launch_profile</code><span>driver.cpp:24</span></li><li><code>test</code><span>test.cpp:10</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>CoroPerf 沿机器码的数据流，从寄存器和栈字节还原恢复函数接收的协程帧地址，再将它匹配到创建时记录且在采样时仍存活的实例。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 4</code></p>
+        </aside><section class="stack observed" id="join-2-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · selected-native-boundary</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>void* std::__1::__thread_proxy&lt;std::__1::tuple&lt;std::__1::unique_ptr&lt;std::__1::__thread_struct, std::__1::default_delete&lt;std::__1::__thread_struct&gt; &gt;, void </code><span>thread:352</span></li><li><code>worker_run</code><span>driver.cpp:43</span></li><li><code>resume_shared</code><span>driver.cpp:38</span></li><li><code>test</code><span>test.cpp:13</span></li><li><code>observe</code><span>driver.cpp:18</span></li><li><code>after_sample</code><span>driver.cpp:10</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · selected-native-boundary</span></div><ol class="frames"><li><code>void* std::__1::__thread_proxy&lt;std::__1::tuple&lt;std::__1::unique_ptr&lt;std::__1::__thread_struct, std::__1::default_delete&lt;std::__1::__thread_struct&gt; &gt;, void </code><span>thread:352</span></li><li><code>worker_run</code><span>driver.cpp:43</span></li><li><code>resume_shared</code><span>driver.cpp:38</span></li><li><code>test</code><span>test.cpp:13</span></li><li><code>observe</code><span>driver.cpp:18</span></li><li><code>after_sample</code><span>driver.cpp:10</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>在 Clang 6.0.0 的 -O2 构建中，同一协程的两个实例在同一工作线程恢复，并打印出相同的旧 pthread ID。对照调用和 Linux TID 都显示恢复发生在工作线程。带完整符号的 GDB 为两次恢复显示相同的函数与指令地址，而且缺少两个发起者。同线程和 -O0 对照都报告当前线程 ID。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>该构建的创建代码把首次 pthread_self 的结果写到协程帧偏移 0x18，恢复代码从该位置取回旧值并传给日志。CoroPerf 根据去符号后机器码的数据流，从寄存器和栈字节还原各次恢复的帧地址，再接回对应的创建栈。记录 2 → 3 恢复 launch_inventory，1 → 4 恢复 launch_profile。去掉恢复函数的机器码模型或创建历史，两条观测均无法归属。</dd></div><div><dt>适用范围与局限</dt><dd>这是对旧档案中 Linux x86-64 Coroutines TS 复现的双调用者扩展。应用以省略帧指针的选项编译，并从优化后的 ELF 中去掉应用符号与栈展开表。数字地址指定采集点，基于地址的图构建完才加载调试符号显示函数名。两批各 8 条拼接都与实际恢复的句柄一致。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

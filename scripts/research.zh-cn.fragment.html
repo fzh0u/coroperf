@@ -8,6 +8,66 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>asyncpg #547 · 哪些请求借出了让连接池无法关闭的连接？</h3>
+      <p>关闭连接池卡住时，两个原始请求的 Task 都已回收。任务栈与分配追踪显示两个归还 Future 都来自同一行库代码。CoroPerf 根据实际的 Future 找到各自的连接获取记录，再接回应用调用者。</p>
+      <a href="evidence/magicstack--asyncpg--547.html#call-stack">比较两条从连接获取到关闭等待的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>SQLAlchemy #13689 · 后来读取失败的缓存条目由谁写入？</h3>
+      <p>两个写入 Task 已被回收，两次读取在同一行库代码报错，分配栈也相同。CoroPerf 根据实际的 <code>FrozenResult</code>，将每条读取异常接回原始写入者。</p>
+      <a href="evidence/sqlalchemy--sqlalchemy--13689.html#call-stack">比较两个缓存条目的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #157157 · 哪一次取消产生了最终异常？</h3>
+      <p>同一个 Task 接受两次取消。事件循环停顿时，最终异常来自先前已取消的 Future，外部请求的消息丢失。CoroPerf 用实际 Task 和 Future 的状态接回两条取消请求栈。</p>
+      <a href="evidence/python--cpython--157157.html#call-stack">比较两条取消请求的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Nuitka #4073 · 注入异步生成器的异常最初由谁发起？</h3>
+      <p>受影响版本丢失 <code>make_exception</code>，两条接收回溯相同。匹配生产者与接收者之间的同一个异常对象，可以把每条回溯分别接回原始发起者。</p>
+      <a href="evidence/nuitka--nuitka--4073.html#call-stack">比较接收与首次抛出的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>async-lru #480 · 谁淘汰了缓存结果，谁仍在等待？</h3>
+      <p>在受影响版本中，20 个缓存计算都结束了，15 个请求仍在等待。用同一个结果 <code>Future</code> 对上每次淘汰、完成回调和等待中的 Task，再通过两个实际调度 Handle 把各自的执行栈接回原始调用者。</p>
+      <a href="evidence/aio-libs--async-lru--480.html#call-stack">比较淘汰与等待的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Dart #61585 · 哪个功能入口发起了拦截器调用？</h3>
+      <p>Dart 3.14.0 的原生异步栈能追到 <code>testFuture</code>，但两次调用都缺少原始入口。CoroPerf 将实际执行的 <code>Future</code> 监听器回调接回绑定栈，即使后发起的调用先到达，也能找回对应的 <code>featureA</code> 或 <code>featureB</code>。</p>
+      <a href="evidence/dart-lang--sdk--61585.html#call-stack">比较两条功能入口到拦截器的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>ZIO #1003 · 两条失败栈分别对应哪次 unsafeRun？</h3>
+      <p>在报告版本中，两条失败追踪只有 Fiber ID 不同。Java 线程快照能看到两个 <code>unsafeRun</code>。CoroPerf 用实际 <code>FiberContext</code> 对象，把每条失败栈接回具体调用者和源码行。</p>
+      <a href="evidence/zio--zio--1003.html#call-stack">比较两条 unsafeRun 拼接链 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>gRPC Python #37881 · 请求 ID 丢失时，工作线程来自哪条拦截器路径？</h3>
+      <p>两条 RPC 使用同一个方法和相同载荷。在报告使用的构建中，两个工作线程通过相同的栈读到 <code>None</code>。CoroPerf 用实际执行的 <code>WorkItem</code> 接回提交栈，再用处理器对象找回 asyncio 线程上的拦截器路径。</p>
+      <a href="evidence/grpc--grpc--37881.html#call-stack">查看两条拦截器到工作线程的拼接链 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #157213 · gather 失败后，是谁发起了还在运行的任务？</h3>
+      <p>官方补丁修正了当前等待者列表。两个任务经过同一个回调后，原生诊断里都缺少最初的发起者。CoroPerf 记录创建 <code>Task</code> 时实际运行的 <code>Handle</code>，把每个存活任务连回各自的 <code>call_soon</code> 调用者。</p>
+      <a href="evidence/python--cpython--157213.html#call-stack">查看两个发起者与存活任务的拼接点 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #156278 · 流清理之前，真正失败的是哪次读取？</h3>
+      <p>两个任务最终都留下经过 <code>wait_closed</code> 的同一条异常栈。CoroPerf 保存首次抛出时的执行栈，并拼回匹配的 Task 创建栈，从而恢复失败的 <code>readexactly</code> 或 <code>readuntil</code> 及其原始调用者。</p>
+      <a href="evidence/python--cpython--156278.html#call-stack">查看两条首次抛出的拼接记录 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>.NET #125417 · 恢复执行的 Task 由谁发起？</h3>
+      <p>在测试的 CoreCLR 草案中，直接 await 的实时异步栈能显示调用者。经过同步 Task 转发后，两条恢复栈都缺少发起者。CoroPerf 用 TPL 执行区间确定采样属于哪个 Task，再拼回创建栈里的 <code>LaunchInventory</code> 或 <code>LaunchProfile</code>。8 次核对均与实际 Task ID 一致。</p>
+      <a href="evidence/dotnet--runtime--125417.html#call-stack">查看两条连接调用者和被调用者的栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #105836 · 是谁提交了仍在清理的任务？</h3>
+      <p>外层 Future 已取消，循环线程上的 Task 仍未结束。提交回调结束后，原生任务诊断显示相同的清理路径。匹配 <code>_chain_future</code> 接收到的实际 Task 和 Future，就能跨线程接回原始提交者。</p>
+      <a href="evidence/python--cpython--105836.html#call-stack">查看两条从提交到清理的拼接链 ↗</a>
+    </div>
+    <div class="research-entry">
       <h3>.NET #60764 · 跨垃圾回收的创建记录</h3>
       <p>构造函数的栈起于计时器工作线程。状态机里存的令牌把 <code>Program.Main</code> 的创建现场和 <code>Foo</code> 恢复后进入 <code>A..ctor</code> 的现场连起来。后续的三次正常运行和三次强制压缩式垃圾回收对照均找回了发起者。</p>
       <a href="evidence/dotnet--runtime--60764.html#join-1-point-1">查看创建到执行的拼接点 ↗</a>
@@ -17,9 +77,109 @@
       <p>两次调用携带相同的消息，服务端又反转了回复顺序，两个失败栈也落在同一库代码位置。匹配 Kotlin Job 后，可以分别定位个人资料和库存查询的启动位置。独立对照用引用相等核对了异常对象。</p>
       <a href="evidence/grpc--grpc-kotlin--299.html#call-stack">对照两条拼接栈 ↗</a>
     </div>
+    <div class="research-entry">
+      <h3>Kotlin #1660 · 找回被尾调用优化省略的调用者</h3>
+      <p>在测试版本中，切换调度器后，异常栈恢复和 DebugProbes 实时转储都缺少尾调用者。CoroPerf 用同一个 <code>DispatchedCoroutine</code> Job，把 worker 上抛出异常的 <code>invokeSuspend</code> 接回实际的 <code>profileCaller</code> 或 <code>inventoryCaller</code>。两批共 16 次归属均通过独立核对。</p>
+      <a href="evidence/kotlin--kotlinx.coroutines--1660.html#call-stack">对照两个尾调用者的拼接点 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Cats Effect #2620 · 谁启动了无栈的等待 fiber？</h3>
+      <p>在原始 Play 应用里，开启完整追踪后，Dispatcher worker 的 <code>WAITING</code> 记录依然没有栈帧。CoroPerf 用同一 <code>IOFiber</code> 对象把等待登记接回构造，再沿创建者边找到 <code>AppLoader.scala:32</code> 的 Dispatcher 初始化。</p>
+      <a href="evidence/typelevel--cats-effect--2620.html#call-stack">查看四个 worker 的创建者链 ↗</a>
+    </div>
   </section>
   <section class="block" aria-labelledby="assembly">
     <div class="section-head"><h2 id="assembly">原生协程与调度归属</h2></div>
+    <div class="research-entry">
+      <h3>CPython #115218 · 哪个调用者等 I/O 等得更久？</h3>
+      <p>Python 的异步采样器可以区分两个等待中的 Task，并显示哪个等得更久。CoroPerf 测量各自的实际挂起时间，再沿调度 Handle 找回原始调用者。</p>
+      <a href="evidence/python--cpython--115218.html#call-stack">比较两条 I/O 等待及其原始调用者 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Go #52557 · 哪个已经退出的生产者让这个调用一直等待？</h3>
+      <p>两个 <code>singleflight</code> 生产者都已退出，四个等待者仍在阻塞。Go trace 记录了发起者和退出事件。沿实际登记的结果通道和共享调用，可以把各个等待者接回它依赖的生产者。</p>
+      <a href="evidence/golang--go--52557.html#call-stack">比较两条等待者到原始发起者的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>futures-rs #2387 · 流处理一条结果时，哪个调用者的握手超时了？</h3>
+      <p>服务端在模拟时限前发出回复。流等第一项工作完成后才再次轮询该握手。CoroPerf 使用实际轮询区间和结果对象，把超时的握手和占住消费循环的工作分别接回两个调用者。</p>
+      <a href="evidence/rust-lang--futures-rs--2387.html#call-stack">比较握手与结果处理的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>LLVM #121092 · 同一个帧地址上的协程分别由谁发起？</h3>
+      <p>恢复 GDB 可读的帧类型后，四次观测仍然显示相同的帧地址和工作线程栈。CoroPerf 从机器指令的数据流恢复活动帧，再用它当前的生命周期接回记录原始调用者的创建栈。</p>
+      <a href="evidence/llvm--llvm-project--121092.html#call-stack">比较同一地址上的两次恢复与拼接 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>.NET #38904 · 重复重抛分别来自哪个调用者？</h3>
+      <p>同一个工作线程上有 14 次调用栈相同的重抛。CoroPerf 匹配各根 Task 实际保存的异常对象。在展示运行中，<code>LaunchProfile</code> 对应 12 次重抛，<code>LaunchInventory</code> 对应 2 次。</p>
+      <a href="evidence/dotnet--runtime--38904.html#call-stack">比较两条重抛到原始调用者的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Bun #45020 · 同一次轮询拖延了哪些调用者？</h3>
+      <p>展示运行中，两个 immediate Promise 兑现后，协程都等了同一次 165 毫秒的 <code>epoll_pwait2</code>。原生 Inspector 能追到共享调度位置。CoroPerf 用每个 await 实际等待的 Promise 对象拼回创建栈，找回两条恢复栈各自的发起者。</p>
+      <a href="evidence/oven-sh--bun--45020.html#call-stack">比较两条调用者到协程恢复现场的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Go #64614 · 两次补拨分别由谁触发？</h3>
+      <p>连接池报告有 3 个打开连接，驱动实际可用连接为 0。同一个 goroutine 依次处理缓冲区中的补拨信号。CoroPerf 将各次拨号区间接回同一通道上的发送栈，恢复触发补拨的调用者。</p>
+      <a href="evidence/golang--go--64614.html#call-stack">比较两条从丢弃连接到补拨的拼接栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>LLVM #56972 · 哪个调用者引发了额外的协程帧分配？</h3>
+      <p>Clang 19 在 <code>Bar</code> 恢复时为 <code>Baz</code> 多做了一次 48 字节的堆分配，析构函数对照把 <code>Baz</code> 嵌在 <code>Bar</code> 帧中。两次额外分配返回同一个地址。CoroPerf 用去符号的机器码还原各自的父协程帧，再接回原始调用者。</p>
+      <a href="evidence/llvm--llvm-project--56972.html#call-stack">查看两条从分配现场接回调用者的栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>futures-rs #2047 · 哪个调用者拖延了已就绪的任务？</h3>
+      <p>修复前，已就绪的心跳要等 102 次重试，修复后只等 31 次。两个重试 Future 的普通栈相同。在展示的运行中，CoroPerf 用子节点轮询区间接回 <code>push</code> 的调用栈，将其中 96 次重试归到 <code>launch_profile</code>，另外 6 次归到 <code>launch_inventory</code>。</p>
+      <a href="evidence/rust-lang--futures-rs--2047.html#call-stack">比较两条接回原始调用者的重试栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #90155 · 谁越过排队的任务拿到了许可？</h3>
+      <p>在 3.10.3 中，释放者再次取得许可，而已经被唤醒的任务继续等待。把两个 Task 分别接回实际的调度 <code>Handle</code>，可以找回原始调用者。在 3.14.3 中，先排队的任务拿到了下一次许可。</p>
+      <a href="evidence/python--cpython--90155.html#call-stack">比较实际取得许可和仍在等待的两条栈 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #112169 · 哪个调用者占用了 DNS 线程？</h3>
+      <p>两个繁忙线程的物理栈相同。地址解析要等的是默认池里的线程。CoroPerf 用实际 <code>WorkItem</code> 和调度器更早取出的请求，把占用该线程的工作连回原始应用调用者。</p>
+      <a href="evidence/python--cpython--112169.html#call-stack">比较默认池和私有池的拼接 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Tokio #8434 · 两个卡住的子 Future 分别由谁提交？</h3>
+      <p>原生任务追踪能看到触发问题时的两个锁操作。子 Future 卡住后，追踪无法取得新的叶子栈。CoroPerf 用实际被轮询的子节点归属先前记录的采样，再找回各自的提交者。</p>
+      <a href="evidence/tokio-rs--tokio--8434.html#call-stack">查看两个叶子栈接回调用者的拼接点 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>LLVM #37601 · 打印旧线程 ID 的协程由谁发起？</h3>
+      <p>两条带符号的 GDB 恢复栈完全相同，打印的也是同一个旧 pthread ID。CoroPerf 根据去符号后的机器码，从寄存器和栈字节定位实际协程帧，再接回它的创建栈。两个独立批次各通过 8 条调用者核对。</p>
+      <a href="evidence/llvm--llvm-project--37601.html#call-stack">查看两条跨线程拼接 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Tokio #8760 · 哪个入口启动了频繁清理定时器的任务？</h3>
+      <p>本地 2,048 个短周期 interval 的测试复现了发布版 CPU 开销回归。两个应用入口共用一个 spawn 位置，执行中的清理栈也相同。CoroPerf 用活跃的 poll 区间和创建栈，将 768 次清理归到对应的启动入口。</p>
+      <a href="evidence/tokio-rs--tokio--8760.html#call-stack">查看两条定时器到发起者的拼接链 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Asio #1239 · 找回 detached spawn 之前的调用者</h3>
+      <p>带符号的 GDB 显示调度器调用栈，Asio 的 awaiter 链止于 detached 边界。CoroPerf 从去符号的机器码、寄存器和栈字节确定定时器运行的是哪个协程，再沿两段创建栈接回原始入口。</p>
+      <a href="evidence/chriskohlhoff--asio--1239.html#call-stack">查看两条调用者到定时器的拼接链 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Node #50056 · 两个调用者，共享同一个 CPU 热点</h3>
+      <p>在 V8 profiler 改编实验中，603 个普通样本只显示共享的被调用者。CoroPerf 把 579 个独立核对的观测分别接回 <code>launchProfile</code> 或 <code>launchInventory</code> 的创建栈。反转执行顺序后仍能正确区分。</p>
+      <a href="evidence/nodejs--node--50056.html#call-stack">对照两个 caller 与 callee 的拼接点 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Tokio #8085 · 哪个调用者拖慢了 socket 读取？</h3>
+      <p>两个 CPU 任务挂起后的物理栈相同，运行时给出的 spawn 位置也相同。CoroPerf 把各次 poll 接回各自的创建栈。在这个本地改编实验中，把同样的 CPU 工作移到独立运行时后，读取延迟中位数从 107.924 毫秒降到 0.039 毫秒。</p>
+      <a href="evidence/tokio-rs--tokio--8085.html#call-stack">对照两个任务的发起路径 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Tokio #8527 · 谁提交了排队慢的阻塞任务？</h3>
+      <p>原生 span 能看到任务 ID，但两条路径的阻塞提交行和生产者启动行都相同。CoroPerf 把 worker 上的 CPU 样本经由阻塞任务的创建栈接回异步生产者的早期调用者。1,036 个样本均与独立记录的任务句柄 ID 相符。</p>
+      <a href="evidence/tokio-rs--tokio--8527.html#call-stack">查看两条调用者链和排队时间 ↗</a>
+    </div>
     <div class="research-entry">
       <h3>Drogon #2331 · 哪个请求卡在 PostgreSQL</h3>
       <p>两个请求入口都会创建 <code>shared_lookup</code> 的实例。在去符号的 HTTP/PostgreSQL 改编程序中，仅靠指令数据流，六份外部等待采样均无法归属。加入实际执行的激活绑定后，六份均归属成功。沿创建关系继续向上追溯，六份都找到了正确的请求入口。</p>

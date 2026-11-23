@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which cancellation request reached the TaskGroup&#x27;s final error?">
+  <title>python/cpython #157157 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/python--cpython--157157.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="python--cpython--157157.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/python--cpython--157157.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">python/cpython #157157</p>
+        <h1>Which cancellation request reached the TaskGroup&#x27;s final error?</h1>
+        <div class="case-links"><a href="https://github.com/python/cpython/issues/157157">Upstream report ↗</a><a href="https://github.com/python/cpython/pull/157158">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The target Task accepts two cancellation requests. The recorded Task and completion Future identify the request behind the propagated error and the separate accepted request whose message was lost.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 5</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>2 → 5</code></a></nav>
+          <section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Cancellation request stack</h4><span>Record 2</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:47</span></li><li><code>cancel_inside</code><span>stock.py:19</span></li><li><code>cancel</code><span>taskgroups.py:334</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Cancellation request → target observation</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-5">Record 5</a></p>
+          <p>The request and the observation refer to the same target Task at different points in its recorded cancellation timeline.</p>
+          <p>The internal request sets the pending-cancellation flag. The TaskGroup's first completion Future then delivers a CancelledError with empty arguments.</p>
+          <p class="join-verification">Graph edge <code>cancel_request_to_observation · 2 → 5</code></p>
+        </aside><section class="stack observed" id="join-1-record-5"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · diagnostic_stacktrace</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:43</span></li><li><code>__aexit__</code><span>taskgroups.py:75</span></li><li><code>_aexit</code><span>taskgroups.py:125</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5 · diagnostic_stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:43</span></li><li><code>__aexit__</code><span>taskgroups.py:75</span></li><li><code>_aexit</code><span>taskgroups.py:125</span></li></ol></section>
+          <p class="small trace-note">Frames from record 5 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 8</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>4 → 8</code></a></nav>
+          <section class="stack " id="join-2-record-4"><div class="stack-head"><h4>Cancellation request stack</h4><span>Record 4</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>main</code><span>observe.py:104</span></li><li><code>trial</code><span>stock.py:70</span></li><li><code>cancel_profile</code><span>stock.py:11</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Cancellation request → target observation</strong></div>
+          <p class="join-records"><a href="#join-2-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-2-record-8">Record 8</a></p>
+          <p>The request and the observation refer to the same target Task at different points in its recorded cancellation timeline.</p>
+          <p>The observer records the accepted external request and compares its message with the later exception propagated by TaskGroup.</p>
+          <p class="join-verification">Graph edge <code>cancel_request_to_observation · 4 → 8</code></p>
+        </aside><section class="stack observed" id="join-2-record-8"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8 · diagnostic_stacktrace</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:43</span></li><li><code>__aexit__</code><span>taskgroups.py:75</span></li><li><code>_aexit</code><span>taskgroups.py:165</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8 · diagnostic_stacktrace</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>observe.py:111</span></li><li><code>run</code><span>runners.py:205</span></li><li><code>run</code><span>runners.py:128</span></li><li><code>run_until_complete</code><span>base_events.py:711</span></li><li><code>run_forever</code><span>base_events.py:682</span></li><li><code>_run_once</code><span>base_events.py:2065</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>body</code><span>stock.py:43</span></li><li><code>__aexit__</code><span>taskgroups.py:75</span></li><li><code>_aexit</code><span>taskgroups.py:165</span></li></ol></section>
+          <p class="small trace-note">Frames from record 8 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With a short event-loop stall, TaskGroup propagates CancelledError with empty arguments after accepting an external cancel(&#x27;outside&#x27;). In the event-gated control, the error retains &#x27;outside&#x27;. The native traceback, Task stack, creation trace, coroutine origin, and live asyncio call graph omit both cancellation request stacks.</dd></div><div><dt>What CoroPerf showed</dt><dd>The internal cancellation at record 2 sets the pending flag. The same completion Future is cancelled when the external request arrives, and its message-less CancelledError appears at record 5. The external request at record 4 raises the target Task&#x27;s cancellation count to two and stores &#x27;outside&#x27; on the Task. At record 8, TaskGroup raises the same exception object seen at 5, with empty arguments. Joining 4 to 8 exposes the accepted request whose message is absent. With event synchronization the external request instead cancels a different, pending Future, and that Future&#x27;s exception is propagated with &#x27;outside&#x27;.</dd></div><div><dt>Scope and limits</dt><dd>The local replay uses CPython 3.15.2 and the standard C Task implementation. It compares two external callers and two timing conditions, with 48 request-to-observation joins across two batches. The probe observes real Task.cancel calls and TaskGroup exit events. Upstream PR #157158 makes the test deterministic by changing its timing. The stalled-loop case remains observable on this runtime.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

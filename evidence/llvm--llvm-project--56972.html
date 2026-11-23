@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which caller incurred the extra coroutine-frame allocation?">
+  <title>llvm/llvm-project #56972 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/llvm--llvm-project--56972.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="llvm--llvm-project--56972.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/llvm--llvm-project--56972.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">llvm/llvm-project #56972</p>
+        <h1>Which caller incurred the extra coroutine-frame allocation?</h1>
+        <div class="case-links"><a href="https://github.com/llvm/llvm-project/issues/56972">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Two extra frame allocations return the same child address. Instruction dataflow recovers the two distinct active parent frames and connects the allocation sites to their original application callers.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 3</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 3</code></a></nav>
+          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:104</span></li><li><code>launch_profile</code><span>replay.cpp:73</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-1-record-3">Record 3</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>Machine-code dataflow recovers the resume function's frame argument from registers and stack bytes. The frame matches a live coroutine instance recorded at creation.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 1 → 3</code></p>
+        </aside><section class="stack observed" id="join-1-record-3"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · selected-native-boundary</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:114</span></li><li><code>drain</code><span>replay.cpp:87</span></li><li><code>resume_shared</code><span>replay.cpp:82</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3 · selected-native-boundary</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:114</span></li><li><code>drain</code><span>replay.cpp:87</span></li><li><code>resume_shared</code><span>replay.cpp:82</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+          <p class="small trace-note">Frames from record 3 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>2 → 4</code></a></nav>
+          <section class="stack " id="join-2-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:105</span></li><li><code>launch_inventory</code><span>replay.cpp:77</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-2-record-4">Record 4</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>Machine-code dataflow recovers the resume function's frame argument from registers and stack bytes. The frame matches a live coroutine instance recorded at creation.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 2 → 4</code></p>
+        </aside><section class="stack observed" id="join-2-record-4"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · selected-native-boundary</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:114</span></li><li><code>drain</code><span>replay.cpp:87</span></li><li><code>resume_shared</code><span>replay.cpp:82</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · selected-native-boundary</span></div><ol class="frames"><li><code>main</code><span>replay.cpp:114</span></li><li><code>drain</code><span>replay.cpp:87</span></li><li><code>resume_shared</code><span>replay.cpp:82</span></li><li><code>Bar</code><span>replay.cpp:60</span></li></ol></section>
+          <p class="small trace-note">Frames from record 4 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Clang 19 at -O2 generates an extra 48-byte heap allocation for Baz while Bar resumes in the await_resume variant. In the destructor control, the Baz header is initialized 24 bytes inside the Bar frame. The two requests cause six total allocation calls in the affected variant and four in the control. At the affected observation, symbolized GDB shows the same inline Baz, Bar and scheduler stack for both instances. Both original launchers are absent.</dd></div><div><dt>What CoroPerf showed</dt><dd>On the stripped ELF, the allocator&#x27;s result in rax supplies the address for Baz&#x27;s resume and destroy fields. Machine-code dataflow recovers the different active Bar frames from the resume argument preserved in rbx. The matching live creation records connect the two observations to launch_profile and launch_inventory. In the displayed run, the allocator returned the same Baz address twice. Withholding the Bar resume model or the construction history leaves both observations unattributed.</dd></div><div><dt>Scope and limits</dt><dd>The replay schedules two instances of the archived C++20 reduction on one thread. Linux x86-64 Clang 19.1.7 builds omit frame pointers. Capture uses event-triggered register and stack snapshots on an ELF with no app symbols or CFI, using no function-bound sidecar or recorded resume intervals. Debug names are added after building the address graph. Two builds and replays verify 32 joins across both allocation layouts and independent launch and dispatch orders.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="A dispatcher switch hides the exception’s tail caller">
+  <title>Kotlin/kotlinx.coroutines #1660 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/kotlin--kotlinx.coroutines--1660.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="kotlin--kotlinx.coroutines--1660.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/kotlin--kotlinx.coroutines--1660.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">Kotlin/kotlinx.coroutines #1660</p>
+        <h1>A dispatcher switch hides the exception’s tail caller</h1>
+        <div class="case-links"><a href="https://github.com/Kotlin/kotlinx.coroutines/issues/1660">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The same worker exception stack can come from profileCaller or inventoryCaller. The Job taken from the throwing continuation links that exception to the correct caller at DispatchedCoroutine creation.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 32</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>0 → 2</code></a><a href="#join-1-point-2">Join point 2 <code>2 → 4</code></a><a href="#join-1-point-3">Join point 3 <code>4 → 32</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>MatchedCallersKt.main</code><span>MatchedCallers.kt:46</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:52</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.&lt;init&gt;</code><span>Builders.kt:61</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 2 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>MatchedCallersKt.main</code><span>MatchedCallers.kt:46</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:54</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:79</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:271</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallersKt$main$1.invokeSuspend</code><span>MatchedCallers.kt:54</span></li><li><code>kotlinx.coroutines.BuildersKt.async$default</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async$default</code><span>Builders.common.kt:82</span></li><li><code>kotlinx.coroutines.BuildersKt.async</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async</code><span>Builders.common.kt:88</span></li><li><code>kotlinx.coroutines.DeferredCoroutine.&lt;init&gt;</code><span>Builders.common.kt:97</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">Join point 2</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">Record 4</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 4 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-4"><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>MatchedCallersKt.main</code><span>MatchedCallers.kt:46</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:54</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:79</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:271</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallersKt$main$1.invokeSuspend</code><span>MatchedCallers.kt:54</span></li><li><code>kotlinx.coroutines.BuildersKt.async$default</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async$default</code><span>Builders.common.kt:82</span></li><li><code>kotlinx.coroutines.BuildersKt.async</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async</code><span>Builders.common.kt:89</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.start</code><span>AbstractCoroutine.kt:158</span></li><li><code>kotlinx.coroutines.CoroutineStart.invoke</code><span>CoroutineStart.kt:111</span></li><li><code>kotlinx.coroutines.intrinsics.UndispatchedKt.startCoroutineUndispatched</code><span>Undispatched.kt:55</span></li><li><code>MatchedCallersKt$main$1$invokeSuspend$$inlined$mapIndexed$lambda$1.invoke</code><span>MatchedCallers.kt</span></li><li><code>MatchedCallersKt$main$1$invokeSuspend$$inlined$mapIndexed$lambda$1.invokeSuspend</code><span>MatchedCallers.kt:57</span></li><li><code>MatchedCallersKt$main$1$routes$1.invoke</code><span>MatchedCallers.kt</span></li><li><code>MatchedCallersKt$main$1$routes$1.invoke</code><span>MatchedCallers.kt:49</span></li><li><code>MatchedCallersKt.profileCaller</code><span>MatchedCallers.kt:42</span></li><li><code>MatchedCallersKt.changeContextAndThrow</code><span>MatchedCallers.kt:31</span></li><li><code>kotlinx.coroutines.BuildersKt.withContext</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.withContext</code><span>Builders.common.kt:158</span></li><li><code>kotlinx.coroutines.DispatchedCoroutine.&lt;init&gt;</code><span>Builders.common.kt:220</span></li><li><code>kotlinx.coroutines.internal.ScopeCoroutine.&lt;init&gt;</code><span>Scopes.kt:18</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-3" aria-label="Join point 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-3">Join point 3</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-1-record-32">Record 32</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The creation hook registers the runtime object. The observation resolves the token by reference identity through the same weak-reference map.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 4 → 32</code></p>
+        </aside><section class="stack observed" id="join-1-record-32"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 32 · diagnostic</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run</code><span>CoroutineScheduler.kt:655</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker</code><span>CoroutineScheduler.kt:667</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask</code><span>CoroutineScheduler.kt:727</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely</code><span>CoroutineScheduler.kt:561</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallersKt$changeContextAndThrow$2.invokeSuspend</code><span>MatchedCallers.kt:36</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 32 · diagnostic</span></div><ol class="frames"><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run</code><span>CoroutineScheduler.kt:655</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker</code><span>CoroutineScheduler.kt:667</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask</code><span>CoroutineScheduler.kt:727</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely</code><span>CoroutineScheduler.kt:561</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallersKt$changeContextAndThrow$2.invokeSuspend</code><span>MatchedCallers.kt:36</span></li></ol></section>
+          <p class="small trace-note">Frames from record 32 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 18</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>0 → 6</code></a><a href="#join-2-point-2">Join point 2 <code>6 → 9</code></a><a href="#join-2-point-3">Join point 3 <code>9 → 18</code></a></nav>
+          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>MatchedCallersKt.main</code><span>MatchedCallers.kt:46</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:52</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.&lt;init&gt;</code><span>Builders.kt:61</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-2-record-6">Record 6</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 6 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-6"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 6</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>MatchedCallersKt.main</code><span>MatchedCallers.kt:46</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:54</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:79</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:271</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallersKt$main$1.invokeSuspend</code><span>MatchedCallers.kt:54</span></li><li><code>kotlinx.coroutines.BuildersKt.async$default</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async$default</code><span>Builders.common.kt:82</span></li><li><code>kotlinx.coroutines.BuildersKt.async</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async</code><span>Builders.common.kt:88</span></li><li><code>kotlinx.coroutines.DeferredCoroutine.&lt;init&gt;</code><span>Builders.common.kt:97</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">Join point 2</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-6">Record 6</a><span aria-hidden="true">→</span><a href="#join-2-record-9">Record 9</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 9 → 6</code></p>
+        </aside><section class="stack " id="join-2-record-9"><div class="stack-head"><h4>Creation stack</h4><span>Record 9</span><span class="record-instance">Instance from record 9</span></div><ol class="frames"><li><code>MatchedCallersKt.main</code><span>MatchedCallers.kt:46</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:54</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:79</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:271</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallersKt$main$1.invokeSuspend</code><span>MatchedCallers.kt:54</span></li><li><code>kotlinx.coroutines.BuildersKt.async$default</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async$default</code><span>Builders.common.kt:82</span></li><li><code>kotlinx.coroutines.BuildersKt.async</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async</code><span>Builders.common.kt:89</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.start</code><span>AbstractCoroutine.kt:158</span></li><li><code>kotlinx.coroutines.CoroutineStart.invoke</code><span>CoroutineStart.kt:111</span></li><li><code>kotlinx.coroutines.intrinsics.UndispatchedKt.startCoroutineUndispatched</code><span>Undispatched.kt:55</span></li><li><code>MatchedCallersKt$main$1$invokeSuspend$$inlined$mapIndexed$lambda$1.invoke</code><span>MatchedCallers.kt</span></li><li><code>MatchedCallersKt$main$1$invokeSuspend$$inlined$mapIndexed$lambda$1.invokeSuspend</code><span>MatchedCallers.kt:57</span></li><li><code>MatchedCallersKt$main$1$routes$2.invoke</code><span>MatchedCallers.kt</span></li><li><code>MatchedCallersKt$main$1$routes$2.invoke</code><span>MatchedCallers.kt:49</span></li><li><code>MatchedCallersKt.inventoryCaller</code><span>MatchedCallers.kt:44</span></li><li><code>MatchedCallersKt.changeContextAndThrow</code><span>MatchedCallers.kt:31</span></li><li><code>kotlinx.coroutines.BuildersKt.withContext</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.withContext</code><span>Builders.common.kt:158</span></li><li><code>kotlinx.coroutines.DispatchedCoroutine.&lt;init&gt;</code><span>Builders.common.kt:220</span></li><li><code>kotlinx.coroutines.internal.ScopeCoroutine.&lt;init&gt;</code><span>Scopes.kt:18</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-3" aria-label="Join point 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-3">Join point 3</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-9">Record 9</a><span aria-hidden="true">→</span><a href="#join-2-record-18">Record 18</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The creation hook registers the runtime object. The observation resolves the token by reference identity through the same weak-reference map.</p>
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 9 → 18</code></p>
+        </aside><section class="stack observed" id="join-2-record-18"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 18 · diagnostic</span><span class="record-instance">Instance from record 9</span></div><ol class="frames"><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run</code><span>CoroutineScheduler.kt:655</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker</code><span>CoroutineScheduler.kt:667</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask</code><span>CoroutineScheduler.kt:727</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely</code><span>CoroutineScheduler.kt:561</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallersKt$changeContextAndThrow$2.invokeSuspend</code><span>MatchedCallers.kt:36</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 18 · diagnostic</span></div><ol class="frames"><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run</code><span>CoroutineScheduler.kt:655</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker</code><span>CoroutineScheduler.kt:667</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask</code><span>CoroutineScheduler.kt:727</span></li><li><code>kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely</code><span>CoroutineScheduler.kt:561</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallersKt$changeContextAndThrow$2.invokeSuspend</code><span>MatchedCallers.kt:36</span></li></ol></section>
+          <p class="small trace-note">Frames from record 18 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With Kotlin 1.3.50 and kotlinx.coroutines 1.3.3, the dispatch-switch example omits callThrowableSuspendFun even with stock recovery enabled. In the two-caller extension, both exceptions have identical stacks, and the official DebugProbes live dumps also omit both tail callers.</dd></div><div><dt>What CoroPerf showed</dt><dd>The Kotlin compiler forwards the continuation through the tail callers without creating a wrapper state machine. CoroPerf records the still-live caller stack at DispatchedCoroutine construction and reads the same Job from the throwing continuation on the worker. Across two batches, all 16 joins agreed with an independent check of the Job and original exception, including trials with reversed launch order.</dd></div><div><dt>Scope and limits</dt><dd>The displayed stacks are from the controlled two-caller extension. The original tail-call loss was replayed separately on the same versions. The non-tail source variant retained its wrapper with stock recovery. The stock comparison covers these historical releases.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

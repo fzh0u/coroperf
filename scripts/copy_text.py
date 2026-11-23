@@ -1,9 +1,12 @@
 """English and Simplified Chinese text for the static atlas."""
 
+ISSUE_KINDS = ("functional", "performance", "profiling", "debugging")
+
 LABELS = {
     "atlas": ("Coroutine Evidence Atlas", "协程证据图谱"),
     "skip": ("Skip to content", "跳到正文"),
     "navigation": ("Main navigation", "主导航"),
+    "language_picker": ("Language", "选择语言"),
     "issues": ("Issue evidence", "案例证据"),
     "research": ("Research notes", "研究摘要"),
     "method": ("Method", "分析方法"),
@@ -11,6 +14,15 @@ LABELS = {
     "record": ("Record {id}", "记录 {id}"),
     "instance": ("Instance from record {id}", "实例首次见于记录 {id}"),
     "upstream": ("Upstream report ↗", "上游报告 ↗"),
+    "tracker_status": ("Upstream status", "上游状态"),
+    "tracker_open": ("Open", "开放"),
+    "tracker_closed": ("Closed", "已关闭"),
+    "tracker_unconfirmed": ("Unconfirmed", "待核对"),
+    "any_tracker_status": ("All upstream statuses", "全部上游状态"),
+    "tracker_summary": ("Upstream status · {opened} open · {closed} closed", "上游状态 · {opened} 个开放 · {closed} 个已关闭"),
+    "tracker_unconfirmed_count": ("{count} unconfirmed", "{count} 个待核对"),
+    "tracker_checked": ("Checked {time}", "核对时间 {time}"),
+    "tracker_data": ("Download upstream status data", "下载上游状态数据"),
     "followup": ("Follow-up evidence ↗", "上游后续证据 ↗"),
     "reproduction": ("Reproduction", "复现范围"),
     "diagnosis": ("Diagnosis", "诊断依据"),
@@ -21,24 +33,58 @@ LABELS = {
     "limits": ("Scope and limits", "适用范围与局限"),
     "connected": ("CoroPerf connected stack", "CoroPerf 拼接调用栈"),
     "raw_stack": ("Original physical stack", "原始物理调用栈"),
+    "raw_task_snapshot": ("Original task snapshot", "原始任务栈快照"),
     "raw_note": (
         "Frames from record {id} alone. Each stack block lists frames from caller to callee.",
         "这里只显示记录 {id} 的栈帧。各个栈块均按调用者到被调用者的顺序排列。",
     ),
     "origin_stack": ("Creation stack", "创建时的物理栈"),
+    "cancellation_stack": ("Cancellation request stack", "取消请求的调用栈"),
     "ancestor_stack": ("Ancestor creation stack", "上游协程创建时的物理栈"),
+    "async_ancestor_stack": ("Async parent creation stack", "异步父级的创建栈"),
+    "result_producer_stack": ("Result producer's launch stack", "结果生产者的发起栈"),
+    "acquiring_task_stack": ("Connection acquisition Task's creation stack", "连接获取 Task 的创建栈"),
     "execution_observation": ("Observed execution stack", "观测到的执行物理栈"),
+    "task_snapshot": ("Observed task stack", "观测到的任务栈"),
     "edge_proof": (
         "The graph records this edge, and both endpoints carry the same captured instance identity.",
         "采集图记录了这条边，两个端点也携带相同的协程实例标识。",
+    ),
+    "cancellation_proof": (
+        "The request and the observation refer to the same target Task at different points in its recorded cancellation timeline.",
+        "请求和观测都关联到同一个目标 Task，分处该 Task 已记录的取消过程中的两个位置。",
+    ),
+    "taskgroup-internal-cancel": (
+        "The internal request sets the pending-cancellation flag. The TaskGroup's first completion Future then delivers a CancelledError with empty arguments.",
+        "内部请求先设置待取消标志。随后 TaskGroup 等待的第一个完成 Future 交付了参数为空的 CancelledError。",
+    ),
+    "taskgroup-outer-cancel": (
+        "The observer records the accepted external request and compares its message with the later exception propagated by TaskGroup.",
+        "探针记录已接受的外部请求，将它的消息与 TaskGroup 后来传播的异常进行对照。",
     ),
     "injected-value-token": (
         "The probe stores an identity token in the async state machine. The creation probe and the execution probe read the same token.",
         "探针把身份令牌存进异步状态机。创建现场和执行现场都读到了同一个令牌。",
     ),
+    "weak-identity-object-id": (
+        "The creation hook registers the runtime object. The observation resolves the token by reference identity through the same weak-reference map.",
+        "创建钩子登记实际运行时对象。采样时按对象引用身份从同一张弱引用表找到对应的令牌。",
+    ),
     "runtime-token-generation": (
         "The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.",
         "采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。",
+    ),
+    "actor-entry-argument-dataflow": (
+        "Machine-code dataflow recovers the resume function's frame argument from registers and stack bytes. The frame matches a live coroutine instance recorded at creation.",
+        "CoroPerf 沿机器码的数据流，从寄存器和栈字节还原恢复函数接收的协程帧地址，再将它匹配到创建时记录且在采样时仍存活的实例。",
+    ),
+    "execution-interval": (
+        "The observation falls inside this instance's recorded execution interval on the sampled thread. That interval supplies the owner used to select the creation record.",
+        "采样时间落在该实例于当前线程上的已记录执行区间内。CoroPerf 用这个区间确定采样归属，再定位对应的创建记录。",
+    ),
+    "live-child-node": (
+        "The sample has no child ID. Its thread and timestamp place it inside the actual FuturesUnordered node's poll interval. That node selects the matching creation record.",
+        "采样本身没有子 Future ID。采样线程和时间戳将它定位到 FuturesUnordered 实际子节点的 poll 区间，再按该节点匹配创建记录。",
     ),
     "task_proof": (
         "The spawn hook and helper-body sample recorded the same task ID in the same process. The ID had one matching creation in this capture.",
@@ -52,12 +98,75 @@ LABELS = {
         "The recorded graph identifies the asynchronous parent of this creation record.",
         "采集图记录了这条创建记录对应的异步父级。",
     ),
+    "result_dependency_proof": (
+        "DoChan registers the reader's exact result channel on the same singleflight call used by the producer. That call links the waiter to the producer's original launcher.",
+        "DoChan 把等待者实际使用的结果通道登记到生产者执行的同一个 singleflight 调用。沿这个调用可以找到生产者的原始发起者。",
+    ),
+    "captured-goroutine-id": (
+        "The reader's creation record and blocked snapshot identify the same goroutine in the same process.",
+        "读取协程的创建记录和阻塞快照指向同一进程里的同一个 goroutine。",
+    ),
+    "release_dependency_proof": (
+        "The acquisition stores the holder's release Future. The shutdown Task later awaits that exact Future on the same holder.",
+        "获取连接时生成了连接槽的归还 Future。关闭连接池的 Task 随后在同一个连接槽上等待这一个 Future。",
+    ),
+    "asyncio-live-task-at-snapshot": (
+        "The pending snapshot identifies the same asyncio Task recorded when the pool started waiting for this holder.",
+        "阻塞快照和连接池开始等待此连接槽时的创建记录指向同一个 asyncio Task。",
+    ),
+    "scheduled-handle-running-at-task-creation": (
+        "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
+        "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",
+    ),
+    "buffered-result-object": (
+        "The stream consumer creates the work Future with the same result object emitted by the earlier handshake Future.",
+        "流消费者用此前握手 Future 返回的同一个结果对象创建后续处理的 Future。",
+    ),
+    "stored-exception-object-handoff": (
+        "The receiver Task takes the same exception object recorded before handoff in the producer Task. It catches that object after generator injection.",
+        "接收 Task 拿到的异常对象与生产者 Task 在交接前记录的对象相同，注入生成器后捕获的也仍是这个对象。",
+    ),
+    "same-frozen-result-object": (
+        "The reader Task receives the exact FrozenResult object recorded when the writer filled the cache.",
+        "读取 Task 接收的 FrozenResult 对象，与写入 Task 填充缓存时记录的是同一个对象。",
+    ),
+    "actual-rpc-handler-and-submitted-work-item": (
+        "At thread-pool submission, the WorkItem holds the same handler object this server Task created inside the interceptor.",
+        "提交线程池工作时，WorkItem 持有的正是这个服务端 Task 在拦截器里创建的处理器对象。",
+    ),
+    "active-work-item-object": (
+        "The observed worker was executing the same WorkItem recorded when it was created on the event-loop thread.",
+        "观测发生在工作线程执行同一个 WorkItem 时。该对象在事件循环线程创建时已记录。",
+    ),
+    "jdi-fiber-receiver": (
+        "JDI records the same FiberContext object at construction and at captureTrace on the worker failure path.",
+        "JDI 在创建现场与工作线程失败时的 captureTrace 中，记录了同一个 FiberContext 对象。",
+    ),
+    "dart-callback-object": (
+        "Dart identical confirms that the active Future listener holds the exact nextIteration callback recorded with the launch stack.",
+        "Dart 的 identical 确认，当前 Future 监听器持有的正是发起栈中记录的 nextIteration 回调对象。",
+    ),
+    "go-opener-signal": (
+        "The sample falls within one dial interval. The corresponding receive and send occupy the same FIFO position on the recorded opener channel.",
+        "采样落在一次拨号区间内。对应的接收和发送在同一个 opener 通道上处于相同的 FIFO 队列位置。",
+    ),
+    "dotnet-task-fault-object": (
+        "The root Task's fault contains the exact Exception object observed at the rethrow. That Task identifies the earlier launch stack.",
+        "根 Task 保存的正是重抛时观测到的同一个 Exception 对象。用该 Task 可以找回早先的发起栈。",
+    ),
+    "same-dequeued-request-in-work-item": (
+        "The broker dequeues the exact request object passed to this WorkItem. The enqueue stack records the original caller.",
+        "调度器从队列取出的请求对象正是后来传给该 WorkItem 的对象。入队栈记录了原始调用者。",
+    ),
     "join_number": ("Join point {n}", "拼接点 {n}"),
     "jump_joins": ("Jump to a join point", "跳转到拼接点"),
     "join_creation": ("Creation → observed execution", "创建 → 执行观测"),
+    "join_cancellation": ("Cancellation request → target observation", "取消请求 → 目标任务观测"),
     "join_tokio": ("Spawn → helper execution", "任务创建 → 任务体执行"),
     "join_parent": ("Creator → child creation", "创建者 → 子协程创建"),
     "join_async_parent": ("Async parent → child creation", "异步父级 → 子协程创建"),
+    "join_result_dependency": ("Producer launch → reader's result dependency", "生产者发起点 → 等待者的结果依赖"),
+    "join_release_dependency": ("Connection acquisition → shutdown wait", "连接获取 → 关闭等待"),
     "edge": ("Graph edge", "采集图边"),
     "identity": ("Identity check", "身份核对"),
     "join_guide": (
@@ -65,6 +174,7 @@ LABELS = {
         "栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。",
     ),
     "observation_number": ("Observation {id}", "观测记录 {id}"),
+    "suspended_duration": ("Suspended for {ms} ms", "挂起 {ms} 毫秒"),
     "sample": ("Observation", "执行观测"),
     "create": ("Creation", "创建"),
     "Full local reproduction": ("Full local reproduction", "本地完整复现"),
@@ -79,17 +189,51 @@ LABELS = {
     "snapshot": ("Corpus snapshot", "语料快照"),
     "stat_pages": ("Issue evidence pages", "案例证据页"),
     "stat_joins": ("Verified join points", "已核实的拼接点"),
-    "stat_observations": ("Matched execution observations", "已匹配创建栈的执行观测"),
+    "stat_observations": ("Matched execution observations", "已匹配的执行观测"),
+    "issue_kind": ("Issue type", "问题类型"),
+    "any_issue_kind": ("All issue types", "全部问题类型"),
+    "outcomes": ("What CoroPerf helped investigate", "CoroPerf 帮助分析了什么"),
+    "outcomes_scope": (
+        "Each previously reported issue counts once by its main symptom or diagnostic question. Every case has a checked stack join.",
+        "每个已有报告的 Issue 按主要症状或诊断问题计入一次。每个案例都有经过核对的拼接。",
+    ),
+    "functional": ("Functional failures and correctness", "功能故障与正确性问题"),
+    "performance": ("Performance problems", "性能问题"),
+    "profiling": ("Performance profiling", "性能剖析与归因"),
+    "debugging": ("Debugging and missing stacks", "调试与调用栈缺失"),
+    "functional_detail": (
+        "Hangs, wrong results, premature cancellation, and cleanup failures.",
+        "卡住、错误结果、过早取消及资源清理等功能行为。",
+    ),
+    "performance_detail": (
+        "Observed latency, extra CPU or allocations, and worker or connection contention.",
+        "观测到的延迟、额外 CPU 或分配开销，以及工作线程或连接争用。",
+    ),
+    "profiling_detail": (
+        "Attribution of CPU samples or suspended I/O time to an application caller.",
+        "将 CPU 热点样本或 I/O 等待时间归到应用调用者。",
+    ),
+    "debugging_detail": (
+        "Recovery of the caller, failed operation, or task origin missing from a diagnostic.",
+        "补回诊断中缺失的调用者、失败操作或任务来源。",
+    ),
+    "case_count": ("Cases", "案例数"),
+    "direct_diagnosis": ("Direct diagnosis", "有直接诊断证据"),
+    "evidence_matrix": ("Reproduction and diagnosis", "复现范围与诊断依据"),
+    "evidence_matrix_help": (
+        "Reproduction describes how much of the report the local experiment covers. Diagnosis describes whether the conclusion follows directly from observed evidence or relies on comparisons. Both describe the same cases counted above.",
+        "复现范围说明本地实验覆盖原帖的哪些内容。诊断依据说明结论来自直接观测，还是需要结合对照实验。下表统计的是上面同一批案例。",
+    ),
     "why_join": ("What stitching revealed", "拼接补回了什么"),
     "any_scope": ("All reproduction scopes", "全部复现范围"),
     "admission": ("Which cases are included", "案例入选标准"),
     "selected": ("Selected investigations", "代表性案例"),
-    "hero_a": ("Follow the stack", "跨越挂起与恢复"),
-    "hero_b": ("across", ""),
-    "hero_em": ("resumes.", "追踪调用栈"),
+    "hero_a": ("Connect the callee", "把被调用者"),
+    "hero_b": ("to its", "连回"),
+    "hero_em": ("original caller.", "原始调用者"),
     "hero_copy": (
-        "See where suspended work began and which caller or request produced a later failure, wait, or slow execution.",
-        "用已核实的栈拼接追溯协程的发起位置，并定位导致异常、阻塞或延迟的调用者。",
+        "When suspension hides the caller from the physical stack, CoroPerf uses recorded coroutine identities to connect later execution to the stack that started or requested it.",
+        "协程挂起后，原始调用者可能从物理栈消失。CoroPerf 根据记录的协程身份，把后续执行接回创建或发出请求时的调用栈。",
     ),
     "browse": ("Browse issue evidence ↓", "查看案例证据 ↓"),
     "read_research": ("Read the research notes ↗", "阅读研究摘要 ↗"),
@@ -109,12 +253,12 @@ LABELS = {
     "read_evidence": ("How to read the evidence", "如何阅读证据"),
     "read_join": ("The recorded join", "拼接是怎么得到的"),
     "method_join": (
-        "A creation-to-execution join requires two stack records with the same captured instance identity and a graph edge or an audited runtime task ID. Additional creator edges link separately recorded parent and child instances.",
-        "从创建到执行的拼接要求两个栈记录携带相同的实例标识，并有采集图边或已核对的运行时任务 ID 支持。如有额外的创建者关系边，页面会另外标出。",
+        "A join links an earlier creation or request stack to a later observation of the same instance. The connection uses a recorded graph edge or an audited runtime task ID. Creator edges can extend the stack across separate parent and child instances.",
+        "拼接把较早的创建栈或请求栈接到同一实例的后续观测。依据是采集图中的记录边或已核对的运行时任务 ID。创建者关系还可以连接不同的父、子实例。",
     ),
     "method_coverage": (
-        "Each featured case has an identity-verified join that recovers a missing caller or distinguishes which request or task owns the observed behavior. Its evidence page names the added fact and links the supporting records.",
-        "每个入选案例都有经过身份核对的拼接，用来补回缺失的调用者，或区分观测结果属于哪个请求或任务。证据页逐条标明拼接补回的事实和对应记录。",
+        "An identity-verified join must recover a caller or task that the tested stock diagnostic leaves missing or ambiguous. Each evidence page names the recovered fact and links the supporting records.",
+        "入选案例要求经过身份核实的拼接能补回普通诊断中缺失或无法区分的调用者或任务。证据页写明恢复了什么，并链接对应记录。",
     ),
     "reproduction_scope": ("Reproduction scope", "复现的范围"),
     "method_reproduction": (
@@ -138,13 +282,13 @@ FEATURES = {
     "en": [
         ("Managed identity", "Recovering Main after an async resume"),
         ("Native disassembly", "Tracing a database stall to the originating request"),
-        ("Scheduling", "Tracing a delayed task back to its spawn"),
+        ("CPU profiling", "Finding the callers behind one CPU hot path"),
         ("Error attribution", "Distinguishing identical RPC failures by launch site"),
     ],
     "zh-CN": [
         ("托管运行时", "在异步恢复后追溯到 Main"),
         ("原生汇编", "从数据库阻塞现场追溯请求入口"),
-        ("调度性能", "把延迟执行的任务连回创建位置"),
+        ("CPU 性能分析", "区分同一热点函数背后的调用者"),
         ("异常归属", "用启动位置区分相同的 RPC 错误"),
     ],
 }

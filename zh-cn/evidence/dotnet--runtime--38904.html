@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="多层 await 的重复重抛分别来自哪个调用者？">
+  <title>dotnet/runtime #38904 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/dotnet--runtime--38904.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/dotnet--runtime--38904.html" lang="en" hreflang="en">English</a><a href="dotnet--runtime--38904.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">dotnet/runtime #38904</p>
+        <h1>多层 await 的重复重抛分别来自哪个调用者？</h1>
+        <div class="case-links"><a href="https://github.com/dotnet/runtime/issues/38904">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>两条失败链在同一个工作线程交错执行，重抛栈相同。用根 Task 实际保存的异常对象，可以把重抛接回各自的原始调用者。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 4</code></a></nav>
+          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>Program.Main</code></li><li><code>Program.LaunchInventory</code></li><li><code>Program.Launch</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>根 Task 保存的正是重抛时观测到的同一个 Exception 对象。用该 Task 可以找回早先的发起栈。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 4</code></p>
+        </aside><section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>ContinuationQueue.Drain</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Threading.ExecutionContext.RunInternal</code></li><li><code>Program+&lt;Chain&gt;d__4.MoveNext</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess</code></li><li><code>System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span></div><ol class="frames"><li><code>ContinuationQueue.Drain</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Threading.ExecutionContext.RunInternal</code></li><li><code>Program+&lt;Chain&gt;d__4.MoveNext</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess</code></li><li><code>System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw</code></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>0 → 5</code></a></nav>
+          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>Program.Main</code></li><li><code>Program.LaunchProfile</code></li><li><code>Program.Launch</code></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>根 Task 保存的正是重抛时观测到的同一个 Exception 对象。用该 Task 可以找回早先的发起栈。</p>
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 5</code></p>
+        </aside><section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>ContinuationQueue.Drain</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Threading.ExecutionContext.RunInternal</code></li><li><code>Program+&lt;Chain&gt;d__4.MoveNext</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess</code></li><li><code>System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span></div><ol class="frames"><li><code>ContinuationQueue.Drain</code></li><li><code>System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1.MoveNext</code></li><li><code>System.Threading.ExecutionContext.RunInternal</code></li><li><code>Program+&lt;Chain&gt;d__4.MoveNext</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification</code></li><li><code>System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess</code></li><li><code>System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw</code></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>两条失败的调用链在同一工作线程上交错执行。原生 EventPipe 记录了 16 次抛出，异常类型与消息相同，其中 14 次重抛的调用栈相同。最终的 Exception.StackTrace 能看到经过 Chain 的传播路径，但原生事件和异常栈都缺少同步发起者。成功对照有 0 次抛出，直接转发到同样的叶子 Task 时只有 2 次首次抛出。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>FirstChanceException 在首次抛出和重抛时都提供实际的异常对象。已完成的根 Task 保存了同一个异常对象，CoroPerf 由此把每条抛出栈拼回最初记录的 Task 创建栈。展示运行中，LaunchInventory 有 2 次重抛，代表性拼接为 1 → 4。LaunchProfile 有 12 次重抛，代表性拼接为 0 → 5。交换发起或放行顺序仍可匹配，交换 await 深度后，重抛次数随调用链一起改变归属。</dd></div><div><dt>适用范围与局限</dt><dd>在 Linux x86-64 的 CoreCLR 8.0.34 和 10.0.0 上，使用单个续体队列交错运行。实验统计失败 Task 的首次抛出和重抛次数。探针在进程内采集 first-chance 事件，等根 Task 完成后读取实际异常对象。两批实验共核对 512 条抛出观测，其中 448 条是重抛。移除通过根 Task 异常匹配得出的身份后，所有观测均无法归属。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

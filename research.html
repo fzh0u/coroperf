@@ -16,13 +16,23 @@
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap header-row">
-      <a class="brand" href="index.html"><img class="brand-pony" src="assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
-      <nav aria-label="Main navigation">
+      <a class="brand" href="index.html"><img class="brand-pony" src="assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
         <a href="index.html#issues">Issue evidence</a>
         <a href="research.html">Research notes</a>
         <a href="index.html#method">Method</a>
       </nav>
-      <div class="languages"><span class="language-current" lang="en" aria-current="true">English</span><a class="language-switch" id="language-switch" href="zh-cn/research.html" lang="zh-CN" hreflang="zh-CN">简体中文</a></div>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="research.html" lang="en" hreflang="en" aria-current="page">English</a><a href="zh-cn/research.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
     </div>
   </header>
   <main id="main"><article class="wrap research">
@@ -35,6 +45,66 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>asyncpg #547 · Who borrowed each connection that kept the pool open?</h3>
+      <p>Both acquiring Tasks have been collected when shutdown gets stuck. Stock Task stacks and the allocation trace identify two pending release Futures at the same library line. CoroPerf matches each actual Future to its acquisition and recovers the application caller.</p>
+      <a href="evidence/magicstack--asyncpg--547.html#call-stack">Compare both acquisition-to-shutdown joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>SQLAlchemy #13689 · Who filled the cache entry that failed later?</h3>
+      <p>Both reads fail at the same library line after both writer Tasks have been collected. The allocation traces also match. CoroPerf uses each actual <code>FrozenResult</code> to connect the failing reader to its original writer.</p>
+      <a href="evidence/sqlalchemy--sqlalchemy--13689.html#call-stack">Compare the two cache handoffs ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #157157 · Which cancellation reached the final error?</h3>
+      <p>The target accepts two cancellation requests. With a stalled loop, the earlier cancelled Future supplies the final exception and the external message disappears. CoroPerf links the two request stacks to the observed Task and Future state.</p>
+      <a href="evidence/python--cpython--157157.html#call-stack">Compare the two cancellation requests ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Nuitka #4073 · Who first raised the error injected into the async generator?</h3>
+      <p>The affected build drops the original <code>make_exception</code> frame. Both caught errors have identical tracebacks. Matching the exception object across producer and receiver Tasks restores the application launcher for each error.</p>
+      <a href="evidence/nuitka--nuitka--4073.html#call-stack">Compare the receiver and first-raise stacks ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>async-lru #480 · Who evicted the result and who stayed waiting?</h3>
+      <p>All 20 cache computations finish, while 15 callers remain blocked on the affected release. The same result <code>Future</code> connects each eviction to its completion callback and waiting Task. Joining the two Task stacks through their dispatch Handles recovers the original callers.</p>
+      <a href="evidence/aio-libs--async-lru--480.html#call-stack">Compare the eviction and waiting stacks ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Dart #61585 · Which feature launched the interceptor?</h3>
+      <p>Stock Dart 3.14.0 shows <code>testFuture</code> as an async frame. The original feature remains absent. Matching the actual <code>Future</code> listener callback to its binding stack recovers <code>featureA</code> or <code>featureB</code> even when the second launch reaches the interceptor first.</p>
+      <a href="evidence/dart-lang--sdk--61585.html#call-stack">Compare both feature-to-interceptor stacks ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>ZIO #1003 · Which unsafeRun initiated each worker failure?</h3>
+      <p>The reported runtime produces the same failure trace for two fibers apart from their IDs. Java thread snapshots show both <code>unsafeRun</code> calls. Matching the actual <code>FiberContext</code> restores the particular caller and source line for each failure.</p>
+      <a href="evidence/zio--zio--1003.html#call-stack">Compare both unsafeRun joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>gRPC Python #37881 · Which interceptor led to the worker that lost the request ID?</h3>
+      <p>Both RPCs use the same method and payload. In the reported build, two worker threads read <code>None</code> through identical stacks. The active <code>WorkItem</code> links each read to its submission. Matching the exact handler then restores the interceptor route on the asyncio thread.</p>
+      <a href="evidence/grpc--grpc--37881.html#call-stack">Inspect both interceptor-to-worker joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #157213 · Who started the tasks that outlived gather?</h3>
+      <p>The official patch corrects the list of current waiters. After the shared dispatch callback runs, built-in diagnostics omit both original launchers. Recording the actual <code>Handle</code> at dispatch connects each surviving <code>Task</code> back to its <code>call_soon</code> caller.</p>
+      <a href="evidence/python--cpython--157213.html#call-stack">Inspect both caller-to-survivor joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #156278 · Which reads failed before stream cleanup?</h3>
+      <p>Two tasks have the same final traceback through <code>wait_closed</code>. Keeping the first raise and linking it to the actual Task creation stack restores the failed <code>readexactly</code> or <code>readuntil</code> and its original caller.</p>
+      <a href="evidence/python--cpython--156278.html#call-stack">Inspect both first-raise joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>.NET #125417 · What called the resumed Task?</h3>
+      <p>On the tested CoreCLR draft, direct await recovers its caller in the live async stack. Both synchronous forwarders disappear after resumption. A TPL execution interval assigns each worker observation to its Task, and the recorded creation stack restores <code>LaunchInventory</code> or <code>LaunchProfile</code>. All eight checks matched the actual Task IDs.</p>
+      <a href="evidence/dotnet--runtime--125417.html#call-stack">Inspect both caller-to-callee joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #105836 · Which caller submitted the task still in cleanup?</h3>
+      <p>The bridge Future reports cancellation while the loop Task is still pending. After the submission callback runs, stock task diagnostics display the same cleanup for both tasks. Matching the actual Task and bridge Future at <code>_chain_future</code> recovers the original caller on the submitting thread.</p>
+      <a href="evidence/python--cpython--105836.html#call-stack">Inspect both submission-to-cleanup stacks ↗</a>
+    </div>
+    <div class="research-entry">
       <h3>.NET #60764 · Recovery across garbage collection</h3>
       <p>The constructor stack starts on a timer worker. The token stored in the state machine joins the call from <code>Program.Main</code> to the resumed <code>Foo</code> invocation at <code>A..ctor</code>. A follow-up matched that initiation in three normal and three forced-compaction runs.</p>
       <a href="evidence/dotnet--runtime--60764.html#join-1-point-1">Inspect the creation-to-execution join ↗</a>
@@ -44,9 +114,109 @@
       <p>Two calls carried the same message, and the server reversed the reply order. Both failure stacks ended at the same library location. Matching the Kotlin Job identifies the distinct launch sites for the profile and inventory calls. An independent check compared the exception objects by reference.</p>
       <a href="evidence/grpc--grpc-kotlin--299.html#call-stack">Compare both joined stacks ↗</a>
     </div>
+    <div class="research-entry">
+      <h3>Kotlin #1660 · Recovering a caller removed by tail-call optimization</h3>
+      <p>After a dispatcher switch, exception recovery and the live DebugProbes dump both omit the tail caller on the tested Kotlin release. CoroPerf uses the actual <code>DispatchedCoroutine</code> Job to connect the worker's failing <code>invokeSuspend</code> to either <code>profileCaller</code> or <code>inventoryCaller</code>. All 16 attributions across two batches match the independent check.</p>
+      <a href="evidence/kotlin--kotlinx.coroutines--1660.html#call-stack">Compare both tail-caller joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Cats Effect #2620 · Who started the trace-less waiting fibers?</h3>
+      <p>In the original Play app, even full stock tracing leaves the dispatcher workers' <code>WAITING</code> rows empty. Matching each <code>IOFiber</code> at wait registration to its creation, then following its creator edge, leads back to dispatcher initialization at <code>AppLoader.scala:32</code>.</p>
+      <a href="evidence/typelevel--cats-effect--2620.html#call-stack">Inspect the four worker-to-creator chains ↗</a>
+    </div>
   </section>
   <section class="block" aria-labelledby="assembly">
     <div class="section-head"><h2 id="assembly">Native and scheduling attribution</h2></div>
+    <div class="research-entry">
+      <h3>CPython #115218 · Which caller spent longer waiting for I/O?</h3>
+      <p>Python's async-aware sampler distinguishes the two suspended Tasks and shows which waited longer. CoroPerf measures each actual suspension and follows the dispatch Handle back to the original caller.</p>
+      <a href="evidence/python--cpython--115218.html#call-stack">Compare both I/O waits and their callers ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Go #52557 · Which exited producer left each waiter blocked?</h3>
+      <p>Both <code>singleflight</code> producers exit while all four waiters remain blocked. Go's trace records the launchers and exits. The shared call and each registered result channel connect a specific waiter to the producer it depended on.</p>
+      <a href="evidence/golang--go--52557.html#call-stack">Compare the two waiter-to-launcher joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>futures-rs #2387 · Whose handshake timed out while the stream processed another result?</h3>
+      <p>The server sends a reply before its simulated deadline. The stream polls that handshake again only after finishing the first item's work. Poll intervals and the actual result object connect the stalled handshake and the work ahead of it to two distinct callers.</p>
+      <a href="evidence/rust-lang--futures-rs--2387.html#call-stack">Compare the handshake and work stacks ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>LLVM #121092 · Who launched each coroutine at the reused address?</h3>
+      <p>Four coroutine lifetimes share one frame address and one worker stack, even with frame types restored in GDB. Machine-code dataflow identifies the live frame. CoroPerf connects its current lifetime to the earlier creation stack that names the original caller.</p>
+      <a href="evidence/llvm--llvm-project--121092.html#call-stack">Compare the two generations at the same address ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>.NET #38904 · Which caller accounts for the repeated rethrows?</h3>
+      <p>Fourteen identical rethrow stacks interleave on one worker. CoroPerf matches the exception object to the fault of its root Task. In the selected run, that attributes twelve rethrows to <code>LaunchProfile</code> and two to <code>LaunchInventory</code>.</p>
+      <a href="evidence/dotnet--runtime--38904.html#call-stack">Compare both rethrow-to-caller stacks ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Bun #45020 · Which callers were waiting through the same poll?</h3>
+      <p>Both immediate Promises resolve before one 165 ms <code>epoll_pwait2</code> in the selected run. Stock Inspector reaches the shared scheduler. CoroPerf matches each awaited Promise to its creation stack and recovers the original launcher for both delayed continuations.</p>
+      <a href="evidence/oven-sh--bun--45020.html#call-stack">Compare both caller-to-continuation stacks ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Go #64614 · Who triggered each replacement dial?</h3>
+      <p>The pool reports three open connections while the driver has zero. One goroutine processes the buffered replacement signals in order. CoroPerf matches each dial interval to the original send stack on the same channel, recovering the caller that discarded the connection.</p>
+      <a href="evidence/golang--go--64614.html#call-stack">Compare both discard-to-dial stacks ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>LLVM #56972 · Who incurred the extra coroutine-frame allocation?</h3>
+      <p>Clang 19 makes a 48-byte heap allocation when <code>Bar</code> resumes. The destructor control embeds <code>Baz</code> inside <code>Bar</code>. Two extra allocations return the same child address. CoroPerf recovers the distinct parent frames from stripped machine code and joins each one to its original caller.</p>
+      <a href="evidence/llvm--llvm-project--56972.html#call-stack">Compare both allocation-to-caller joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>futures-rs #2047 · Which caller delayed a ready task?</h3>
+      <p>A ready heartbeat waits through 102 retry attempts on the affected revision and 31 after the fix. Both retry futures have the same ordinary stack. The child poll intervals and <code>push</code> stacks assign 96 of the 102 attempts to <code>launch_profile</code> and six to <code>launch_inventory</code> in the displayed run.</p>
+      <a href="evidence/rust-lang--futures-rs--2047.html#call-stack">Compare both retry-to-caller joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #90155 · Who took the permit ahead of a queued waiter?</h3>
+      <p>On 3.10.3 the releasing task reacquires the permit while the woken waiter stays blocked. Joining each Task to the earlier dispatch <code>Handle</code> identifies both original callers. On 3.14.3 the queued task gets the next grant.</p>
+      <a href="evidence/python--cpython--90155.html#call-stack">Compare the grant and waiting stacks ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>CPython #112169 · Which caller occupied the DNS worker?</h3>
+      <p>Two busy worker threads have the same stack. The resolver waits for the one in the default pool. The actual <code>WorkItem</code> and the broker's earlier queue request connect that worker to its original application caller.</p>
+      <a href="evidence/python--cpython--112169.html#call-stack">Compare the default and private worker joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Tokio #8434 · Which callers submitted the stranded child futures?</h3>
+      <p>The stock task trace identifies the lock operations reached during the trace poll. After the children are stranded, it records no leaf stacks. CoroPerf matches the earlier leaf samples to the child nodes that were actually polled and recovers both original callers.</p>
+      <a href="evidence/tokio-rs--tokio--8434.html#call-stack">Inspect both leaf-to-caller joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>LLVM #37601 · Who launched the coroutine reporting the old thread ID?</h3>
+      <p>Two resumes have identical symbolized GDB stacks and the same obsolete pthread ID. CoroPerf uses the stripped machine code to identify the actual frame from registers and stack bytes, then joins it to its recorded launch. Two independent batches each pass eight caller checks.</p>
+      <a href="evidence/llvm--llvm-project--37601.html#call-stack">Inspect the two cross-thread joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Tokio #8760 · Who started the intervals that kept clearing timers?</h3>
+      <p>The released regression increases CPU time for 2,048 short intervals in the local benchmark. Both application entries share a spawn line and the same timer-clear stack. CoroPerf connects all 768 clear observations to the correct entry using each task's poll interval and creation stack.</p>
+      <a href="evidence/tokio-rs--tokio--8760.html#call-stack">Inspect both timer-to-caller joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Asio #1239 · Recovering the caller beyond a detached spawn</h3>
+      <p>Symbolized GDB shows the scheduler stack, and Asio's live awaiter chain stops at the detached boundary. From stripped machine code, register values and stack bytes, CoroPerf identifies the timer's active coroutine, then connects it through two recorded creation stacks to the original launcher.</p>
+      <a href="evidence/chriskohlhoff--asio--1239.html#call-stack">Inspect both caller-to-timer chains ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Node #50056 · Two callers, one CPU hot path</h3>
+      <p>In a V8 profiler adaptation, 603 ordinary samples showed the shared callee without either launch site. CoroPerf joined 579 independently checked samples to the correct <code>launchProfile</code> or <code>launchInventory</code> creation stack. The control reversed execution order.</p>
+      <a href="evidence/nodejs--node--50056.html#call-stack">Compare the two caller-to-callee joins ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Tokio #8085 · Which caller delayed the socket read?</h3>
+      <p>Two CPU tasks have the same physical stack after suspension and the same stock spawn location. CoroPerf joins each poll to its creation stack. In this local adaptation, moving the same CPU work to a separate runtime changes median read delay from 107.924 ms to 0.039 ms.</p>
+      <a href="evidence/tokio-rs--tokio--8085.html#call-stack">Compare the two launch paths ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Tokio #8527 · Who submitted the blocking jobs with long queue waits?</h3>
+      <p>The stock span records show task IDs and the same submit and producer-spawn locations for both routes. CoroPerf connects the worker's CPU sample through blocking task creation to the async producer's earlier caller. All 1,036 samples match the independently recorded handle IDs.</p>
+      <a href="evidence/tokio-rs--tokio--8527.html#call-stack">Inspect both caller chains and queue waits ↗</a>
+    </div>
     <div class="research-entry">
       <h3>Drogon #2331 · Which request stalled in PostgreSQL?</h3>
       <p>Two request entry points create instances of <code>shared_lookup</code>. In a stripped HTTP/PostgreSQL adaptation, instruction dataflow alone assigned zero of six external-wait samples. Observed activation bindings assigned six. Keeping creation history led all six samples back to the correct request origin.</p>
