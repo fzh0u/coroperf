@@ -8,6 +8,11 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>Ray Data #67984 · 哪个输入转换拖延了另一个 UDF？</h3>
+      <p>占住 Actor 事件循环的格式转换与等待恢复的 UDF 分别来自两个入口。仍开放的提案将转换移到工作线程。CPU 对照中，从完成回调入队到 UDF 恢复的中位数从 2.50 毫秒降至 0.082 毫秒。</p>
+      <a href="evidence/ray-project--ray--67984.html#call-stack">对照修改前后的格式转换与 UDF 拼接栈</a>
+    </div>
+    <div class="research-entry">
       <h3>SGLang #29367 · 预分词请求的结果由哪个接收任务交付？</h3>
       <p>修复前两个结果都由同一个接收 Task 交付。上游合并后恢复为两个独立的接收 Task。四处拼接分别找回两个接收任务和两个请求的创建入口。</p>
       <a href="evidence/sgl-project--sglang--29367.html#call-stack">对照两个接收任务和两个请求的证据</a>

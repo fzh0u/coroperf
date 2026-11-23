@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Ray Data 的哪个批次格式转换拖延了另一个 UDF？">
+  <title>ray-project/ray #67984 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/ray-project--ray--67984.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/ray-project--ray--67984.html" lang="en" hreflang="en">English</a><a href="ray-project--ray--67984.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #67984</p>
+        <h1>Ray Data 的哪个批次格式转换拖延了另一个 UDF？</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/67984">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>调度与资源争用定位</dd></div>
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>GitHub 状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/ray-project/ray/pull/67985">候选修复已做本地对照 · PR 开放 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>按实际转换协程在两条相同的格式转换栈中分辨两个发起者。被拖延的 UDF 与占住事件循环的格式转换来自不同入口。应用提案后，按实际提交给执行器的可调用对象，也能跨线程保留这一区分。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform</code><span>planner-master.py:931</span></li><li><code>_UserTimingIterator.__next__</code><span>block_batching.py:76</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_format_batch</code><span>util.py:377</span></li><li><code>run.&lt;locals&gt;.&lt;lambda&gt;</code><span>check_format_handoff.py:188</span></li><li><code>Replay.format_batch</code><span>check_format_handoff.py:94</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>4 → 3</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform</code><span>planner-master.py:931</span></li><li><code>_UserTimingIterator.__next__</code><span>block_batching.py:76</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_format_batch</code><span>util.py:377</span></li><li><code>run.&lt;locals&gt;.&lt;lambda&gt;</code><span>check_format_handoff.py:188</span></li><li><code>Replay.format_batch</code><span>check_format_handoff.py:94</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 3 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>Replay.background_source</code><span>check_format_handoff.py:146</span></li><li><code>Replay.consume</code><span>check_format_handoff.py:136</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._transform</code><span>planner-master.py:979</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 6</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._apply_udf</code><span>planner-master.py:825</span></li><li><code>Replay.run_udf</code><span>check_format_handoff.py:124</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 6 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>6 → 2</code></a><a href="#join-2-point-1">拼接点 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-6"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 6</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._apply_udf</code><span>planner-master.py:825</span></li><li><code>Replay.run_udf</code><span>check_format_handoff.py:124</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-2-record-6">记录 6</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 6</code></p>
+        </aside><section class="stack " id="join-2-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform</code><span>planner-master.py:934</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-2">记录 2</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>Replay.interactive_source</code><span>check_format_handoff.py:143</span></li><li><code>Replay.consume</code><span>check_format_handoff.py:136</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._transform</code><span>planner-master.py:979</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 1</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform</code><span>planner-master.py:931</span></li><li><code>_UserTimingIterator.__next__</code><span>block_batching.py:76</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_format_batch</code><span>util.py:377</span></li><li><code>run.&lt;locals&gt;.&lt;lambda&gt;</code><span>check_format_handoff.py:188</span></li><li><code>Replay.format_batch</code><span>check_format_handoff.py:94</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 1 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-3-point-1">拼接点 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-3-record-1"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform</code><span>planner-master.py:931</span></li><li><code>_UserTimingIterator.__next__</code><span>block_batching.py:76</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_format_batch</code><span>util.py:377</span></li><li><code>run.&lt;locals&gt;.&lt;lambda&gt;</code><span>check_format_handoff.py:188</span></li><li><code>Replay.format_batch</code><span>check_format_handoff.py:94</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-3-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-3-record-1">记录 1</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 0 → 1</code></p>
+        </aside><section class="stack " id="join-3-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>Replay.interactive_source</code><span>check_format_handoff.py:143</span></li><li><code>Replay.consume</code><span>check_format_handoff.py:136</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._transform</code><span>planner-master.py:979</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 14</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 14</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>InputExecutor.submit.&lt;locals&gt;.invoke</code><span>check_format_handoff.py:167</span></li><li><code>_UserTimingIterator.__next__</code><span>block_batching.py:76</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_format_batch</code><span>util.py:377</span></li><li><code>run.&lt;locals&gt;.&lt;lambda&gt;</code><span>check_format_handoff.py:188</span></li><li><code>Replay.format_batch</code><span>check_format_handoff.py:94</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 14 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-4-point-2">拼接点 2 <code>14 → 13</code></a><a href="#join-4-point-1">拼接点 1 <code>13 → 12</code></a></nav>
+          <section class="stack observed" id="join-4-record-14"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 14</span><span class="record-instance">实例首次见于记录 13</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>InputExecutor.submit.&lt;locals&gt;.invoke</code><span>check_format_handoff.py:167</span></li><li><code>_UserTimingIterator.__next__</code><span>block_batching.py:76</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_format_batch</code><span>util.py:377</span></li><li><code>run.&lt;locals&gt;.&lt;lambda&gt;</code><span>check_format_handoff.py:188</span></li><li><code>Replay.format_batch</code><span>check_format_handoff.py:94</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-4-record-13">记录 13</a><span aria-hidden="true">→</span><a href="#join-4-record-14">记录 14</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 13 → 14</code></p>
+        </aside><section class="stack " id="join-4-record-13"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 13</span><span class="record-instance">实例首次见于记录 13</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform</code><span>planner-proposal.py:1000</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform.&lt;locals&gt;._advance_input</code><span>planner-proposal.py:969</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-4-record-12">记录 12</a><span aria-hidden="true">→</span><a href="#join-4-record-13">记录 13</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 12 → 13</code></p>
+        </aside><section class="stack " id="join-4-record-12"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 12</span><span class="record-instance">实例首次见于记录 12</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>Replay.background_source</code><span>check_format_handoff.py:146</span></li><li><code>Replay.consume</code><span>check_format_handoff.py:136</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._transform</code><span>planner-proposal.py:1072</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 15</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 15</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._apply_udf</code><span>planner-proposal.py:851</span></li><li><code>Replay.run_udf</code><span>check_format_handoff.py:124</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 15 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-5-point-2">拼接点 2 <code>15 → 10</code></a><a href="#join-5-point-1">拼接点 1 <code>10 → 7</code></a></nav>
+          <section class="stack observed" id="join-5-record-15"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 15</span><span class="record-instance">实例首次见于记录 10</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._apply_udf</code><span>planner-proposal.py:851</span></li><li><code>Replay.run_udf</code><span>check_format_handoff.py:124</span></li></ol></section>
+        <aside class="join-marker" id="join-5-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-5-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-5-record-10">记录 10</a><span aria-hidden="true">→</span><a href="#join-5-record-15">记录 15</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 10 → 15</code></p>
+        </aside><section class="stack " id="join-5-record-10"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 10</span><span class="record-instance">实例首次见于记录 10</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform</code><span>planner-proposal.py:1017</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform.&lt;locals&gt;._launch_udf</code><span>planner-proposal.py:984</span></li></ol></section>
+        <aside class="join-marker" id="join-5-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-5-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-5-record-7">记录 7</a><span aria-hidden="true">→</span><a href="#join-5-record-10">记录 10</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 7 → 10</code></p>
+        </aside><section class="stack " id="join-5-record-7"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 7</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>Replay.interactive_source</code><span>check_format_handoff.py:143</span></li><li><code>Replay.consume</code><span>check_format_handoff.py:136</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._transform</code><span>planner-proposal.py:1072</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 9</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 9</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>InputExecutor.submit.&lt;locals&gt;.invoke</code><span>check_format_handoff.py:167</span></li><li><code>_UserTimingIterator.__next__</code><span>block_batching.py:76</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_format_batch</code><span>util.py:377</span></li><li><code>run.&lt;locals&gt;.&lt;lambda&gt;</code><span>check_format_handoff.py:188</span></li><li><code>Replay.format_batch</code><span>check_format_handoff.py:94</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 9 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-6-point-2">拼接点 2 <code>9 → 8</code></a><a href="#join-6-point-1">拼接点 1 <code>8 → 7</code></a></nav>
+          <section class="stack observed" id="join-6-record-9"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 9</span><span class="record-instance">实例首次见于记录 8</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>InputExecutor.submit.&lt;locals&gt;.invoke</code><span>check_format_handoff.py:167</span></li><li><code>_UserTimingIterator.__next__</code><span>block_batching.py:76</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_MappingIterator.__next__</code><span>util.py:178</span></li><li><code>_format_batch</code><span>util.py:377</span></li><li><code>run.&lt;locals&gt;.&lt;lambda&gt;</code><span>check_format_handoff.py:188</span></li><li><code>Replay.format_batch</code><span>check_format_handoff.py:94</span></li></ol></section>
+        <aside class="join-marker" id="join-6-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-6-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-6-record-8">记录 8</a><span aria-hidden="true">→</span><a href="#join-6-record-9">记录 9</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 8 → 9</code></p>
+        </aside><section class="stack " id="join-6-record-8"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 8</span><span class="record-instance">实例首次见于记录 8</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform</code><span>planner-proposal.py:1000</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._execute_transform.&lt;locals&gt;._advance_input</code><span>planner-proposal.py:969</span></li></ol></section>
+        <aside class="join-marker" id="join-6-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-6-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-6-record-7">记录 7</a><span aria-hidden="true">→</span><a href="#join-6-record-8">记录 8</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 7 → 8</code></p>
+        </aside><section class="stack " id="join-6-record-7"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 7</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>Replay.interactive_source</code><span>check_format_handoff.py:143</span></li><li><code>Replay.consume</code><span>check_format_handoff.py:136</span></li><li><code>_generate_transform_fn_for_async_map.&lt;locals&gt;._transform</code><span>planner-proposal.py:1072</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>Ray 2.59.0 和固定版本的主线规划器都在 Actor 事件循环上转换后台批次。前台 UDF 的完成回调已经入队，要等转换结束才运行。PR #67985 将转换移到单独的工作线程。每版各跑九次无人工等待的实验，每批输入由两个 Arrow 块组成。从回调入队到 UDF 恢复的中位数，2.59.0 为 2.58 毫秒，主线为 2.50 毫秒，应用提案为 0.082 毫秒。三组的两项求和结果都一致。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>主线上两条格式转换记录 1 和 4 的 Ray 执行栈相同，按实际协程分别接回发起记录 0 和 3。延迟的前台 UDF 按实际 Task 拼回 6 → 2 → 0。应用提案后，后台转换在工作线程执行，按实际提交的可调用对象及其父协程拼回 14 → 13 → 12。前台 UDF 独立拼回 15 → 10 → 7，并在后台转换结束前恢复。</dd></div><div><dt>适用范围与局限</dt><dd>单进程 CPU 实验运行实际 Ray 批处理规划器，以及 Arrow 到 NumPy 的格式转换。测试用合成数值数据，在进入转换时安排完成回调。展示的调用栈来自受控等待实验，用来核对事件顺序。计时来自单独的无人工等待实验，每批输入 16 MiB。GPU 推理和分布式吞吐量仍待验证。Issue 和提案均仍开放。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>
