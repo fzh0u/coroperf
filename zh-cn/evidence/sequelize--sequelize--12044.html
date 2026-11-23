@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="原帖作者在评论中给出的重复用户名示例：直接 create 的错误栈止于 Query.formatError、Query.run 及微任务；相同唯一约束经 findOrCreate 时保留 model.save、Function.findOrCreate 和测试调用行">
+  <title>sequelize/sequelize #12044 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/sequelize--sequelize--12044.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
+      <nav aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <div class="languages"><a class="language-switch" id="language-switch" href="../../evidence/sequelize--sequelize--12044.html" lang="en" hreflang="en">English</a><span class="language-current" lang="zh-CN" aria-current="true">简体中文</span></div>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">sequelize/sequelize #12044</p>
+        <h1>原帖作者在评论中给出的重复用户名示例：直接 create 的错误栈止于 Query.formatError、Query.run 及微任务；相同唯一约束经 findOrCreate 时保留 model.save、Function.findOrCreate 和测试调用行</h1>
+        <div class="case-links"><a href="https://github.com/sequelize/sequelize/issues/12044">上游报告 ↗</a><a href="https://github.com/sequelize/sequelize/pull/13347/files">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>将第二次 create 的创建栈拼到 catch 现场，把错误栈中缺失的应用调用行连到驱动报错路径。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 870</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>16 → 516</code></a><a href="#join-1-point-2">拼接点 2 <code>516 → 705</code></a><a href="#join-1-point-3">拼接点 3 <code>705 → 870</code></a></nav>
+          <section class="stack " id="join-1-record-16"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 16</span><span class="record-instance">实例首次见于记录 16</span></div><ol class="frames"><li><code>Function.executeUserEntryPoint [as runMain]</code><span>run_main.js:74</span></li><li><code>Function.Module._load</code><span>loader.js:899</span></li><li><code>Module.load</code><span>loader.js:1000</span></li><li><code>Object.Module._extensions..js</code><span>loader.js:1176</span></li><li><code>Module._compile</code><span>loader.js:1156</span></li><li><code>Object.&lt;anonymous&gt;</code><span>app.cjs:14</span></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-16">记录 16</a><span aria-hidden="true">→</span><a href="#join-1-record-516">记录 516</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 516 → 16</code></p>
+        </aside><section class="stack " id="join-1-record-516"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 516</span><span class="record-instance">实例首次见于记录 516</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues.js:97</span></li><li><code>runFixture</code><span>app.cjs:5</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-516">记录 516</a><span aria-hidden="true">→</span><a href="#join-1-record-705">记录 705</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 705 → 516</code></p>
+        </aside><section class="stack " id="join-1-record-705"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 705</span><span class="record-instance">实例首次见于记录 705</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues.js:97</span></li><li><code>runFixture</code><span>app.cjs:11</span></li><li><code>Promise.catch (&lt;anonymous&gt;)</code></li><li><code>Promise.then (&lt;anonymous&gt;)</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-3" aria-label="拼接点 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-3">拼接点 3</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-705">记录 705</a><span aria-hidden="true">→</span><a href="#join-1-record-870">记录 870</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 705 → 870</code></p>
+        </aside><section class="stack observed" id="join-1-record-870"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 870 · diagnostic</span><span class="record-instance">实例首次见于记录 705</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues.js:97</span></li><li><code>Query.run</code><span>query.js:87</span></li><li><code>Query.formatError</code><span>query.js:338</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 870 · diagnostic</span></div><ol class="frames"><li><code>processTicksAndRejections</code><span>task_queues.js:97</span></li><li><code>Query.run</code><span>query.js:87</span></li><li><code>Query.formatError</code><span>query.js:338</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 870 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>原帖作者在评论中给出的重复用户名示例：直接 create 的错误栈止于 Query.formatError、Query.run 及微任务；相同唯一约束经 findOrCreate 时保留 model.save、Function.findOrCreate 和测试调用行。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>受影响图在第二次 create 创建任务时记录 runFixture 第 9 行、model.save、PostgresQueryInterface.insert 及 Query.run；另一条同任务创建至错误样本的边定位第 11 行的 catch。findOrCreate 的 SQL 包装函数返回 sequelize_caught_exception，而普通 INSERT 的驱动错误走 catch 中的 formatError。</dd></div><div><dt>适用范围与局限</dt><dd>full_local 对应有公开代码的 PostgreSQL 子例。首帖的 length 校验来自未公开模型；此前的校验实测保留在历史图，不能据此声称 6.10.0 首次修好了模型校验。测试用独立数据库并补全最小模型定义。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

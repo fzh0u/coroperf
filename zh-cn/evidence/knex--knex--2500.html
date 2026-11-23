@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="原帖代码对同一张缺失的 userss 表执行 SELECT，Bluebird 的 .then 栈保留 test 第 18 行，而 await 的未处理拒绝保留三段 previous event 却丢失 test">
+  <title>knex/knex #2500 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/knex--knex--2500.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
+      <nav aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <div class="languages"><a class="language-switch" id="language-switch" href="../../evidence/knex--knex--2500.html" lang="en" hreflang="en">English</a><span class="language-current" lang="zh-CN" aria-current="true">简体中文</span></div>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">knex/knex #2500</p>
+        <h1>原帖代码对同一张缺失的 userss 表执行 SELECT，Bluebird 的 .then 栈保留 test 第 18 行，而 await 的未处理拒绝保留三段 previous event 却丢失 test</h1>
+        <div class="case-links"><a href="https://github.com/knex/knex/issues/2500">上游报告 ↗</a><a href="https://github.com/knex/knex/issues/2500#issuecomment-1445331959">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>通过发生拒绝的 Promise 身份，可以恢复应用测试中缺失的异步调用者。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 74</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 74</code></a></nav>
+          <section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>bootstrap_node.js:617</span></li><li><code>startup</code><span>bootstrap_node.js:193</span></li><li><code>Function.Module.runMain</code><span>module.js:701</span></li><li><code>Function.Module._load</code><span>module.js:505</span></li><li><code>tryModuleLoad</code><span>module.js:513</span></li><li><code>Module.load</code><span>module.js:573</span></li><li><code>Object.Module._extensions..js</code><span>module.js:671</span></li><li><code>Module._compile</code><span>module.js:660</span></li><li><code>Object.&lt;anonymous&gt;</code><span>app.cjs:19</span></li><li><code>test</code><span>app.cjs:15</span></li><li><code>&lt;anonymous&gt;</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-74">记录 74</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 74</code></p>
+        </aside><section class="stack observed" id="join-1-record-74"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 74 · diagnostic</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>bootstrap_node.js:617</span></li><li><code>startup</code><span>bootstrap_node.js:193</span></li><li><code>Function.Module.runMain</code><span>module.js:703</span></li><li><code>process._tickCallback</code><span>next_tick.js:160</span></li><li><code>Builder.Target.then</code><span>interface.js:35</span></li><li><code>Runner.run</code><span>runner.js:47</span></li><li><code>From previous event:</code></li><li><code>tryOnImmediate</code><span>timers.js:717</span></li><li><code>runCallback</code><span>timers.js:756</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:61</span></li><li><code>From previous event:</code></li><li><code>Runner.&lt;anonymous&gt;</code><span>runner.js:149</span></li><li><code>Client_PG.query</code><span>client.js:199</span></li><li><code>Client_PG._query</code><span>index.js:287</span></li><li><code>From previous event:</code></li><li><code>TCP.onread</code><span>net.js:599</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:213</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:256</span></li><li><code>addChunk</code><span>_stream_readable.js:269</span></li><li><code>Socket.emit</code><span>events.js:160</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:113</span></li><li><code>Connection.parseMessage</code><span>connection.js:370</span></li><li><code>Connection.parseE</code><span>connection.js:545</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 74 · diagnostic</span></div><ol class="frames"><li><code>&lt;anonymous&gt;</code><span>bootstrap_node.js:617</span></li><li><code>startup</code><span>bootstrap_node.js:193</span></li><li><code>Function.Module.runMain</code><span>module.js:703</span></li><li><code>process._tickCallback</code><span>next_tick.js:160</span></li><li><code>Builder.Target.then</code><span>interface.js:35</span></li><li><code>Runner.run</code><span>runner.js:47</span></li><li><code>From previous event:</code></li><li><code>tryOnImmediate</code><span>timers.js:717</span></li><li><code>runCallback</code><span>timers.js:756</span></li><li><code>&lt;anonymous&gt;</code><span>runner.js:61</span></li><li><code>From previous event:</code></li><li><code>Runner.&lt;anonymous&gt;</code><span>runner.js:149</span></li><li><code>Client_PG.query</code><span>client.js:199</span></li><li><code>Client_PG._query</code><span>index.js:287</span></li><li><code>From previous event:</code></li><li><code>TCP.onread</code><span>net.js:599</span></li><li><code>Socket.Readable.push</code><span>_stream_readable.js:213</span></li><li><code>readableAddChunk</code><span>_stream_readable.js:256</span></li><li><code>addChunk</code><span>_stream_readable.js:269</span></li><li><code>Socket.emit</code><span>events.js:160</span></li><li><code>Socket.&lt;anonymous&gt;</code><span>connection.js:113</span></li><li><code>Connection.parseMessage</code><span>connection.js:370</span></li><li><code>Connection.parseE</code><span>connection.js:545</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 74 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>原帖代码对同一张缺失的 userss 表执行 SELECT，Bluebird 的 .then 栈保留 test 第 18 行，而 await 的未处理拒绝保留三段 previous event 却丢失 test。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>在 await 的受影响图中，Node 传给 unhandledRejection 的原生 Promise 与 async_hooks 初始化对象匹配。样本经同一 Promise 的创建栈连回 test 函数入口，补上错误栈缺失的应用归属。后续评论另做配置对照：两端执行器均启用 asyncStackTraces，仅在创建 builder 的包装实例上也启用时，两条错误栈均恢复本地调用函数。</dd></div><div><dt>适用范围与局限</dt><dd>原帖的 test 函数入口与具体 SQL 行分开，图只直接恢复入口。Node 9 采集臂安装拒绝监听器，原生默认告警文本以无探针运行保存。Bluebird .then 的通知没有原生 Promise 身份。较晚评论者未公开应用及版本，本地使用其完整 runner 覆盖函数的两个显式路由分支；两个数据库共用一台本地服务，未运行副本复制。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

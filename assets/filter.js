@@ -1,24 +1,28 @@
 const filters = document.querySelector(".filters");
 const query = document.getElementById("query");
-const state = document.getElementById("state");
-const origin = document.getElementById("origin");
+const scope = document.getElementById("scope");
 const count = document.getElementById("results-count");
+const { format, empty } = count.dataset;
+
+function normalize(value) {
+  return value.toLowerCase().replace(/[#\s]+/g, " ").trim();
+}
+
 const rows = Array.from(document.querySelectorAll("#case-rows tr"), row => ({
   row,
-  search: row.textContent.toLowerCase().replace(/\s+/g, " "),
+  search: normalize(row.textContent + " " + row.dataset.titleAlt),
 }));
 
 function filterIssues() {
-  const terms = query.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const terms = normalize(query.value).split(" ").filter(Boolean);
   let matches = 0;
   for (const { row, search } of rows) {
     const visible = terms.every(term => search.includes(term)) &&
-      (!state.value || state.value === row.dataset.state) &&
-      (!origin.value || origin.value === row.dataset.reviewed);
+      (!scope.value || scope.value === row.dataset.scope);
     row.hidden = !visible;
     if (visible) matches += 1;
   }
-  count.textContent = matches ? `${matches} of ${rows.length} issues` : "No issues match these filters";
+  count.textContent = matches ? format.replace("{matches}", matches).replace("{total}", rows.length) : empty;
 }
 
 filters.hidden = false;

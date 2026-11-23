@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="原始 Node 程序经间接调用后，默认栈丢失异步上层">
+  <title>nodejs/node #48511 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/nodejs--node--48511.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
+      <nav aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <div class="languages"><a class="language-switch" id="language-switch" href="../../evidence/nodejs--node--48511.html" lang="en" hreflang="en">English</a><span class="language-current" lang="zh-CN" aria-current="true">简体中文</span></div>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">nodejs/node #48511</p>
+        <h1>原始 Node 程序经间接调用后，默认栈丢失异步上层</h1>
+        <div class="case-links"><a href="https://github.com/nodejs/node/issues/48511">上游报告 ↗</a><a href="https://github.com/nodejs/node/issues/48511#issuecomment-1607849482">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>根据对照推断</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>foo 第一次 await 之后的诊断栈缺少 main 和 indirectCall。匹配到的 Promise 创建记录保留了这两个调用者。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 12</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>7 → 12</code></a></nav>
+          <section class="stack " id="join-1-record-7"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 7</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>Object.&lt;anonymous&gt;</code><span>issue.js:16</span></li><li><code>main</code><span>issue.js:14</span></li><li><code>indirectCall</code><span>issue.js:2</span></li><li><code>foo</code><span>issue.js:7</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-7">记录 7</a><span aria-hidden="true">→</span><a href="#join-1-record-12">记录 12</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 7 → 12</code></p>
+        </aside><section class="stack observed" id="join-1-record-12"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 12 · diagnostic</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>foo</code><span>issue.js:8</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 12 · diagnostic</span></div><ol class="frames"><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>foo</code><span>issue.js:8</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 12 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>原始 Node 程序经间接调用后，默认栈丢失异步上层。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>Promise 创建路径恢复 main → indirectCall → foo；V8 工单没有给出引擎内部根因。</dd></div><div><dt>适用范围与局限</dt><dd>观察到调用链，不据此判定 V8 优化器机制。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="两个调用点同时通过已发布的 Electron 下载器发起 HTTPS GET，只给其中一路设置 200 ms 连接限时，另一路 2000 ms">
+  <title>sindresorhus/got #2277 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/sindresorhus--got--2277.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
+      <nav aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <div class="languages"><a class="language-switch" id="language-switch" href="../../evidence/sindresorhus--got--2277.html" lang="en" hreflang="en">English</a><span class="language-current" lang="zh-CN" aria-current="true">简体中文</span></div>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">sindresorhus/got #2277</p>
+        <h1>两个调用点同时通过已发布的 Electron 下载器发起 HTTPS GET，只给其中一路设置 200 ms 连接限时，另一路 2000 ms</h1>
+        <div class="case-links"><a href="https://github.com/sindresorhus/got/issues/2277">上游报告 ↗</a><a href="https://github.com/sindresorhus/got/issues/2277#issuecomment-1640082689">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>根据对照推断</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>用 Promise 和计时器身份核对超时现场，找出触发连接阶段时限的发起者。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 11</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>10 → 11</code></a></nav>
+          <section class="stack " id="join-1-record-10"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 10</span><span class="record-instance">实例首次见于记录 10</span></div><ol class="frames"><li><code>Object.downloadArtifact</code><span>index.js:65</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-10">记录 10</a><span aria-hidden="true">→</span><a href="#join-1-record-11">记录 11</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 10 → 11</code></p>
+        </aside><section class="stack observed" id="join-1-record-11"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 11 · running_sdk_await_continuation</span><span class="record-instance">实例首次见于记录 10</span></div><ol class="frames"><li><code>Object.downloadArtifact</code><span>index.js:117</span></li><li><code>promiseResolveHook</code><span>async_hooks:364</span></li><li><code>emitHook</code><span>async_hooks:235</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 11 · running_sdk_await_continuation</span></div><ol class="frames"><li><code>Object.downloadArtifact</code><span>index.js:117</span></li><li><code>promiseResolveHook</code><span>async_hooks:364</span></li><li><code>emitHook</code><span>async_hooks:235</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 11 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 1</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>0 → 1</code></a></nav>
+          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>ClientRequest.&lt;anonymous&gt;</code><span>timed-out.js:84</span></li><li><code>timeConnect</code><span>timed-out.js:82</span></li><li><code>addTimeout</code><span>timed-out.js:26</span></li><li><code>setTimeout</code><span>node:timers:164</span></li><li><code>new Timeout</code><span>timers:198</span></li><li><code>initAsyncResource</code><span>timers:164</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-1">记录 1</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 0 → 1</code></p>
+        </aside><section class="stack observed" id="join-2-record-1"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1 · running_timer_at_request_destroy</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>process.processTimers</code><span>timers:512</span></li><li><code>listOnTimeout</code><span>timers:571</span></li><li><code>Timeout.timeoutHandler [as _onTimeout]</code><span>timed-out.js:36</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1 · running_timer_at_request_destroy</span></div><ol class="frames"><li><code>process.processTimers</code><span>timers:512</span></li><li><code>listOnTimeout</code><span>timers:571</span></li><li><code>Timeout.timeoutHandler [as _onTimeout]</code><span>timed-out.js:36</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 1 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>两个调用点同时通过已发布的 Electron 下载器发起 HTTPS GET，只给其中一路设置 200 ms 连接限时，另一路 2000 ms。两轮交换限时的无探针运行均只丢失短限时的一路；归一化模块安装目录后，错误标题、13 个帧的函数、文件和行列与报告一致，栈中缺少 SDK 和应用调用点。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>原生错误已经能回答“哪个 URL 失败”。新增身份记录还能回答“哪一个本地调用返回的 Promise 收到该错误”，并从 timer 栈定位到 connect 阶段的终止请求处。将 200 ms 预算移到另一个版本后，服务器收到的路径、被拒绝的两个 Promise 和正在执行的计时器随之切换。</dd></div><div><dt>适用范围与局限</dt><dd>原项目的依赖、domain 环境和限时来源未公开，本地 SDK 和两个调用点由实验选定。计时器仅作诊断，返回 Promise 的下游反应回调在独立 ID 上运行，空帧 settlement 保留结局。包捕获通过成功 GET 的端口排除另一连接，使用用户态采样时间。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

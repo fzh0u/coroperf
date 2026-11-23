@@ -1,0 +1,147 @@
+{
+  "dotnet--runtime--60764": {
+    "records": [["0", "6"]],
+    "en": "The constructor stack begins on a timer worker. Joining it to creation recovers Program.Main as the initiator of this Foo state machine.",
+    "zh": "构造函数的物理栈起于计时器工作线程。拼回创建栈后，可以确定这次 Foo 状态机由 Program.Main 发起。"
+  },
+  "drogonframework--drogon--2331": {
+    "records": [["105", "158"]],
+    "en": "Two request entries use shared_lookup. The stopped sample's owner and the recorded creator chain identify profile_entry as the origin of the blocked request.",
+    "zh": "两个请求入口都使用 shared_lookup。将停止现场归到具体协程后，沿创建关系可以确认卡住的是由 profile_entry 发起的请求。"
+  },
+  "tokio-rs--tokio--6315": {
+    "records": [["31", "52"]],
+    "en": "The matched spawn and helper-body stacks identify which parent launched the delayed task in the controlled LIFO-slot run.",
+    "zh": "在受控的 LIFO 槽位复现中，将任务创建栈和任务体执行栈对齐，能找到被延迟调度的任务由哪个父任务发起。"
+  },
+  "pgjdbc--pgjdbc--1951": {
+    "records": [["1", "3"]],
+    "en": "The pin sample locates the JDBC read. The matched virtual-thread start supplies the earlier application dispatch path.",
+    "zh": "JFR 钉住事件指出 JDBC 读取位置。用同一个虚拟线程 ID 拼回启动记录后，可以找到早先的应用请求分派路径。"
+  },
+  "nodejs--node--36126": {
+    "records": [["5", "13"]],
+    "en": "The resumed diagnostic contains sub. The Promise creation stack restores its synchronous initiator, main.",
+    "zh": "恢复后的诊断栈只有 sub。拼上对应 Promise 的创建栈后，可以找回同步发起者 main。"
+  },
+  "nodejs--node--48511": {
+    "records": [["7", "12"]],
+    "en": "The early post-await diagnostic in foo omits main and indirectCall. The matching Promise creation record retains both.",
+    "zh": "foo 第一次 await 之后的诊断栈缺少 main 和 indirectCall。匹配到的 Promise 创建记录保留了这两个调用者。"
+  },
+  "golang--go--22289": {
+    "records": [["11", "12"]],
+    "en": "Runtime creator IDs recover the chain from the blocked goroutine through its ancestors in the controlled fixture.",
+    "zh": "在受控程序里，用运行时创建者 ID 将阻塞的 goroutine 追溯到多级创建者。"
+  },
+  "python--cpython--91048": {
+    "records": [["1", "15"]],
+    "en": "The suspended task is linked to the task creation in f2. The crossed-await control checks creator and current waiter independently.",
+    "zh": "挂起现场被连回 f2 中的任务创建位置。交叉 await 对照对创建者和当前等待者做了独立核对。"
+  },
+  "python--cpython--88831": {
+    "records": [["3", "43"]],
+    "en": "Finalization evidence identifies the pending task, and the identity-matched capture traces the task to its creation.",
+    "zh": "终结现场识别出仍未完成的任务，再通过匹配实例的采集记录追溯它的创建位置。"
+  },
+  "aio-libs--async-lru--528": {
+    "records": [["1", "2"]],
+    "en": "The active stack shows bar. Its child-task creation stack recovers foo and main and identifies the first caller among several waiters.",
+    "zh": "当前栈显示 bar。拼回子任务的创建栈后可恢复 foo 和 main，并从多个等待者中区分最早的发起者。"
+  },
+  "kludex--starlette--1438": {
+    "records": [["13", "65"]],
+    "en": "The task creation link connects the request middleware to the background execution that received cancellation.",
+    "zh": "任务创建关系把请求中间件和收到取消的后台执行连在一起。"
+  },
+  "fastapi--fastapi--709": {
+    "records": [["13", "554"]],
+    "en": "Joining the pending subscription stack to request-task creation identifies which request was still live at shutdown.",
+    "zh": "将仍在等待的订阅栈拼回请求任务的创建处，可以确定服务关闭时仍存活的是哪个请求。"
+  },
+  "sqlalchemy--sqlalchemy--8145": {
+    "records": [["1", "254"]],
+    "en": "The cleanup sample links back to the same Task created by main. Pool records then identify the matching checked-out connection left by the cancellation.",
+    "zh": "把清理现场连回 main 创建的同一个任务。连接池记录进一步核对出取消后遗留的已借出连接。"
+  },
+  "grpc--grpc-kotlin--299": {
+    "records": [["4", "72"], ["5", "67"]],
+    "en": "Captured Kotlin Job identities connect the two failure samples to their respective launch sites, even with identical messages and reversed reply order.",
+    "zh": "用采集到的 Kotlin Job 身份，将两处失败分别匹配到各自的启动位置。消息相同、响应顺序反转时也能区分两次调用。"
+  },
+  "kotlin--kotlinx.coroutines--2327": {
+    "records": [["81", "104"], ["5", "22"]],
+    "en": "Job lifecycle joins attribute the identical requestSuspend failures to the separate async and launch callers.",
+    "zh": "沿 Job 生命周期将两个相同的 requestSuspend 失败分别连回 async 和 launch 的发起者。"
+  },
+  "kotlin--kotlinx.coroutines--2604": {
+    "records": [["0", "9"]],
+    "en": "The throw sample and its continuation chain are joined to the runBlocking Job; this recovers the caller path across suspension.",
+    "zh": "将抛异常时的续体栈连回 runBlocking 创建的 Job，恢复挂起前的调用路径。"
+  },
+  "python-trio--trio--285": {
+    "records": [["1", "4"]],
+    "en": "Creation-to-cancellation attribution identifies which of two similarly executing tasks came from the unresponsive branch.",
+    "zh": "把取消现场连回任务的创建位置，区分执行路径相似的两个任务，定位无响应的一侧。"
+  },
+  "huggingface--huggingface_hub--2521": {
+    "records": [["43", "55"], ["3", "18"]],
+    "en": "Two requests shared a URL. The captured task lineage and response identities let the warning be attributed to submit_alpha.",
+    "zh": "两个请求使用同一 URL。沿任务创建关系并核对响应对象身份，可以将告警归到 submit_alpha。"
+  },
+  "automattic--mongoose--15317": {
+    "records": [["70", "124"]],
+    "en": "The validation stack starts at Document.invalidate. The Promise creation record recovers the originating model.save call in runDemo.",
+    "zh": "校验栈起于 Document.invalidate。拼上 Promise 创建记录可以找回 runDemo 中发起的 model.save。"
+  },
+  "automattic--mongoose--8691": {
+    "records": [["43", "81"]],
+    "en": "The creation record shows Query.then starting exec internally and recovers the application context missing from the error.",
+    "zh": "创建记录显示 Query.then 在内部启动 exec，并恢复错误栈里丢失的应用调用上下文。"
+  },
+  "axios--axios--2387": {
+    "records": [["6", "112"], ["14", "186"]],
+    "en": "Matching Promise, Error, and ClientRequest identities lets the two reports be traced to separate axios.get callers.",
+    "zh": "对齐 Promise、Error 和 ClientRequest 身份后，可以把两条错误记录分别追溯到对应的 axios.get 调用者。"
+  },
+  "knex--knex--2500": {
+    "records": [["1", "74"]],
+    "en": "The rejection's Promise identity identifies the creation stack in the application test where the missing async caller originated.",
+    "zh": "通过发生拒绝的 Promise 身份，可以恢复应用测试中缺失的异步调用者。"
+  },
+  "sequelize--sequelize--12044": {
+    "records": [["705", "870"]],
+    "en": "Stitching the second create call to its catch reconnects the lost application call site to the driver-error path.",
+    "zh": "将第二次 create 的创建栈拼到 catch 现场，把错误栈中缺失的应用调用行连到驱动报错路径。"
+  },
+  "sidorares--node-mysql2--530": {
+    "records": [["75", "98"], ["77", "120"]],
+    "en": "The two query Promise identities tie similar failures to readAccount and readInvoice separately.",
+    "zh": "两次查询的 Promise 身份将相似的错误分别归到 readAccount 和 readInvoice。"
+  },
+  "sindresorhus--got--2277": {
+    "records": [["10", "11"], ["0", "1"]],
+    "en": "Promise and timer identities recover which initiating caller hit its connect-phase deadline in the timing control.",
+    "zh": "用 Promise 和计时器身份核对超时现场，找出触发连接阶段时限的发起者。"
+  },
+  "typeorm--typeorm--11499": {
+    "records": [["0", "1"], ["2", "3"]],
+    "en": "The same SQL produces the same error text in two callers. Matching each Promise and await continuation distinguishes importOrders from refreshCatalog.",
+    "zh": "两个调用者执行相同 SQL 并得到相同报错。拼接各自 Promise 的创建栈和 await 恢复栈，可以区分 importOrders 和 refreshCatalog。"
+  },
+  "vincit--objection.js--1618": {
+    "records": [["0", "2"], ["1", "4"]],
+    "en": "At the custom thenable boundary, query-object identity reconnects each rejection to its own application creation site.",
+    "zh": "在自定义 thenable 边界，用查询对象身份将各次拒绝连回对应的应用创建位置。"
+  },
+  "omnilib--aiosqlite--87": {
+    "records": [["6", "156"], ["7", "189"], ["9", "205"]],
+    "en": "Task joins identify which concurrent gather callers received each lastrowid observation, so the reported values can be compared with the correct committed rows.",
+    "zh": "通过任务拼接找出每次 lastrowid 观测来自哪个 gather 子任务，进而用正确的已提交数据行核对返回值。"
+  },
+  "tortoise--tortoise-orm--2060": {
+    "records": [["6", "95"]],
+    "en": "The join identifies the gather caller whose defaults were lost and traces its task to the conflict-handling path that returned the competing caller's value.",
+    "zh": "拼接确定了 gather 中哪一个调用者的默认值丢失，并将它的任务追溯到返回竞争方数据的冲突处理路径。"
+  }
+}

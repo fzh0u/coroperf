@@ -1,69 +1,81 @@
 #!/usr/bin/env python3
-"""Build the static evidence atlas from the checked-in public snapshot."""
+"""Build both versions of the static atlas from the public snapshot."""
 
-from collections import Counter
 from html import escape
 import json
 from pathlib import Path
 
+from copy_text import COPY, FEATURES
+
 
 ROOT = Path(__file__).resolve().parents[1]
-FEATURED = [
-    ("dotnet--runtime--60764", "Managed identity", "Recovering Main after an async resume"),
-    ("sgl-project--sglang--50722", "Performance", "Finding the poll loop behind a throughput drop"),
-    ("drogonframework--drogon--2331", "Native disassembly", "Attributing a database stall in a stripped binary"),
-    ("vercel--next.js--74988", "Framework ownership", "Finding the components behind a render failure"),
-]
-STATE = {
-    "creation": "Coroutine stack joined",
-    "renderer": "Renderer chain linked",
-    "physical": "Physical stacks captured",
-    "missing": "No stack captured",
-}
+FEATURED = (
+    "dotnet--runtime--60764",
+    "drogonframework--drogon--2331",
+    "tokio-rs--tokio--6315",
+    "grpc--grpc-kotlin--299",
+)
+SCOPES = ("Full local reproduction", "Component reproduced")
 
 
-def document(title, description, body, prefix="", script=""):
+def document(path, title, description, body, language):
+    text = COPY[language]
+    chinese = language == "zh-CN"
+    depth = path.count("/")
+    prefix = "../" * depth
+    assets = "../" * (depth + chinese)
+    alternate = assets + ("" if chinese else "zh-cn/") + path
+    alt_language, alt_name = ("en", "English") if chinese else ("zh-CN", "简体中文")
+    language_links = (
+        f'<a class="language-switch" id="language-switch" href="{alternate}" '
+        f'lang="{alt_language}" hreflang="{alt_language}">{alt_name}</a>'
+    )
+    if chinese:
+        language_links += '<span class="language-current" lang="zh-CN" aria-current="true">简体中文</span>'
+    else:
+        language_links = '<span class="language-current" lang="en" aria-current="true">English</span>' + language_links
+    script = f'<script defer src="{assets}assets/filter.js"></script>' if path == "index.html" else ""
     output = f"""<!doctype html>
-<html lang="en">
+<html lang="{language}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#772f26">
   <meta name="description" content="{escape(description)}">
   <title>{escape(title)} · coroPerf</title>
-  <link rel="stylesheet" href="{prefix}assets/site.css">
+  <link rel="alternate" hreflang="{alt_language}" href="{alternate}">
+  <link rel="icon" type="image/png" href="{assets}assets/coroperf-pony.png">
+  <link rel="stylesheet" href="{assets}assets/site.css">
+  <script defer src="{assets}assets/navigation.js"></script>
   {script}
 </head>
 <body>
-  <a class="skip" href="#main">Skip to content</a>
+  <a class="skip" href="#main">{text["skip"]}</a>
   <header class="site-header">
     <div class="wrap header-row">
-      <a class="brand" href="{prefix}index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
-      <nav aria-label="Main navigation">
-        <a href="{prefix}index.html#issues">Issue evidence</a>
-        <a href="{prefix}research.html">Research notes</a>
-        <a href="{prefix}index.html#method">Method</a>
+      <a class="brand" href="{prefix}index.html"><img class="brand-pony" src="{assets}assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
+      <nav aria-label="{text["navigation"]}">
+        <a href="{prefix}index.html#issues">{text["issues"]}</a>
+        <a href="{prefix}research.html">{text["research"]}</a>
+        <a href="{prefix}index.html#method">{text["method"]}</a>
       </nav>
+      <div class="languages">{language_links}</div>
     </div>
   </header>
   <main id="main">{body}</main>
-  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · {text["atlas"]}</span><a href="#main">{text["top"]}</a></div></footer>
 </body>
 </html>
 """
     return "\n".join(line.rstrip() for line in output.splitlines()) + "\n"
 
 
-def case_state(case):
-    if any(join["relation"] == "creation" for join in case["joins"]):
-        return "creation"
-    if case["joins"]:
-        return "renderer"
-    return "physical" if case["physical"] else "missing"
+def case_title(case, language):
+    return case["title_zh"] if language == "zh-CN" else case["title"]
 
 
-def pill(state):
-    return f'<span class="pill {state}">{STATE[state]}</span>'
+def record_label(record, text):
+    return text["record"].format(id=escape(record["id"]))
 
 
 def frame_rows(frames):
@@ -77,254 +89,259 @@ def frame_rows(frames):
     return '<ol class="frames">' + "".join(rows) + "</ol>"
 
 
-def stack(block, title, extra_class=""):
+def stack(block, title, text, anchor="", extra_class=""):
+    identifier = f' id="{anchor}"' if anchor else ""
     kind = block["sample_kind"]
-    note = f" · {escape(kind.replace('_', ' '))}" if kind and kind != "unknown" else ""
+    note = f" · {escape(kind)}" if kind and kind != "unknown" else ""
+    identity = ""
+    if block.get("instance") is not None:
+        label = text["instance"].format(id=escape(block["instance"]))
+        identity = f'<span class="record-instance">{label}</span>'
     return (
-        f'<section class="stack {extra_class}">'
+        f'<section class="stack {extra_class}"{identifier}>'
         f'<div class="stack-head"><h4>{escape(title)}</h4>'
-        f'<span>Record {escape(block["id"])}{note}</span></div>'
+        f'<span>{record_label(block, text)}{note}</span>{identity}</div>'
         f'{frame_rows(block["frames"])}</section>'
     )
 
 
-def lineage(join):
+def join_marker(source, target, kind, relation, trace_number, number, text, identity_kind=None):
+    proof = {
+        "creation": "edge_proof",
+        "tokio": "task_proof",
+        "parent": "parent_proof",
+        "async_parent": "async_parent_proof",
+    }[relation]
+    prefix = f"join-{trace_number}"
+    source_id, target_id = escape(source["id"]), escape(target["id"])
+    raw_from, raw_to = source_id, target_id
+    if kind in {"coroutine_created_by", "goroutine_created_by", "created_by"}:
+        raw_from, raw_to = target_id, source_id
+    verification = (
+        f'{text["identity"]} <code>{escape(kind)}</code>' if relation == "tokio"
+        else f'{text["edge"]} <code>{escape(kind)} · {raw_from} → {raw_to}</code>'
+    )
+    identity_detail = f"<p>{text[identity_kind]}</p>" if identity_kind in (
+        "injected-value-token", "runtime-token-generation"
+    ) else ""
+    return f"""
+        <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#{prefix}-point-{number}">{text["join_number"].format(n=number)}</a><strong>{text[f"join_{relation}"]}</strong></div>
+          <p class="join-records"><a href="#{prefix}-record-{source_id}">{record_label(source, text)}</a><span aria-hidden="true">→</span><a href="#{prefix}-record-{target_id}">{record_label(target, text)}</a></p>
+          <p>{text[proof]}</p>
+          {identity_detail}
+          <p class="join-verification">{verification}</p>
+        </aside>"""
+
+
+def trace(join, number, text):
+    creation, observation = join["creation"], join["observation"]
     ancestors = join["ancestors"]
-    if not ancestors:
-        return ""
-    renderer = join["relation"] == "renderer"
+    origin_title = text["origin_stack"]
+    observation_title = text["execution_observation"]
+
     blocks = []
-    for ancestor in ancestors:
-        relation = ("JSX render owner" if renderer else
-                    "Recorded async parent" if ancestor["link_to_child"] == "parent_to_create" else
-                    "Recorded creator")
-        heading = ancestor["component"] if renderer and ancestor["component"] else "Ancestor creation stack"
-        blocks.append(stack(ancestor, heading))
-        blocks.append(f'<div class="edge">↓ <span>{relation}</span><code>{escape(ancestor["link_to_child"])}</code></div>')
-    return "".join(blocks)
+    links = []
+    path = [*ancestors, creation, observation]
+    for index, (parent, child) in enumerate(zip(path, path[1:]), start=1):
+        ancestor_link = index <= len(ancestors)
+        kind = parent["link_to_child"] if ancestor_link else join["edge"]
+        anchor = f'join-{number}-record-{escape(parent["id"])}'
+        if ancestor_link:
+            title = text["ancestor_stack"]
+            relation = "async_parent" if kind == "parent_to_create" else "parent"
+        else:
+            title = origin_title
+            relation = "tokio" if kind == "runtime_task_id" else "creation"
+        blocks.append(stack(parent, title, text, anchor))
+        identity = join.get("identity_kind") if relation == "creation" else None
+        blocks.append(join_marker(parent, child, kind, relation, number, index, text, identity))
+        label = text["join_number"].format(n=index)
+        links.append(f'<a href="#join-{number}-point-{index}">{label} '
+                     f'<code>{escape(parent["id"])} → {escape(child["id"])}</code></a>')
+    anchor = f'join-{number}-record-{escape(observation["id"])}'
+    blocks.append(stack(observation, observation_title, text, anchor, "observed"))
 
-
-def trace(join):
-    creation = join["creation"]
-    observation = join["observation"]
-    renderer = join["relation"] == "renderer"
-    opening = "Renderer registration stack" if renderer else "Creation stack"
-    ending = "Observed render stack" if renderer else "Observed execution stack"
-    boundary = "Same recorded renderer instance" if renderer else "Same coroutine instance across records"
-    if join["edge"] == "runtime_task_id":
-        boundary = "Same runtime task ID in one process"
-    evidence = [*join["ancestors"], creation]
-    components = [entry["component"] for entry in evidence if entry["component"]]
-    chain = ""
-    if renderer and len(components) > 1:
-        chain = '<p class="chain">' + " <span>→</span> ".join(map(escape, components)) + "</p>"
+    physical = {key: value for key, value in observation.items() if key != "instance"}
     return f"""
       <div class="trace-grid">
         <div class="trace-pane stitched">
-          <h3>CoroPerf connected stack</h3>
-          {chain}
-          {lineage(join)}
-          {stack(creation, opening)}
-          <div class="edge">↓ <span>{boundary}</span><code>{escape(join["edge"])}</code></div>
-          {stack(observation, ending, "observed")}
+          <h3>{text["connected"]}</h3>
+          <nav class="join-links" aria-label="{text["jump_joins"]}">{"".join(links)}</nav>
+          {"".join(blocks)}
         </div>
         <div class="trace-pane">
-          <h3>Original physical stack</h3>
-          {stack(observation, ending, "observed")}
-          <p class="small trace-note">The frames on record {escape(observation["id"])} before stitching. Both columns list frames from caller to callee.</p>
+          <h3>{text["raw_stack"]}</h3>
+          {stack(physical, observation_title, text, extra_class="observed")}
+          <p class="small trace-note">{text["raw_note"].format(id=escape(physical["id"]))}</p>
         </div>
       </div>"""
 
 
-def provenance(join):
-    if join.get("capture_label"):
-        return join["capture_label"]
-    if join["historical_pair"]:
-        return "Reviewed creation-to-observation witness"
-    if join["selected_witness"]:
-        return "Observation selected in the issue review"
-    return "Other observation in the same capture"
+def contribution(case, language):
+    return case["contribution_zh"] if language == "zh-CN" else case["contribution"]
 
 
-def physical_stacks(blocks):
-    if not blocks:
-        return ""
-    content = []
-    for i, record in enumerate(blocks):
-        event = str(record["event"] or "stack").replace("_", " ")
-        heading = "Captured stack"
-        leaf = record["frames"][-1]["function"]
-        content.append(f'<details class="extra" {"open" if i == 0 else ""}>'
-                       f'<summary>Record {escape(record["id"])} · {escape(event)}'
-                       f'<code>{escape(leaf)}</code></summary>{stack(record, heading)}</details>')
-    return "".join(content)
-
-
-def case_page(case):
-    state = case_state(case)
-    joins = case["joins"]
-    if joins:
-        if state == "renderer":
-            explanation = "The React renderer records the component-owner relationship and links the throw to the same registered renderer instance."
-        elif joins[0]["edge"] == "runtime_task_id":
-            explanation = "The runtime spawn hook and the helper-body observation record the same Tokio task ID in one process. The graph also records the task that spawned it."
+def case_page(case, language):
+    text = COPY[language]
+    title = case_title(case, language)
+    displays = []
+    for index, join in enumerate(case["joins"], start=1):
+        note = text["observation_number"].format(id=escape(join["observation"]["id"]))
+        content = trace(join, index, text)
+        if index == 1:
+            displays.append(f'<p class="provenance">{note}</p>{content}')
         else:
-            explanation = "CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack."
-        displays = [f'<p class="provenance">{provenance(joins[0])} · observation {escape(joins[0]["observation"]["id"])}</p>{trace(joins[0])}']
-        for join in joins[1:]:
-            displays.append(f'<details class="extra more-trace"><summary>{provenance(join)} · observation '
-                            f'{escape(join["observation"]["id"])}</summary>{trace(join)}</details>')
-        content = "".join(displays)
-        if case["physical"]:
-            content += f'<h3 class="related-head">Other captured stacks</h3>{physical_stacks(case["physical"])}'
-    elif state == "physical":
-        explanation = "The available capture has stack frames, but supplies no verified join between a creation stack and an observed execution stack."
-        content = physical_stacks(case["physical"])
-    else:
-        explanation = "This case has no captured stack frames in the published snapshot. The findings below record the scope and outcome of the investigation."
-        content = ""
+            displays.append(f'<details class="extra more-trace"><summary>{note}</summary>{content}</details>')
+    content = "".join(displays)
+
     source = ""
     if case["upstream_reference"] and case["upstream_reference"] != case["url"]:
-        source = f'<a href="{escape(case["upstream_reference"])}">Follow-up evidence ↗</a>'
-    fields = [("observation", "Local observation"), ("interpretation", "What CoroPerf showed"), ("limits", "Scope and limits")]
+        source = f'<a href="{escape(case["upstream_reference"])}">{text["followup"]}</a>'
+    data = case["findings_zh"] if language == "zh-CN" else case["findings"]
     findings = "".join(
-        f'<div><dt>{label}</dt><dd>{escape(case["findings"][key])}</dd></div>'
-        for key, label in fields if case["findings"].get(key)
+        f'<div><dt>{text[key]}</dt><dd>{escape(data[key])}</dd></div>'
+        for key in ("observation", "interpretation", "limits") if data.get(key)
     )
-    origin = "Confirmed in the issue review" if case["reviewed_origin"] else "Outside the reviewed origin lower bound"
     body = f"""
     <article class="wrap case">
-      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <a class="back" href="../index.html#issues">← {text["issues"]}</a>
       <header class="case-header">
         <p class="eyebrow">{escape(case["reference"])}</p>
-        <h1>{escape(case["title"])}</h1>
-        <div class="case-links"><a href="{escape(case["url"])}">Upstream report ↗</a>{source}</div>
+        <h1>{escape(title)}</h1>
+        <div class="case-links"><a href="{escape(case["url"])}">{text["upstream"]}</a>{source}</div>
         <dl class="case-status">
-          <div><dt>Reproduction</dt><dd>{escape(case["reproduction"])}</dd></div>
-          <div><dt>Diagnosis</dt><dd>{escape(case["diagnosis"])}</dd></div>
-          <div><dt>Reviewed coroutine origin</dt><dd>{origin}</dd></div>
+          <div><dt>{text["reproduction"]}</dt><dd>{text[case["reproduction"]]}</dd></div>
+          <div><dt>{text["diagnosis"]}</dt><dd>{text[case["diagnosis"]]}</dd></div>
         </dl>
       </header>
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
-        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2>{pill(state)}</div>
-        <p class="section-copy">{explanation}</p>
+        <div class="section-head"><h2 id="stack-title">{text["stack_title"]}</h2></div>
+        <div class="join-contribution"><h3>{text["why_join"]}</h3><p>{escape(contribution(case, language))}</p></div>
+        <p class="small join-guide">{text["join_guide"]}</p>
         {content}
       </section>
       <section class="findings" aria-labelledby="findings-title">
-        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <div class="section-head"><h2 id="findings-title">{text["findings"]}</h2></div>
         <dl>{findings}</dl>
       </section>
     </article>"""
-    return document(case["reference"], case["title"], body, "../")
+    return document(f'evidence/{case["id"]}.html', case["reference"], title, body, language)
 
 
 def featured_card(case, label, headline):
     return f"""
-      <a class="feature" href="evidence/{escape(case["id"])}.html">
+      <a class="feature" href="evidence/{escape(case["id"])}.html#call-stack">
         <span class="feature-label">{escape(label)}</span>
         <h3>{escape(headline)}</h3>
         <span class="feature-ref">{escape(case["reference"])} <span aria-hidden="true">↗</span></span>
       </a>"""
 
 
-def table_row(case):
-    state = case_state(case)
-    reviewed = "yes" if case["reviewed_origin"] else "no"
+def table_row(case, text, language):
+    scope = escape(case["reproduction"])
+    other_language = "en" if language == "zh-CN" else "zh-CN"
     return f"""
-      <tr data-state="{state}" data-reviewed="{reviewed}">
-        <th scope="row"><a href="evidence/{escape(case["id"])}.html"><span>{escape(case["reference"])}</span>{escape(case["title"])}</a></th>
-        <td>{pill(state)}</td><td>{escape(case["reproduction"])}</td>
+      <tr data-scope="{scope}" data-title-alt="{escape(case_title(case, other_language))}">
+        <th scope="row"><a href="evidence/{escape(case["id"])}.html"><span>{escape(case["reference"])}</span>{escape(case_title(case, language))}</a></th>
+        <td>{escape(contribution(case, language))}</td><td>{text[case["reproduction"]]}</td>
       </tr>"""
 
 
-def index_page(snapshot):
+def index_page(snapshot, language):
+    text = COPY[language]
     cases = snapshot["cases"]
     by_id = {case["id"]: case for case in cases}
-    totals = Counter(map(case_state, cases))
-    dotnet = by_id["dotnet--runtime--60764"]
-    example = dotnet["joins"][0]
+    joins = [join for case in cases for join in case["joins"]]
+    example = by_id["dotnet--runtime--60764"]["joins"][0]
     top = example["creation"]["frames"][0]["function"]
     leaf = next(frame["function"] for frame in example["observation"]["frames"] if frame["function"] == "A..ctor")
-    selected = "".join(featured_card(by_id[identifier], label, title) for identifier, label, title in FEATURED)
+    selected = "".join(featured_card(by_id[identifier], *feature)
+                       for identifier, feature in zip(FEATURED, FEATURES[language]))
     stats = [
-        (len(cases), "Issue evidence pages"),
-        (totals["creation"], "Coroutine stack joins"),
-        (totals["renderer"], "Renderer chains"),
-        (snapshot["historical_origin_lower_bound"], "Reviewed origins in the full study"),
+        (len(cases), "stat_pages"),
+        (len(joins), "stat_observations"),
+        (sum(len(join["ancestors"]) + 1 for join in joins), "stat_joins"),
     ]
-    numbers = "".join(f"<div><dd>{n:,}</dd><dt>{escape(title)}</dt></div>" for n, title in stats)
-    options = "".join(f'<option value="{key}">{text}</option>' for key, text in STATE.items())
-    rows = "".join(map(table_row, cases))
+    numbers = "".join(f"<div><dd>{count:,}</dd><dt>{text[key]}</dt></div>" for count, key in stats)
+    options = "".join(f'<option value="{key}">{text[key]}</option>' for key in SCOPES)
+    rows = "".join(table_row(case, text, language) for case in cases)
+    data = "../data/cases.json" if language == "zh-CN" else "data/cases.json"
     body = f"""
     <section class="wrap hero" aria-labelledby="hero-title">
       <div>
-        <p class="eyebrow">Coroutine Evidence Atlas</p>
-        <h1 id="hero-title">Follow the stack<br>across <em>resumes.</em></h1>
-        <p class="hero-copy">Explore real issue reproductions, performance investigations, and the recorded stack links that recover where asynchronous execution began.</p>
-        <div class="actions"><a class="button" href="#issues">Browse issue evidence ↓</a><a href="research.html">Read the research notes ↗</a></div>
+        <p class="eyebrow">{text["atlas"]}</p>
+        <h1 id="hero-title">{text["hero_a"]}<br>{text["hero_b"]} <em>{text["hero_em"]}</em></h1>
+        <p class="hero-copy">{text["hero_copy"]}</p>
+        <div class="actions"><a class="button" href="#issues">{text["browse"]}</a><a href="research.html">{text["read_research"]}</a></div>
       </div>
       <figure class="specimen">
-        <figcaption><span>From the issue evidence</span><a href="evidence/dotnet--runtime--60764.html#call-stack">dotnet/runtime #60764 ↗</a></figcaption>
+        <figcaption><span>{text["specimen"]}</span><a href="evidence/dotnet--runtime--60764.html#join-1-point-1">dotnet/runtime #60764 ↗</a></figcaption>
         <div class="specimen-body">
-          <div class="specimen-block"><span>Creation · record {escape(example["creation"]["id"])}</span><code>{escape(top)}</code><code>{escape(example["creation"]["frames"][-1]["function"])}</code></div>
-          <div class="specimen-edge">↓ &nbsp; Same state-machine instance</div>
-          <div class="specimen-block"><span>Observation · record {escape(example["observation"]["id"])}</span><code>Program.Foo [MoveNext]</code><code>{escape(leaf)}</code></div>
+          <div class="specimen-block"><span>{text["create"]} · {record_label(example["creation"], text)}</span><code>{escape(top)}</code><code>{escape(example["creation"]["frames"][-1]["function"])}</code></div>
+          <div class="specimen-edge">↓ &nbsp; {text["specimen_join"]}</div>
+          <div class="specimen-block"><span>{text["sample"]} · {record_label(example["observation"], text)}</span><code>Program.Foo [MoveNext]</code><code>{escape(leaf)}</code></div>
         </div>
-        <div class="specimen-foot">Selected frames from the recorded join</div>
+        <div class="specimen-foot">{text["specimen_foot"]}</div>
       </figure>
     </section>
     <section class="wrap block" aria-labelledby="coverage">
-      <div class="section-head"><h2 id="coverage">Evidence coverage</h2><span class="small">Corpus snapshot · <time>{escape(snapshot["corpus_date"])}</time></span></div>
+      <div class="section-head"><h2 id="coverage">{text["coverage"]}</h2><span class="small">{text["snapshot"]} · <time>{escape(snapshot["corpus_date"])}</time></span></div>
       <dl class="stats">{numbers}</dl>
     </section>
     <section class="wrap block" aria-labelledby="selected">
-      <div class="section-head"><h2 id="selected">Selected investigations</h2></div>
+      <div class="section-head"><h2 id="selected">{text["selected"]}</h2></div>
       <div class="features">{selected}</div>
     </section>
     <section class="wrap block" id="issues" aria-labelledby="issues-title">
-      <div class="section-head"><h2 id="issues-title">Issue evidence</h2><a href="data/cases.json" download>Download snapshot data ↓</a></div>
-      <p class="section-copy">Open a case to inspect its connected call stack, original physical frames, local findings, and upstream report. Cases with limited captures describe the evidence gap.</p>
+      <div class="section-head"><h2 id="issues-title">{text["issues"]}</h2><a href="{data}" download>{text["download"]}</a></div>
+      <p class="section-copy">{text["index_copy"]}</p>
       <div class="filters" hidden>
-        <div><label for="query">Search issues</label><input type="search" id="query" placeholder="Project, issue number, or title"></div>
-        <div><label for="state">Call stack</label><select id="state"><option value="">Any stack status</option>{options}</select></div>
-        <div><label for="origin">Issue review</label><select id="origin"><option value="">Any review status</option><option value="yes">Confirmed coroutine origin</option></select></div>
+        <div><label for="query">{text["search"]}</label><input type="search" id="query" placeholder="{text["placeholder"]}"></div>
+        <div><label for="scope">{text["reproduction"]}</label><select id="scope"><option value="">{text["any_scope"]}</option>{options}</select></div>
       </div>
-      <p class="results-count" id="results-count" role="status">{len(cases)} issues</p>
+      <p class="results-count" id="results-count" role="status" data-format="{text["filtered_result"]}" data-empty="{text["no_result"]}">{text["result"].format(total=len(cases))}</p>
       <div class="table-wrap">
-        <table><thead><tr><th scope="col">Issue</th><th scope="col">Call stack</th><th scope="col">Reproduction</th></tr></thead>
+        <table><thead><tr><th scope="col">{text["issue"]}</th><th scope="col">{text["why_join"]}</th><th scope="col">{text["reproduction"]}</th></tr></thead>
         <tbody id="case-rows">{rows}</tbody></table>
       </div>
     </section>
     <section class="method" id="method" aria-labelledby="method-title">
       <div class="wrap">
-        <div class="section-head"><h2 id="method-title">How to read the evidence</h2></div>
+        <div class="section-head"><h2 id="method-title">{text["read_evidence"]}</h2></div>
         <div class="method-grid">
-          <div><h3>The recorded join</h3><p>Each join has two stack-bearing records with a shared instance identity and a recorded graph edge or audited runtime task ID. Parent and renderer-owner links have their own labels. Frames run from caller to callee within each record.</p></div>
-          <div><h3>Two coverage measures</h3><p>The join count measures coverage in the published captures. The lower bound of {snapshot["historical_origin_lower_bound"]} measures issue-relevant origins reviewed in the underlying {snapshot["historical_issues"]}-issue corpus. A join from a different observation in the same capture may provide context while the origin relevant to the reported symptom remains open.</p></div>
-          <div><h3>Reproduction scope</h3><p>The affected example, a reproduced component, and a limited or unavailable reproduction have distinct labels. A case can show a physical stack or diagnose a symptom even when creation was outside the capture window.</p></div>
+          <div><h3>{text["read_join"]}</h3><p>{text["method_join"]}</p></div>
+          <div><h3>{text["admission"]}</h3><p>{text["method_coverage"]}</p></div>
+          <div><h3>{text["reproduction_scope"]}</h3><p>{text["method_reproduction"]}</p></div>
         </div>
       </div>
     </section>"""
-    return document("Coroutine Evidence Atlas", "Real systems issues and the recorded call-stack joins that recover coroutine origins.",
-                    body, script='<script defer src="assets/filter.js"></script>')
+    return document("index.html", text["atlas"], text["index_description"], body, language)
 
 
-def main():
-    snapshot = json.loads((ROOT / "data" / "cases.json").read_text(encoding="utf-8"))
-    evidence = ROOT / "evidence"
-    evidence.mkdir(exist_ok=True)
+def build(snapshot, language):
+    text = COPY[language]
+    chinese = language == "zh-CN"
+    destination = ROOT / "zh-cn" if chinese else ROOT
+    evidence = destination / "evidence"
+    evidence.mkdir(parents=True, exist_ok=True)
     generated = set()
     for case in snapshot["cases"]:
         path = evidence / f'{case["id"]}.html'
-        path.write_text(case_page(case), encoding="utf-8")
+        path.write_text(case_page(case, language), encoding="utf-8")
         generated.add(path)
     for stale in set(evidence.glob("*.html")) - generated:
         stale.unlink()
-    (ROOT / "index.html").write_text(index_page(snapshot), encoding="utf-8")
-    research = (ROOT / "scripts" / "research.fragment.html").read_text(encoding="utf-8")
-    (ROOT / "research.html").write_text(document("Research notes", "Performance and assembly-assisted coroutine investigations.",
-                                                 research), encoding="utf-8")
+    (destination / "index.html").write_text(index_page(snapshot, language), encoding="utf-8")
+    fragment = "research.zh-cn.fragment.html" if chinese else "research.fragment.html"
+    research = (ROOT / "scripts" / fragment).read_text(encoding="utf-8")
+    (destination / "research.html").write_text(
+        document("research.html", text["research"], text["research_description"], research, language),
+        encoding="utf-8",
+    )
 
 
 if __name__ == "__main__":
-    main()
+    snapshot = json.loads((ROOT / "data" / "cases.json").read_text(encoding="utf-8"))
+    for language in COPY:
+        build(snapshot, language)

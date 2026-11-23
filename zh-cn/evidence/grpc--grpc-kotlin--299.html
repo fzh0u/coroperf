@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="同一 stub 的两个 sayHello 并发挂起调用可送出完全相同的 protobuf 请求">
+  <title>grpc/grpc-kotlin #299 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/grpc--grpc-kotlin--299.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
+      <nav aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <div class="languages"><a class="language-switch" id="language-switch" href="../../evidence/grpc--grpc-kotlin--299.html" lang="en" hreflang="en">English</a><span class="language-current" lang="zh-CN" aria-current="true">简体中文</span></div>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">grpc/grpc-kotlin #299</p>
+        <h1>同一 stub 的两个 sayHello 并发挂起调用可送出完全相同的 protobuf 请求</h1>
+        <div class="case-links"><a href="https://github.com/grpc/grpc-kotlin/issues/299">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>用采集到的 Kotlin Job 身份，将两处失败分别匹配到各自的启动位置。消息相同、响应顺序反转时也能区分两次调用。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 72</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 2</code></a><a href="#join-1-point-2">拼接点 2 <code>2 → 4</code></a><a href="#join-1-point-3">拼接点 3 <code>4 → 72</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>MatchedCallsKt.main</code><span>MatchedCalls.kt:22</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:52</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.&lt;init&gt;</code><span>Builders.kt:61</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 2 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>MatchedCallsKt.main</code><span>MatchedCalls.kt:22</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:54</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:79</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:271</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallsKt$main$1.invokeSuspend</code><span>MatchedCalls.kt:23</span></li><li><code>kotlinx.coroutines.SupervisorKt.supervisorScope</code><span>Supervisor.kt:52</span></li><li><code>kotlinx.coroutines.SupervisorCoroutine.&lt;init&gt;</code><span>Supervisor.kt:63</span></li><li><code>kotlinx.coroutines.internal.ScopeCoroutine.&lt;init&gt;</code><span>Scopes.kt:18</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 4 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-4"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>MatchedCallsKt.main</code><span>MatchedCalls.kt:22</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:54</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:79</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:271</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallsKt$main$1.invokeSuspend</code><span>MatchedCalls.kt:23</span></li><li><code>kotlinx.coroutines.SupervisorKt.supervisorScope</code><span>Supervisor.kt:53</span></li><li><code>kotlinx.coroutines.intrinsics.UndispatchedKt.startUndispatchedOrReturn</code><span>Undispatched.kt:91</span></li><li><code>MatchedCallsKt$main$1$1.invoke</code><span>MatchedCalls.kt</span></li><li><code>MatchedCallsKt$main$1$1.invoke</code><span>MatchedCalls.kt</span></li><li><code>MatchedCallsKt$main$1$1.invokeSuspend</code><span>MatchedCalls.kt:24</span></li><li><code>MatchedCallsKt.profile</code><span>MatchedCalls.kt:10</span></li><li><code>kotlinx.coroutines.BuildersKt.async$default</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async$default</code><span>Builders.common.kt:82</span></li><li><code>kotlinx.coroutines.BuildersKt.async</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async</code><span>Builders.common.kt:88</span></li><li><code>kotlinx.coroutines.DeferredCoroutine.&lt;init&gt;</code><span>Builders.common.kt:97</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-3" aria-label="拼接点 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-3">拼接点 3</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-4">记录 4</a><span aria-hidden="true">→</span><a href="#join-1-record-72">记录 72</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 4 → 72</code></p>
+        </aside><section class="stack observed" id="join-1-record-72"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 72 · diagnostic</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>io.grpc.internal.SerializingExecutor.run</code><span>SerializingExecutor.java:123</span></li><li><code>io.grpc.internal.ContextRunnable.run</code><span>ContextRunnable.java:37</span></li><li><code>io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInContext</code><span>ClientCallImpl.java:718</span></li><li><code>io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInternal</code><span>ClientCallImpl.java:739</span></li><li><code>io.grpc.internal.ClientCallImpl.access$300</code><span>ClientCallImpl.java:68</span></li><li><code>io.grpc.internal.ClientCallImpl.closeObserver</code><span>ClientCallImpl.java:553</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener.onClose</code><span>DelayedClientCall.java:461</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener.delayOrExecute</code><span>DelayedClientCall.java:428</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener$3.run</code><span>DelayedClientCall.java:464</span></li><li><code>io.grpc.kotlin.ClientCalls$rpcImpl$1$1$1.onClose</code><span>ClientCalls.kt:295</span></li><li><code>io.grpc.Status.asException</code><span>Status.java:551</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 72 · diagnostic</span></div><ol class="frames"><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>io.grpc.internal.SerializingExecutor.run</code><span>SerializingExecutor.java:123</span></li><li><code>io.grpc.internal.ContextRunnable.run</code><span>ContextRunnable.java:37</span></li><li><code>io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInContext</code><span>ClientCallImpl.java:718</span></li><li><code>io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInternal</code><span>ClientCallImpl.java:739</span></li><li><code>io.grpc.internal.ClientCallImpl.access$300</code><span>ClientCallImpl.java:68</span></li><li><code>io.grpc.internal.ClientCallImpl.closeObserver</code><span>ClientCallImpl.java:553</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener.onClose</code><span>DelayedClientCall.java:461</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener.delayOrExecute</code><span>DelayedClientCall.java:428</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener$3.run</code><span>DelayedClientCall.java:464</span></li><li><code>io.grpc.kotlin.ClientCalls$rpcImpl$1$1$1.onClose</code><span>ClientCalls.kt:295</span></li><li><code>io.grpc.Status.asException</code><span>Status.java:551</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 72 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 67</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>0 → 2</code></a><a href="#join-2-point-2">拼接点 2 <code>2 → 5</code></a><a href="#join-2-point-3">拼接点 3 <code>5 → 67</code></a></nav>
+          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>MatchedCallsKt.main</code><span>MatchedCalls.kt:22</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:52</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.&lt;init&gt;</code><span>Builders.kt:61</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-2">记录 2</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 2 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-2"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>MatchedCallsKt.main</code><span>MatchedCalls.kt:22</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:54</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:79</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:271</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallsKt$main$1.invokeSuspend</code><span>MatchedCalls.kt:23</span></li><li><code>kotlinx.coroutines.SupervisorKt.supervisorScope</code><span>Supervisor.kt:52</span></li><li><code>kotlinx.coroutines.SupervisorCoroutine.&lt;init&gt;</code><span>Supervisor.kt:63</span></li><li><code>kotlinx.coroutines.internal.ScopeCoroutine.&lt;init&gt;</code><span>Scopes.kt:18</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 5 → 2</code></p>
+        </aside><section class="stack " id="join-2-record-5"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>MatchedCallsKt.main</code><span>MatchedCalls.kt:22</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking$default</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default</code><span>Builders.kt:36</span></li><li><code>kotlinx.coroutines.BuildersKt.runBlocking</code></li><li><code>kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking</code><span>Builders.kt:54</span></li><li><code>kotlinx.coroutines.BlockingCoroutine.joinBlocking</code><span>Builders.kt:79</span></li><li><code>kotlinx.coroutines.EventLoopImplBase.processNextEvent</code><span>EventLoop.common.kt:271</span></li><li><code>kotlinx.coroutines.DispatchedTask.run</code><span>DispatchedTask.kt:56</span></li><li><code>kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith</code><span>ContinuationImpl.kt:33</span></li><li><code>MatchedCallsKt$main$1.invokeSuspend</code><span>MatchedCalls.kt:23</span></li><li><code>kotlinx.coroutines.SupervisorKt.supervisorScope</code><span>Supervisor.kt:53</span></li><li><code>kotlinx.coroutines.intrinsics.UndispatchedKt.startUndispatchedOrReturn</code><span>Undispatched.kt:91</span></li><li><code>MatchedCallsKt$main$1$1.invoke</code><span>MatchedCalls.kt</span></li><li><code>MatchedCallsKt$main$1$1.invoke</code><span>MatchedCalls.kt</span></li><li><code>MatchedCallsKt$main$1$1.invokeSuspend</code><span>MatchedCalls.kt:25</span></li><li><code>MatchedCallsKt.inventory</code><span>MatchedCalls.kt:14</span></li><li><code>kotlinx.coroutines.BuildersKt.async$default</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async$default</code><span>Builders.common.kt:82</span></li><li><code>kotlinx.coroutines.BuildersKt.async</code></li><li><code>kotlinx.coroutines.BuildersKt__Builders_commonKt.async</code><span>Builders.common.kt:88</span></li><li><code>kotlinx.coroutines.DeferredCoroutine.&lt;init&gt;</code><span>Builders.common.kt:97</span></li><li><code>kotlinx.coroutines.AbstractCoroutine.&lt;init&gt;</code><span>AbstractCoroutine.kt:47</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-3" aria-label="拼接点 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-3">拼接点 3</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-5">记录 5</a><span aria-hidden="true">→</span><a href="#join-2-record-67">记录 67</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 5 → 67</code></p>
+        </aside><section class="stack observed" id="join-2-record-67"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 67 · diagnostic</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>io.grpc.internal.SerializingExecutor.run</code><span>SerializingExecutor.java:123</span></li><li><code>io.grpc.internal.ContextRunnable.run</code><span>ContextRunnable.java:37</span></li><li><code>io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInContext</code><span>ClientCallImpl.java:718</span></li><li><code>io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInternal</code><span>ClientCallImpl.java:739</span></li><li><code>io.grpc.internal.ClientCallImpl.access$300</code><span>ClientCallImpl.java:68</span></li><li><code>io.grpc.internal.ClientCallImpl.closeObserver</code><span>ClientCallImpl.java:553</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener.onClose</code><span>DelayedClientCall.java:461</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener.delayOrExecute</code><span>DelayedClientCall.java:428</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener$3.run</code><span>DelayedClientCall.java:464</span></li><li><code>io.grpc.kotlin.ClientCalls$rpcImpl$1$1$1.onClose</code><span>ClientCalls.kt:295</span></li><li><code>io.grpc.Status.asException</code><span>Status.java:551</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 67 · diagnostic</span></div><ol class="frames"><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>io.grpc.internal.SerializingExecutor.run</code><span>SerializingExecutor.java:123</span></li><li><code>io.grpc.internal.ContextRunnable.run</code><span>ContextRunnable.java:37</span></li><li><code>io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInContext</code><span>ClientCallImpl.java:718</span></li><li><code>io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInternal</code><span>ClientCallImpl.java:739</span></li><li><code>io.grpc.internal.ClientCallImpl.access$300</code><span>ClientCallImpl.java:68</span></li><li><code>io.grpc.internal.ClientCallImpl.closeObserver</code><span>ClientCallImpl.java:553</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener.onClose</code><span>DelayedClientCall.java:461</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener.delayOrExecute</code><span>DelayedClientCall.java:428</span></li><li><code>io.grpc.internal.DelayedClientCall$DelayedListener$3.run</code><span>DelayedClientCall.java:464</span></li><li><code>io.grpc.kotlin.ClientCalls$rpcImpl$1$1$1.onClose</code><span>ClientCalls.kt:295</span></li><li><code>io.grpc.Status.asException</code><span>Status.java:551</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 67 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>同一 stub 的两个 sayHello 并发挂起调用可送出完全相同的 protobuf 请求。双失败时客户端收到两个不同的异常对象，原始栈均从 Status.asException 和 ClientCalls.kt 第295行的 onClose 开始，两处业务调用均未出现。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>在生成 stub 的续体参数上读取实际 Job 的弱身份 ID，对应到同一 Job 的创建与失败完成栈。即使方法、消息和错误相同，仍能区分 profile 在第11行和 inventory 在第15行发起的挂起调用。</dd></div><div><dt>适用范围与局限</dt><dd>报告没有可运行应用和精确依赖锁。本地使用上游协议与报告时期版本，服务端显式发出所述状态。调用方和调用点可直接确定，真实生产环境为何出现网络异常需要服务端证据。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

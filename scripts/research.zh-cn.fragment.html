@@ -1,0 +1,34 @@
+<article class="wrap research">
+  <a class="back" href="index.html#issues">← 案例证据</a>
+  <header>
+    <p class="eyebrow">2026 年 11 月研究进展</p>
+    <h1>拼接栈补回了什么</h1>
+    <p class="section-copy">这些案例用已记录的协程拼接补回缺失的调用者，或把后续的故障、阻塞和延迟归到对应的请求或任务。</p>
+  </header>
+  <section class="block" aria-labelledby="identity">
+    <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
+    <div class="research-entry">
+      <h3>.NET #60764 · 跨垃圾回收的创建记录</h3>
+      <p>构造函数的栈起于计时器工作线程。状态机里存的令牌把 <code>Program.Main</code> 的创建现场和 <code>Foo</code> 恢复后进入 <code>A..ctor</code> 的现场连起来。后续的三次正常运行和三次强制压缩式垃圾回收对照均找回了发起者。</p>
+      <a href="evidence/dotnet--runtime--60764.html#join-1-point-1">查看创建到执行的拼接点 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>gRPC Kotlin #299 · 失败来自哪次调用</h3>
+      <p>两次调用携带相同的消息，服务端又反转了回复顺序，两个失败栈也落在同一库代码位置。匹配 Kotlin Job 后，可以分别定位个人资料和库存查询的启动位置。独立对照用引用相等核对了异常对象。</p>
+      <a href="evidence/grpc--grpc-kotlin--299.html#call-stack">对照两条拼接栈 ↗</a>
+    </div>
+  </section>
+  <section class="block" aria-labelledby="assembly">
+    <div class="section-head"><h2 id="assembly">原生协程与调度归属</h2></div>
+    <div class="research-entry">
+      <h3>Drogon #2331 · 哪个请求卡在 PostgreSQL</h3>
+      <p>两个请求入口都会创建 <code>shared_lookup</code> 的实例。在去符号的 HTTP/PostgreSQL 改编程序中，仅靠指令数据流，六份外部等待采样均无法归属。加入实际执行的激活绑定后，六份均归属成功。沿创建关系继续向上追溯，六份都找到了正确的请求入口。</p>
+      <a href="evidence/drogonframework--drogon--2331.html#call-stack">查看停止现场及其创建者链 ↗</a>
+    </div>
+    <div class="research-entry">
+      <h3>Tokio #6315 · 谁创建了被延迟执行的任务</h3>
+      <p>在受控复现中，创建任务的工作线程阻塞后，任务仍留在该工作线程的 LIFO 槽位。创建钩子和任务体样本记录了相同的进程内任务 ID。拼接可以把延迟执行的任务连回创建它的父任务及调用位置。</p>
+      <a href="evidence/tokio-rs--tokio--6315.html#call-stack">查看延迟任务的创建位置 ↗</a>
+    </div>
+  </section>
+</article>

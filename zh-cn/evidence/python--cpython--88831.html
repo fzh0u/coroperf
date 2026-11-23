@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="孤立 Future 上等待的 Task 在触发 GC 后被销毁；保留强引用时没有销毁诊断">
+  <title>python/cpython #88831 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/python--cpython--88831.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
+      <nav aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <div class="languages"><a class="language-switch" id="language-switch" href="../../evidence/python--cpython--88831.html" lang="en" hreflang="en">English</a><span class="language-current" lang="zh-CN" aria-current="true">简体中文</span></div>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">python/cpython #88831</p>
+        <h1>孤立 Future 上等待的 Task 在触发 GC 后被销毁；保留强引用时没有销毁诊断</h1>
+        <div class="case-links"><a href="https://github.com/python/cpython/issues/88831">上游报告 ↗</a><a href="https://github.com/ldo/dbussy/pull/45">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>根据对照推断</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>终结现场识别出仍未完成的任务，再通过匹配实例的采集记录追溯它的创建位置。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 43</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 1</code></a><a href="#join-1-point-2">拼接点 2 <code>1 → 3</code></a><a href="#join-1-point-3">拼接点 3 <code>3 → 43</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reproduce.py:130</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:625</span></li><li><code>ensure_future</code><span>tasks.py:615</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">记录 1</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 1 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reproduce.py:130</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>exercise</code><span>reproduce.py:90</span></li><li><code>gather</code><span>tasks.py:783</span></li><li><code>_ensure_future</code><span>tasks.py:636</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-3">记录 3</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 3 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>reproduce.py:130</span></li><li><code>run</code><span>runners.py:44</span></li><li><code>run_until_complete</code><span>base_events.py:633</span></li><li><code>run_forever</code><span>base_events.py:600</span></li><li><code>_run_once</code><span>base_events.py:1896</span></li><li><code>_run</code><span>events.py:80</span></li><li><code>start_sync</code><span>reproduce.py:80</span></li><li><code>create_task</code><span>tasks.py:337</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-3" aria-label="拼接点 3">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-3">拼接点 3</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-1-record-43">记录 43</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 3 → 43</code></p>
+        </aside><section class="stack observed" id="join-1-record-43"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 43 · gdb-finalizer-backtrace</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>_PyEval_Vector</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>trace_call_function</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_Vector</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>trace_call_function</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_Vector</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>trace_call_function</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_Vector</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>PyObject_Call</code></li><li><code>_PyObject_Call</code></li><li><code>PyVectorcall_Call</code></li><li><code>cfunction_vectorcall_FASTCALL_KEYWORDS</code></li><li><code>context_run</code></li><li><code>cfunction_vectorcall_O</code></li><li><code>task_wakeup</code></li><li><code>task_step</code></li><li><code>PyIter_Send</code></li><li><code>PyGen_am_send</code></li><li><code>gen_send_ex2</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>trace_call_function</code></li><li><code>cfunction_vectorcall_FASTCALL_KEYWORDS</code></li><li><code>gc_collect</code></li><li><code>gc_collect_with_callback</code></li><li><code>gc_collect_main</code></li><li><code>TaskObj_finalize</code></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 43 · gdb-finalizer-backtrace</span></div><ol class="frames"><li><code>_PyEval_Vector</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>trace_call_function</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_Vector</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>trace_call_function</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_Vector</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>trace_call_function</code></li><li><code>_PyFunction_Vectorcall</code></li><li><code>_PyEval_Vector</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>PyObject_Call</code></li><li><code>_PyObject_Call</code></li><li><code>PyVectorcall_Call</code></li><li><code>cfunction_vectorcall_FASTCALL_KEYWORDS</code></li><li><code>context_run</code></li><li><code>cfunction_vectorcall_O</code></li><li><code>task_wakeup</code></li><li><code>task_step</code></li><li><code>PyIter_Send</code></li><li><code>PyGen_am_send</code></li><li><code>gen_send_ex2</code></li><li><code>_PyEval_EvalFrameDefault</code></li><li><code>trace_call_function</code></li><li><code>cfunction_vectorcall_FASTCALL_KEYWORDS</code></li><li><code>gc_collect</code></li><li><code>gc_collect_with_callback</code></li><li><code>gc_collect_main</code></li><li><code>TaskObj_finalize</code></li></ol></section>
+          <p class="small trace-note">这里只显示记录 43 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>孤立 Future 上等待的 Task 在触发 GC 后被销毁；保留强引用时没有销毁诊断。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>GDB 的 TaskObj_finalize 实参对应实际 pending Task，Python 图补充创建任务身份，支持不可达循环的解释。</dd></div><div><dt>适用范围与局限</dt><dd>原应用未公开，本地仅复现生命周期机制；GC 内部路径来自外部调试器。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

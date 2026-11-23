@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="真实 SQL Server 的 YYY int NOT NULL 列收到参数 NULL，报 515、EREQUEST">
+  <title>typeorm/typeorm #11499 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/typeorm--typeorm--11499.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
+      <nav aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <div class="languages"><a class="language-switch" id="language-switch" href="../../evidence/typeorm--typeorm--11499.html" lang="en" hreflang="en">English</a><span class="language-current" lang="zh-CN" aria-current="true">简体中文</span></div>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">typeorm/typeorm #11499</p>
+        <h1>真实 SQL Server 的 YYY int NOT NULL 列收到参数 NULL，报 515、EREQUEST</h1>
+        <div class="case-links"><a href="https://github.com/typeorm/typeorm/issues/11499">上游报告 ↗</a><a href="https://github.com/typeorm/typeorm/pull/12056">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>两个调用者执行相同 SQL 并得到相同报错。拼接各自 Promise 的创建栈和 await 恢复栈，可以区分 importOrders 和 refreshCatalog。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 1</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:37</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>two-requests.cjs:37</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:11</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">记录 1</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 0 → 1</code></p>
+        </aside><section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1 · outer_async_function_rethrow</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>async main</code><span>two-requests.cjs:39</span></li><li><code>async Promise.allSettled (index 0)</code></li><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:13</span></li><li><code>promiseResolveHook</code><span>async_hooks:364</span></li><li><code>emitHook</code><span>async_hooks:235</span></li><li><code>AsyncHook.promiseResolve</code><span>observe.cjs:19</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1 · outer_async_function_rethrow</span></div><ol class="frames"><li><code>async main</code><span>two-requests.cjs:39</span></li><li><code>async Promise.allSettled (index 0)</code></li><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:13</span></li><li><code>promiseResolveHook</code><span>async_hooks:364</span></li><li><code>emitHook</code><span>async_hooks:235</span></li><li><code>AsyncHook.promiseResolve</code><span>observe.cjs:19</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 1 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>2 → 3</code></a></nav>
+          <section class="stack " id="join-2-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:37</span></li><li><code>Array.map (&lt;anonymous&gt;)</code></li><li><code>&lt;anonymous&gt;</code><span>two-requests.cjs:37</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:12</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 3</code></p>
+        </aside><section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3 · running_await_continuation</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:39</span></li><li><code>async Promise.allSettled (index 0)</code></li><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:13</span></li><li><code>logFailure</code><span>two-requests.cjs:9</span></li><li><code>console.observedError [as error]</code><span>observe.cjs:37</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3 · running_await_continuation</span></div><ol class="frames"><li><code>main</code><span>two-requests.cjs:39</span></li><li><code>async Promise.allSettled (index 0)</code></li><li><code>process.processTicksAndRejections</code><span>task_queues:95</span></li><li><code>Object.importOrders [as import]</code><span>two-requests.cjs:13</span></li><li><code>logFailure</code><span>two-requests.cjs:9</span></li><li><code>console.observedError [as error]</code><span>observe.cjs:37</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>真实 SQL Server 的 YYY int NOT NULL 列收到参数 NULL，报 515、EREQUEST。报告版本 0.3.24 的原生栈从 SqlServerQueryRunner.js:204 开始，缺少应用调用行。合法写入可由独立连接读回。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>用运行时记录的 Promise 身份区分两个应用调用。应用返回的实际 async Promise 的创建帧是 importOrders 或 refreshCatalog，V8 报告它结束时的栈仍位于同一函数的 rethrow。此时正执行的 await 续体由 runner.query 返回的具体 Promise 触发。核对该续体中的原生错误帧、错误对象及两个请求的独立结果，可以把相同 SQL 和错误信息归回各自的调用行。</dd></div><div><dt>适用范围与局限</dt><dd>报告者的 Nest 应用、实体和真实表名未发布。程序使用其 Node 和 TypeORM 版本、SQL Server 驱动、查询方式和同类非空约束。两个入口以及查询返回、异常打印和 V8 结束时的观测点为本地对照。服务端事件独立验证错误与 SQL；未将具体服务端会话推作 JavaScript 的协程创建者。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

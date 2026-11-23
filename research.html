@@ -6,75 +6,56 @@
   <meta name="theme-color" content="#772f26">
   <meta name="description" content="Performance and assembly-assisted coroutine investigations.">
   <title>Research notes · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="zh-cn/research.html">
+  <link rel="icon" type="image/png" href="assets/coroperf-pony.png">
   <link rel="stylesheet" href="assets/site.css">
+  <script defer src="assets/navigation.js"></script>
 
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap header-row">
-      <a class="brand" href="index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <a class="brand" href="index.html"><img class="brand-pony" src="assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
       <nav aria-label="Main navigation">
         <a href="index.html#issues">Issue evidence</a>
         <a href="research.html">Research notes</a>
         <a href="index.html#method">Method</a>
       </nav>
+      <div class="languages"><span class="language-current" lang="en" aria-current="true">English</span><a class="language-switch" id="language-switch" href="zh-cn/research.html" lang="zh-CN" hreflang="zh-CN">简体中文</a></div>
     </div>
   </header>
   <main id="main"><article class="wrap research">
   <a class="back" href="index.html#issues">← Issue evidence</a>
   <header>
     <p class="eyebrow">November 2026 research update</p>
-    <h1>From stack links to diagnosis</h1>
-    <p class="section-copy">The revision tracks request performance, async state-machine identity across collection, and native coroutine ownership when symbols and unwind information are unavailable.</p>
+    <h1>What the joined stack recovers</h1>
+    <p class="section-copy">The selected investigations use a recorded coroutine join to recover a missing caller or attribute later behavior to the responsible request or task.</p>
   </header>
-  <section class="block" aria-labelledby="perf">
-    <div class="section-head"><h2 id="perf">Performance in LLM serving</h2></div>
-    <div class="research-entry">
-      <h3>SGLang #50722 · Disconnect polling</h3>
-      <p>The joined request stack locates <code>is_disconnected</code> under the stream generator. In separate frontend CPU profiles, poll-related samples fell from 122 of 492 to 1 of 353 after limiting poll cadence.</p>
-      <p class="measure"><span>9,419 → 13,500 tokens/s</span><span>9,120 → 96 polls per workload</span></p>
-      <p class="small">Median throughput was measured without probes on one A100 with a 135M model and 48 concurrent clients.</p>
-      <a href="evidence/sgl-project--sglang--50722.html#call-stack">Inspect the request stack ↗</a>
-    </div>
-    <div class="research-entry">
-      <h3>vLLM #57350 · Detokenization on the event loop</h3>
-      <p>The request-task stack attributes incremental detokenization to the loop thread. The paired executor run lowered concurrent tokenization latency and reconstructed the same text, with lower aggregate streaming throughput.</p>
-      <p class="measure"><span>155 → 57 ms tokenization p95</span><span>1,993 → 1,753 tokens/s</span></p>
-      <p class="small">Each build had one paired GPU-less run with 20 streams and a local tokenizer.</p>
-      <a href="evidence/vllm-project--vllm--57350.html#call-stack">Inspect the request stack ↗</a>
-    </div>
-  </section>
   <section class="block" aria-labelledby="identity">
-    <div class="section-head"><h2 id="identity">Identity across suspension</h2></div>
+    <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
-      <h3>.NET #60764 · Creation before garbage collection</h3>
-      <p>The recorded state-machine identity connects <code>Program.Main</code> to the resumed <code>Foo</code> invocation in <code>A..ctor</code>. Follow-up controls matched the invocation in three normal runs and three runs with verified forced compacting collections.</p>
-      <a href="evidence/dotnet--runtime--60764.html#call-stack">Compare connected and physical stacks ↗</a>
+      <h3>.NET #60764 · Recovery across garbage collection</h3>
+      <p>The constructor stack starts on a timer worker. The token stored in the state machine joins the call from <code>Program.Main</code> to the resumed <code>Foo</code> invocation at <code>A..ctor</code>. A follow-up matched that initiation in three normal and three forced-compaction runs.</p>
+      <a href="evidence/dotnet--runtime--60764.html#join-1-point-1">Inspect the creation-to-execution join ↗</a>
     </div>
     <div class="research-entry">
-      <h3>Next.js #74988 · Renderer ownership</h3>
-      <p>Captured React owner objects connect <code>Home</code>, <code>AsyncComponent</code>, and <code>ThrowingComponent</code>. All six instrumented throws recovered this owner chain. Zero of six control throws did with owner links disabled.</p>
-      <a href="evidence/vercel--next.js--74988.html#call-stack">Inspect the renderer chain ↗</a>
+      <h3>gRPC Kotlin #299 · Which call failed?</h3>
+      <p>Two calls carried the same message, and the server reversed the reply order. Both failure stacks ended at the same library location. Matching the Kotlin Job identifies the distinct launch sites for the profile and inventory calls. An independent check compared the exception objects by reference.</p>
+      <a href="evidence/grpc--grpc-kotlin--299.html#call-stack">Compare both joined stacks ↗</a>
     </div>
   </section>
   <section class="block" aria-labelledby="assembly">
-    <div class="section-head"><h2 id="assembly">Optimized and stripped binaries</h2></div>
+    <div class="section-head"><h2 id="assembly">Native and scheduling attribution</h2></div>
     <div class="research-entry">
       <h3>Drogon #2331 · Which request stalled in PostgreSQL?</h3>
-      <p>Disassembly identified construction, actor, and cleanup paths in a stripped build. The SQL blocking stack alone leaves the owning request ambiguous. Observed transfer and activation bindings assigned all six fault samples. Retaining creation history recovered all six request origins.</p>
-      <p class="small">The HTTP/PostgreSQL adaptation used two request entry points to call the same coroutine function. Instruction dataflow alone assigned zero of six fault samples.</p>
-      <a href="evidence/drogonframework--drogon--2331.html#call-stack">Inspect the connected creation and stall stacks ↗</a>
+      <p>Two request entry points create instances of <code>shared_lookup</code>. In a stripped HTTP/PostgreSQL adaptation, instruction dataflow alone assigned zero of six external-wait samples. Observed activation bindings assigned six. Keeping creation history led all six samples back to the correct request origin.</p>
+      <a href="evidence/drogonframework--drogon--2331.html#call-stack">Inspect the stopped sample and its creator chain ↗</a>
     </div>
     <div class="research-entry">
-      <h3>LLVM code-generation benchmarks</h3>
-      <p class="small">These benchmarks form a separate set of assembly observations. Each entry reports a code path or layout comparison on local toolchains.</p>
-      <ul>
-        <li><strong>#148380.</strong> The stripped Clang 19 out-of-line build allocated a 24-byte coroutine frame and dispatched through the frame’s destroy slot. The path took 14.36 ns per iteration versus 2.15 ns in Clang 18. An inlined Clang 19 caller used an allocation-free path at 2.15 ns. <a href="https://github.com/llvm/llvm-project/issues/148380">Upstream issue ↗</a></li>
-        <li><strong>#56972.</strong> Moving cleanup to the destructor embedded the <code>Baz</code> frame inside <code>Bar</code> in the runnable adaptation. Allocations went from three to two per iteration and median time went from 45.77 to 34.71 ns. <a href="https://github.com/llvm/llvm-project/issues/56972">Upstream issue ↗</a></li>
-        <li><strong>#57852.</strong> Splitting grouped awaitables removed three allocations in a construction-only comparison. In the completed-result experiment, both groupings allocated three frames and splitting was slower. <a href="https://github.com/llvm/llvm-project/issues/57852">Upstream issue ↗</a></li>
-        <li><strong>#64933.</strong> Stripped Clang 14, 18, and 19 builds all executed the final-suspend indirect tail transfer. Clang 18 alone executed an out-of-line <code>await_suspend</code> helper in each observed iteration. <a href="https://github.com/llvm/llvm-project/issues/64933">Upstream issue ↗</a></li>
-      </ul>
+      <h3>Tokio #6315 · Who spawned the delayed task?</h3>
+      <p>In the controlled scheduler replay, a helper stayed in a worker’s LIFO slot while the spawning worker was blocked. A spawn hook and the helper-body sample recorded the same process-local task ID. The joined stack recovers the parent and launch site of that delayed helper.</p>
+      <a href="evidence/tokio-rs--tokio--6315.html#call-stack">Trace the delayed helper to its spawn ↗</a>
     </div>
   </section>
 </article>

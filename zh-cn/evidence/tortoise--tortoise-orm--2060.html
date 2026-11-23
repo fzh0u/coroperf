@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="两个异步调用同时为同一商品键指定不同值">
+  <title>tortoise/tortoise-orm #2060 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/tortoise--tortoise-orm--2060.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
+      <nav aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <div class="languages"><a class="language-switch" id="language-switch" href="../../evidence/tortoise--tortoise-orm--2060.html" lang="en" hreflang="en">English</a><span class="language-current" lang="zh-CN" aria-current="true">简体中文</span></div>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">tortoise/tortoise-orm #2060</p>
+        <h1>两个异步调用同时为同一商品键指定不同值</h1>
+        <div class="case-links"><a href="https://github.com/tortoise/tortoise-orm/issues/2060">上游报告 ↗</a><a href="https://github.com/tortoise/tortoise-orm/pull/2276">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>拼接确定了 gather 中哪一个调用者的默认值丢失，并将它的任务追溯到返回竞争方数据的冲突处理路径。</p></div>
+        <p class="small join-guide">栈帧保留在各自的采集块中。拼接点表示两个采集块之间有可核实的关系。拼接栈里的实例标签取自该实例在本次采集中首次出现的记录号。</p>
+        <p class="provenance">观测记录 95</p>
+      <div class="trace-grid">
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>0 → 6</code></a><a href="#join-1-point-2">拼接点 2 <code>6 → 95</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>posted.py:22</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:100</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-6">记录 6</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 6 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-6"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 6</span><span class="record-instance">实例首次见于记录 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>posted.py:22</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>posted.py:15</span></li><li><code>gather</code><span>tasks.py:831</span></li><li><code>ensure_future</code><span>tasks.py:695</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-6">记录 6</a><span aria-hidden="true">→</span><a href="#join-1-record-95">记录 95</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 6 → 95</code></p>
+        </aside><section class="stack observed" id="join-1-record-95"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 95 · semantic_boundary</span><span class="record-instance">实例首次见于记录 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>posted.py:22</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>update_or_create</code><span>models.py:1359</span></li></ol></section>
+        </div>
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 95 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>posted.py:22</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:674</span></li><li><code>run_forever</code><span>base_events.py:641</span></li><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>update_or_create</code><span>models.py:1359</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 95 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>两个异步调用同时为同一商品键指定不同值。未创建行的一方成功返回了另一方的值，提交的数据也漏掉了本次更新。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>PostgreSQL 日志记录插入参数、回滚和实际 UPDATE。上游回归同时覆盖相同列、不同列及 get_or_create；另用原生 SQL 验证更新语义。</dd></div><div><dt>适用范围与局限</dt><dd>并发调度影响是否遇到插入冲突。另一个原帖程序复制了旧算法，修复后仍演示旧结果。Python 栈无法独立判定数据库中的提交顺序。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

@@ -6,19 +6,23 @@
   <meta name="theme-color" content="#772f26">
   <meta name="description" content="An upsert can leave lastrowid pointing to another project">
   <title>omnilib/aiosqlite #87 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/omnilib--aiosqlite--87.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
   <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
 
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap header-row">
-      <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>coro<em>Perf</em></a>
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony.png" width="44" height="44" alt="">coro<em>Perf</em></a>
       <nav aria-label="Main navigation">
         <a href="../index.html#issues">Issue evidence</a>
         <a href="../research.html">Research notes</a>
         <a href="../index.html#method">Method</a>
       </nav>
+      <div class="languages"><span class="language-current" lang="en" aria-current="true">English</span><a class="language-switch" id="language-switch" href="../zh-cn/evidence/omnilib--aiosqlite--87.html" lang="zh-CN" hreflang="zh-CN">简体中文</a></div>
     </div>
   </header>
   <main id="main">
@@ -31,56 +35,89 @@
         <dl class="case-status">
           <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
           <div><dt>Diagnosis</dt><dd>Inferred from controls</dd></div>
-          <div><dt>Reviewed coroutine origin</dt><dd>Confirmed in the issue review</dd></div>
         </dl>
       </header>
       <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
-        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2><span class="pill creation">Coroutine stack joined</span></div>
-        <p class="section-copy">CoroPerf follows a recorded graph edge from a creation stack to an observation of the same coroutine instance. Any additional creator links appear above the creation stack.</p>
-        <p class="provenance">Reviewed creation-to-observation witness · observation 156</p>
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Task joins identify which concurrent gather callers received each lastrowid observation, so the reported values can be compared with the correct committed rows.</p></div>
+        <p class="small join-guide">Frames stay in their original capture blocks. A join shows a recorded relationship across blocks. In a connected stack, the instance label uses the first record ID for that instance in its capture.</p>
+        <p class="provenance">Observation 156</p>
       <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>0 → 6</code></a><a href="#join-1-point-2">Join point 2 <code>6 → 156</code></a></nav>
+          <section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-6">Record 6</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
 
-          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
-          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>measure</code><span>burst.py:23</span></li><li><code>gather</code><span>tasks.py:813</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section>
-          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
-          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 156 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 6 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-6"><div class="stack-head"><h4>Creation stack</h4><span>Record 6</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>measure</code><span>burst.py:23</span></li><li><code>gather</code><span>tasks.py:813</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-6">Record 6</a><span aria-hidden="true">→</span><a href="#join-1-record-156">Record 156</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 6 → 156</code></p>
+        </aside><section class="stack observed" id="join-1-record-156"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 156 · semantic_boundary</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
         </div>
         <div class="trace-pane">
           <h3>Original physical stack</h3>
-          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 156 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
-          <p class="small trace-note">The frames on record 156 before stitching. Both columns list frames from caller to callee.</p>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 156 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
+          <p class="small trace-note">Frames from record 156 alone. Each stack block lists frames from caller to callee.</p>
         </div>
-      </div><details class="extra more-trace"><summary>Observation selected in the issue review · observation 189</summary>
+      </div><details class="extra more-trace"><summary>Observation 189</summary>
       <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>0 → 7</code></a><a href="#join-2-point-2">Join point 2 <code>7 → 189</code></a></nav>
+          <section class="stack " id="join-2-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-2-record-7">Record 7</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
 
-          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
-          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>measure</code><span>burst.py:23</span></li><li><code>gather</code><span>tasks.py:813</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section>
-          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
-          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 189 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 7 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-7"><div class="stack-head"><h4>Creation stack</h4><span>Record 7</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>measure</code><span>burst.py:23</span></li><li><code>gather</code><span>tasks.py:813</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-7">Record 7</a><span aria-hidden="true">→</span><a href="#join-2-record-189">Record 189</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 7 → 189</code></p>
+        </aside><section class="stack observed" id="join-2-record-189"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 189 · semantic_boundary</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
         </div>
         <div class="trace-pane">
           <h3>Original physical stack</h3>
-          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 189 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
-          <p class="small trace-note">The frames on record 189 before stitching. Both columns list frames from caller to callee.</p>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 189 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
+          <p class="small trace-note">Frames from record 189 alone. Each stack block lists frames from caller to callee.</p>
         </div>
-      </div></details><details class="extra more-trace"><summary>Observation selected in the issue review · observation 205</summary>
+      </div></details><details class="extra more-trace"><summary>Observation 205</summary>
       <div class="trace-grid">
         <div class="trace-pane stitched">
           <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-3-point-1">Join point 1 <code>0 → 9</code></a><a href="#join-3-point-2">Join point 2 <code>9 → 205</code></a></nav>
+          <section class="stack " id="join-3-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="Join point 1">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-3-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-3-record-9">Record 9</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
 
-          <section class="stack "><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:595</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section><div class="edge">↓ <span>Recorded creator</span><code>coroutine_created_by</code></div>
-          <section class="stack "><div class="stack-head"><h4>Creation stack</h4><span>Record 9</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>measure</code><span>burst.py:23</span></li><li><code>gather</code><span>tasks.py:813</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section>
-          <div class="edge">↓ <span>Same coroutine instance across records</span><code>base_to_sample</code></div>
-          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 205 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 9 → 0</code></p>
+        </aside><section class="stack " id="join-3-record-9"><div class="stack-head"><h4>Creation stack</h4><span>Record 9</span><span class="record-instance">Instance from record 9</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>measure</code><span>burst.py:23</span></li><li><code>gather</code><span>tasks.py:813</span></li><li><code>ensure_future</code><span>tasks.py:661</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-2" aria-label="Join point 2">
+          <div class="join-heading"><span aria-hidden="true">↓</span><a href="#join-3-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-3-record-9">Record 9</a><span aria-hidden="true">→</span><a href="#join-3-record-205">Record 205</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 9 → 205</code></p>
+        </aside><section class="stack observed" id="join-3-record-205"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 205 · semantic_boundary</span><span class="record-instance">Instance from record 9</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
         </div>
         <div class="trace-pane">
           <h3>Original physical stack</h3>
-          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 205 · semantic boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
-          <p class="small trace-note">The frames on record 205 before stitching. Both columns list frames from caller to callee.</p>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 205 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:14</span></li><li><code>run</code><span>runners.py:43</span></li><li><code>run_until_complete</code><span>base_events.py:603</span></li><li><code>run_forever</code><span>base_events.py:570</span></li><li><code>_run_once</code><span>base_events.py:1859</span></li><li><code>_run</code><span>events.py:81</span></li><li><code>submit</code><span>burst.py:21</span></li><li><code>lastrowid</code><span>cursor.py:76</span></li></ol></section>
+          <p class="small trace-note">Frames from record 205 alone. Each stack block lists frames from caller to callee.</p>
         </div>
       </div></details>
       </section>

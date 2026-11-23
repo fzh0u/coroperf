@@ -26,11 +26,10 @@ INTERNAL_PATH = re.compile(
 )
 ADDRESS = re.compile(r"\b0x[0-9a-f]{10,}\b", re.IGNORECASE)
 TRACKERS = {"github.com", "code.djangoproject.com", "issues.apache.org", "sqlite.org"}
-SUPPLEMENTAL_GRAPHS = {
-    "ktorio--ktor--1267": (
-        "perf-out/systems-repro/processing/prior-01/ktorio--ktor--1267/kotlin-analysis/graph.json",
-        "Supplemental Kotlin Job capture",
-    ),
+CHINESE_HEADLINES = {
+    "dotnet--runtime--60764": "Foo 恢复后，物理调用栈里找不到 Main",
+    "drogonframework--drogon--2331": "Drogon 在数据库事件循环上执行同步 SQL，导致请求超时",
+    "tokio-rs--tokio--6315": "Tokio 的 LIFO 槽位保留了一个没有及时轮询的任务",
 }
 
 
@@ -71,6 +70,15 @@ def block(segment, leaf_first):
     }
 
 
+def instance_labels(segments):
+    labels = {}
+    for identifier, segment in segments.items():
+        identity = segment.get("coroutine_id")
+        if identity not in (None, "", "?", "unknown"):
+            labels.setdefault(identity, identifier)
+    return labels
+
+
 def framework_root(segment):
     return segment.get("identity_domain") == "react-render-owner"
 
@@ -106,7 +114,6 @@ def ancestry(start, segments, parents, leaf_first):
             break
         entry = block(segments[parent], leaf_first)
         entry["link_to_child"] = kind
-        entry["component"] = segments[parent].get("component_name")
         chain.append(entry)
         current = parent
         seen.add(parent)
@@ -132,14 +139,11 @@ def audit_task_id_pair(followup, segments):
     return None
 
 
-def evidence_from_graph(graph, ledger, public):
+def evidence_from_graph(graph, ledger, public, required_pairs):
     segments = {str(s["id"]): s for s in graph["segments"]}
     leaf_first = graph.get("frame_order") != "root_to_leaf"
     parents = raw_parent_edges(graph, segments)
-    raw_witness = [str(i) for i in ledger.get("witness_segment_ids") or []]
-    witnesses = {identifier: index for index, identifier in enumerate(raw_witness)}
     origin = public.get("origin") or {}
-    historical_pair = (str(origin.get("create")), str(origin.get("sample")))
     candidates = defaultdict(dict)
     for edge in graph["edges"]:
         if edge["kind"] not in BASE_EDGES:
@@ -151,61 +155,43 @@ def evidence_from_graph(graph, ledger, public):
         source, target = task_pair
         candidates[target].setdefault(source, "runtime_task_id")
 
-    pairs = []
-    for target, sources in candidates.items():
-        if len(sources) != 1:
-            continue
-        source, kind = next(iter(sources.items()))
-        a, b = segments[source], segments[target]
-        if event(a) not in CREATE or event(b) not in OBSERVATION or not a.get("frames") or not b.get("frames"):
-            continue
-        identity = a.get("coroutine_id")
-        if identity in (None, "", "?", "unknown") or identity != b.get("coroutine_id"):
-            continue
-        historical = (source, target) == historical_pair
-        rank = (not historical, target not in witnesses, witnesses.get(target, len(witnesses)),
-                source not in witnesses, int(target) if target.isdecimal() else float("inf"), target)
-        pairs.append((rank, source, target, kind, identity, historical))
-    pairs.sort()
-
     joins = []
-    seen_samples = set()
-    for _, source, target, kind, identity, historical in pairs:
-        creation, sample = block(segments[source], leaf_first), block(segments[target], leaf_first)
-        signature = (identity, sample["sample_kind"], tuple(f["function"] for f in sample["frames"]))
-        if signature in seen_samples:
-            continue
-        seen_samples.add(signature)
-        creation["component"] = segments[source].get("component_name")
-        ownership = framework_root(segments[source])
+    labels = instance_labels(segments)
+    producer = graph.get("producer", {})
+    for source, target in required_pairs:
+        sources = candidates[target]
+        a, b = segments[source], segments[target]
+        identity = a.get("coroutine_id")
+        if (set(sources) != {source} or event(a) not in CREATE or event(b) not in OBSERVATION
+                or not a.get("frames") or not b.get("frames") or identity not in labels
+                or identity != b.get("coroutine_id") or framework_root(a)):
+            raise ValueError(f"{ledger['id']}: no verified coroutine join from {source} to {target}")
+        creation, observation = block(a, leaf_first), block(b, leaf_first)
+        ancestors = ancestry(source, segments, parents, leaf_first)
+        for record in [*ancestors, creation, observation]:
+            record["instance"] = labels[segments[record["id"]]["coroutine_id"]]
         joins.append({
-            "creation": creation, "observation": sample, "edge": kind,
-            "ancestors": ancestry(source, segments, parents, leaf_first),
-            "relation": "renderer" if ownership else "creation",
-            "selected_witness": target in witnesses,
-            "historical_pair": historical,
+            "creation": creation,
+            "observation": observation,
+            "edge": sources[source],
+            "ancestors": ancestors,
+            "identity_kind": producer.get("identity_kind"),
         })
-        if len(joins) == 3:
-            break
+    return joins
 
-    physical = []
-    shown = {j["observation"]["id"] for j in joins} | {j["creation"]["id"] for j in joins}
-    for exported in public.get("segments") or []:
-        identifier = str(exported["id"])
-        if identifier in shown or not exported.get("frames"):
-            continue
-        native = segments.get(identifier)
-        physical.append(block(native if native and native.get("frames") else exported,
-                              leaf_first if native and native.get("frames") else True))
-        if len(physical) == 4:
-            break
-    if not joins and not physical:
-        for segment in segments.values():
-            if event(segment) in OBSERVATION and segment.get("frames"):
-                physical.append(block(segment, leaf_first))
-                if len(physical) == 4:
-                    break
-    return joins, physical, len(pairs)
+
+def chinese_case(row):
+    findings = {
+        "observation": safe_text(row["symptom_zh"]),
+        "interpretation": safe_text(row["reasoning_zh"]),
+        "limits": safe_text(row["limits_zh"]),
+    }
+    title = CHINESE_HEADLINES.get(row["id"])
+    if not title:
+        sentences = re.split(r"[。！？\n]", findings["observation"])
+        title = next((sentence.strip() for sentence in sentences if len(sentence.strip()) >= 12),
+                     sentences[0].strip())
+    return title, findings
 
 
 def main():
@@ -217,6 +203,8 @@ def main():
     public = workspace / "web" / "coroperf-results" / "public"
     results = (public / "results.js").read_text(encoding="utf-8").split("=", 1)[1].strip().removesuffix(";")
     index = json.loads(results)
+    index_by_id = {row["id"]: row for row in index["cases"]}
+    focus = read_json(HERE / "data" / "focus.json")
     ledger = read_json(workspace / "perf-out" / "systems-repro" / "ledger.json")
     by_id = {row["id"]: row for row in ledger["cases"]}
     deferred = read_json(workspace / "research" / "deferred-security-issues.json")["cases"]
@@ -224,25 +212,20 @@ def main():
     deferred_urls = {row["issue_url"] for row in deferred}
 
     cases = []
-    for item in index["cases"]:
-        identifier = item["id"]
+    for identifier, review in focus.items():
+        item = index_by_id[identifier]
         if identifier in deferred_ids or item["url"] in deferred_urls:
-            continue
+            raise ValueError(f"{identifier}: deferred from publication")
         evidence = read_json(public / "evidence" / f"{identifier}.json")
         findings = {key: safe_text(value) for key, value in evidence["findings"].items()}
         if REVIEW.search(" ".join([item["title"], *findings.values()])):
-            continue
+            raise ValueError(f"{identifier}: review required before publication")
         row = by_id[identifier]
-        graph_path = workspace / row["graph"] if row.get("graph") else None
-        graph = read_json(graph_path) if graph_path and graph_path.is_file() else {"edges": [], "segments": []}
-        joins, physical, pair_count = evidence_from_graph(graph, row, evidence)
-        if not joins and identifier in SUPPLEMENTAL_GRAPHS:
-            path, label = SUPPLEMENTAL_GRAPHS[identifier]
-            if (workspace / path).is_file():
-                supplement = read_json(workspace / path)
-                joins, _, pair_count = evidence_from_graph(supplement, {}, {})
-                for join in joins:
-                    join["capture_label"] = label
+        title_zh, findings_zh = chinese_case(row)
+        graph = read_json(workspace / row["graph"])
+        joins = evidence_from_graph(graph, row, evidence, review["records"])
+        if not joins:
+            raise ValueError(f"{identifier}: at least one verified join is required")
         upstream_reference = evidence.get("upstream_reference")
         if upstream_reference and not any(upstream_reference.startswith(f"https://{host}/") for host in TRACKERS):
             upstream_reference = None
@@ -250,19 +233,18 @@ def main():
             "id": identifier,
             "reference": f'{item["repo"]} #{item["issue"]}',
             "title": safe_text(item["title"]),
+            "title_zh": title_zh,
             "url": item["url"],
             "upstream_reference": upstream_reference,
             "reproduction": evidence["reproduction"],
             "diagnosis": evidence["diagnosis"],
-            "reviewed_origin": bool(item.get("origin")),
             "findings": findings,
+            "findings_zh": findings_zh,
             "joins": joins,
-            "physical": physical,
-            "pair_count": pair_count,
+            "contribution": review["en"],
+            "contribution_zh": review["zh"],
         })
-    snapshot = {"corpus_date": index["date"], "historical_issues": ledger["statistics"]["issues"],
-                "historical_origin_lower_bound": ledger["statistics"]["source_for_coroutine_lower_bound"],
-                "cases": cases}
+    snapshot = {"corpus_date": index["date"], "cases": cases}
     args.output.write_text(json.dumps(snapshot, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 
 

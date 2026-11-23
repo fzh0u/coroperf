@@ -1,6 +1,6 @@
 # coroPerf Coroutine Evidence Atlas
 
-An English-language static research site for the coroPerf issue corpus. Each issue has a permalink with its upstream report, reproduction scope, findings, and call-stack evidence. When the capture supplies a valid join, the default view compares the connected stack with the physical stack on the same execution record.
+A bilingual static research site for selected issues whose diagnosis benefits from coroutine stack stitching. Each issue has English and [Simplified Chinese](zh-cn/index.html) pages with its upstream report, reproduction scope, findings, and call-stack evidence. The header switches to the same page in the other language. Each retained case explains what stitching revealed. The page places a labeled join point between the two captured stack blocks and shows the original physical stack alongside it.
 
 ## Publish to GitHub Pages
 
@@ -18,12 +18,14 @@ From the repository root, run the following command and open [the local preview]
 python3 -m http.server 8000
 ```
 
-- `index.html` is the issue index with search and evidence filters.
+- `index.html` is the issue index with search and a reproduction-scope filter.
 - `evidence/` contains the static issue pages.
-- `research.html` summarizes the performance and assembly measurements.
-- `data/cases.json` contains public case findings, exported frame sequences, endpoint record IDs, and the types of recorded links.
+- `research.html` summarizes representative error, scheduling, and native attribution cases.
+- `zh-cn/` mirrors the index, research notes, and evidence pages in Simplified Chinese. Function names, paths to public upstream reports, and evidence labels from the graph retain their original spelling.
+- `data/focus.json` lists the reviewed cases, exact creation/observation pairs, and what each join establishes.
+- `data/cases.json` contains the exported findings, stacks, and graph edges in the public snapshot.
 
-To update the snapshot from the original research workspace, run the export command first. For an edit to the published text or data, update `data/cases.json` or the research notes fragment, then rebuild. The scripts use Python 3.10 or newer and its standard library.
+To update the snapshot from the original research workspace, run the export command first. For a text edit, update the case data, the site copy in `scripts/copy_text.py`, or the research notes fragments, then rebuild. The scripts use Python 3.10 or newer and its standard library. Chinese case findings come from the study's Chinese records. Most Chinese index headlines use the leading observation from the same record.
 
 ```sh
 python3 scripts/export_snapshot.py /path/to/research-workspace
@@ -35,9 +37,8 @@ Commit the generated HTML with the updated snapshot so GitHub Pages can serve th
 ## Reading the stack evidence
 
 - A coroutine join requires nonempty stacks at both endpoints, the same captured instance, and an explicit graph edge or an audited runtime task ID within one process. Ancestors appear only when the graph records the parent relationship.
-- Renderer chains use recorded JSX ownership and the physical frames of the linked rendering observation.
-- The case labels distinguish issue-review observations from additional observations in the same capture. Each page shows up to three representative joins. Physical frames stay available when the capture lacks a verified join.
-- The coverage count describes the published capture graphs. The reviewed origin lower bound describes issue-relevant origins in the full study.
+- A join point links to the two captured record IDs and names the graph edge or identity check that supports it. In the connected view, the instance label uses the first record ID for that instance in the capture.
+- Each selected join supplies missing caller context or attributes the observed behavior to its initiating task or request. The original physical stack remains next to its connected view.
+- To add an issue, record the diagnostic contribution and reviewed record IDs in `data/focus.json`. The exporter checks that each pair is a valid instance join before it can enter the catalog.
 
 Instrument Serif is distributed under the [SIL Open Font License](assets/fonts/OFL.txt).
-# fzh0u.github.io-coroperf
