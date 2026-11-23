@@ -8,6 +8,16 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>vLLM #58266 · 哪个请求占用了多模态工作线程？</h3>
+      <p>核对实际提交对象后，可以确认缩略图等待期间处理的是文档请求。本地六页对照中，六线程完成得比按值复制结果的双进程原型更快。</p>
+      <a href="evidence/vllm-project--vllm--58266.html#call-stack">对照两个 renderer 执行栈与请求入口</a>
+    </div>
+    <div class="research-entry">
+      <h3>Ray Serve #64036 · 热更新后哪些批次获得了执行名额？</h3>
+      <p>仍开放的提案在同一个副本上修改并发上限。核对请求 Future 后，可以分辨哪批在旧任务结束后进入，哪批在上限调高后进入。</p>
+      <a href="evidence/ray-project--ray--64036.html#call-stack">将四个批次拼回各自的入队位置</a>
+    </div>
+    <div class="research-entry">
       <h3>LlamaIndex #22369 · 哪个查询拖延了已创建的下游任务？</h3>
       <p>第二次同步读取占了第一个下游 Task 等待时间中的约 202 毫秒。仍开放的提案让支持异步的检索器释放事件循环。只支持同步的检索器仍在事件循环上等待。</p>
       <a href="evidence/run-llama--llama_index--22369.html#call-stack">对照两个路由任务与下游任务</a>

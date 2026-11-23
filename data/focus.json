@@ -1,4 +1,23 @@
 {
+  "vllm-project--vllm--58266": {
+    "contribution_kind": "scheduling_contention",
+    "language": "Python",
+    "kind": "performance",
+    "case_file": "research/github-issue-discovery/vllm-58266/case.json",
+    "records": [["2", "4"], ["3", "5"]],
+    "en": "The exact WorkItems connect two identical renderer stacks to different requests. The timestamps identify the document preprocessing that owns the single slot while the thumbnail is waiting to start.",
+    "zh": "实际 WorkItem 将两条相同的 renderer 执行栈拼回不同请求。时间戳显示缩略图等待开始时，文档的预处理仍占用唯一的 worker。"
+  },
+  "ray-project--ray--64036": {
+    "contribution_kind": "scheduling_contention",
+    "language": "Python",
+    "kind": "performance",
+    "fix": {"state": "proposed", "url": "https://github.com/ray-project/ray/pull/64040"},
+    "case_file": "research/github-issue-discovery/ray-64036/case.json",
+    "records": [["8", "9"], ["10", "11"], ["1", "2"], ["4", "5"]],
+    "en": "The same request Futures join the identical batch execution stacks to the caption and embeddings submissions. That identifies which queued batches begin after the old slots drain and which one enters after the limit is raised.",
+    "zh": "用实际请求 Future 把相同的批处理执行栈拼回图像说明和嵌入请求。这样可以区分旧批次结束后获准执行的请求，以及调高并发上限后进入的请求。"
+  },
   "run-llama--llama_index--22369": {
     "contribution_kind": "scheduling_contention",
     "language": "Python",

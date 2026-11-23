@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which Ray Serve batches enter after a live concurrency change?">
+  <title>ray-project/ray #64036 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/ray-project--ray--64036.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="ray-project--ray--64036.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/ray-project--ray--64036.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #64036</p>
+        <h1>Which Ray Serve batches enter after a live concurrency change?</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/64036">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Scheduling and contention</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/ray-project/ray/pull/64040">Proposed fix tested locally · PR open ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The same request Futures join the identical batch execution stacks to the caption and embeddings submissions. That identifies which queued batches begin after the old slots drain and which one enters after the limit is raised.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 9</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:628</span></li><li><code>_BatchQueue._assign_func_results</code><span>batching.py:479</span></li><li><code>Model.collect</code><span>check_reconfigure.py:113</span></li></ol></section>
+          <p class="small trace-note">Frames from record 9 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>9 → 8</code></a><a href="#join-1-point-1">Join point 1 <code>8 → 6</code></a></nav>
+          <section class="stack observed" id="join-1-record-9"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9</span><span class="record-instance">Instance from record 8</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:628</span></li><li><code>_BatchQueue._assign_func_results</code><span>batching.py:479</span></li><li><code>Model.collect</code><span>check_reconfigure.py:113</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-8">Record 8</a><span aria-hidden="true">→</span><a href="#join-1-record-9">Record 9</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 8 → 9</code></p>
+        </aside><section class="stack " id="join-1-record-8"><div class="stack-head"><h4>Batch submission stack</h4><span>Record 8</span><span class="record-instance">Instance from record 8</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_sub_batches</code><span>batching.py:558</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Request creation → batch submission</strong></div>
+          <p class="join-records"><a href="#join-1-record-6">Record 6</a><span aria-hidden="true">→</span><a href="#join-1-record-8">Record 8</a></p>
+          <p>The batch holds the exact Future created by this request, at the same position as its input.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 6 → 8</code></p>
+        </aside><section class="stack " id="join-1-record-6"><div class="stack-head"><h4>Request creation stack</h4><span>Record 6</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>UserCallableWrapper.call_user_method</code><span>replica.py:4544</span></li><li><code>UserCallableWrapper._call_func_or_gen</code><span>replica.py:3942</span></li><li><code>Model.caption</code><span>check_reconfigure.py:121</span></li><li><code>batch.&lt;locals&gt;._batch_decorator.&lt;locals&gt;.batch_wrapper</code><span>batching.py:1050</span></li><li><code>batch.&lt;locals&gt;._batch_decorator.&lt;locals&gt;.enqueue_request</code><span>batching.py:1035</span></li><li><code>_BatchQueue.put</code><span>batching.py:286</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 11</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:628</span></li><li><code>_BatchQueue._assign_func_results</code><span>batching.py:479</span></li><li><code>Model.collect</code><span>check_reconfigure.py:113</span></li></ol></section>
+          <p class="small trace-note">Frames from record 11 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>11 → 10</code></a><a href="#join-2-point-1">Join point 1 <code>10 → 7</code></a></nav>
+          <section class="stack observed" id="join-2-record-11"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11</span><span class="record-instance">Instance from record 10</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:628</span></li><li><code>_BatchQueue._assign_func_results</code><span>batching.py:479</span></li><li><code>Model.collect</code><span>check_reconfigure.py:113</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-10">Record 10</a><span aria-hidden="true">→</span><a href="#join-2-record-11">Record 11</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 10 → 11</code></p>
+        </aside><section class="stack " id="join-2-record-10"><div class="stack-head"><h4>Batch submission stack</h4><span>Record 10</span><span class="record-instance">Instance from record 10</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_sub_batches</code><span>batching.py:558</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Request creation → batch submission</strong></div>
+          <p class="join-records"><a href="#join-2-record-7">Record 7</a><span aria-hidden="true">→</span><a href="#join-2-record-10">Record 10</a></p>
+          <p>The batch holds the exact Future created by this request, at the same position as its input.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 7 → 10</code></p>
+        </aside><section class="stack " id="join-2-record-7"><div class="stack-head"><h4>Request creation stack</h4><span>Record 7</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>UserCallableWrapper.call_user_method</code><span>replica.py:4544</span></li><li><code>UserCallableWrapper._call_func_or_gen</code><span>replica.py:3942</span></li><li><code>Model.embeddings</code><span>check_reconfigure.py:124</span></li><li><code>batch.&lt;locals&gt;._batch_decorator.&lt;locals&gt;.batch_wrapper</code><span>batching.py:1050</span></li><li><code>batch.&lt;locals&gt;._batch_decorator.&lt;locals&gt;.enqueue_request</code><span>batching.py:1035</span></li><li><code>_BatchQueue.put</code><span>batching.py:286</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:628</span></li><li><code>_BatchQueue._assign_func_results</code><span>batching.py:479</span></li><li><code>Model.collect</code><span>check_reconfigure.py:113</span></li></ol></section>
+          <p class="small trace-note">Frames from record 2 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-3-point-2">Join point 2 <code>2 → 1</code></a><a href="#join-3-point-1">Join point 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-3-record-2"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:628</span></li><li><code>_BatchQueue._assign_func_results</code><span>batching.py:479</span></li><li><code>Model.collect</code><span>check_reconfigure.py:113</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-3-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-3-record-2">Record 2</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 1 → 2</code></p>
+        </aside><section class="stack " id="join-3-record-1"><div class="stack-head"><h4>Batch submission stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_sub_batches</code><span>batching.py:558</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">Join point 1</a><strong>Request creation → batch submission</strong></div>
+          <p class="join-records"><a href="#join-3-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-3-record-1">Record 1</a></p>
+          <p>The batch holds the exact Future created by this request, at the same position as its input.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 0 → 1</code></p>
+        </aside><section class="stack " id="join-3-record-0"><div class="stack-head"><h4>Request creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>UserCallableWrapper.call_user_method</code><span>replica.py:4544</span></li><li><code>UserCallableWrapper._call_func_or_gen</code><span>replica.py:3942</span></li><li><code>Model.caption</code><span>check_reconfigure.py:121</span></li><li><code>batch.&lt;locals&gt;._batch_decorator.&lt;locals&gt;.batch_wrapper</code><span>batching.py:1050</span></li><li><code>batch.&lt;locals&gt;._batch_decorator.&lt;locals&gt;.enqueue_request</code><span>batching.py:1035</span></li><li><code>_BatchQueue.put</code><span>batching.py:286</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:628</span></li><li><code>_BatchQueue._assign_func_results</code><span>batching.py:479</span></li><li><code>Model.collect</code><span>check_reconfigure.py:113</span></li></ol></section>
+          <p class="small trace-note">Frames from record 5 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-4-point-2">Join point 2 <code>5 → 4</code></a><a href="#join-4-point-1">Join point 1 <code>4 → 3</code></a></nav>
+          <section class="stack observed" id="join-4-record-5"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_batch_inner</code><span>batching.py:628</span></li><li><code>_BatchQueue._assign_func_results</code><span>batching.py:479</span></li><li><code>Model.collect</code><span>check_reconfigure.py:113</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-4-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-4-record-5">Record 5</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 4 → 5</code></p>
+        </aside><section class="stack " id="join-4-record-4"><div class="stack-head"><h4>Batch submission stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>_BatchQueue._process_sub_batches</code><span>batching.py:558</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-1">Join point 1</a><strong>Request creation → batch submission</strong></div>
+          <p class="join-records"><a href="#join-4-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-4-record-4">Record 4</a></p>
+          <p>The batch holds the exact Future created by this request, at the same position as its input.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 3 → 4</code></p>
+        </aside><section class="stack " id="join-4-record-3"><div class="stack-head"><h4>Request creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:3678</span></li><li><code>UserCallableWrapper.call_user_method</code><span>replica.py:4544</span></li><li><code>UserCallableWrapper._call_func_or_gen</code><span>replica.py:3942</span></li><li><code>Model.embeddings</code><span>check_reconfigure.py:124</span></li><li><code>batch.&lt;locals&gt;._batch_decorator.&lt;locals&gt;.batch_wrapper</code><span>batching.py:1050</span></li><li><code>batch.&lt;locals&gt;._batch_decorator.&lt;locals&gt;.enqueue_request</code><span>batching.py:1035</span></li><li><code>_BatchQueue.put</code><span>batching.py:286</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Four requests enter one live Serve replica with an initial limit of two batches. Changing user_config to one leaves the base implementation&#x27;s fixed semaphore at two. With PR #64040, the two active batches finish without interruption. The next batch starts when both drain. Raising the limit back to two starts the last batch while the third is still active. Each run keeps the same replica PID across its updates and returns all four expected results.</dd></div><div><dt>What CoroPerf showed</dt><dd>Each handler uses the same physical function stack. Live Task and coroutine identity match the handler observations to their own creations. The retained _SingleRequest and its exact Future then join each creation back to the corresponding enqueue. This identifies the two waiting batches as the already-enqueued second caption request and second embeddings request, and verifies which one enters after each limit change.</dd></div><div><dt>Scope and limits</dt><dd>The control and proposal use their pinned batching modules with the same Ray 2.59.0 runtime and AnyIO 4.16.0. A declarative user_config update calls the deployment&#x27;s asynchronous reconfigure method. The fixture uses one replica, one item per batch, and controlled release points. It checks admission and results with outstanding work. GPU throughput and other deployment topologies remain outside the experiment. Both the issue and PR are open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

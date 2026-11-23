@@ -23,7 +23,9 @@ STATUS_LABELS = {
 }
 PULL_LABELS = {
     "pullOpen": "open",
+    "pullOpened": "open",
     "pullDraft": "open",
+    "draft": "open",
     "pullClosed": "closed",
     "pullMerged": "merged",
 }
