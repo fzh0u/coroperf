@@ -45,6 +45,11 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>SGLang #29367 · 预分词请求的结果由哪个接收任务交付？</h3>
+      <p>修复前两个结果都由同一个接收 Task 交付。上游合并后恢复为两个独立的接收 Task。四处拼接分别找回两个接收任务和两个请求的创建入口。</p>
+      <a href="evidence/sgl-project--sglang--29367.html#call-stack">对照两个接收任务和两个请求的证据</a>
+    </div>
+    <div class="research-entry">
       <h3>SGLang #17021 · 哪些工作推迟了已就绪的接收任务？</h3>
       <p>两个分词执行栈分别接回各自的入口。它们都在实际接收 Future 就绪后运行。CPU 实验将相同工作移到工作线程，从就绪到恢复的中位数从 32.6 降到 0.050 毫秒。</p>
       <a href="evidence/sgl-project--sglang--17021.html#call-stack">查看接收任务和两条分词拼接栈</a>
@@ -72,6 +77,7 @@
     <div class="research-entry">
       <h3>Ray Data #65038 · 哪个生产任务延迟了首块交付？</h3>
       <p>两条首次 yield 的执行栈各自接回对应的批次 Task 和输入。原版等第一批生成全部 12 块才交付第一块，本地补丁在生成第一块后就交付，且保留 36 行结果的顺序。</p>
+      <p>另一组单节点实验输出 24 块时，Actor 内 Arrow 池的活跃分配峰值相对入口从约 24 MiB 降到约 4 MiB。</p>
       <a href="evidence/ray-project--ray--65038.html#call-stack">比较两条批次任务的拼接栈</a>
     </div>
     <div class="research-entry">

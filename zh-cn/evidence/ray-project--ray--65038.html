@@ -98,7 +98,7 @@
       </section>
       <section class="findings" aria-labelledby="findings-title">
         <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
-        <dl><div><dt>本地复现结果</dt><dd>在 Ray 2.56.1 的规划器实验中，两个生产任务在第一批完成前都已启动。第一批的生产任务生成全部 12 块后，消费者才收到第一块。本地补丁在第 1 块生成后就交付。单节点 map_batches 对照也确认两版返回相同的 36 行，顺序一致。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两次首次 yield 的执行栈经过相同的异步生成器和规划器帧。用实际 Task 将执行记录 3 拼到第一批的创建记录 0，将执行记录 2 拼到第二批的创建记录 1。事件顺序显示，即使两个生产者都已启动，第一块仍要等自己的生产任务攒完列表。</dd></div><div><dt>适用范围与局限</dt><dd>规划器实验用小型合成批次统计交付前的 yield 次数。补丁能在消费者提前退出后关闭已启动的生成器，也能在交付前面分块后传递异常。单节点实验中，UDF 生成 6 块后抛错并触发一次 Actor 重试，两版最终都保留相同的 36 行。工作进程重启和大规模吞吐仍待验证。</dd></div></dl>
+        <dl><div><dt>本地复现结果</dt><dd>在 Ray 2.56.1 的规划器实验中，第一批生产任务生成全部 12 块后，消费者才收到第一块。本地补丁在第 1 块生成后就交付。另一组单节点 map_batches 实验在每次 yield 时采样 Actor 的 Arrow 内存池。输出 4 个和 24 个 1 MiB 分块时，原版异步路径的活跃分配峰值相对入口约为 4 MiB 和 24 MiB，补丁两组均约为 4 MiB。所有输出字节和行顺序一致。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两次首次 yield 的执行栈经过相同的异步生成器和规划器帧。用实际 Task 将执行记录 3 拼到第一批的创建记录 0，将执行记录 2 拼到第二批的创建记录 1。事件顺序显示，即使两个生产者都已启动，第一块仍要等自己的生产任务攒完列表。</dd></div><div><dt>适用范围与局限</dt><dd>内存实验每次使用一个 Actor 和一个输入批次，目标分块 512 KiB，每个输出块含一行超出目标大小的数据。统计的是 yield 采样点上 Actor 的 Arrow 池活跃分配量。单独的 Actor 重试实验也确认本地补丁保留全部 36 行。进程 RSS、对象存储内存、工作进程重启和多节点吞吐仍待测量。</dd></div></dl>
       </section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>

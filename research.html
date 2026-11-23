@@ -45,6 +45,11 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>SGLang #29367 · Which receivers delivered the pre-tokenized replies?</h3>
+      <p>The parent revision delivers both replies through the same receiver Task. The merged change restores two separate receiver Tasks. The four joins recover both receiver launchers and the corresponding request starts.</p>
+      <a href="evidence/sgl-project--sglang--29367.html#call-stack">Compare the two receivers and the two requests</a>
+    </div>
+    <div class="research-entry">
       <h3>SGLang #17021 · Which work delayed the ready receiver?</h3>
       <p>Two tokenizer stacks join to separate launchers. Both run after the real receiver Future is ready. Moving the same work to threads changes the median ready-to-resume interval from 32.6 to 0.050 ms in the CPU fixture.</p>
       <a href="evidence/sgl-project--sglang--17021.html#call-stack">Compare the receiver and both tokenizer joins</a>
@@ -71,7 +76,7 @@
     </div>
     <div class="research-entry">
       <h3>Ray Data #65038 · Which producer held the first chunk?</h3>
-      <p>The first-yield stacks join to the two batch Tasks and their bound inputs. The stock planner waits for all 12 chunks from the first producer. The local candidate delivers the first chunk after one yield and preserves the order of all 36 rows.</p>
+      <p>The first-yield stacks join to the two batch Tasks and their bound inputs. The first chunk arrives after 12 yields on the original planner and after one yield with the local patch. At 24 chunks, a separate single-node test measures about 24 MiB of live Arrow allocations above UDF entry on the stock path and about 4 MiB with the patch.</p>
       <a href="evidence/ray-project--ray--65038.html#call-stack">Compare both batch creation joins</a>
     </div>
     <div class="research-entry">
