@@ -1,4 +1,24 @@
 {
+  "vllm-project--vllm--58145": {
+    "contribution_kind": "cost_attribution",
+    "language": "Python",
+    "kind": "performance",
+    "fix": {"state": "local"},
+    "case_file": "research/github-issue-discovery/vllm-58145/case.json",
+    "records": [["0", "2"], ["1", "3"]],
+    "en": "CoroPerf joins each identical lexer-construction path to its original request Task. With the local patch, the cold construction follows the first launcher and the second caller reuses the lexer shape.",
+    "zh": "CoroPerf 将两条相同的词法器构建路径接回各自的任务。用本地补丁后，冷构建随首个入口移动，第二次调用复用词法器结构。"
+  },
+  "sgl-project--sglang--50722": {
+    "contribution_kind": "cost_attribution",
+    "language": "Python",
+    "kind": "performance",
+    "fix": {"state": "merged", "url": "https://github.com/sgl-project/sglang/pull/50741"},
+    "case_file": "research/github-issue-discovery/sglang-50722/case.json",
+    "records": [["1463", "1977"], ["1208", "1978"], ["951", "2881"]],
+    "en": "Two identical receive stacks join to separate stream-body Tasks and their ASGI request creation stacks. Joining the listener sample to the same parent request identifies the per-chunk checks as additional work in the output Task.",
+    "zh": "两条相同的接收栈分别接回各自的输出 Task 和 ASGI 请求创建栈。监听样本也能接回其中同一个请求，表明逐块检查是输出 Task 上的额外工作。"
+  },
   "ray-project--ray--65038": {
     "contribution_kind": "scheduling_contention",
     "language": "Python",

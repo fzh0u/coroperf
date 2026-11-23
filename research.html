@@ -45,6 +45,16 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>vLLM #58145 · Which calls rebuilt the Mistral lexer?</h3>
+      <p>Two identical construction stacks join to their caller Tasks. A bounded local cache reuses the lexer shape and preserves the tested parser events. Median warm constructor time falls from 71.5 to 0.14 ms on v0.30.0.</p>
+      <a href="evidence/vllm-project--vllm--58145.html#call-stack">Compare both parser creation joins</a>
+    </div>
+    <div class="research-entry">
+      <h3>SGLang #50722 · Which tasks ran the per-chunk checks?</h3>
+      <p>The receive samples join to separate stream-body Tasks and their ASGI requests. The merged fix reduces the observed checks from seven to one per eight-chunk stream. The HTTP fixture's median throughput rises from 23,507 to 47,340 chunks/s.</p>
+      <a href="evidence/sgl-project--sglang--50722.html#call-stack">Compare the output Task and disconnect listener</a>
+    </div>
+    <div class="research-entry">
       <h3>Ray Data #65038 · Which producer held the first chunk?</h3>
       <p>The first-yield stacks join to the two batch Tasks and their bound inputs. The stock planner waits for all 12 chunks from the first producer. The local candidate delivers the first chunk after one yield and preserves the order of all 36 rows.</p>
       <a href="evidence/ray-project--ray--65038.html#call-stack">Compare both batch creation joins</a>

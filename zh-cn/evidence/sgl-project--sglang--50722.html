@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="哪些 SGLang 流任务承担了逐块断连检查的开销？">
+  <title>sgl-project/sglang #50722 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/sgl-project--sglang--50722.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/sgl-project--sglang--50722.html" lang="en" hreflang="en">English</a><a href="sgl-project--sglang--50722.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">sgl-project/sglang #50722</p>
+        <h1>哪些 SGLang 流任务承担了逐块断连检查的开销？</h1>
+        <div class="case-links"><a href="https://github.com/sgl-project/sglang/issues/50722">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>性能开销归因</dd></div>
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>GitHub 状态</dt><dd>已关闭</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/sgl-project/sglang/pull/50741">上游修复已合并 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>两条相同的接收栈分别接回各自的输出 Task 和 ASGI 请求创建栈。监听样本也能接回其中同一个请求，表明逐块检查是输出 Task 上的额外工作。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 1977</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1977 · scoped_exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:165</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_run_coro</code><span>_tasks.py:327</span></li><li><code>wrap</code><span>responses.py:281</span></li><li><code>_stream_one_response</code><span>tokenizer_manager.py:2206</span></li><li><code>is_disconnected</code><span>requests.py:339</span></li><li><code>receive</code><span>h11_impl.py:532</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 1977 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>1977 → 1463</code></a><a href="#join-1-point-1">拼接点 1 <code>1463 → 951</code></a></nav>
+          <section class="stack observed" id="join-1-record-1977"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1977 · scoped_exception</span><span class="record-instance">实例首次见于记录 1463</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:165</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_run_coro</code><span>_tasks.py:327</span></li><li><code>wrap</code><span>responses.py:281</span></li><li><code>_stream_one_response</code><span>tokenizer_manager.py:2206</span></li><li><code>is_disconnected</code><span>requests.py:339</span></li><li><code>receive</code><span>h11_impl.py:532</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-1463">记录 1463</a><span aria-hidden="true">→</span><a href="#join-1-record-1977">记录 1977</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 1463 → 1977</code></p>
+        </aside><section class="stack " id="join-1-record-1463"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1463</span><span class="record-instance">实例首次见于记录 1463</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:165</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>run_asgi</code><span>h11_impl.py:411</span></li><li><code>__call__</code><span>proxy_headers.py:63</span></li><li><code>app</code><span>workload.py:109</span></li><li><code>__call__</code><span>responses.py:284</span></li><li><code>start_soon</code><span>_tasks.py:158</span></li><li><code>create_task</code><span>_asyncio.py:1009</span></li><li><code>_spawn</code><span>_asyncio.py:968</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-951">记录 951</a><span aria-hidden="true">→</span><a href="#join-1-record-1463">记录 1463</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 1463 → 951</code></p>
+        </aside><section class="stack " id="join-1-record-951"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 951</span><span class="record-instance">实例首次见于记录 951</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:165</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_read_ready</code><span>selector_events.py:970</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1027</span></li><li><code>data_received</code><span>h11_impl.py:176</span></li><li><code>handle_events</code><span>h11_impl.py:258</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 1978</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1978 · scoped_exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:165</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_run_coro</code><span>_tasks.py:327</span></li><li><code>wrap</code><span>responses.py:281</span></li><li><code>_stream_one_response</code><span>tokenizer_manager.py:2206</span></li><li><code>is_disconnected</code><span>requests.py:339</span></li><li><code>receive</code><span>h11_impl.py:532</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 1978 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>1978 → 1208</code></a><a href="#join-2-point-1">拼接点 1 <code>1208 → 696</code></a></nav>
+          <section class="stack observed" id="join-2-record-1978"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1978 · scoped_exception</span><span class="record-instance">实例首次见于记录 1208</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:165</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_run_coro</code><span>_tasks.py:327</span></li><li><code>wrap</code><span>responses.py:281</span></li><li><code>_stream_one_response</code><span>tokenizer_manager.py:2206</span></li><li><code>is_disconnected</code><span>requests.py:339</span></li><li><code>receive</code><span>h11_impl.py:532</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-1208">记录 1208</a><span aria-hidden="true">→</span><a href="#join-2-record-1978">记录 1978</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 1208 → 1978</code></p>
+        </aside><section class="stack " id="join-2-record-1208"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1208</span><span class="record-instance">实例首次见于记录 1208</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:165</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>run_asgi</code><span>h11_impl.py:411</span></li><li><code>__call__</code><span>proxy_headers.py:63</span></li><li><code>app</code><span>workload.py:109</span></li><li><code>__call__</code><span>responses.py:284</span></li><li><code>start_soon</code><span>_tasks.py:158</span></li><li><code>create_task</code><span>_asyncio.py:1009</span></li><li><code>_spawn</code><span>_asyncio.py:968</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-696">记录 696</a><span aria-hidden="true">→</span><a href="#join-2-record-1208">记录 1208</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 1208 → 696</code></p>
+        </aside><section class="stack " id="join-2-record-696"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 696</span><span class="record-instance">实例首次见于记录 696</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:165</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_read_ready</code><span>selector_events.py:970</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1027</span></li><li><code>data_received</code><span>h11_impl.py:176</span></li><li><code>handle_events</code><span>h11_impl.py:258</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 2881</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 2881 · task_snapshot</span></div><ol class="frames"><li><code>run_asgi</code><span>h11_impl.py:411</span></li><li><code>__call__</code><span>proxy_headers.py:63</span></li><li><code>app</code><span>workload.py:109</span></li><li><code>__call__</code><span>responses.py:285</span></li><li><code>wrap</code><span>responses.py:281</span></li><li><code>listen_for_disconnect</code><span>responses.py:249</span></li><li><code>receive</code><span>h11_impl.py:532</span></li><li><code>wait</code><span>locks.py:212</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 2881 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-3-point-1">拼接点 1 <code>2881 → 951</code></a></nav>
+          <section class="stack observed" id="join-3-record-2881"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 2881 · task_snapshot</span><span class="record-instance">实例首次见于记录 951</span></div><ol class="frames"><li><code>run_asgi</code><span>h11_impl.py:411</span></li><li><code>__call__</code><span>proxy_headers.py:63</span></li><li><code>app</code><span>workload.py:109</span></li><li><code>__call__</code><span>responses.py:285</span></li><li><code>wrap</code><span>responses.py:281</span></li><li><code>listen_for_disconnect</code><span>responses.py:249</span></li><li><code>receive</code><span>h11_impl.py:532</span></li><li><code>wait</code><span>locks.py:212</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-3-record-951">记录 951</a><span aria-hidden="true">→</span><a href="#join-3-record-2881">记录 2881</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 951 → 2881</code></p>
+        </aside><section class="stack " id="join-3-record-951"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 951</span><span class="record-instance">实例首次见于记录 951</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>workload.py:165</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_read_ready</code><span>selector_events.py:970</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1027</span></li><li><code>data_received</code><span>h11_impl.py:176</span></li><li><code>handle_events</code><span>h11_impl.py:258</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>独立 HTTP 流式实验中，变更前、受影响提交、合并修复后的无采集吞吐中位数分别是 49,336、23,507 和 47,340 块/秒。两次短流采集中，256 个受影响的输出任务各对 8 个分块执行了 7 次检查。修复后每个输出任务各检查 1 次。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>cProfile 能给出检查总次数及直接调用者。按实际 Task 将相同的取消接收栈记录 1977、1978 分别拼回输出 Task 创建记录 1463、1208，再回到不同的 ASGI 请求创建记录 951、696。记录 2881 则显示，创建输出 Task 1463 的那个请求 Task 同时运行着独立的断连监听。</dd></div><div><dt>适用范围与局限</dt><dd>实验使用固定版本的 SGLang 流式方法、真实回环 TCP、Starlette 和 Uvicorn，输出分块由受控数据源提供。中位数取自每个版本四次无采集运行。原报告的 GPU 模型吞吐没有在本次实验中测量。PR #50741 已合并。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which callers paid for repeated Mistral lexer construction?">
+  <title>vllm-project/vllm #58145 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/vllm-project--vllm--58145.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="vllm-project--vllm--58145.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/vllm-project--vllm--58145.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">vllm-project/vllm #58145</p>
+        <h1>Which callers paid for repeated Mistral lexer construction?</h1>
+        <div class="case-links"><a href="https://github.com/vllm-project/vllm/issues/58145">Upstream report ↗</a><a href="https://github.com/vllm-project/vllm/blob/bfe3d7e879344289915ad4c0b5d01c219fbefbae/vllm/parser/engine/streaming_parser_engine.py">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Performance cost attribution</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd>Local patch tested</dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>CoroPerf joins each identical lexer-construction path to its original request Task. With the local patch, the cold construction follows the first launcher and the second caller reuses the lexer shape.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 2</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_parser.py:190</span></li><li><code>main</code><span>check_parser.py:160</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Probe.parse</code><span>check_parser.py:91</span></li><li><code>StreamingParserEngine.__init__</code><span>streaming_parser_engine.py:133</span></li><li><code>_build_drop_info</code><span>streaming_parser_engine.py:39</span></li></ol></section>
+          <p class="small trace-note">Frames from record 2 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_parser.py:190</span></li><li><code>main</code><span>check_parser.py:160</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Probe.parse</code><span>check_parser.py:91</span></li><li><code>StreamingParserEngine.__init__</code><span>streaming_parser_engine.py:133</span></li><li><code>_build_drop_info</code><span>streaming_parser_engine.py:39</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_parser.py:190</span></li><li><code>main</code><span>check_parser.py:160</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Probe.run</code><span>check_parser.py:111</span></li><li><code>Probe.launch_export</code><span>check_parser.py:101</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_parser.py:190</span></li><li><code>main</code><span>check_parser.py:160</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Probe.parse</code><span>check_parser.py:91</span></li><li><code>StreamingParserEngine.__init__</code><span>streaming_parser_engine.py:133</span></li><li><code>_build_drop_info</code><span>streaming_parser_engine.py:39</span></li></ol></section>
+          <p class="small trace-note">Frames from record 3 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>3 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_parser.py:190</span></li><li><code>main</code><span>check_parser.py:160</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Probe.parse</code><span>check_parser.py:91</span></li><li><code>StreamingParserEngine.__init__</code><span>streaming_parser_engine.py:133</span></li><li><code>_build_drop_info</code><span>streaming_parser_engine.py:39</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">Record 3</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 1 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_parser.py:190</span></li><li><code>main</code><span>check_parser.py:160</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Probe.run</code><span>check_parser.py:111</span></li><li><code>Probe.launch_preview</code><span>check_parser.py:104</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The actual Mistral-Small-4 tokenizer has 1,000 special tokens, 996 filtered by the tested parser configuration. On v0.30.0 and the checked main revision, both caller Tasks construct the same augmented lexer shape. The local bounded cache builds it for the first caller and reuses it for the second. Median warm parser construction on v0.30.0 drops from 71.5 ms to 0.14 ms.</dd></div><div><dt>What CoroPerf showed</dt><dd>The two _build_drop_info execution stacks coincide. Matching the actual asyncio Task connects observations 2 and 3 to the separate export and preview launch stacks at records 0 and 1. With the patch and reversed launch order, the one cold build follows the new first caller.</dd></div><div><dt>Scope and limits</dt><dd>The CPU replay runs the pinned parser engine, original Mistral configuration and tokenizer data. Tool-call events and token filtering agree, including separate state for concurrent parsers and different token IDs for shared text. The timing covers warm parser construction. The issue is open and the patch is local. End-to-end inference and serving throughput remain unmeasured.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
