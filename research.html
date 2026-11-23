@@ -42,7 +42,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(17)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(20)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(11)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(17)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(21)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(11)</span></a></li></ul></nav>
 
     <section class="block" id="caller_recovery" aria-labelledby="caller_recovery-title">
       <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">28 issues</span></div>
@@ -375,12 +375,17 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">20 issues</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">21 issues</span></div>
       <p class="section-copy">Connect a delayed task to the execution order, poll interval, or resource that held it up.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
           <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm-omni--4561.html#call-stack"><span>vllm-project/vllm-omni #4561</span>Which ready audio replies wait for idle replicas?</a></th>
+        <td><p>The paired joins recover both replica readers and their matching request launches. With four additional idle replicas, the current legacy loop delays the slower reply by a median 90.55 ms in the CPU fixture. The event-driven default routes it in 1.26 ms.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/vllm-project/vllm-omni/issues/4561">Open</a><a class="fix-label" href="https://github.com/vllm-project/vllm-omni/pull/8675">Repair verified · PR merged</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/vllm-project--vllm--58266.html#call-stack"><span>vllm-project/vllm #58266</span>Which request occupied the multimodal worker?</a></th>
         <td><p>Exact executor submissions identify the document that runs while the thumbnail waits. In the local six-image comparison, six threads finish sooner than a two-process prototype that copies its results.</p></td>
