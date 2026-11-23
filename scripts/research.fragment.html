@@ -8,6 +8,16 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">Missing callers and ambiguous failures</h2></div>
     <div class="research-entry">
+      <h3>Ray Serve #53071 · Which queue serialized three batches?</h3>
+      <p>All 24 request Futures were enqueued before the first batch finished. Three execution stacks connect to one queue Task created in the first enqueue. Enabling concurrency on the fixed release gives each batch a separate Task.</p>
+      <a href="evidence/ray-project--ray--53071.html#call-stack">Inspect the serial queue Task and three batches</a>
+    </div>
+    <div class="research-entry">
+      <h3>Transformers #46315 · Which calls rebuilt the vocabulary?</h3>
+      <p>Two identical worker stacks connect through their executor WorkItems to separate tokenizer callers. The affected code rebuilds the mapping twelve or six times per six-token input. The fixed release performs all conversions without rebuilding it.</p>
+      <a href="evidence/huggingface--transformers--46315.html#call-stack">Compare both worker-to-caller joins</a>
+    </div>
+    <div class="research-entry">
       <h3>Ray Serve #63901 · Which requests launched the prompt producers?</h3>
       <p>The proposal overlaps prompts in a streaming SGLang completion. The actual producer Task and queue tuple recover the requesting coroutine even when two requests stream the same prompts.</p>
       <a href="evidence/ray-project--ray--63901.html#call-stack">Compare the producer-to-request joins ↗</a>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="哪些调用者承担了 BERT 词表的重复重建开销？">
+  <title>huggingface/transformers #46315 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/huggingface--transformers--46315.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/huggingface--transformers--46315.html" lang="en" hreflang="en">English</a><a href="huggingface--transformers--46315.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">huggingface/transformers #46315</p>
+        <h1>哪些调用者承担了 BERT 词表的重复重建开销？</h1>
+        <div class="case-links"><a href="https://github.com/huggingface/transformers/issues/46315">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>性能开销归因</dd></div>
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>GitHub 状态</dt><dd>已关闭</dd></div>
+          <div><dt>上游修复证据</dt><dd><a href="https://github.com/huggingface/transformers/pull/46323">已在修复对照中验证 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>按实际 WorkItem 把两条相同的 token 转换栈接回各自的调用者，将不同的词表重建次数归到对应请求。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 3</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.convert_tokens_to_ids</code><span>tokenization_utils_base.py:1477</span></li><li><code>PythonBackend._convert_token_to_id_with_added_voc</code><span>tokenization_python.py:689</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>3 → 2</code></a><a href="#join-1-point-1">拼接点 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.convert_tokens_to_ids</code><span>tokenization_utils_base.py:1477</span></li><li><code>PythonBackend._convert_token_to_id_with_added_voc</code><span>tokenization_python.py:689</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>观测发生在工作线程执行同一个 WorkItem 时。该对象在事件循环线程创建时已记录。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 3</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_worker.py:142</span></li><li><code>main</code><span>check_worker.py:113</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Probe.convert</code><span>check_worker.py:48</span></li><li><code>to_thread</code><span>threads.py:25</span></li><li><code>BaseEventLoop.run_in_executor</code><span>base_events.py:863</span></li><li><code>ThreadPoolExecutor.submit</code><span>thread.py:176</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 2 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_worker.py:142</span></li><li><code>main</code><span>check_worker.py:113</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Probe.run</code><span>check_worker.py:94</span></li><li><code>Probe.run.&lt;locals&gt;.launch_profile</code><span>check_worker.py:84</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.convert_tokens_to_ids</code><span>tokenization_utils_base.py:1477</span></li><li><code>PythonBackend._convert_token_to_id_with_added_voc</code><span>tokenization_python.py:689</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>5 → 4</code></a><a href="#join-2-point-1">拼接点 1 <code>4 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>_worker</code><span>thread.py:92</span></li><li><code>_WorkItem.run</code><span>thread.py:58</span></li><li><code>PreTrainedTokenizerBase.convert_tokens_to_ids</code><span>tokenization_utils_base.py:1477</span></li><li><code>PythonBackend._convert_token_to_id_with_added_voc</code><span>tokenization_python.py:689</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-4">记录 4</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>观测发生在工作线程执行同一个 WorkItem 时。该对象在事件循环线程创建时已记录。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 4 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-4"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_worker.py:142</span></li><li><code>main</code><span>check_worker.py:113</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Probe.convert</code><span>check_worker.py:48</span></li><li><code>to_thread</code><span>threads.py:25</span></li><li><code>BaseEventLoop.run_in_executor</code><span>base_events.py:863</span></li><li><code>ThreadPoolExecutor.submit</code><span>thread.py:176</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-4">记录 4</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 4 → 1</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_worker.py:142</span></li><li><code>main</code><span>check_worker.py:113</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Probe.run</code><span>check_worker.py:94</span></li><li><code>Probe.run.&lt;locals&gt;.launch_inventory</code><span>check_worker.py:87</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>原帖同步基准加入 5,000 个中日韩字符，将同一组 360 个 token 转成 ID 共 100 次。本地 5.9.0 耗时 87.045 秒，5.12.1 耗时 0.018 秒，所有 ID 一致。只将上游查表改动移植到 5.9.0，也得到相同结果。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>协程对照把两条等长请求交给线程池，转换时的物理栈相同。用实际 WorkItem 将执行记录 3、5 接回提交记录 2、4，再拼回不同的调用方创建记录 0、1。六个附加词表命中触发 12 次映射重建，六个未命中触发 6 次。反转启动顺序并交换输入后，次数随输入归到对应调用者。5.12.1 两条都为零，ID 保持一致。</dd></div><div><dt>适用范围与局限</dt><dd>原帖计时来自同步词到 ID 转换。额外的 CPU 线程池实验用固定版本的中文 BERT 分词器和两组各六个 token，验证开销归属。实验未运行模型推理。PR #46323 已合并。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

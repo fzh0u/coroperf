@@ -46,7 +46,7 @@
           <div><dt>CoroPerf 贡献</dt><dd>性能开销归因</dd></div>
           <div><dt>问题类型</dt><dd>性能问题</dd></div>
           <div><dt>GitHub 状态</dt><dd>开放</dd></div>
-          <div><dt>上游修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>上游修复证据</dt><dd><a href="https://github.com/dotnet/runtime/issues/38904">应用侧替代方案已在本地验证 ↗</a></dd></div>
           <div><dt>案例语言</dt><dd>C#</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
@@ -98,7 +98,7 @@
       </section>
       <section class="findings" aria-labelledby="findings-title">
         <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
-        <dl><div><dt>本地复现结果</dt><dd>两条失败的调用链在同一工作线程上交错执行。原生 EventPipe 记录了 16 次抛出，异常类型与消息相同，其中 14 次重抛的调用栈相同。最终的 Exception.StackTrace 能看到经过 Chain 的传播路径，但原生事件和异常栈都缺少同步发起者。成功对照有 0 次抛出，直接转发到同样的叶子 Task 时只有 2 次首次抛出。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>FirstChanceException 在首次抛出和重抛时都提供实际的异常对象。已完成的根 Task 保存了同一个异常对象，CoroPerf 由此把每条抛出栈拼回最初记录的 Task 创建栈。展示运行中，LaunchInventory 有 2 次重抛，代表性拼接为 1 → 4。LaunchProfile 有 12 次重抛，代表性拼接为 0 → 5。交换发起或放行顺序仍可匹配，交换 await 深度后，重抛次数随调用链一起改变归属。</dd></div><div><dt>适用范围与局限</dt><dd>在 Linux x86-64 的 CoreCLR 8.0.34 和 10.0.0 上，使用单个续体队列交错运行。实验统计失败 Task 的首次抛出和重抛次数。探针在进程内采集 first-chance 事件，等根 Task 完成后读取实际异常对象。两批实验共核对 512 条抛出观测，其中 448 条是重抛。移除通过根 Task 异常匹配得出的身份后，所有观测均无法归属。</dd></div></dl>
+        <dl><div><dt>本地复现结果</dt><dd>两条失败的调用链在同一工作线程上交错执行。原生 EventPipe 记录了 16 次抛出，异常类型与消息相同，其中 14 次重抛的调用栈相同。最终的 Exception.StackTrace 能看到经过 Chain 的传播路径，但原生事件和异常栈都缺少同步发起者。成功对照有 0 次抛出，直接转发到同样的叶子 Task 时只有 2 次首次抛出。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>FirstChanceException 在首次抛出和重抛时都提供实际的异常对象。已完成的根 Task 保存了同一个异常对象，CoroPerf 由此把每条抛出栈拼回最初记录的 Task 创建栈。展示运行中，LaunchInventory 有 2 次重抛，代表性拼接为 1 → 4。LaunchProfile 有 12 次重抛，代表性拼接为 0 → 5。交换发起或放行顺序仍可匹配，交换 await 深度后，重抛次数随调用链一起改变归属。</dd></div><div><dt>适用范围与局限</dt><dd>拼接实验覆盖 Linux CoreCLR 8.0.34 和 10.0.0 上的失败 Task。独立的应用侧对照将 12 层只做 await 的转发改为直接返回 Task。两种运行时都保留成功结果、原始异常对象和取消令牌。该对照中，失败与取消时都消除了 12 次转发重抛，且直接返回叶子 Task。运行时 Issue 仍开放。</dd></div></dl>
       </section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>

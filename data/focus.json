@@ -1,4 +1,24 @@
 {
+  "ray-project--ray--53071": {
+    "contribution_kind": "scheduling_contention",
+    "kind": "performance",
+    "language": "Python",
+    "case_file": "research/github-issue-discovery/ray-53071/case.json",
+    "fix": {"state": "verified", "url": "https://github.com/ray-project/ray/pull/53096"},
+    "records": [["1", "11"], ["1", "26"], ["1", "27"]],
+    "en": "Matching all request Futures identifies the three ready batches. Their execution stacks lead back to the same queue Task, created in the first enqueue.",
+    "zh": "按实际 Future 核对三批已就绪请求。三个执行栈都接回在首次入队时创建的同一个队列 Task。"
+  },
+  "huggingface--transformers--46315": {
+    "contribution_kind": "cost_attribution",
+    "kind": "performance",
+    "language": "Python",
+    "case_file": "research/github-issue-discovery/transformers-46315/case.json",
+    "fix": {"state": "verified", "url": "https://github.com/huggingface/transformers/pull/46323"},
+    "records": [["2", "3"], ["4", "5"]],
+    "en": "The executor WorkItem reconnects both identical token conversion stacks to their callers and attributes the different counts of vocabulary rebuilds.",
+    "zh": "按实际 WorkItem 把两条相同的 token 转换栈接回各自的调用者，将不同的词表重建次数归到对应请求。"
+  },
   "ray-project--ray--63901": {
     "contribution_kind": "request_handoff",
     "kind": "performance",
@@ -163,6 +183,7 @@
     "language": "C#",
     "kind": "performance",
     "case_file": "research/github-issue-discovery/dotnet-38904/case.json",
+    "fix": {"state": "workaround", "url": "https://github.com/dotnet/runtime/issues/38904"},
     "records": [["1", "4"], ["0", "5"]],
     "en": "Two fault chains interleave on one worker with identical rethrow stacks. The actual exception object in each root Task connects the rethrows to its original caller.",
     "zh": "两条失败链在同一个工作线程交错执行，重抛栈相同。用根 Task 实际保存的异常对象，可以把重抛接回各自的原始调用者。"

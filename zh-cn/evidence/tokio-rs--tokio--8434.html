@@ -98,7 +98,7 @@
       </section>
       <section class="findings" aria-labelledby="findings-title">
         <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
-        <dl><div><dt>本地复现结果</dt><dd>在 Tokio 1.53.1 中，对互斥锁交接过程做追踪后，即使再轮询父任务 50 次，两个子 Future 仍未完成，互斥锁也一直处于锁定状态。原生 Trace::capture 在触发问题时能看到信号量和互斥锁的等待栈。两个子 Future 停止被轮询后，原生追踪没有返回叶子栈。交换发起顺序或角色后，最初的两条原生栈保持一致。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>采样时没有子 Future ID。CoroPerf 用记录 6 到 8 的 poll 区间定位信号量采样，用记录 9 到 11 的区间定位互斥锁采样。再用区间内实际运行的 FuturesUnordered 子节点回查创建栈，在本页两条链中分别找回 launch_profile 和 launch_inventory。移除 poll 区间后，两条采样都失去归属。</dd></div><div><dt>适用范围与局限</dt><dd>本页展示 Linux x86-64 上对官方锁交接回归测试所做的双子 Future 扩展。定向探针记录 FuturesUnordered 实际子节点的分配与 poll。对照覆盖 Tokio 1.53.1 和 1.53.2。修复版的两个子 Future 均能完成，受影响版本在普通轮询下也能完成。</dd></div></dl>
+        <dl><div><dt>本地复现结果</dt><dd>在 Tokio 1.53.1 中，对互斥锁交接过程做追踪后，即使再轮询父任务 50 次，两个子 Future 仍未完成，互斥锁也一直处于锁定状态。原生 Trace::capture 在触发问题时能看到信号量和互斥锁的等待栈。两个子 Future 停止被轮询后，原生追踪没有返回叶子栈。交换发起顺序或角色后，最初的两条原生栈保持一致。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>采样时没有子 Future ID。CoroPerf 用记录 6 到 8 的 poll 区间定位信号量采样，用记录 9 到 11 的区间定位互斥锁采样。再用区间内实际运行的 FuturesUnordered 子节点回查创建栈，在本页两条链中分别找回 launch_profile 和 launch_inventory。移除 poll 区间后，两条采样都失去归属。</dd></div><div><dt>适用范围与局限</dt><dd>本页展示 Linux x86-64 上对官方锁交接回归测试所做的双子 Future 扩展。定向探针记录 FuturesUnordered 实际子节点的分配与 poll。对照覆盖 Tokio 1.53.1 和 1.53.2。已合并并进入 1.53.2 的修复使两个子 Future 都能完成，GitHub Issue 仍开放。</dd></div></dl>
       </section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>

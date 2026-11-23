@@ -45,6 +45,16 @@
   <section class="block" aria-labelledby="identity">
     <div class="section-head"><h2 id="identity">调用者丢失与异常归属</h2></div>
     <div class="research-entry">
+      <h3>Ray Serve #53071 · 哪个队列串行执行了三批请求？</h3>
+      <p>第一批完成前，24 条请求都已入队。三个执行栈接回首个请求入队时创建的同一个队列 Task。修复版打开并发后，每批各有一个执行 Task。</p>
+      <a href="evidence/ray-project--ray--53071.html#call-stack">查看串行队列 Task 和三条批次栈</a>
+    </div>
+    <div class="research-entry">
+      <h3>Transformers #46315 · 哪些调用触发了词表重建？</h3>
+      <p>按实际 WorkItem 将相同的工作线程栈接回两个调用者。受影响版本处理两条六词请求时分别重建 12 次和 6 次词表。修复版完成相同的转换，重建次数归零。</p>
+      <a href="evidence/huggingface--transformers--46315.html#call-stack">比较两条从工作线程接回调用方的栈</a>
+    </div>
+    <div class="research-entry">
       <h3>Ray Serve #63901 · 哪些请求创建了这些 prompt 生成协程？</h3>
       <p>候选修复让同一 SGLang 请求中的 prompt 重叠执行。通过实际 Task 和队列元组，即使两个请求的 prompt 相同，也能分别找回生成协程所属的请求。</p>
       <a href="evidence/ray-project--ray--63901.html#call-stack">比较生成协程接回请求的两条拼接栈 ↗</a>
