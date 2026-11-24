@@ -231,6 +231,10 @@ LABELS = {
         "The observed Tokio Task ID matches the ID of the JoinHandle at launch. The router ID also matches the JSON payload and the request header. The ELF offsets come from the stripped build. Disassembly checks the call instructions, and the byte-identical code in the symbolized copy supplies function labels.",
         "观测到的 Tokio Task ID 与发起时 JoinHandle 的 ID 相同。路由器中的请求 ID 也与 JSON 正文和请求头一致。ELF 偏移来自剥离符号的构建，调用指令用反汇编核对，函数名来自机器码逐字节一致的带符号副本。",
     ),
+    "ollama-embedding-goroutine-and-request-row": (
+        "The live Go context carries the exact request and row ticket assigned before errgroup.Go. Its input fingerprint matches both the frontend tokenization event and the separate runner's JSON payload.",
+        "实际 Go context 携带 errgroup.Go 前建立的同一个请求及输入行记录。文本指纹同时与前端分词事件及独立 runner 进程收到的 JSON 正文一致。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which Ollama embedding batch paid for the frontend vocabulary load?">
+  <title>ollama/ollama #7400 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/ollama--ollama--7400.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="ollama--ollama--7400.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/ollama--ollama--7400.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ollama/ollama #7400</p>
+        <h1>Which Ollama embedding batch paid for the frontend vocabulary load?</h1>
+        <div class="case-links"><a href="https://github.com/ollama/ollama/issues/7400">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Performance cost attribution</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/ollama/ollama/pull/7424">Proposed fix tested locally · PR closed ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Go</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Identical embedding stacks join to separate HTTP requests through the original request and row carried by the worker&#x27;s Go context. The joins distinguish the first caller that paid for vocabulary loading from the next request&#x27;s warm preflight.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>golang.org/x/sync/errgroup.(*Group).Go.func1</code><span>errgroup.go:75</span></li><li><code>github.com/ollama/ollama/server.(*Server).EmbedHandler.func1</code><span>routes.go:451</span></li><li><code>github.com/ollama/ollama/llm.(*llmServer).Embedding</code><span>server.go:872</span></li></ol></section>
+          <p class="small trace-note">Frames from record 1 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>golang.org/x/sync/errgroup.(*Group).Go.func1</code><span>errgroup.go:75</span></li><li><code>github.com/ollama/ollama/server.(*Server).EmbedHandler.func1</code><span>routes.go:451</span></li><li><code>github.com/ollama/ollama/llm.(*llmServer).Embedding</code><span>server.go:872</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">Record 1</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The live Go context carries the exact request and row ticket assigned before errgroup.Go. Its input fingerprint matches both the frontend tokenization event and the separate runner's JSON payload.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>net/http.(*conn).serve</code><span>server.go:2092</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3210</span></li><li><code>net/http.(*ServeMux).ServeHTTP</code><span>server.go:2747</span></li><li><code>github.com/gin-gonic/gin.(*Engine).ServeHTTP</code><span>gin.go:589</span></li><li><code>github.com/gin-gonic/gin.(*Engine).handleHTTPRequest</code><span>gin.go:633</span></li><li><code>github.com/gin-gonic/gin.(*Context).Next</code><span>context.go:185</span></li><li><code>github.com/gin-gonic/gin.LoggerWithConfig.func1</code><span>logger.go:249</span></li><li><code>github.com/gin-gonic/gin.(*Context).Next</code><span>context.go:185</span></li><li><code>github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1</code><span>recovery.go:102</span></li><li><code>github.com/gin-gonic/gin.(*Context).Next</code><span>context.go:185</span></li><li><code>github.com/ollama/ollama/server.(*Server).GenerateRoutes.allowedHostsMiddleware.func3</code><span>routes.go:1120</span></li><li><code>github.com/gin-gonic/gin.(*Context).Next</code><span>context.go:185</span></li><li><code>github.com/ollama/ollama/server.(*Server).EmbedHandler</code><span>routes.go:449</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>golang.org/x/sync/errgroup.(*Group).Go.func1</code><span>errgroup.go:75</span></li><li><code>github.com/ollama/ollama/server.(*Server).EmbedHandler.func1</code><span>routes.go:451</span></li><li><code>github.com/ollama/ollama/llm.(*llmServer).Embedding</code><span>server.go:872</span></li></ol></section>
+          <p class="small trace-note">Frames from record 3 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>3 → 2</code></a></nav>
+          <section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>golang.org/x/sync/errgroup.(*Group).Go.func1</code><span>errgroup.go:75</span></li><li><code>github.com/ollama/ollama/server.(*Server).EmbedHandler.func1</code><span>routes.go:451</span></li><li><code>github.com/ollama/ollama/llm.(*llmServer).Embedding</code><span>server.go:872</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-2-record-3">Record 3</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The live Go context carries the exact request and row ticket assigned before errgroup.Go. Its input fingerprint matches both the frontend tokenization event and the separate runner's JSON payload.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 2 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1700</span></li><li><code>net/http.(*conn).serve</code><span>server.go:2092</span></li><li><code>net/http.serverHandler.ServeHTTP</code><span>server.go:3210</span></li><li><code>net/http.(*ServeMux).ServeHTTP</code><span>server.go:2747</span></li><li><code>github.com/gin-gonic/gin.(*Engine).ServeHTTP</code><span>gin.go:589</span></li><li><code>github.com/gin-gonic/gin.(*Engine).handleHTTPRequest</code><span>gin.go:633</span></li><li><code>github.com/gin-gonic/gin.(*Context).Next</code><span>context.go:185</span></li><li><code>github.com/gin-gonic/gin.LoggerWithConfig.func1</code><span>logger.go:249</span></li><li><code>github.com/gin-gonic/gin.(*Context).Next</code><span>context.go:185</span></li><li><code>github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1</code><span>recovery.go:102</span></li><li><code>github.com/gin-gonic/gin.(*Context).Next</code><span>context.go:185</span></li><li><code>github.com/ollama/ollama/server.(*Server).GenerateRoutes.allowedHostsMiddleware.func3</code><span>routes.go:1120</span></li><li><code>github.com/gin-gonic/gin.(*Context).Next</code><span>context.go:185</span></li><li><code>github.com/ollama/ollama/server.(*Server).EmbedHandler</code><span>routes.go:449</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With all-minilm already loaded in the CPU runner, the first 12-text request takes a median 134.3 ms after runner acquisition on the historical base and 100.1 ms with the local adaptation of PR #7424. Warm medians are 101.0 and 96.8 ms. The first vocabulary load costs 26.8–27.5 ms in the two traced orders. All embedding coordinates match exactly. The proposal counts two extra special tokens per text.</dd></div><div><dt>What CoroPerf showed</dt><dd>The catalog and query workers have identical Embedding stacks. The exact Go context ticket carries the initiating HTTP request and input row into the errgroup worker. Its payload fingerprint agrees with the preflight tokenization and the separate runner&#x27;s JSON input. Execution record 1 joins to the catalog worker&#x27;s creation 0. Execution record 3 joins to the query worker&#x27;s creation 2. The first request&#x27;s host vocabulary load and per-row tokenizations finish before it creates its workers. Reversing the requests moves the vocabulary cost from the twelve-row catalog batch to the one-row query.</dd></div><div><dt>Scope and limits</dt><dd>The replay uses real loopback /api/embed and the historical CPU runner with ordinary in-context text. An empty request primes the runner before each comparison. Each cold median uses five fresh processes per arm and task order. The warm medians pool 35 requests per shape and arm. The proposal adaptation removes the shared counter update by storing counts per row. This isolates historical endpoint overhead. The candidate changes reported token counts and the original Sentence Transformers comparison is outside the experiment. Issue #7400 is open and PR #7424 closed without merging.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
