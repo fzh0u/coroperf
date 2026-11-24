@@ -22,6 +22,7 @@ PARENT_WITNESSES = {
     "same-batch-request-future", "rust-engine-thread-launch", "same-reactor-tool-batch",
     "same-dynamo-endpoint-notifier", "ray-batcher-reader-created-by-request-task",
     "trtllm-batch-task-and-worker-record",
+    "same-vllm-benchmark-process-and-client-task",
 }
 CREATE = {"create", "creation"}
 OBSERVATION = {"sample", "cpu_sample", "diagnostic_stacktrace", "task_snapshot"}

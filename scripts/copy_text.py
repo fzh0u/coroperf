@@ -259,6 +259,15 @@ LABELS = {
         "The executor schedules and runs the same native Task Arc. A separate SourceToken identity links each stop writer to the task that reads it.",
         "首次调度和执行时的原生 Task Arc 是同一个对象。另用 SourceToken 的对象身份，将每次停止信号的写入和读取任务接起来。",
     ),
+    "benchmark_process_launch": ("Benchmark worker process launch stack", "基准程序的工作进程启动栈"),
+    "same-vllm-benchmark-worker-task": (
+        "The child event loop creates this exact asyncio Task. The receive callback uses the same ResponseHandler recorded at that Task's send, and the exit observation records the same live Task.",
+        "子进程事件循环创建了同一个 asyncio Task。接收回调使用该 Task 发送时记录的协议对象，退出观测也记录了同一个实际 Task。",
+    ),
+    "same-vllm-benchmark-process-and-client-task": (
+        "The parent's Process.start returns the child PID that created this Task. The recorded client index also agrees in both processes.",
+        "主进程的 Process.start 所启动的子进程 PID，与创建该 Task 的进程 PID 一致。两个进程记录的客户端编号也一致。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",

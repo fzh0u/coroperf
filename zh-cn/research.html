@@ -42,7 +42,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(21)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(16)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(29)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(22)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(21)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(17)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(29)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(22)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -370,12 +370,17 @@
       </div>
     </section>
     <section class="block" id="failure_lifecycle" aria-labelledby="failure_lifecycle-title">
-      <div class="section-head"><h2 id="failure_lifecycle-title">异常、取消与任务生命周期</h2><span class="case-kind">16 个案例</span></div>
+      <div class="section-head"><h2 id="failure_lifecycle-title">异常、取消与任务生命周期</h2><span class="case-kind">17 个案例</span></div>
       <p class="section-copy">定位首次失败，或追溯改变任务状态的取消、退出或清理。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="failure_lifecycle-title">
           <thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 证据说明</th><th scope="col">GitHub 状态<small>修复证据</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm--57173.html#call-stack"><span>vllm-project/vllm #57173</span>基准客户端退出时还剩哪些对话？</a></th>
+        <td><p>用实际 Task 与主进程启动记录，把相同的接收栈和退出栈接回两个客户端。主分支应发 12 次，实际发出 10 次，每个客户端各剩一轮。已验证 PR #57181 发齐 12 次，并保留显式请求上限。</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/vllm-project/vllm/issues/57173">开放</a><a class="fix-label" href="https://github.com/vllm-project/vllm/pull/57181">候选补丁已验证 · PR 开放</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/langchain4j--langchain4j--7165.html#call-stack"><span>langchain4j/langchain4j #7165</span>capture 抛出异常时，哪条流的 onError 仍在等待？</a></th>
         <td><p>用实际处理器与异常对象，把两条相同的回调栈接回各自的流启动点。暂停回调时，修复前的测试断言失败。合入版等待回调后通过。GitHub 上该 issue 仍开放。</p></td>
