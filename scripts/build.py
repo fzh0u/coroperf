@@ -153,6 +153,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "tokio-join-handle-and-running-task", "same-dynamo-endpoint-notifier",
         "ray-batcher-task-and-queue-object", "ray-batcher-reader-created-by-request-task",
         "ray-cache-loader-task-object", "ray-model-loader-created-by-request-task",
+        "ray-router-reporter-live-task", "ray-router-cross-thread-metrics-callback",
         "sglang-detokenizer-ipc-row-and-request-task", "sglang-tokenizer-internal-request-id",
         "sglang-tokenizer-http-request-id",
     ) else ""

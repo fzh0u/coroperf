@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Ray Serve 的后台指标汇报由哪些部署句柄创建？">
+  <title>ray-project/ray #62619 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/ray-project--ray--62619.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/ray-project--ray--62619.html" lang="en" hreflang="en">English</a><a href="ray-project--ray--62619.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #62619</p>
+        <h1>Ray Serve 的后台指标汇报由哪些部署句柄创建？</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/62619">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>性能开销归因</dd></div>
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>GitHub 状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/ray-project/ray/pull/62674">候选修复已做本地对照 · PR 开放 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>实际指标汇报 Task 和跨线程调度的同一个 asyncio Handle，把两条相同的指标刷新栈分别接回部署句柄的初始化。与共享汇报任务对照后，可将原版增加的路由线程 CPU 开销归到逐句柄唤醒。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>SingletonThreadRouter._get_singleton_asyncio_loop.&lt;locals&gt;._run_router_event_loop</code><span>router.py:1709</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>RouterMetricsManager._report_cached_metrics_forever</code><span>router.py:365</span></li><li><code>RouterMetricsManager._report_cached_metrics</code><span>router.py:347</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>4 → 1</code></a><a href="#join-1-point-1">拼接点 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>SingletonThreadRouter._get_singleton_asyncio_loop.&lt;locals&gt;._run_router_event_loop</code><span>router.py:1709</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>RouterMetricsManager._report_cached_metrics_forever</code><span>router.py:365</span></li><li><code>RouterMetricsManager._report_cached_metrics</code><span>router.py:347</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>执行本次指标刷新的 reporter，就是路由器创建并保存在该管理器上的同一个 asyncio Task。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 1 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>SingletonThreadRouter._get_singleton_asyncio_loop.&lt;locals&gt;._run_router_event_loop</code><span>router.py:1709</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>RouterMetricsManager.__init__.&lt;locals&gt;.create_metrics_task</code><span>router.py:212</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">记录 1</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_reporter.py:348</span></li><li><code>main</code><span>check_reporter.py:341</span></li><li><code>inspect</code><span>check_reporter.py:305</span></li><li><code>warm_chat_handle</code><span>check_reporter.py:92</span></li><li><code>open_handle</code><span>check_reporter.py:88</span></li><li><code>DeploymentHandle.options</code><span>handle.py:1132</span></li><li><code>_DeploymentHandleBase._options</code><span>handle.py:224</span></li><li><code>_DeploymentHandleBase._init</code><span>handle.py:166</span></li><li><code>create_router</code><span>default_impl.py:207</span></li><li><code>SingletonThreadRouter.__init__</code><span>router.py:1680</span></li><li><code>AsyncioRouter.__init__</code><span>router.py:680</span></li><li><code>RouterMetricsManager.__init__</code><span>router.py:219</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>SingletonThreadRouter._get_singleton_asyncio_loop.&lt;locals&gt;._run_router_event_loop</code><span>router.py:1709</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>RouterMetricsManager._report_cached_metrics_forever</code><span>router.py:365</span></li><li><code>RouterMetricsManager._report_cached_metrics</code><span>router.py:347</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>5 → 3</code></a><a href="#join-2-point-1">拼接点 1 <code>3 → 2</code></a></nav>
+          <section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>SingletonThreadRouter._get_singleton_asyncio_loop.&lt;locals&gt;._run_router_event_loop</code><span>router.py:1709</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>RouterMetricsManager._report_cached_metrics_forever</code><span>router.py:365</span></li><li><code>RouterMetricsManager._report_cached_metrics</code><span>router.py:347</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>执行本次指标刷新的 reporter，就是路由器创建并保存在该管理器上的同一个 asyncio Task。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>SingletonThreadRouter._get_singleton_asyncio_loop.&lt;locals&gt;._run_router_event_loop</code><span>router.py:1709</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>RouterMetricsManager.__init__.&lt;locals&gt;.create_metrics_task</code><span>router.py:212</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+
+          <p class="join-verification">采集图边 <code>parent_to_create · 2 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-2"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_reporter.py:348</span></li><li><code>main</code><span>check_reporter.py:341</span></li><li><code>inspect</code><span>check_reporter.py:305</span></li><li><code>warm_embed_handle</code><span>check_reporter.py:96</span></li><li><code>open_handle</code><span>check_reporter.py:88</span></li><li><code>DeploymentHandle.options</code><span>handle.py:1132</span></li><li><code>_DeploymentHandleBase._options</code><span>handle.py:224</span></li><li><code>_DeploymentHandleBase._init</code><span>handle.py:166</span></li><li><code>create_router</code><span>default_impl.py:207</span></li><li><code>SingletonThreadRouter.__init__</code><span>router.py:1680</span></li><li><code>AsyncioRouter.__init__</code><span>router.py:680</span></li><li><code>RouterMetricsManager.__init__</code><span>router.py:219</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>原版为每个部署句柄创建一个缓存指标汇报 Task，候选 PR 则在路由事件循环上运行一个共享 Task。128 个空闲句柄使用默认的 100 毫秒汇报间隔时，两种顺序下，每个 850 毫秒窗口的路由线程 CPU 时间中位数从 40.3–42.2 毫秒降至 17.3 毫秒，减少 57–59%。无句柄时低于 0.13 毫秒。独立的 16 句柄对照中，首轮汇报从唤醒 16 个 Task 减到 1 个，两个版本都刷新了 16 次，逐句柄计数增量一致。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>原版的两次指标刷新在路由线程上经过完全相同的执行栈。用各自 RouterMetricsManager 保存的实际 Task，把执行记录 4 和 5 分别接回创建记录 1 和 3。创建发生时正在运行 call_soon_threadsafe 返回的同一个 asyncio Handle，沿它跨线程接回记录 0 或 2 中的 DeploymentHandle.options 初始化，区分使用同一部署的聊天和嵌入调用者。原生 asyncio Task 调试栈只记录共用的路由侧回调。反转初始化顺序后仍能正确归属。候选 PR 中，两个管理器由同一个 Task 汇报，仍可沿实际注册回调接回各自入口。</dd></div><div><dt>适用范围与局限</dt><dd>组件对照在 Ray 2.59.0 中使用固定版本的 router.py，运行实际 DeploymentHandle.options、路由线程初始化、缓存指标代码和 Ray 指标调用。控制器通信使用本地夹具。每种配置和顺序预热后测五个空闲窗口。唤醒次数与拼接栈由单独实验采集。计时范围为缓存句柄所在的路由线程。模型推理和外部 Prometheus 抓取在实验范围之外。候选 PR 通过六项上游测试。另一个生命周期对照发现，最后一个旧句柄关闭与新句柄注册交叠时，候选 PR 会留下两个汇报任务。本地补丁在两种注册顺序下均维持一个任务，两个句柄的计数增量一致，也通过上述六项测试。Issue 与 PR 均开放。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

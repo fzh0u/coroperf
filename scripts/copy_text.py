@@ -199,6 +199,14 @@ LABELS = {
         "The sampled loader is the exact Task stored under this model ID in the replica's load map.",
         "观测到的加载 Task 就是副本加载表中该模型 ID 对应的同一个 Task。",
     ),
+    "ray-router-reporter-live-task": (
+        "The reporter executing this metric flush is the same asyncio Task the router created and stored on this manager.",
+        "执行本次指标刷新的 reporter，就是路由器创建并保存在该管理器上的同一个 asyncio Task。",
+    ),
+    "ray-router-cross-thread-metrics-callback": (
+        "The exact asyncio Handle scheduled while initializing the deployment handle is running on the router thread when it creates the reporter Task.",
+        "部署句柄初始化时提交的同一个 asyncio Handle，在路由线程上执行并创建了指标汇报 Task。",
+    ),
     "ray-model-loader-created-by-request-task": (
         "This request Task is active when the replica creates the cache loader. Its creation stack contains the interactive or batch launcher.",
         "副本创建加载 Task 时正在执行这个请求 Task。它的创建栈包含交互式或批处理入口。",
