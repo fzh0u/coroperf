@@ -42,7 +42,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(17)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(15)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(22)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(15)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(18)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(15)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(22)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(15)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -227,12 +227,17 @@
       </div>
     </section>
     <section class="block" id="request_handoff" aria-labelledby="request_handoff-title">
-      <div class="section-head"><h2 id="request_handoff-title">请求与结果交接归因</h2><span class="case-kind">17 个案例</span></div>
+      <div class="section-head"><h2 id="request_handoff-title">请求与结果交接归因</h2><span class="case-kind">18 个案例</span></div>
       <p class="section-copy">沿队列、回调、批次或工作线程追踪请求或结果，确定它属于哪个调用者。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="request_handoff-title">
           <thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 证据说明</th><th scope="col">GitHub 状态<small>修复证据</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/sgl-project--sglang--50424.html#call-stack"><span>sgl-project/sglang #50424</span>哪些基准运行把被拒绝的流计成了成功？</a></th>
+        <td><p>实际 Task 将相同的客户端执行栈接回评估与校准的发起入口。修复前两个被拒响应各被计入 8 个 token。开放的候选修复将汇总从 4 个成功、21 个 token 修正为 2 个成功、5 个 token。</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/sgl-project/sglang/issues/50424">开放</a><a class="fix-label" href="https://github.com/sgl-project/sglang/pull/50427">候选补丁已验证 · PR 开放</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/vllm-project--vllm--68610.html#call-stack"><span>vllm-project/vllm #68610</span>哪些 vLLM 请求在一轮调度之后才到达？</a></th>
         <td><p>将相同的调度器执行栈分别接回交互和批量请求的提交协程。调度器尚未处理新请求时，原版报告 3 个容量等待，候选修复报告 1 个。下一轮调度检查过两个新请求后，两版都报告 3 个。</p></td>
