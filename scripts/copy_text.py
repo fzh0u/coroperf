@@ -235,6 +235,14 @@ LABELS = {
         "The live Go context carries the exact request and row ticket assigned before errgroup.Go. Its input fingerprint matches both the frontend tokenization event and the separate runner's JSON payload.",
         "实际 Go context 携带 errgroup.Go 前建立的同一个请求及输入行记录。文本指纹同时与前端分词事件及独立 runner 进程收到的 JSON 正文一致。",
     ),
+    "trtllm-live-batch-worker-and-record": (
+        "The active worker is the same asyncio Task recorded at creation. Its coroutine and the counter both hold this exact batch record.",
+        "执行中的 worker 就是创建时记录的 asyncio Task。它的协程和计数函数持有同一个批次对象。",
+    ),
+    "trtllm-batch-task-and-worker-record": (
+        "The batch Task created by the HTTP route is active when it creates this worker. The worker's closure holds that same batch record.",
+        "HTTP 路由创建的批次 Task 正在运行时创建了这个 worker，worker 的闭包持有同一个批次对象。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",

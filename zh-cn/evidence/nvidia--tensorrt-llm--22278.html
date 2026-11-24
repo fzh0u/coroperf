@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="TensorRT-LLM 哪次 HTTP 批次提交承担了重复计数？">
+  <title>NVIDIA/TensorRT-LLM #22278 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/nvidia--tensorrt-llm--22278.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/nvidia--tensorrt-llm--22278.html" lang="en" hreflang="en">English</a><a href="nvidia--tensorrt-llm--22278.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">NVIDIA/TensorRT-LLM #22278</p>
+        <h1>TensorRT-LLM 哪次 HTTP 批次提交承担了重复计数？</h1>
+        <div class="case-links"><a href="https://github.com/NVIDIA/TensorRT-LLM/issues/22278">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>性能开销归因</dd></div>
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>GitHub 状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/NVIDIA/TensorRT-LLM/pull/22280">候选修复已做本地对照 · PR 开放 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>通过实际 worker Task，把相同的重复计数栈接回两次 HTTP 提交所创建的批次 Task。用同一个批次对象确认每次重复扫描属于评估批次还是索引批次。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 8</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.worker</code><span>base-anthropic_batches.py:449</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.run_one</code><span>base-anthropic_batches.py:428</span></li><li><code>AnthropicBatchStore._recount</code><span>base-anthropic_batches.py:484</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 8 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>8 → 1</code></a><a href="#join-1-point-1">拼接点 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-8"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 8</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.worker</code><span>base-anthropic_batches.py:449</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.run_one</code><span>base-anthropic_batches.py:428</span></li><li><code>AnthropicBatchStore._recount</code><span>base-anthropic_batches.py:484</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-1-record-8">记录 8</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>执行中的 worker 就是创建时记录的 asyncio Task。它的协程和计数函数持有同一个批次对象。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 1 → 8</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run</code><span>base-anthropic_batches.py:452</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>BaseEventLoop.create_task</code><span>base_events.py:464</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">记录 1</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+          <p>HTTP 路由创建的批次 Task 正在运行时创建了这个 worker，worker 的闭包持有同一个批次对象。</p>
+          <p class="join-verification">采集图边 <code>parent_to_create · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>RequestResponseCycle.run_asgi</code><span>httptools_impl.py:422</span></li><li><code>ProxyHeadersMiddleware.__call__</code><span>proxy_headers.py:63</span></li><li><code>FastAPI.__call__</code><span>applications.py:1159</span></li><li><code>Starlette.__call__</code><span>applications.py:96</span></li><li><code>ServerErrorMiddleware.__call__</code><span>errors.py:164</span></li><li><code>ExceptionMiddleware.__call__</code><span>exceptions.py:63</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>AsyncExitStackMiddleware.__call__</code><span>asyncexitstack.py:18</span></li><li><code>Router.__call__</code><span>routing.py:683</span></li><li><code>Router.app</code><span>routing.py:704</span></li><li><code>Route.handle</code><span>routing.py:289</span></li><li><code>request_response.&lt;locals&gt;.app</code><span>routing.py:134</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>request_response.&lt;locals&gt;.app.&lt;locals&gt;.app</code><span>routing.py:120</span></li><li><code>get_request_handler.&lt;locals&gt;.app</code><span>routing.py:674</span></li><li><code>run_endpoint_function</code><span>routing.py:328</span></li><li><code>OpenAIServer.anthropic_create_batch</code><span>base-openai_server.py:2793</span></li><li><code>AnthropicBatchStore.create</code><span>base-anthropic_batches.py:211</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>BaseEventLoop.create_task</code><span>base_events.py:464</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 9</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 9</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.worker</code><span>base-anthropic_batches.py:449</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.run_one</code><span>base-anthropic_batches.py:428</span></li><li><code>AnthropicBatchStore._recount</code><span>base-anthropic_batches.py:484</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 9 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>9 → 4</code></a><a href="#join-2-point-1">拼接点 1 <code>4 → 3</code></a></nav>
+          <section class="stack observed" id="join-2-record-9"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 9</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.worker</code><span>base-anthropic_batches.py:449</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.run_one</code><span>base-anthropic_batches.py:428</span></li><li><code>AnthropicBatchStore._recount</code><span>base-anthropic_batches.py:484</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-4">记录 4</a><span aria-hidden="true">→</span><a href="#join-2-record-9">记录 9</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>执行中的 worker 就是创建时记录的 asyncio Task。它的协程和计数函数持有同一个批次对象。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 4 → 9</code></p>
+        </aside><section class="stack " id="join-2-record-4"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run</code><span>base-anthropic_batches.py:452</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>BaseEventLoop.create_task</code><span>base_events.py:464</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-4">记录 4</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+          <p>HTTP 路由创建的批次 Task 正在运行时创建了这个 worker，worker 的闭包持有同一个批次对象。</p>
+          <p class="join-verification">采集图边 <code>parent_to_create · 3 → 4</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>RequestResponseCycle.run_asgi</code><span>httptools_impl.py:422</span></li><li><code>ProxyHeadersMiddleware.__call__</code><span>proxy_headers.py:63</span></li><li><code>FastAPI.__call__</code><span>applications.py:1159</span></li><li><code>Starlette.__call__</code><span>applications.py:96</span></li><li><code>ServerErrorMiddleware.__call__</code><span>errors.py:164</span></li><li><code>ExceptionMiddleware.__call__</code><span>exceptions.py:63</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>AsyncExitStackMiddleware.__call__</code><span>asyncexitstack.py:18</span></li><li><code>Router.__call__</code><span>routing.py:683</span></li><li><code>Router.app</code><span>routing.py:704</span></li><li><code>Route.handle</code><span>routing.py:289</span></li><li><code>request_response.&lt;locals&gt;.app</code><span>routing.py:134</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>request_response.&lt;locals&gt;.app.&lt;locals&gt;.app</code><span>routing.py:120</span></li><li><code>get_request_handler.&lt;locals&gt;.app</code><span>routing.py:674</span></li><li><code>run_endpoint_function</code><span>routing.py:328</span></li><li><code>OpenAIServer.anthropic_create_batch</code><span>base-openai_server.py:2793</span></li><li><code>AnthropicBatchStore.create</code><span>base-anthropic_batches.py:211</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>BaseEventLoop.create_task</code><span>base_events.py:464</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>处理 1024 条时，原版计数 1025 次，共访问 525824 条历史结果，包含结束时的最后一次重计。PR #22280 对 1024 条结果逐条更新计数，省去历史扫描。两种测试顺序中，从环回 HTTP 提交到批次结束的事件循环线程 CPU 中位数由 235–256 毫秒降至 20.4–21.3 毫秒。两版返回相同的 930 个成功结果和 94 个模拟单条失败。候选补丁在批次结束后才公布结果 URL。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两个 HTTP 提交已返回，两条 worker 的 _recount 执行栈仍相同。通过实际运行的 asyncio Task 和同一个批次对象，把执行记录 8 接回 worker 创建记录 1，再用当时活跃的父批次 Task 接回评估请求的 HTTP 创建记录 0。索引请求的路径是 9 → 4 → 3。反转 POST 顺序后两条路径仍正确。原版追踪中，两条的评估批次访问历史结果五次，四条的索引批次访问十四次。</dd></div><div><dt>适用范围与局限</dt><dd>实验使用固定版本的批次存储、协议模型和路由方法，通过真实环回 HTTP 调用，单条推理由测试替身返回。每种规模、版本和运行顺序各测 7 次，计时轮关闭栈采集。1024 条时的遍历次数另行记录。取消操作的最终结果一致。候选版通过 30 项上游测试，其中两项新增断言在原版上失败。GPU 推理超出本次测量范围。核对时主分支的批次存储文件与 PR 基线相同，Issue 和 PR 均开放。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

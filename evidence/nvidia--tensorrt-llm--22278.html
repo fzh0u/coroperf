@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which TensorRT-LLM HTTP batch paid for each repeated count?">
+  <title>NVIDIA/TensorRT-LLM #22278 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/nvidia--tensorrt-llm--22278.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="nvidia--tensorrt-llm--22278.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/nvidia--tensorrt-llm--22278.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">NVIDIA/TensorRT-LLM #22278</p>
+        <h1>Which TensorRT-LLM HTTP batch paid for each repeated count?</h1>
+        <div class="case-links"><a href="https://github.com/NVIDIA/TensorRT-LLM/issues/22278">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Performance cost attribution</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/NVIDIA/TensorRT-LLM/pull/22280">Proposed fix tested locally · PR open ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Identical recount stacks join through live worker Tasks to the batch Tasks created by two HTTP submissions. The shared batch record assigns each repeated scan to the right evaluation or indexing batch.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 8</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.worker</code><span>base-anthropic_batches.py:449</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.run_one</code><span>base-anthropic_batches.py:428</span></li><li><code>AnthropicBatchStore._recount</code><span>base-anthropic_batches.py:484</span></li></ol></section>
+          <p class="small trace-note">Frames from record 8 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>8 → 1</code></a><a href="#join-1-point-1">Join point 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-8"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.worker</code><span>base-anthropic_batches.py:449</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.run_one</code><span>base-anthropic_batches.py:428</span></li><li><code>AnthropicBatchStore._recount</code><span>base-anthropic_batches.py:484</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-1-record-8">Record 8</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The active worker is the same asyncio Task recorded at creation. Its coroutine and the counter both hold this exact batch record.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 1 → 8</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run</code><span>base-anthropic_batches.py:452</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>BaseEventLoop.create_task</code><span>base_events.py:464</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">Record 1</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>The batch Task created by the HTTP route is active when it creates this worker. The worker's closure holds that same batch record.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>RequestResponseCycle.run_asgi</code><span>httptools_impl.py:422</span></li><li><code>ProxyHeadersMiddleware.__call__</code><span>proxy_headers.py:63</span></li><li><code>FastAPI.__call__</code><span>applications.py:1159</span></li><li><code>Starlette.__call__</code><span>applications.py:96</span></li><li><code>ServerErrorMiddleware.__call__</code><span>errors.py:164</span></li><li><code>ExceptionMiddleware.__call__</code><span>exceptions.py:63</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>AsyncExitStackMiddleware.__call__</code><span>asyncexitstack.py:18</span></li><li><code>Router.__call__</code><span>routing.py:683</span></li><li><code>Router.app</code><span>routing.py:704</span></li><li><code>Route.handle</code><span>routing.py:289</span></li><li><code>request_response.&lt;locals&gt;.app</code><span>routing.py:134</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>request_response.&lt;locals&gt;.app.&lt;locals&gt;.app</code><span>routing.py:120</span></li><li><code>get_request_handler.&lt;locals&gt;.app</code><span>routing.py:674</span></li><li><code>run_endpoint_function</code><span>routing.py:328</span></li><li><code>OpenAIServer.anthropic_create_batch</code><span>base-openai_server.py:2793</span></li><li><code>AnthropicBatchStore.create</code><span>base-anthropic_batches.py:211</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>BaseEventLoop.create_task</code><span>base_events.py:464</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 9</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.worker</code><span>base-anthropic_batches.py:449</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.run_one</code><span>base-anthropic_batches.py:428</span></li><li><code>AnthropicBatchStore._recount</code><span>base-anthropic_batches.py:484</span></li></ol></section>
+          <p class="small trace-note">Frames from record 9 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>9 → 4</code></a><a href="#join-2-point-1">Join point 1 <code>4 → 3</code></a></nav>
+          <section class="stack observed" id="join-2-record-9"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 9</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.worker</code><span>base-anthropic_batches.py:449</span></li><li><code>AnthropicBatchStore._run.&lt;locals&gt;.run_one</code><span>base-anthropic_batches.py:428</span></li><li><code>AnthropicBatchStore._recount</code><span>base-anthropic_batches.py:484</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-4">Record 4</a><span aria-hidden="true">→</span><a href="#join-2-record-9">Record 9</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The active worker is the same asyncio Task recorded at creation. Its coroutine and the counter both hold this exact batch record.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 4 → 9</code></p>
+        </aside><section class="stack " id="join-2-record-4"><div class="stack-head"><h4>Creation stack</h4><span>Record 4</span><span class="record-instance">Instance from record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>AnthropicBatchStore._run</code><span>base-anthropic_batches.py:452</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>BaseEventLoop.create_task</code><span>base_events.py:464</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-4">Record 4</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>The batch Task created by the HTTP route is active when it creates this worker. The worker's closure holds that same batch record.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 3 → 4</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_batches.py:501</span></li><li><code>main</code><span>check_batches.py:497</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1987</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>RequestResponseCycle.run_asgi</code><span>httptools_impl.py:422</span></li><li><code>ProxyHeadersMiddleware.__call__</code><span>proxy_headers.py:63</span></li><li><code>FastAPI.__call__</code><span>applications.py:1159</span></li><li><code>Starlette.__call__</code><span>applications.py:96</span></li><li><code>ServerErrorMiddleware.__call__</code><span>errors.py:164</span></li><li><code>ExceptionMiddleware.__call__</code><span>exceptions.py:63</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>AsyncExitStackMiddleware.__call__</code><span>asyncexitstack.py:18</span></li><li><code>Router.__call__</code><span>routing.py:683</span></li><li><code>Router.app</code><span>routing.py:704</span></li><li><code>Route.handle</code><span>routing.py:289</span></li><li><code>request_response.&lt;locals&gt;.app</code><span>routing.py:134</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>request_response.&lt;locals&gt;.app.&lt;locals&gt;.app</code><span>routing.py:120</span></li><li><code>get_request_handler.&lt;locals&gt;.app</code><span>routing.py:674</span></li><li><code>run_endpoint_function</code><span>routing.py:328</span></li><li><code>OpenAIServer.anthropic_create_batch</code><span>base-openai_server.py:2793</span></li><li><code>AnthropicBatchStore.create</code><span>base-anthropic_batches.py:211</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>BaseEventLoop.create_task</code><span>base_events.py:464</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>For 1,024 items, the original store makes 1,025 passes and visits 525,824 historical rows, including the final recount. PR #22280 records 1,024 individual outcomes without those scans. Event-loop thread CPU from loopback submission to batch completion drops from 235–256 ms to 20.4–21.3 ms in the two run orders. Both runs return the same 930 successes and 94 synthetic item errors. The proposal publishes the results URL only after the batch ends.</dd></div><div><dt>What CoroPerf showed</dt><dd>The two worker samples have identical _recount execution stacks after their HTTP submitters have finished. The executing asyncio Task and exact batch record connect observation 8 to worker creation 1, and the active parent batch Task connects it to HTTP creation 0 for evaluation. The indexing path is 9 → 4 → 3. Both paths remain correct when the POST order is reversed. In the traced base, the two-item evaluation batch visits five historical rows and the four-item indexing batch visits fourteen.</dd></div><div><dt>Scope and limits</dt><dd>The experiment runs the pinned TensorRT-LLM batch store, protocol models and route methods over a real loopback HTTP server with a synthetic item runner. Timings use seven warmed trials per size and arm in each order, with stack collection disabled. The 1,024-item pass counts come from a separate instrumented run. Cancellation keeps the same final results. The proposal passes all 30 upstream tests. Two new assertions fail on the base. GPU inference is outside scope. The current main batch store matches the PR base file, and the tracker and PR are open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
