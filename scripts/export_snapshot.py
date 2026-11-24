@@ -296,13 +296,14 @@ def main():
         if not issue:
             raise ValueError(f'{row["id"]}: invalid public follow-up issue URL')
         repo, number = issue.groups()
-        fix_url = website.get("merged_fix")
+        merged_fix = website.get("merged_fix")
+        fix_url = merged_fix or website.get("pull_request")
         if fix_url and not re.fullmatch(rf"https://github\.com/{re.escape(repo)}/pull/\d+", fix_url):
             raise ValueError(f'{row["id"]}: invalid public follow-up pull request URL')
         followups.append({
             "id": row["id"], "url": url, "reference": f"{repo} #{number}",
             "title": website["title"], "title_zh": website["title_zh"],
-            "fix": {"state": "merged", "url": fix_url} if fix_url else None,
+            "fix": {"state": "merged" if merged_fix else "unconfirmed", "url": fix_url} if fix_url else None,
         })
 
     cases = []
