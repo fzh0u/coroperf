@@ -42,7 +42,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(20)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(16)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(28)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(22)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(21)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(16)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(28)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(22)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -255,12 +255,17 @@
       </div>
     </section>
     <section class="block" id="request_handoff" aria-labelledby="request_handoff-title">
-      <div class="section-head"><h2 id="request_handoff-title">请求与结果交接归因</h2><span class="case-kind">20 个案例</span></div>
+      <div class="section-head"><h2 id="request_handoff-title">请求与结果交接归因</h2><span class="case-kind">21 个案例</span></div>
       <p class="section-copy">沿队列、回调、批次或工作线程追踪请求或结果，确定它属于哪个调用者。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="request_handoff-title">
           <thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 证据说明</th><th scope="col">GitHub 状态<small>修复证据</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm--66246.html#call-stack"><span>vllm-project/vllm #66246</span>哪次 Task 创建发出了 64-token 探针？</a></th>
+        <td><p>两条响应接收栈和请求体完全相同。用协议对象和发送 Task 可以区分探针和主负载的来源。开放的 PR #66260 在三个后端都把探针恢复为 1 token，并保留两种主负载覆盖设置。</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/vllm-project/vllm/issues/66246">开放</a><a class="fix-label" href="https://github.com/vllm-project/vllm/pull/66260">候选补丁已验证 · PR 开放</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/dotnet--extensions--7320.html#call-stack"><span>dotnet/extensions #7320</span>脱离 trace 的后续模型调用属于哪个 agent？</a></th>
         <td><p>10.3.0 中，两条后续模型 span 分别生成新 trace。活跃的枚举器和原始消息把执行栈接回各自的 agent 入口。已发布的 10.4.0 在 .NET 8 和 .NET 10 上都保留了两个 agent 的 trace。</p></td>

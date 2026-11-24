@@ -160,6 +160,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "dynamo-stripped-serializer-task-and-request",
         "ollama-embedding-goroutine-and-request-row",
         "trtllm-live-batch-worker-and-record", "trtllm-batch-task-and-worker-record",
+        "same-aiohttp-protocol-and-benchmark-task",
     ) else ""
     return f"""
         <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">

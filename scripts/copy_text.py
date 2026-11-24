@@ -243,6 +243,10 @@ LABELS = {
         "The batch Task created by the HTTP route is active when it creates this worker. The worker's closure holds that same batch record.",
         "HTTP 路由创建的批次 Task 正在运行时创建了这个 worker，worker 的闭包持有同一个批次对象。",
     ),
+    "same-aiohttp-protocol-and-benchmark-task": (
+        "The receiving callback and ClientRequest.send use the same live ResponseHandler. At send time, the active asyncio Task matches the one recorded when the benchmark created it.",
+        "响应接收回调与 ClientRequest.send 使用同一个实际的 ResponseHandler。发送时正在执行的 asyncio Task 与基准程序创建时记录的对象一致。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",
