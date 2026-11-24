@@ -42,7 +42,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(17)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(21)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(11)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(17)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(21)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(12)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -508,12 +508,17 @@
       </div>
     </section>
     <section class="block" id="cost_attribution" aria-labelledby="assembly">
-      <div class="section-head"><h2 id="assembly">Performance cost attribution</h2><span class="case-kind">11 issues</span></div>
+      <div class="section-head"><h2 id="assembly">Performance cost attribution</h2><span class="case-kind">12 issues</span></div>
       <p class="section-copy">Assign measured CPU work, allocations, or waiting time to the application caller that incurred them.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="assembly">
           <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/vllm-project--vllm--61423.html#call-stack"><span>vllm-project/vllm #61423</span>Which requests produced the delayed iteration timings?</a></th>
+        <td><p>The same timing-read stack handles both snapshots from a later stats-only reply. Joining each snapshot to the scheduled Request and its submitting Task restores both callers. The merged timer measures worker-stream intervals when enabled.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/vllm-project/vllm/issues/61423">Open</a><a class="fix-label" href="https://github.com/vllm-project/vllm/pull/61690">Repair merged</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/sgl-project--sglang--43304.html#call-stack"><span>sgl-project/sglang #43304</span>Which requests waited before the router read the packet?</a></th>
         <td><p>Both reply stacks join to their own callers. The open PR measures routing after receipt. A local patch measures the preceding transfer and separates a controlled 25 ms wait from work in the router with both IPC codecs.</p></td>
