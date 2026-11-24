@@ -42,7 +42,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(21)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(17)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(29)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(22)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(21)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(17)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(30)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(22)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -465,12 +465,17 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">调度与资源争用定位</h2><span class="case-kind">29 个案例</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">调度与资源争用定位</h2><span class="case-kind">30 个案例</span></div>
       <p class="section-copy">将延迟任务接到造成等待的执行顺序、轮询区间或被占用的资源。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
           <thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 证据说明</th><th scope="col">GitHub 状态<small>修复证据</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--67547.html#call-stack"><span>ray-project/ray #67547</span>哪个已就绪的生成器让数据执行器反复调度？</a></th>
+        <td><p>把零字节轮询接回 actor Task 和各自的数据集发起位置。消费者暂停约 600 毫秒时，开放的 PR #67572 把调度次数中位数从 1054 降到 135。每次仍按序交付 131072 行。</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/67547">开放</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/67572">候选补丁已验证 · PR 开放</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/pola-rs--polars--29256.html#call-stack"><span>pola-rs/polars #29256</span>流式连接达到行数上限后，哪个扫描还在读取？</a></th>
         <td><p>用实际 Task 和 SourceToken 把截断、连接规划与两边的扫描桥接起来。连接任务通知并排空左侧时，右侧又生成了 9 到 10 批。本地并行排空补丁保持结果一致，只减少少量读取。Issue 仍开放。</p></td>

@@ -268,6 +268,24 @@ LABELS = {
         "The parent's Process.start returns the child PID that created this Task. The recorded client index also agrees in both processes.",
         "主进程的 Process.start 所启动的子进程 PID，与创建该 Task 的进程 PID 一致。两个进程记录的客户端编号也一致。",
     ),
+    "ray_generator_submission": ("Ray generator submission stack", "Ray 生成器提交栈"),
+    "ray_dataset_launch": ("Dataset iterator launch stack", "数据集迭代器发起栈"),
+    "same-ray-ready-generator-at-zero-budget": (
+        "The same live ObjectRefGenerator is registered at creation, returned ready by ray.wait, and given to on_data_ready with a zero-byte budget. The read returns zero.",
+        "创建时登记的实际 ObjectRefGenerator 与 ray.wait 返回为就绪的对象一致。on_data_ready 对该对象的读取预算为零，读取结果也是零。",
+    ),
+    "same-ray-actor-asyncio-task": (
+        "The actor event loop resumes the same asyncio.Task recorded when _execute_transform created it.",
+        "actor 事件循环恢复的 asyncio.Task，与 _execute_transform 创建时记录的实际对象一致。",
+    ),
+    "same-ray-task-id-and-index": (
+        "The Ray native task ID and the task index in the actor's TaskContext match the driver's submitted generator.",
+        "actor 的 TaskContext 任务编号和 Ray 原生任务 ID，都与驱动进程提交的生成器一致。",
+    ),
+    "same-ray-terminal-operator": (
+        "The stream is registered by the same terminal MapBatches operator that was passed to the dataset executor at launch.",
+        "登记生成器的末端 MapBatches 算子，与启动数据集执行器时传入的算子是同一个实例。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",

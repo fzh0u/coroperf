@@ -23,6 +23,7 @@ PARENT_WITNESSES = {
     "same-dynamo-endpoint-notifier", "ray-batcher-reader-created-by-request-task",
     "trtllm-batch-task-and-worker-record",
     "same-vllm-benchmark-process-and-client-task",
+    "same-ray-terminal-operator", "same-ray-task-id-and-index",
 }
 CREATE = {"create", "creation"}
 OBSERVATION = {"sample", "cpu_sample", "diagnostic_stacktrace", "task_snapshot"}
@@ -245,7 +246,7 @@ def evidence_from_graph(graph, ledger, public, required_pairs):
             record["instance"] = labels[segments[record["id"]]["coroutine_id"]]
         ownership = b.get("ownership_evidence")
         identity_kind = producer.get("identity_kind")
-        if ownership in {"actor-entry-argument-dataflow", "active-work-item-object"}:
+        if ownership in {"actor-entry-argument-dataflow", "active-work-item-object", "same-ray-actor-asyncio-task"}:
             identity_kind = ownership
         identity_kind = cancellation.get((source, target), identity_kind)
         joins.append({

@@ -163,6 +163,8 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "same-aiohttp-protocol-and-benchmark-task",
         "polars-stopped-task-and-source-token",
         "same-vllm-benchmark-worker-task", "same-vllm-benchmark-process-and-client-task",
+        "same-ray-ready-generator-at-zero-budget", "same-ray-actor-asyncio-task",
+        "same-ray-task-id-and-index", "same-ray-terminal-operator",
     ) else ""
     return f"""
         <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">
@@ -211,6 +213,12 @@ def trace(join, number, text):
         elif ancestor_link and identity == "same-vllm-benchmark-process-and-client-task":
             relation = "async_parent"
             title = text["benchmark_process_launch"]
+        elif ancestor_link and identity == "same-ray-task-id-and-index":
+            relation = "async_parent"
+            title = text["ray_generator_submission"]
+        elif ancestor_link and identity == "same-ray-terminal-operator":
+            relation = "async_parent"
+            title = text["ray_dataset_launch"]
         elif ancestor_link:
             relation = "async_parent" if kind == "parent_to_create" else "parent"
             title = text["async_ancestor_stack" if relation == "async_parent" else "ancestor_stack"]
