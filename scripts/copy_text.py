@@ -286,6 +286,18 @@ LABELS = {
         "The stream is registered by the same terminal MapBatches operator that was passed to the dataset executor at launch.",
         "登记生成器的末端 MapBatches 算子，与启动数据集执行器时传入的算子是同一个实例。",
     ),
+    "verl-live-rollout-task": (
+        "The publishing Task is the same live asyncio Task recorded at creation. The queue payload has the same object identity at publication and consumption or reset.",
+        "发布结果的是创建时记录的同一个 asyncio Task。结果进入队列后，用同一个对象核对它是否已消费或仍在队列中。",
+    ),
+    "verl-live-processor-task": (
+        "At the sample Task's creation, the active parent is the exact processor Task launched by the streaming supervisor.",
+        "样本 Task 创建时正在执行的父任务，就是流式执行入口创建的同一个处理 Task。",
+    ),
+    "verl-live-paused-processor": (
+        "The admission check pauses the same asyncio processor Task recorded at creation, with a stored staleness count of 76.",
+        "已记录创建位置的同一个 asyncio 处理 Task 在此暂停进样本，记录的陈旧度计数为 76。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",

@@ -42,7 +42,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(17)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(30)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(22)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(17)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(31)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(22)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -477,12 +477,17 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">30 issues</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">31 issues</span></div>
       <p class="section-copy">Connect a delayed task to the execution order, poll interval, or resource that held it up.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
           <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/verl-project--verl--7938.html#call-stack"><span>verl-project/verl #7938</span>Which finished Tasks still count at reset?</a></th>
+        <td><p>Identical rollout stacks join to a sample already consumed and a sample still queued. The migrated legacy recipe counts 76 with six remaining. The locally tested patch restores 6 and delivers the next batch of 64 in both event orders.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/verl-project/verl/issues/7938">Closed</a><span class="fix-label">Local patch tested</span></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/ray-project--ray--67547.html#call-stack"><span>ray-project/ray #67547</span>Which ready generator keeps the data executor busy?</a></th>
         <td><p>Ready generator identity joins the zero-byte polls to the actor Task and dataset launch. In 600 ms pause windows, open PR #67572 lowers the median scheduler steps from 1,054 to 135 on Ray 2.59.0. The adaptation to master 01ef5c0 lowers the median from 964.5 to 5. Every run returns the same 131,072 ordered rows.</p></td>

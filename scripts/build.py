@@ -165,6 +165,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "same-vllm-benchmark-worker-task", "same-vllm-benchmark-process-and-client-task",
         "same-ray-ready-generator-at-zero-budget", "same-ray-actor-asyncio-task",
         "same-ray-task-id-and-index", "same-ray-terminal-operator",
+        "verl-live-rollout-task", "verl-live-processor-task", "verl-live-paused-processor",
     ) else ""
     return f"""
         <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">
