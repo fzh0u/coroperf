@@ -151,7 +151,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "taskgroup-internal-cancel", "taskgroup-outer-cancel", "same-frozen-result-object", "captured-goroutine-id",
         "asyncio-live-task-at-snapshot", "asyncio-task-and-stream-frame",
         "rust-engine-launch-token", "reactor-scheduled-tool-callback",
-        "tokio-join-handle-and-running-task", "same-dynamo-endpoint-notifier",
+        "tokio-join-handle-and-running-task", "tei-embedding-task-and-batch-metadata", "same-dynamo-endpoint-notifier",
         "ray-batcher-task-and-queue-object", "ray-batcher-reader-created-by-request-task",
         "ray-cache-loader-task-object", "ray-model-loader-created-by-request-task",
         "ray-router-reporter-live-task", "ray-router-cross-thread-metrics-callback",

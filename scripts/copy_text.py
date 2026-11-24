@@ -191,6 +191,10 @@ LABELS = {
         "The live Tokio Task at timer expiry has the same ID as the JoinHandle returned at spawn.",
         "计时器到期时，运行中的 Tokio Task ID 与创建时返回的 JoinHandle ID 一致。",
     ),
+    "tei-embedding-task-and-batch-metadata": (
+        "The resumed embedding future has the same Tokio Task ID as the JoinHandle captured at launch. The request's metadata records that ID at enqueue and carries it into the dispatched batch.",
+        "向量请求恢复执行时的 Tokio Task ID 与发起时捕获的 JoinHandle ID 一致。请求入队时记录该 ID，随请求元数据进入实际派发的批次。",
+    ),
     "same-dynamo-endpoint-notifier": (
         "The health-check Task holds the same endpoint notifier that SystemHealth created at registration.",
         "健康检查 Task 持有 SystemHealth 在端点注册时创建的同一个通知对象。",
