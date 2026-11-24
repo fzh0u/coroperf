@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which vLLM startup Task launched each background KV pin?">
+  <title>vllm-project/vllm #42632 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/vllm-project--vllm--42632.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="vllm-project--vllm--42632.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/vllm-project--vllm--42632.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">vllm-project/vllm #42632</p>
+        <h1>Which vLLM startup Task launched each background KV pin?</h1>
+        <div class="case-links"><a href="https://github.com/vllm-project/vllm/issues/42632">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Scheduling and contention</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/vllm-project/vllm/pull/54792">Proposed fix tested locally · PR open ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Two native pinning threads have identical execution stacks. Matching the Thread and AsyncHostBuffer objects joins each observation to the separate startup Task that initiated it.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1002</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1045</span></li><li><code>Thread.run</code><span>threading.py:982</span></li><li><code>AsyncHostBuffer._run</code><span>async_host_buffer.py:74</span></li><li><code>SimpleCPUOffloadWorker.get_init_state.&lt;locals&gt;.&lt;lambda&gt;</code><span>worker.py:304</span></li><li><code>_allocate_cpu_caches</code><span>worker.py:59</span></li><li><code>PinProbe.install.&lt;locals&gt;.pin</code><span>check_worker.py:91</span></li><li><code>pin_tensor</code><span>cuda_mem_ops.py:39</span></li></ol></section>
+          <p class="small trace-note">Frames from record 4 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>4 → 2</code></a><a href="#join-1-point-1">Join point 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1002</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1045</span></li><li><code>Thread.run</code><span>threading.py:982</span></li><li><code>AsyncHostBuffer._run</code><span>async_host_buffer.py:74</span></li><li><code>SimpleCPUOffloadWorker.get_init_state.&lt;locals&gt;.&lt;lambda&gt;</code><span>worker.py:304</span></li><li><code>_allocate_cpu_caches</code><span>worker.py:59</span></li><li><code>PinProbe.install.&lt;locals&gt;.pin</code><span>check_worker.py:91</span></li><li><code>pin_tensor</code><span>cuda_mem_ops.py:39</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">Record 4</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>component_entry.py:74</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:291</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>check_worker.py:237</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>exercise</code><span>check_worker.py:149</span></li><li><code>SimpleCPUOffloadWorker.get_init_state</code><span>worker.py:303</span></li><li><code>AsyncHostBuffer.__init__</code><span>async_host_buffer.py:62</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>component_entry.py:74</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:291</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>check_worker.py:237</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>check_worker.py:201</span></li><li><code>run.&lt;locals&gt;.&lt;genexpr&gt;</code><span>check_worker.py:201</span></li><li><code>launch_interactive</code><span>check_worker.py:181</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1002</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1045</span></li><li><code>Thread.run</code><span>threading.py:982</span></li><li><code>AsyncHostBuffer._run</code><span>async_host_buffer.py:74</span></li><li><code>SimpleCPUOffloadWorker.get_init_state.&lt;locals&gt;.&lt;lambda&gt;</code><span>worker.py:304</span></li><li><code>_allocate_cpu_caches</code><span>worker.py:59</span></li><li><code>PinProbe.install.&lt;locals&gt;.pin</code><span>check_worker.py:91</span></li><li><code>pin_tensor</code><span>cuda_mem_ops.py:39</span></li></ol></section>
+          <p class="small trace-note">Frames from record 5 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>5 → 3</code></a><a href="#join-2-point-1">Join point 1 <code>3 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1002</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1045</span></li><li><code>Thread.run</code><span>threading.py:982</span></li><li><code>AsyncHostBuffer._run</code><span>async_host_buffer.py:74</span></li><li><code>SimpleCPUOffloadWorker.get_init_state.&lt;locals&gt;.&lt;lambda&gt;</code><span>worker.py:304</span></li><li><code>_allocate_cpu_caches</code><span>worker.py:59</span></li><li><code>PinProbe.install.&lt;locals&gt;.pin</code><span>check_worker.py:91</span></li><li><code>pin_tensor</code><span>cuda_mem_ops.py:39</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">Record 5</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>component_entry.py:74</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:291</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>check_worker.py:237</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>exercise</code><span>check_worker.py:149</span></li><li><code>SimpleCPUOffloadWorker.get_init_state</code><span>worker.py:303</span></li><li><code>AsyncHostBuffer.__init__</code><span>async_host_buffer.py:62</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">Record 3</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 1 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>component_entry.py:74</span></li><li><code>run_path</code><span>&lt;frozen runpy&gt;:291</span></li><li><code>_run_module_code</code><span>&lt;frozen runpy&gt;:98</span></li><li><code>_run_code</code><span>&lt;frozen runpy&gt;:88</span></li><li><code>&lt;module&gt;</code><span>check_worker.py:237</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:641</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:608</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1936</span></li><li><code>Handle._run</code><span>events.py:84</span></li><li><code>run</code><span>check_worker.py:201</span></li><li><code>run.&lt;locals&gt;.&lt;genexpr&gt;</code><span>check_worker.py:201</span></li><li><code>launch_batch</code><span>check_worker.py:187</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>With 512 MiB of host KV storage on one A100, worker registration takes a median of 126.5–143.6 ms on the base and 123.6–124.4 ms on the draft&#x27;s synchronous path. With the draft&#x27;s async option it returns in about 0.10 ms. The worker becomes ready 129.4–134.2 ms after entry when polling begins immediately. An independent GPU reduction completes before readiness in all ten async trials, and both ends of the host buffer pass the real DMA round trip.</dd></div><div><dt>What CoroPerf showed</dt><dd>The two background pin_tensor returns have identical frames on separate native threads. The actual Thread, AsyncHostBuffer and allocation callback join each pin to the construction scheduled in get_init_state. The active initialization Task connects that construction to launch_interactive or launch_batch. The same mapping holds when launch order is reversed.</dd></div><div><dt>Scope and limits</dt><dd>This is a worker-component comparison of the pinned base and draft with actual CUDA registration and DMA. The fixture provides the KV layout and bridges PyTorch device APIs in the local CUDA environment. The measured return boundary is register_kv_caches. Full server startup and model latency await a service-level comparison. The issue and draft PR remain open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
