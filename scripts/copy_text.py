@@ -223,6 +223,10 @@ LABELS = {
         "The exact token row identifies its position in the detokenizer's received packet. That row's request ID connects it to the live frontend Task that receives the decoded result.",
         "解码时的实际 token 行确定了它在 IPC 数据包里的位置。用该行的请求 ID 接回接收解码结果的前端 Task。",
     ),
+    "sglang-stream-task-and-output-queue": (
+        "The active asyncio Task is the Task recorded at launch. Its request state and notification Event match, and the coalescer holds the exact output list filled for that state.",
+        "执行中的 asyncio Task 就是发起时记录的 Task，两端的请求状态和通知 Event 一致。合并函数收到的也是为该请求状态填充的同一个输出列表。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",

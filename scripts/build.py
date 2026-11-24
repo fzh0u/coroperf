@@ -156,7 +156,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "ray-cache-loader-task-object", "ray-model-loader-created-by-request-task",
         "ray-router-reporter-live-task", "ray-router-cross-thread-metrics-callback",
         "sglang-detokenizer-ipc-row-and-request-task", "sglang-tokenizer-internal-request-id",
-        "sglang-tokenizer-http-request-id",
+        "sglang-tokenizer-http-request-id", "sglang-stream-task-and-output-queue",
     ) else ""
     return f"""
         <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">
