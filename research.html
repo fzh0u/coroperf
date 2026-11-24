@@ -42,7 +42,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(20)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(16)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(27)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(20)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(20)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(16)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(28)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(20)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -448,12 +448,17 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">27 issues</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">28 issues</span></div>
       <p class="section-copy">Connect a delayed task to the execution order, poll interval, or resource that held it up.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
           <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/ai-dynamo--dynamo--9466.html#call-stack"><span>ai-dynamo/dynamo #9466</span>Which Rust request kept a ready Task off the worker?</a></th>
+        <td><p>Two requests have identical native addresses in a stripped build. Disassembly checks the JSON call sites, and exact Tokio Task IDs recover the interactive and batch launchers. Moving the worker core away from long serialization lets a ready peer run during that call. GitHub closed the proposal without merging it, and the issue remains open.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ai-dynamo/dynamo/issues/9466">Open</a><a class="fix-label" href="https://github.com/ai-dynamo/dynamo/pull/9487">Proposal tested · PR closed</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/sgl-project--sglang--49190.html#call-stack"><span>sgl-project/sglang #49190</span>Which requests queued at the Rust tokenizer?</a></th>
         <td><p>Two identical tokenizer worker stacks join to separate HTTP Tasks and launchers. With eight 8,070-token requests, the median burst maximum wait falls from 102.7–103.1 ms to 12.5–12.7 ms. The base with four workers matches the open proposal and all token IDs agree.</p></td>

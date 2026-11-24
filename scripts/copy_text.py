@@ -227,6 +227,10 @@ LABELS = {
         "The active asyncio Task is the Task recorded at launch. Its request state and notification Event match, and the coalescer holds the exact output list filled for that state.",
         "执行中的 asyncio Task 就是发起时记录的 Task，两端的请求状态和通知 Event 一致。合并函数收到的也是为该请求状态填充的同一个输出列表。",
     ),
+    "dynamo-stripped-serializer-task-and-request": (
+        "The observed Tokio Task ID matches the ID of the JoinHandle at launch. The router ID also matches the JSON payload and the request header. The ELF offsets come from the stripped build. Disassembly checks the call instructions, and the byte-identical code in the symbolized copy supplies function labels.",
+        "观测到的 Tokio Task ID 与发起时 JoinHandle 的 ID 相同。路由器中的请求 ID 也与 JSON 正文和请求头一致。ELF 偏移来自剥离符号的构建，调用指令用反汇编核对，函数名来自机器码逐字节一致的带符号副本。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",
