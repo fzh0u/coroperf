@@ -74,6 +74,7 @@ LABELS = {
         "这里只显示记录 {id} 的栈帧。各个栈块均按调用者到被调用者的顺序排列。",
     ),
     "origin_stack": ("Creation stack", "创建时的物理栈"),
+    "channel_submission_stack": ("Go channel submission stack", "Go channel 提交栈"),
     "cancellation_stack": ("Cancellation request stack", "取消请求的调用栈"),
     "ancestor_stack": ("Ancestor creation stack", "上游协程创建时的物理栈"),
     "async_ancestor_stack": ("Async parent creation stack", "异步父级的创建栈"),
@@ -84,6 +85,10 @@ LABELS = {
     "edge_proof": (
         "The graph records this edge, and both endpoints carry the same captured instance identity.",
         "采集图记录了这条边，两个端点也携带相同的协程实例标识。",
+    ),
+    "channel_handoff_proof": (
+        "The worker receives the exact work item submitted on the Go channel and returns it to the submitting goroutine.",
+        "worker 从 Go channel 接收提交时的同一个工作项，并将它传回提交的 goroutine。",
     ),
     "cancellation_proof": (
         "The request and the observation refer to the same target Task at different points in its recorded cancellation timeline.",
@@ -200,6 +205,7 @@ LABELS = {
     "join_number": ("Join point {n}", "拼接点 {n}"),
     "jump_joins": ("Jump to a join point", "跳转到拼接点"),
     "join_creation": ("Creation → observed execution", "创建 → 执行观测"),
+    "join_channel_handoff": ("Go channel submission → observed execution", "Go channel 提交 → 执行观测"),
     "join_cancellation": ("Cancellation request → target observation", "取消请求 → 目标任务观测"),
     "join_tokio": ("Spawn → helper execution", "任务创建 → 任务体执行"),
     "join_parent": ("Creator → child creation", "创建者 → 子协程创建"),

@@ -126,6 +126,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "parent": "parent_proof",
         "async_parent": "async_parent_proof",
         "batch_input": "batch_input_proof",
+        "channel_handoff": "channel_handoff_proof",
         "result_dependency": "result_dependency_proof",
         "release_dependency": "release_dependency_proof",
     }[relation]
@@ -191,6 +192,9 @@ def trace(join, number, text):
         elif kind == "cancel_request_to_observation":
             relation = "cancellation"
             title = text["cancellation_stack"]
+        elif identity == "go-channel-work-item":
+            relation = "channel_handoff"
+            title = text["channel_submission_stack"]
         else:
             title = origin_title
             relation = "tokio" if kind == "runtime_task_id" else "creation"

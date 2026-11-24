@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which Ollama session paid for repeated prefill?">
+  <title>ollama/ollama #19767 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/ollama--ollama--19767.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="ollama--ollama--19767.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/ollama--ollama--19767.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ollama/ollama #19767</p>
+        <h1>Which Ollama session paid for repeated prefill?</h1>
+        <div class="case-links"><a href="https://github.com/ollama/ollama/issues/19767">Upstream report ↗</a><a href="https://github.com/ollama/ollama/blob/v0.40.16/llm/llama_server.go#L1667">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Performance cost attribution</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd>Local patch tested</dd></div>
+          <div><dt>Case language</dt><dd>Go</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Two repeat-prefill timings have identical worker stacks. Matching the same work item across a Go channel recovers its submission, and the submit goroutine&#x27;s creation stack attributes each cost to its own session launcher.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 8</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1771</span></li><li><code>sync.(*WaitGroup).Go.func1</code><span>waitgroup.go:258</span></li><li><code>github.com/ollama/ollama/llm.TestCoroPerfCacheHandoff.func3</code><span>cache_handoff_test.go:209</span></li><li><code>github.com/ollama/ollama/llm.readCacheCompletions</code><span>cache_handoff_test.go:122</span></li><li><code>github.com/ollama/ollama/llm.(*llamaServerRunner).Completion</code><span>llama_server.go:1902</span></li><li><code>github.com/ollama/ollama/llm.readCacheCompletions.func1</code><span>cache_handoff_test.go:127</span></li></ol></section>
+          <p class="small trace-note">Frames from record 8 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>8 → 7</code></a><a href="#join-1-point-1">Join point 1 <code>7 → 6</code></a></nav>
+          <section class="stack observed" id="join-1-record-8"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 8</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1771</span></li><li><code>sync.(*WaitGroup).Go.func1</code><span>waitgroup.go:258</span></li><li><code>github.com/ollama/ollama/llm.TestCoroPerfCacheHandoff.func3</code><span>cache_handoff_test.go:209</span></li><li><code>github.com/ollama/ollama/llm.readCacheCompletions</code><span>cache_handoff_test.go:122</span></li><li><code>github.com/ollama/ollama/llm.(*llamaServerRunner).Completion</code><span>llama_server.go:1902</span></li><li><code>github.com/ollama/ollama/llm.readCacheCompletions.func1</code><span>cache_handoff_test.go:127</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Go channel submission → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-7">Record 7</a><span aria-hidden="true">→</span><a href="#join-1-record-8">Record 8</a></p>
+          <p>The worker receives the exact work item submitted on the Go channel and returns it to the submitting goroutine.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 7 → 8</code></p>
+        </aside><section class="stack " id="join-1-record-7"><div class="stack-head"><h4>Go channel submission stack</h4><span>Record 7</span><span class="record-instance">Instance from record 7</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1771</span></li><li><code>github.com/ollama/ollama/llm.submitCacheTurn</code><span>cache_handoff_test.go:92</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-6">Record 6</a><span aria-hidden="true">→</span><a href="#join-1-record-7">Record 7</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 6 → 7</code></p>
+        </aside><section class="stack " id="join-1-record-6"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 6</span><span class="record-instance">Instance from record 6</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1771</span></li><li><code>testing.tRunner</code><span>testing.go:2036</span></li><li><code>github.com/ollama/ollama/llm.TestCoroPerfCacheHandoff</code><span>cache_handoff_test.go:228</span></li><li><code>github.com/ollama/ollama/llm.launchCatalog</code><span>cache_handoff_test.go:103</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 11</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1771</span></li><li><code>sync.(*WaitGroup).Go.func1</code><span>waitgroup.go:258</span></li><li><code>github.com/ollama/ollama/llm.TestCoroPerfCacheHandoff.func3</code><span>cache_handoff_test.go:209</span></li><li><code>github.com/ollama/ollama/llm.readCacheCompletions</code><span>cache_handoff_test.go:122</span></li><li><code>github.com/ollama/ollama/llm.(*llamaServerRunner).Completion</code><span>llama_server.go:1902</span></li><li><code>github.com/ollama/ollama/llm.readCacheCompletions.func1</code><span>cache_handoff_test.go:127</span></li></ol></section>
+          <p class="small trace-note">Frames from record 11 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>11 → 10</code></a><a href="#join-2-point-1">Join point 1 <code>10 → 9</code></a></nav>
+          <section class="stack observed" id="join-2-record-11"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 11</span><span class="record-instance">Instance from record 10</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1771</span></li><li><code>sync.(*WaitGroup).Go.func1</code><span>waitgroup.go:258</span></li><li><code>github.com/ollama/ollama/llm.TestCoroPerfCacheHandoff.func3</code><span>cache_handoff_test.go:209</span></li><li><code>github.com/ollama/ollama/llm.readCacheCompletions</code><span>cache_handoff_test.go:122</span></li><li><code>github.com/ollama/ollama/llm.(*llamaServerRunner).Completion</code><span>llama_server.go:1902</span></li><li><code>github.com/ollama/ollama/llm.readCacheCompletions.func1</code><span>cache_handoff_test.go:127</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Go channel submission → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-10">Record 10</a><span aria-hidden="true">→</span><a href="#join-2-record-11">Record 11</a></p>
+          <p>The worker receives the exact work item submitted on the Go channel and returns it to the submitting goroutine.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 10 → 11</code></p>
+        </aside><section class="stack " id="join-2-record-10"><div class="stack-head"><h4>Go channel submission stack</h4><span>Record 10</span><span class="record-instance">Instance from record 10</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1771</span></li><li><code>github.com/ollama/ollama/llm.submitCacheTurn</code><span>cache_handoff_test.go:92</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-9">Record 9</a><span aria-hidden="true">→</span><a href="#join-2-record-10">Record 10</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 9 → 10</code></p>
+        </aside><section class="stack " id="join-2-record-9"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 9</span><span class="record-instance">Instance from record 9</span></div><ol class="frames"><li><code>runtime.goexit</code><span>asm_amd64.s:1771</span></li><li><code>testing.tRunner</code><span>testing.go:2036</span></li><li><code>github.com/ollama/ollama/llm.TestCoroPerfCacheHandoff</code><span>cache_handoff_test.go:228</span></li><li><code>github.com/ollama/ollama/llm.launchResearch</code><span>cache_handoff_test.go:108</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Two synthetic sessions alternate on one Ollama runner slot. On four repeat turns, the default runner evaluates 494 to 512 prompt tokens per turn. Forwarding a zero slot similarity threshold leaves four prompt tokens to evaluate on each repeat. Median prefill falls from 1.86 s to 52.3 ms. All six completion texts and generated token counts agree between arms. Reversing the session order also gives four evaluated tokens on each repeat with the local patch.</dd></div><div><dt>What CoroPerf showed</dt><dd>Both final timing callbacks have identical execution frames on the same persistent Go worker. Go&#x27;s traceback with ancestor capture shows the worker&#x27;s launch and omits both request launchers. The exact work pointer received by the runner worker and returned to the submitter connects each callback to its channel send. The submit goroutine&#x27;s creation record then identifies launchCatalog or launchResearch. The catalog path is 8 to 7 to 6 and the research path is 11 to 10 to 9. Native runner logs show the default similarity-based slot selection and the cached prompt restoration with the opt-in override.</dd></div><div><dt>Scope and limits</dt><dd>This component test uses the Ollama v0.40.16 Go launcher and streaming completion reader, llama.cpp b12177, and Qwen3.5-0.8B Q4_0 on a four-thread CPU. The two session launchers and their shared worker are fixture code. The report&#x27;s Qwen3.8-27B GPU and eight-slot checkpoint behavior remain untested. The Ollama issue is open and the configuration patch was tested locally.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
