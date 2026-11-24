@@ -7,10 +7,18 @@ CONTRIBUTION_KINDS = (
 )
 CASE_LANGUAGES = ("Python", "Go", "Rust", "Java", "C++", "C#", "JavaScript / TypeScript", "Kotlin", "Scala", "Dart")
 FIX_STATES = ("verified", "merged", "proposed", "guidance", "workaround", "local", "unconfirmed")
+SOURCE_TOKEN_STAGES = ("slice_to_merge", "merge_to_left", "merge_to_right")
 
 LABELS = {
     "atlas": ("Coroutine Evidence Atlas", "协程证据图谱"),
     "skip": ("Skip to content", "跳到正文"),
+    "source_token_transfers": ("Stop signals between tasks", "任务间的停止信号"),
+    "source_token_stage": ("Signal path", "信号路径"),
+    "source_token_write": ("Writing stack", "写入信号的栈"),
+    "source_token_read": ("Reading stack", "读取信号的栈"),
+    "slice_to_merge": ("Slice to merge planner", "截断任务 → 连接任务"),
+    "merge_to_left": ("Merge planner to left scan", "连接任务 → 左侧扫描"),
+    "merge_to_right": ("Merge planner to right scan", "连接任务 → 右侧扫描"),
     "navigation": ("Main navigation", "主导航"),
     "language_picker": ("Language", "选择语言"),
     "issues": ("Issue evidence", "案例证据"),
@@ -246,6 +254,10 @@ LABELS = {
     "same-aiohttp-protocol-and-benchmark-task": (
         "The receiving callback and ClientRequest.send use the same live ResponseHandler. At send time, the active asyncio Task matches the one recorded when the benchmark created it.",
         "响应接收回调与 ClientRequest.send 使用同一个实际的 ResponseHandler。发送时正在执行的 asyncio Task 与基准程序创建时记录的对象一致。",
+    ),
+    "polars-stopped-task-and-source-token": (
+        "The executor schedules and runs the same native Task Arc. A separate SourceToken identity links each stop writer to the task that reads it.",
+        "首次调度和执行时的原生 Task Arc 是同一个对象。另用 SourceToken 的对象身份，将每次停止信号的写入和读取任务接起来。",
     ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",

@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import re
 
-from copy_text import CASE_LANGUAGES, CONTRIBUTION_KINDS, FIX_STATES, ISSUE_KINDS
+from copy_text import CASE_LANGUAGES, CONTRIBUTION_KINDS, FIX_STATES, ISSUE_KINDS, SOURCE_TOKEN_STAGES
 
 
 HERE = Path(__file__).resolve().parents[1]
@@ -369,6 +369,15 @@ def main():
             "contribution": review["en"],
             "contribution_zh": review["zh"],
         })
+        transfers = graph.get("observed_source_token_transfers", [])
+        if transfers:
+            observations = {join["observation"]["id"]: join["observation"]["instance"] for join in joins}
+            for transfer in transfers:
+                start, end = transfer["from"], transfer["to"]
+                if (transfer["stage"] not in SOURCE_TOKEN_STAGES or start not in observations
+                        or end not in observations or observations[start] == observations[end]):
+                    raise ValueError(f"{identifier}: invalid source token transfer {start} → {end}")
+            cases[-1]["observed_source_token_transfers"] = transfers
     snapshot = {"corpus_date": snapshot_date, "cases": cases, "deferred_followups": followups}
     args.output.write_text(json.dumps(snapshot, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 

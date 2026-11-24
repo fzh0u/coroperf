@@ -161,6 +161,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "ollama-embedding-goroutine-and-request-row",
         "trtllm-live-batch-worker-and-record", "trtllm-batch-task-and-worker-record",
         "same-aiohttp-protocol-and-benchmark-task",
+        "polars-stopped-task-and-source-token",
     ) else ""
     return f"""
         <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">
@@ -255,6 +256,32 @@ def fix_description(case, text, label_prefix):
     return label
 
 
+def source_token_table(case, text):
+    transfers = case.get("observed_source_token_transfers")
+    if not transfers:
+        return ""
+    links = {
+        observation["id"]: f'<a href="#join-{index}-record-{escape(observation["id"])}">{record_label(observation, text)}</a>'
+        for index, join in enumerate(case["joins"], start=1)
+        for observation in (join["observation"],)
+    }
+    rows = "".join(
+        f'<tr><th scope="row">{text[transfer["stage"]]}</th>'
+        f'<td>{links[transfer["from"]]}</td><td>{links[transfer["to"]]}</td></tr>'
+        for transfer in transfers
+    )
+    return f"""
+      <section id="source-token-transfers" aria-labelledby="stop-title">
+        <div class="section-head"><h2 id="stop-title">{text["source_token_transfers"]}</h2></div>
+        <div class="table-wrap summary-table">
+          <table aria-labelledby="stop-title">
+            <thead><tr><th scope="col">{text["source_token_stage"]}</th><th scope="col">{text["source_token_write"]}</th><th scope="col">{text["source_token_read"]}</th></tr></thead>
+            <tbody>{rows}</tbody>
+          </table>
+        </div>
+      </section>"""
+
+
 def case_page(case, language):
     text = COPY[language]
     title = case_title(case, language)
@@ -305,7 +332,7 @@ def case_page(case, language):
         <div class="join-contribution"><h3>{text["why_join"]}</h3><p>{escape(contribution(case, language))}</p></div>
         <p class="small join-guide">{text["join_guide"]}</p>
         {content}
-      </section>
+      </section>{source_token_table(case, text)}
       <section class="findings" aria-labelledby="findings-title">
         <div class="section-head"><h2 id="findings-title">{text["findings"]}</h2></div>
         <dl>{findings}</dl>

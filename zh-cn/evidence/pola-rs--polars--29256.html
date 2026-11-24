@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Polars 的流式连接达到行数上限后，哪个扫描任务还在读取？">
+  <title>pola-rs/polars #29256 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/pola-rs--polars--29256.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/pola-rs--polars--29256.html" lang="en" hreflang="en">English</a><a href="pola-rs--polars--29256.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">pola-rs/polars #29256</p>
+        <h1>Polars 的流式连接达到行数上限后，哪个扫描任务还在读取？</h1>
+        <div class="case-links"><a href="https://github.com/pola-rs/polars/issues/29256">上游报告 ↗</a><a href="https://github.com/pola-rs/polars/blob/py-2.1.0/crates/polars-stream/src/nodes/joins/merge_join.rs#L380-L390">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>调度与资源争用定位</dd></div>
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>GitHub 状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd>本地补丁已测试</dd></div>
+          <div><dt>案例语言</dt><dd>Rust</dd></div>
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>用实际原生 Task 接回创建栈，并通过同一个 SourceToken 追踪每次停止信号的写入和读取。剥离符号后，两条完全相同的扫描桥执行栈分别属于左右输入。左侧收到停止信号时，右侧仍在交付数据。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>StreamingSliceNode::spawn future, stop write [ELF +0x75a2d35]</code><span>streaming_slice.rs:83</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 1 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>StreamingSliceNode::spawn future, stop write [ELF +0x75a2d35]</code><span>streaming_slice.rs:83</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">记录 1</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>首次调度和执行时的原生 Task Arc 是同一个对象。另用 SourceToken 的对象身份，将每次停止信号的写入和读取任务接起来。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::polars_python::lazyframe::general::_::__INVENTORY::Def [ELF +0x69b3790]</code><span>_polars_runtime.abi3.so</span></li><li><code>pyo3::impl_::trampoline::trampoline::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::inner::{closure#0}, *mut pyo3_ffi::object::PyObject [ELF +0x5c27750]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_python::lazyframe::PyLazyFrame::__pymethod_collect__ [ELF +0x69eb220]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_lazy::frame::LazyFrame::collect_with_engine [ELF +0x3f2da80]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::skeleton::run_query [ELF +0x7719481]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::skeleton::StreamingQuery::execute [ELF +0x71425ab]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::execute::execute_graph [ELF +0x714e493]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::execute::run_subgraph::{closure#1} [ELF +0x7157216]</code><span>_polars_runtime.abi3.so</span></li><li><code>StreamingSliceNode::spawn [ELF +0x759fb85]</code><span>_polars_runtime.abi3.so</span></li><li><code>Runnable::schedule [ELF +0x75a331a]</code><span>_polars_runtime.abi3.so</span></li><li><code>Executor::schedule_task [ELF +0x1b4307c]</code><span>mod.rs:208</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>find_mergeable_task, stop check [ELF +0x722513e]</code><span>merge_join.rs:383</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>3 → 2</code></a></nav>
+          <section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>find_mergeable_task, stop check [ELF +0x722513e]</code><span>merge_join.rs:383</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>首次调度和执行时的原生 Task Arc 是同一个对象。另用 SourceToken 的对象身份，将每次停止信号的写入和读取任务接起来。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::polars_python::lazyframe::general::_::__INVENTORY::Def [ELF +0x69b3790]</code><span>_polars_runtime.abi3.so</span></li><li><code>pyo3::impl_::trampoline::trampoline::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::inner::{closure#0}, *mut pyo3_ffi::object::PyObject [ELF +0x5c27750]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_python::lazyframe::PyLazyFrame::__pymethod_collect__ [ELF +0x69eb220]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_lazy::frame::LazyFrame::collect_with_engine [ELF +0x3f2da80]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::skeleton::run_query [ELF +0x7719481]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::skeleton::StreamingQuery::execute [ELF +0x71425ab]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::execute::execute_graph [ELF +0x714e493]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::execute::run_subgraph::{closure#1} [ELF +0x7157216]</code><span>_polars_runtime.abi3.so</span></li><li><code>MergeJoinNode::spawn [ELF +0x7218e2f]</code><span>_polars_runtime.abi3.so</span></li><li><code>Runnable::schedule [ELF +0x722824a]</code><span>_polars_runtime.abi3.so</span></li><li><code>Executor::schedule_task [ELF +0x1b4307c]</code><span>mod.rs:208</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>find_mergeable_task, drain left input [ELF +0x7224824]</code><span>merge_join.rs:385</span></li><li><code>polars_stream::nodes::joins::utils::SpillFrameSearchBuffer::stop_and_buffer_from_pipe::{closure#0} [ELF +0x719d9cb]</code><span>_polars_runtime.abi3.so</span></li><li><code>stop_and_take_pipe_contents, input stop write [ELF +0x719d569]</code><span>utils.rs:235</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-3-point-1">拼接点 1 <code>4 → 2</code></a></nav>
+          <section class="stack observed" id="join-3-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>find_mergeable_task, drain left input [ELF +0x7224824]</code><span>merge_join.rs:385</span></li><li><code>polars_stream::nodes::joins::utils::SpillFrameSearchBuffer::stop_and_buffer_from_pipe::{closure#0} [ELF +0x719d9cb]</code><span>_polars_runtime.abi3.so</span></li><li><code>stop_and_take_pipe_contents, input stop write [ELF +0x719d569]</code><span>utils.rs:235</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-3-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-3-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>首次调度和执行时的原生 Task Arc 是同一个对象。另用 SourceToken 的对象身份，将每次停止信号的写入和读取任务接起来。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 4</code></p>
+        </aside><section class="stack " id="join-3-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::polars_python::lazyframe::general::_::__INVENTORY::Def [ELF +0x69b3790]</code><span>_polars_runtime.abi3.so</span></li><li><code>pyo3::impl_::trampoline::trampoline::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::inner::{closure#0}, *mut pyo3_ffi::object::PyObject [ELF +0x5c27750]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_python::lazyframe::PyLazyFrame::__pymethod_collect__ [ELF +0x69eb220]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_lazy::frame::LazyFrame::collect_with_engine [ELF +0x3f2da80]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::skeleton::run_query [ELF +0x7719481]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::skeleton::StreamingQuery::execute [ELF +0x71425ab]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::execute::execute_graph [ELF +0x714e493]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::execute::run_subgraph::{closure#1} [ELF +0x7157216]</code><span>_polars_runtime.abi3.so</span></li><li><code>MergeJoinNode::spawn [ELF +0x7218e2f]</code><span>_polars_runtime.abi3.so</span></li><li><code>Runnable::schedule [ELF +0x722824a]</code><span>_polars_runtime.abi3.so</span></li><li><code>Executor::schedule_task [ELF +0x1b4307c]</code><span>mod.rs:208</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>find_mergeable_task, drain right input [ELF +0x7224a15]</code><span>merge_join.rs:388</span></li><li><code>polars_stream::nodes::joins::utils::SpillFrameSearchBuffer::stop_and_buffer_from_pipe::{closure#0} [ELF +0x719d9cb]</code><span>_polars_runtime.abi3.so</span></li><li><code>stop_and_take_pipe_contents, input stop write [ELF +0x719d569]</code><span>utils.rs:235</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-4-point-1">拼接点 1 <code>5 → 2</code></a></nav>
+          <section class="stack observed" id="join-4-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>find_mergeable_task, drain right input [ELF +0x7224a15]</code><span>merge_join.rs:388</span></li><li><code>polars_stream::nodes::joins::utils::SpillFrameSearchBuffer::stop_and_buffer_from_pipe::{closure#0} [ELF +0x719d9cb]</code><span>_polars_runtime.abi3.so</span></li><li><code>stop_and_take_pipe_contents, input stop write [ELF +0x719d569]</code><span>utils.rs:235</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-4-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-4-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>首次调度和执行时的原生 Task Arc 是同一个对象。另用 SourceToken 的对象身份，将每次停止信号的写入和读取任务接起来。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 5</code></p>
+        </aside><section class="stack " id="join-4-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::polars_python::lazyframe::general::_::__INVENTORY::Def [ELF +0x69b3790]</code><span>_polars_runtime.abi3.so</span></li><li><code>pyo3::impl_::trampoline::trampoline::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::inner::{closure#0}, *mut pyo3_ffi::object::PyObject [ELF +0x5c27750]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_python::lazyframe::PyLazyFrame::__pymethod_collect__ [ELF +0x69eb220]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_lazy::frame::LazyFrame::collect_with_engine [ELF +0x3f2da80]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::skeleton::run_query [ELF +0x7719481]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::skeleton::StreamingQuery::execute [ELF +0x71425ab]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::execute::execute_graph [ELF +0x714e493]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_stream::execute::run_subgraph::{closure#1} [ELF +0x7157216]</code><span>_polars_runtime.abi3.so</span></li><li><code>MergeJoinNode::spawn [ELF +0x7218e2f]</code><span>_polars_runtime.abi3.so</span></li><li><code>Runnable::schedule [ELF +0x722824a]</code><span>_polars_runtime.abi3.so</span></li><li><code>Executor::schedule_task [ELF +0x1b4307c]</code><span>mod.rs:208</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 7</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 7</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>Bridge::run, input stop check [ELF +0x72eb025]</code><span>bridge.rs:122</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 7 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-5-point-1">拼接点 1 <code>7 → 6</code></a></nav>
+          <section class="stack observed" id="join-5-record-7"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 7</span><span class="record-instance">实例首次见于记录 6</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>Bridge::run, input stop check [ELF +0x72eb025]</code><span>bridge.rs:122</span></li></ol></section>
+        <aside class="join-marker" id="join-5-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-5-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-5-record-6">记录 6</a><span aria-hidden="true">→</span><a href="#join-5-record-7">记录 7</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>首次调度和执行时的原生 Task Arc 是同一个对象。另用 SourceToken 的对象身份，将每次停止信号的写入和读取任务接起来。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 6 → 7</code></p>
+        </aside><section class="stack " id="join-5-record-6"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 6</span><span class="record-instance">实例首次见于记录 6</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>Runnable::run [ELF +0x72a3843]</code><span>_polars_runtime.abi3.so</span></li><li><code>Executor::schedule_task [ELF +0x1b4307c]</code><span>mod.rs:208</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 9</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 9</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>Bridge::run, input stop check [ELF +0x72eb025]</code><span>bridge.rs:122</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 9 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-6-point-1">拼接点 1 <code>9 → 8</code></a></nav>
+          <section class="stack observed" id="join-6-record-9"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 9</span><span class="record-instance">实例首次见于记录 8</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>Bridge::run, input stop check [ELF +0x72eb025]</code><span>bridge.rs:122</span></li></ol></section>
+        <aside class="join-marker" id="join-6-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-6-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-6-record-8">记录 8</a><span aria-hidden="true">→</span><a href="#join-6-record-9">记录 9</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>首次调度和执行时的原生 Task Arc 是同一个对象。另用 SourceToken 的对象身份，将每次停止信号的写入和读取任务接起来。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 8 → 9</code></p>
+        </aside><section class="stack " id="join-6-record-8"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 8</span><span class="record-instance">实例首次见于记录 8</span></div><ol class="frames"><li><code>std::sys::thread::unix::Thread::new::thread_start [ELF +0x7c9bb22]</code><span>_polars_runtime.abi3.so</span></li><li><code>{closure#1}::call_once::{shim:vtable#0} [ELF +0x1b42783]</code><span>_polars_runtime.abi3.so</span></li><li><code>__rust_begin_short_backtrace [ELF +0x1b38581]</code><span>_polars_runtime.abi3.so</span></li><li><code>polars_async::executor::Executor::runner [ELF +0x1b38b5b]</code><span>_polars_runtime.abi3.so</span></li><li><code>Runnable::run [ELF +0x72a3843]</code><span>_polars_runtime.abi3.so</span></li><li><code>Executor::schedule_task [ELF +0x1b4307c]</code><span>mod.rs:208</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section id="source-token-transfers" aria-labelledby="stop-title">
+        <div class="section-head"><h2 id="stop-title">任务间的停止信号</h2></div>
+        <div class="table-wrap summary-table">
+          <table aria-labelledby="stop-title">
+            <thead><tr><th scope="col">信号路径</th><th scope="col">写入信号的栈</th><th scope="col">读取信号的栈</th></tr></thead>
+            <tbody><tr><th scope="row">截断任务 → 连接任务</th><td><a href="#join-1-record-1">记录 1</a></td><td><a href="#join-2-record-3">记录 3</a></td></tr><tr><th scope="row">连接任务 → 左侧扫描</th><td><a href="#join-3-record-4">记录 4</a></td><td><a href="#join-5-record-7">记录 7</a></td></tr><tr><th scope="row">连接任务 → 右侧扫描</th><td><a href="#join-4-record-5">记录 5</a></td><td><a href="#join-6-record-9">记录 9</a></td></tr></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>两个官方版本都正确返回有序的 50 行。Polars 2.1.0 使用 16 个线程重复运行 15 次，左右输入读取量的中位数分别为 36000 和 37000 行。直接在单个源上取 50 行时，上限能下推到数据源。用单线程对照时，连接结果一致，左右读取量的中位数降至 5000 和 6000 行。两次原生跟踪中，右侧数据源在左、右输入先后收到停止信号之间仍生成了 9 到 10 批。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两个扫描桥任务的原生地址栈完全相同。匹配 Task 首次调度时和执行时的 Arc，能接回各自的创建记录。同一个 SourceToken 把截断任务在记录 1 写入的停止信号接到连接任务在记录 3 的检查。连接任务先排空左侧输入，再通知右侧。记录 4 和 5 的输入信号分别对应两个扫描桥在记录 7 和 9 的检查，由此确定哪个已经看到停止信号、哪个仍在交付数据。</dd></div><div><dt>适用范围与局限</dt><dd>本地并行排空补丁通过 96 组结果对照和上游的提前结束测试。16 线程下每种输入、每个构建各交错运行 100 次，输入总量的中位数在键对齐时从 74000 降至 73000 行，键错开时从 60000 降至 59000 行。两组读数区间仍重叠，额外读取依然存在，issue 仍开放。剥离符号的栈保留官方发行版的指令偏移，函数名由代码段字节一致的原版补充。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>
