@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which LangChain4j retry caller is still waiting after exception mapping fails?">
+  <title>langchain4j/langchain4j #7069 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/langchain4j--langchain4j--7069.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="langchain4j--langchain4j--7069.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/langchain4j--langchain4j--7069.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">langchain4j/langchain4j #7069</p>
+        <h1>Which LangChain4j retry caller is still waiting after exception mapping fails?</h1>
+        <div class="case-links"><a href="https://github.com/langchain4j/langchain4j/issues/7069">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Failure and task lifecycle</dd></div>
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/langchain4j/langchain4j/pull/7070">Proposed fix tested locally · PR open ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Java</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Match each exception-mapper callback&#x27;s captured CompletableFuture to the Future from its first retry attempt. Identical execution stacks then reveal which caller is left pending.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 2</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span></div><ol class="frames"><li><code>java.lang.Thread.run</code></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code></li><li><code>java.util.concurrent.FutureTask.run</code></li><li><code>java.util.concurrent.Executors$RunnableAdapter.call</code></li><li><code>RetryReplay$$Lambda$5/[address].run</code></li><li><code>RetryReplay.lambda$failOnWorker$1</code></li><li><code>RetryReplay.fail</code></li><li><code>java.util.concurrent.CompletableFuture.completeExceptionally</code></li><li><code>java.util.concurrent.CompletableFuture.postComplete</code></li><li><code>java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire</code></li><li><code>java.util.concurrent.CompletableFuture.uniWhenComplete</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy$$Lambda$4/[address].accept</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy.lambda$attemptAsync$1</code></li><li><code>RetryReplay$ThrowingMapper.mapException</code></li></ol></section>
+          <p class="small trace-note">Frames from record 2 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>2 → 1</code></a></nav>
+          <section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>java.lang.Thread.run</code></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code></li><li><code>java.util.concurrent.FutureTask.run</code></li><li><code>java.util.concurrent.Executors$RunnableAdapter.call</code></li><li><code>RetryReplay$$Lambda$5/[address].run</code></li><li><code>RetryReplay.lambda$failOnWorker$1</code></li><li><code>RetryReplay.fail</code></li><li><code>java.util.concurrent.CompletableFuture.completeExceptionally</code></li><li><code>java.util.concurrent.CompletableFuture.postComplete</code></li><li><code>java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire</code></li><li><code>java.util.concurrent.CompletableFuture.uniWhenComplete</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy$$Lambda$4/[address].accept</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy.lambda$attemptAsync$1</code></li><li><code>RetryReplay$ThrowingMapper.mapException</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 1 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-1"><div class="stack-head"><h4>Creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>RetryReplay.main</code></li><li><code>RetryReplay.mapper</code></li><li><code>RetryReplay.launchBatch</code></li><li><code>RetryReplay.launch</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy.withRetryAsync</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy.attemptAsync</code></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span></div><ol class="frames"><li><code>java.lang.Thread.run</code></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code></li><li><code>java.util.concurrent.FutureTask.run</code></li><li><code>java.util.concurrent.Executors$RunnableAdapter.call</code></li><li><code>RetryReplay$$Lambda$5/[address].run</code></li><li><code>RetryReplay.lambda$failOnWorker$1</code></li><li><code>RetryReplay.fail</code></li><li><code>java.util.concurrent.CompletableFuture.completeExceptionally</code></li><li><code>java.util.concurrent.CompletableFuture.postComplete</code></li><li><code>java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire</code></li><li><code>java.util.concurrent.CompletableFuture.uniWhenComplete</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy$$Lambda$4/[address].accept</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy.lambda$attemptAsync$1</code></li><li><code>RetryReplay$ThrowingMapper.mapException</code></li></ol></section>
+          <p class="small trace-note">Frames from record 3 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>3 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 3</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code></li><li><code>java.util.concurrent.FutureTask.run</code></li><li><code>java.util.concurrent.Executors$RunnableAdapter.call</code></li><li><code>RetryReplay$$Lambda$5/[address].run</code></li><li><code>RetryReplay.lambda$failOnWorker$1</code></li><li><code>RetryReplay.fail</code></li><li><code>java.util.concurrent.CompletableFuture.completeExceptionally</code></li><li><code>java.util.concurrent.CompletableFuture.postComplete</code></li><li><code>java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire</code></li><li><code>java.util.concurrent.CompletableFuture.uniWhenComplete</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy$$Lambda$4/[address].accept</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy.lambda$attemptAsync$1</code></li><li><code>RetryReplay$ThrowingMapper.mapException</code></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-2-record-3">Record 3</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>base_to_sample · 0 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>RetryReplay.main</code></li><li><code>RetryReplay.mapper</code></li><li><code>RetryReplay.launchInteractive</code></li><li><code>RetryReplay.launch</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy.withRetryAsync</code></li><li><code>dev.langchain4j.internal.RetryUtils$RetryPolicy.attemptAsync</code></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Two custom exception mappers throw on a worker. On main, both caller Futures remain pending after the worker finishes. The mapper failures are visible in the dependent stages returned by whenComplete. With PR #7070 applied, each caller Future completes exceptionally with its own mapper&#x27;s exact throwable after just one attempt. The already-failed input case gives the same before-and-after result.</dd></div><div><dt>What CoroPerf showed</dt><dd>The two mapper executions have identical physical stacks. The completion callback carries the exact caller Future previously observed at the first attempt. Matching JDI object IDs joins record 2 to the batch launch in record 1, and record 3 to the interactive launch in record 0. Reversing completion order swaps the recovered callers.</dd></div><div><dt>Scope and limits</dt><dd>The Java 17 fixture supplies both failed attempts and explicitly throwing custom mappers. The traced retry sources are from main 8705b925d715 and the same revision with the production change from open PR #7070. All 24 tests from the PR pass with that change. Four mapper-failure tests fail on main. The issue remains open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

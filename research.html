@@ -42,7 +42,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(17)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(32)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(18)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(32)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -113,6 +113,27 @@
               <small>Reproduction follow-up paused under safety restrictions</small>
             </th>
             <td class="row-status"><a class="state-pill state-open" href="https://github.com/llvm/llvm-project/issues/135377">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+          </tr>
+          <tr id="followup-sgl-project--sglang--30770">
+            <th scope="row">
+              <a href="https://github.com/sgl-project/sglang/issues/30770"><span>sgl-project/sglang #30770</span>Health-check latency during SGLang preprocessing</a>
+              <small>Reproduction follow-up paused under safety restrictions</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-open" href="https://github.com/sgl-project/sglang/issues/30770">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+          </tr>
+          <tr id="followup-langchain4j--langchain4j--7125">
+            <th scope="row">
+              <a href="https://github.com/langchain4j/langchain4j/issues/7125"><span>langchain4j/langchain4j #7125</span>LangChain4j retry completion on the shared timer</a>
+              <small>Reproduction follow-up paused under safety restrictions</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-open" href="https://github.com/langchain4j/langchain4j/issues/7125">Open</a><a class="fix-label" href="https://github.com/langchain4j/langchain4j/pull/7126">Fix unconfirmed · PR open</a></td>
+          </tr>
+          <tr id="followup-transact-rs--sqlx--4449">
+            <th scope="row">
+              <a href="https://github.com/transact-rs/sqlx/issues/4449"><span>transact-rs/sqlx #4449</span>SQLx pool slot release during connection close</a>
+              <small>Reproduction follow-up paused under safety restrictions</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-closed" href="https://github.com/transact-rs/sqlx/issues/4449">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
           </tr></tbody>
         </table>
       </div>
@@ -389,12 +410,17 @@
       </div>
     </section>
     <section class="block" id="failure_lifecycle" aria-labelledby="failure_lifecycle-title">
-      <div class="section-head"><h2 id="failure_lifecycle-title">Failure and task lifecycle</h2><span class="case-kind">17 issues</span></div>
+      <div class="section-head"><h2 id="failure_lifecycle-title">Failure and task lifecycle</h2><span class="case-kind">18 issues</span></div>
       <p class="section-copy">Locate the first failure or identify the cancellation, exit, or cleanup that determines task state.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="failure_lifecycle-title">
           <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/langchain4j--langchain4j--7069.html#call-stack"><span>langchain4j/langchain4j #7069</span>Which retry callers stay pending after mapping fails?</a></th>
+        <td><p>The two identical mapper stacks carry different caller Futures. JDI object identity joins each stack to its first attempt. Open PR #7070 propagates the exact mapper failures to both callers and passes all 24 tests from the PR.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/langchain4j/langchain4j/issues/7069">Open</a><a class="fix-label" href="https://github.com/langchain4j/langchain4j/pull/7070">Proposal tested · PR open</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/vllm-project--vllm--57173.html#call-stack"><span>vllm-project/vllm #57173</span>Which conversations remained when the benchmark clients exited?</a></th>
         <td><p>Live Tasks and process launches connect identical receive and exit stacks to separate clients. Main sends 10 of 12 requests, with one pending turn per client. The tested PR #57181 sends all 12 and preserves the explicit request limit.</p></td>
