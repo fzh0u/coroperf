@@ -19,7 +19,7 @@ PARENT_WITNESSES = {
     "scheduled-handle-running-at-task-creation", "actual-rpc-handler-and-submitted-work-item",
     "same-dequeued-request-in-work-item", "buffered-result-object", "stored-exception-object-handoff",
     "same-frozen-result-object", "same-singleflight-call-result-channel", "same-pool-holder-release-future",
-    "same-batch-request-future",
+    "same-batch-request-future", "rust-engine-thread-launch",
 }
 CREATE = {"create", "creation"}
 OBSERVATION = {"sample", "cpu_sample", "diagnostic_stacktrace", "task_snapshot"}
