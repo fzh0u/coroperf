@@ -46,7 +46,7 @@
           <div><dt>CoroPerf 贡献</dt><dd>性能开销归因</dd></div>
           <div><dt>问题类型</dt><dd>性能问题</dd></div>
           <div><dt>GitHub 状态</dt><dd>开放</dd></div>
-          <div><dt>修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>修复证据</dt><dd>本地补丁已测试</dd></div>
           <div><dt>案例语言</dt><dd>Python</dd></div>
           <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
           <div><dt>诊断依据</dt><dd>直接证据</dd></div>
@@ -112,7 +112,7 @@
       </section>
       <section class="findings" aria-labelledby="findings-title">
         <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
-        <dl><div><dt>本地复现结果</dt><dd>每个 actor 产出 32 对块和元数据后，Ray Data 逐对象读取会让每个 actor 收到 64 条背压更新。用原生批量接口成对消费已就绪的数据后，更新数降到 32 条。反转先后顺序后，actor 事件计数给出相同结果。两种读取方式输出相同的行和顺序，并核对了元数据中的字节计数。不同轮次和请求的驱动线程 CPU 耗时中位数分别为 3.60–4.63 毫秒和 2.84–4.39 毫秒。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两次 DataOpTask.on_data_ready 的观测出现在同一个驱动线程，执行栈相同。核对实际 ObjectRefGenerator、执行器 WorkItem 和它返回的 Future，可以找回提交它的 Task。目录请求沿 4 → 2 → 0 回溯，研究请求沿 5 → 3 → 1 回溯。反转发起顺序后，相同执行栈的请求归属随之交换，每个 actor 收到的 RPC 数一致。</dd></div><div><dt>适用范围与局限</dt><dd>对照使用 Ray 2.58.0、两个实际运行的本地异步 actor、一个驱动工作线程和真实的 DataOpTask 内联路径。成对读取只在已知全部配对数据成功生成后运行。CPU 区间重叠和 actor 计数都来自这一小规模本地实验。原报告的大规模负载及通用 StreamingExecutor 集成还未验证。GitHub issue #67867 仍开放。</dd></div></dl>
+        <dl><div><dt>本地复现结果</dt><dd>每个 actor 产出 32 对已就绪的块和元数据后，原版逐对象读取会让每个 actor 收到 64 条背压更新，集成本地内联补丁后降到 32 条。反转发起顺序后更新数一致。四组匹配的驱动线程 CPU 耗时中位数从 3.55–5.19 毫秒降到 2.82–4.46 毫秒，输出行和顺序一致。通过 map_batches().take_all() 的公开入口，两版返回相同的 24 行。补丁版有 14 对数据经过快速路径。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两次 DataOpTask.on_data_ready 的观测出现在同一个驱动线程，执行栈相同。核对实际 ObjectRefGenerator、执行器 WorkItem 和它返回的 Future，可以找回提交它的 Task。目录请求沿 4 → 2 → 0 回溯，研究请求沿 5 → 3 → 1 回溯。反转发起顺序后，相同执行栈的请求归属随之交换，每个 actor 收到的 RPC 数一致。</dd></div><div><dt>适用范围与局限</dt><dd>本地补丁用 Ray 2.58.0 和现有的内联元数据选项。只有元数据已是本地字节时才成对消费。对照另行验证了半对数据、字节预算、流结束和线程化的逐对象路径。CPU 中位数来自预先生成数据的本地实验。原报告的大规模负载和线程化路径的批量读取仍待验证。GitHub issue #67867 仍开放。</dd></div></dl>
       </section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
