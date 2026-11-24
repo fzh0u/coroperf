@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Ray Serve 哪条请求流的首 token 延迟主要来自批处理？">
+  <title>ray-project/ray #63585 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/ray-project--ray--63585.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/ray-project--ray--63585.html" lang="en" hreflang="en">English</a><a href="ray-project--ray--63585.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #63585</p>
+        <h1>Ray Serve 哪条请求流的首 token 延迟主要来自批处理？</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/63585">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>性能开销归因</dd></div>
+          <div><dt>问题类型</dt><dd>性能剖析与归因</dd></div>
+          <div><dt>GitHub 状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/ray-project/ray/pull/67968">候选修复已做本地对照 · PR 开放 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>核对读取 Task、Batcher 队列和创建它的请求 Task，把相同的首块入队栈接回各自的调用者，区分两个首包时间相同的流中，哪条耗在引擎侧，哪条耗在输出批处理。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Batcher.read</code><span>batcher.py:99</span></li><li><code>Queue.put_nowait</code><span>queues.py:137</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>4 → 2</code></a><a href="#join-1-point-1">拼接点 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Batcher.read</code><span>batcher.py:99</span></li><li><code>Queue.put_nowait</code><span>queues.py:137</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>运行中的读取 Task 就是这个 Batcher 创建的 Task。观测到的入队操作使用同一个 Batcher 队列。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>consume</code><span>check_metrics.py:178</span></li><li><code>LLMServer.chat</code><span>llm_server.py:460</span></li><li><code>LLMServer._run_request</code><span>llm_server.py:431</span></li><li><code>LLMServer._batch_output_stream</code><span>llm_server.py:378</span></li><li><code>Batcher.__init__</code><span>batcher.py:45</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+          <p>Batcher 启动读取 Task 时，实际运行的是原请求 Task。该请求 Task 的创建栈包含应用侧发起入口。</p>
+          <p class="join-verification">采集图边 <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>pair</code><span>check_metrics.py:259</span></li><li><code>pair.&lt;locals&gt;.&lt;genexpr&gt;</code><span>check_metrics.py:259</span></li><li><code>launch_interactive</code><span>check_metrics.py:200</span></li><li><code>submit</code><span>check_metrics.py:195</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Batcher.read</code><span>batcher.py:99</span></li><li><code>Queue.put_nowait</code><span>queues.py:137</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>5 → 3</code></a><a href="#join-2-point-1">拼接点 1 <code>3 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Batcher.read</code><span>batcher.py:99</span></li><li><code>Queue.put_nowait</code><span>queues.py:137</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>运行中的读取 Task 就是这个 Batcher 创建的 Task。观测到的入队操作使用同一个 Batcher 队列。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>consume</code><span>check_metrics.py:178</span></li><li><code>LLMServer.chat</code><span>llm_server.py:460</span></li><li><code>LLMServer._run_request</code><span>llm_server.py:431</span></li><li><code>LLMServer._batch_output_stream</code><span>llm_server.py:378</span></li><li><code>Batcher.__init__</code><span>batcher.py:45</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>异步父级 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图记录了这条创建记录对应的异步父级。</p>
+          <p>Batcher 启动读取 Task 时，实际运行的是原请求 Task。该请求 Task 的创建栈包含应用侧发起入口。</p>
+          <p class="join-verification">采集图边 <code>parent_to_create · 1 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>异步父级的创建栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>pair</code><span>check_metrics.py:259</span></li><li><code>pair.&lt;locals&gt;.&lt;genexpr&gt;</code><span>check_metrics.py:259</span></li><li><code>launch_batch</code><span>check_metrics.py:204</span></li><li><code>submit</code><span>check_metrics.py:195</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>两条流在 Ray 副本边界的首包都约为 46 毫秒。使用候选 PR #67968 时，交互式流在引擎侧约 5 毫秒，首包输出约 40 毫秒。批处理流在引擎侧约 33 毫秒，首包输出约 12 毫秒。原版在这个路径上没有候选 PR 新增的五类延迟观测。汇总 20 个具有相同模型标签的请求，拿 TTFT 的 p95 减去进入和输出开销各自的 p95，得到 5.2 毫秒。逐请求配对后再求引擎侧 p95，得到 33.4 毫秒。本地补丁直接记录引擎侧区间，对照测得的 p95 同为 33.4 毫秒。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两个首块进入实际 Batcher 队列时，执行栈完全相同。核对运行中的读取 Task、所属 Batcher 和同一个队列，把观测记录 4 与 5 分别接到创建记录 2 与 3。创建读取 Task 的请求 Task 再接回记录 0 与 1 的交互式和批处理入口。两条流分别核对了引擎送出、队列接收和调用方收到的同一个首块对象。原生 asyncio 调试记录相同的创建路径，缺少最初的发起入口。反转发起顺序仍能正确归属。</dd></div><div><dt>适用范围与局限</dt><dd>实验运行固定版本的 Ray LLMServer 流式处理、Batcher 和候选 PR 的 Ray Histogram 记录方法，使用本地模拟引擎和 45 毫秒批处理间隔。每个版本与发起顺序各运行五次，两条流使用同一个模型标签。分位数来自副本边界上的原始直方图观测。验证范围为该边界，模型执行和路由器、代理排队不在实验范围内。候选 PR 的 12 项上游测试均通过。本地补丁另核对引擎指标只在调用方收到首包时记录。Issue 和 PR 仍开放。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

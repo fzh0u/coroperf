@@ -42,7 +42,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(19)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(15)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(25)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(16)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(19)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(15)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(25)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(17)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -559,12 +559,17 @@
       </div>
     </section>
     <section class="block" id="cost_attribution" aria-labelledby="assembly">
-      <div class="section-head"><h2 id="assembly">性能开销归因</h2><span class="case-kind">16 个案例</span></div>
+      <div class="section-head"><h2 id="assembly">性能开销归因</h2><span class="case-kind">17 个案例</span></div>
       <p class="section-copy">将测得的 CPU 工作、分配开销或等待时间归到对应的应用调用者。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="assembly">
           <thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 证据说明</th><th scope="col">GitHub 状态<small>修复证据</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--63585.html#call-stack"><span>ray-project/ray #63585</span>两个首包耗时相同的 Ray Serve 请求各慢在哪里？</a></th>
+        <td><p>相同的入队栈分别接回两个请求入口。两条流首包都约 46 毫秒，其中一条约 40 毫秒耗在 Ray 输出批处理，另一条约 33 毫秒耗在引擎侧。本地补丁直接记录引擎侧区间用于计算分位数。</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/63585">开放</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/67968">候选补丁已验证 · PR 开放</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/ai-dynamo--dynamo--18727.html#call-stack"><span>ai-dynamo/dynamo #18727</span>哪些 Dynamo 请求承担了重复 token 前缀处理的 CPU 开销？</a></th>
         <td><p>实际 Task 和调度 Handle 将相同的 vLLM 解析执行栈接回各自的 Dynamo 发起入口。16384 段的组件实验中，候选 PR 将前端线程 CPU 时间中位数从 1097–1100 毫秒降至 243–245 毫秒，流式输出和统计一致。</p></td>

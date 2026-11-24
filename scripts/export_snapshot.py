@@ -20,7 +20,7 @@ PARENT_WITNESSES = {
     "same-dequeued-request-in-work-item", "buffered-result-object", "stored-exception-object-handoff",
     "same-frozen-result-object", "same-singleflight-call-result-channel", "same-pool-holder-release-future",
     "same-batch-request-future", "rust-engine-thread-launch", "same-reactor-tool-batch",
-    "same-dynamo-endpoint-notifier",
+    "same-dynamo-endpoint-notifier", "ray-batcher-reader-created-by-request-task",
 }
 CREATE = {"create", "creation"}
 OBSERVATION = {"sample", "cpu_sample", "diagnostic_stacktrace", "task_snapshot"}

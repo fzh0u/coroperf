@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which Ray Serve streams spend their first-token delay in batching?">
+  <title>ray-project/ray #63585 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/ray-project--ray--63585.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="ray-project--ray--63585.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/ray-project--ray--63585.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #63585</p>
+        <h1>Which Ray Serve streams spend their first-token delay in batching?</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/63585">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Performance cost attribution</dd></div>
+          <div><dt>Issue type</dt><dd>Performance profiling</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/ray-project/ray/pull/67968">Proposed fix tested locally · PR open ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The exact reader Task, Batcher queue, and creating request Task join identical first-chunk enqueue stacks to distinct callers. This identifies which equal-TTFT stream spent its time below the engine boundary and which waited for batching.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Batcher.read</code><span>batcher.py:99</span></li><li><code>Queue.put_nowait</code><span>queues.py:137</span></li></ol></section>
+          <p class="small trace-note">Frames from record 4 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>4 → 2</code></a><a href="#join-1-point-1">Join point 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Batcher.read</code><span>batcher.py:99</span></li><li><code>Queue.put_nowait</code><span>queues.py:137</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">Record 4</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The live reader Task matches the Task created by the Batcher. The sampled enqueue uses that Batcher's exact queue.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>consume</code><span>check_metrics.py:178</span></li><li><code>LLMServer.chat</code><span>llm_server.py:460</span></li><li><code>LLMServer._run_request</code><span>llm_server.py:431</span></li><li><code>LLMServer._batch_output_stream</code><span>llm_server.py:378</span></li><li><code>Batcher.__init__</code><span>batcher.py:45</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>The original request Task is active when the Batcher starts its reader. Its creation stack contains the application launcher.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>pair</code><span>check_metrics.py:259</span></li><li><code>pair.&lt;locals&gt;.&lt;genexpr&gt;</code><span>check_metrics.py:259</span></li><li><code>launch_interactive</code><span>check_metrics.py:200</span></li><li><code>submit</code><span>check_metrics.py:195</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Batcher.read</code><span>batcher.py:99</span></li><li><code>Queue.put_nowait</code><span>queues.py:137</span></li></ol></section>
+          <p class="small trace-note">Frames from record 5 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>5 → 3</code></a><a href="#join-2-point-1">Join point 1 <code>3 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>Batcher.read</code><span>batcher.py:99</span></li><li><code>Queue.put_nowait</code><span>queues.py:137</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">Record 5</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The live reader Task matches the Task created by the Batcher. The sampled enqueue uses that Batcher's exact queue.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>consume</code><span>check_metrics.py:178</span></li><li><code>LLMServer.chat</code><span>llm_server.py:460</span></li><li><code>LLMServer._run_request</code><span>llm_server.py:431</span></li><li><code>LLMServer._batch_output_stream</code><span>llm_server.py:378</span></li><li><code>Batcher.__init__</code><span>batcher.py:45</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">Record 3</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>The original request Task is active when the Batcher starts its reader. Its creation stack contains the application launcher.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 1 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_metrics.py:310</span></li><li><code>main</code><span>check_metrics.py:299</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>pair</code><span>check_metrics.py:259</span></li><li><code>pair.&lt;locals&gt;.&lt;genexpr&gt;</code><span>check_metrics.py:259</span></li><li><code>launch_batch</code><span>check_metrics.py:204</span></li><li><code>submit</code><span>check_metrics.py:195</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The first response reaches the Ray replica caller in about 46 ms in both streams. On PR #67968 the interactive stream has about 5 ms below the engine boundary and 40 ms of first-chunk egress. The batch stream has about 33 ms below the engine boundary and 12 ms of egress. The baseline emits none of the proposal&#x27;s five latency observations. Pooling 20 requests with one model tag, subtracting the separate p95 values for ingress and egress from the TTFT p95 gives 5.2 ms. The p95 of the request-paired engine intervals is 33.4 ms. A local patch measures that engine p95 directly and reports 33.4 ms in the matched replay.</dd></div><div><dt>What CoroPerf showed</dt><dd>Both first chunks enter an actual Batcher queue through identical execution frames. Matching the live reader Task, its Batcher, and the exact queue joins records 4 and 5 to their creation records 2 and 3. The request Tasks that created those readers join to interactive and batch launches 0 and 1. The exact first-chunk strings make the same trip from the engine through the queue and into each caller&#x27;s first emission. Asyncio debug gives the common spawn path and omits the original launchers. Both launch orders preserve the matches.</dd></div><div><dt>Scope and limits</dt><dd>The replay runs pinned Ray LLMServer stream handling, Batcher, and the proposed Ray Histogram calls with a local engine fixture and a 45 ms batching interval. Five runs per arm and launch order use one shared model tag. Percentiles are calculated from raw histogram observations at the replica boundary. The tests cover that boundary and exclude model execution and router or proxy queueing. The proposal passes its 12 upstream tests. The local patch also passes the test that pairs the engine histogram with a caller&#x27;s first emission. The issue and proposal are open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

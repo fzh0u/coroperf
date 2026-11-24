@@ -187,6 +187,14 @@ LABELS = {
         "The health-check Task holds the same endpoint notifier that SystemHealth created at registration.",
         "健康检查 Task 持有 SystemHealth 在端点注册时创建的同一个通知对象。",
     ),
+    "ray-batcher-task-and-queue-object": (
+        "The live reader Task matches the Task created by the Batcher. The sampled enqueue uses that Batcher's exact queue.",
+        "运行中的读取 Task 就是这个 Batcher 创建的 Task。观测到的入队操作使用同一个 Batcher 队列。",
+    ),
+    "ray-batcher-reader-created-by-request-task": (
+        "The original request Task is active when the Batcher starts its reader. Its creation stack contains the application launcher.",
+        "Batcher 启动读取 Task 时，实际运行的是原请求 Task。该请求 Task 的创建栈包含应用侧发起入口。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",

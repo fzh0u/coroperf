@@ -151,6 +151,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "asyncio-live-task-at-snapshot", "asyncio-task-and-stream-frame",
         "rust-engine-launch-token", "reactor-scheduled-tool-callback",
         "tokio-join-handle-and-running-task", "same-dynamo-endpoint-notifier",
+        "ray-batcher-task-and-queue-object", "ray-batcher-reader-created-by-request-task",
     ) else ""
     return f"""
         <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">
