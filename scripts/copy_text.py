@@ -259,6 +259,10 @@ LABELS = {
         "The sample falls within one dial interval. The corresponding receive and send occupy the same FIFO position on the recorded opener channel.",
         "采样落在一次拨号区间内。对应的接收和发送在同一个 opener 通道上处于相同的 FIFO 队列位置。",
     ),
+    "dotnet-chat-iterator-and-message": (
+        "The original ChatMessage is still in the follow-up model input while the same IAsyncEnumerator is progressing through MoveNextAsync.",
+        "后续模型输入仍持有同一个原始 ChatMessage，对应的 IAsyncEnumerator 正在执行 MoveNextAsync。",
+    ),
     "dotnet-task-fault-object": (
         "The root Task's fault contains the exact Exception object observed at the rethrow. That Task identifies the earlier launch stack.",
         "根 Task 保存的正是重抛时观测到的同一个 Exception 对象。用该 Task 可以找回早先的发起栈。",
