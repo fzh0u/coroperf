@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="延后的 onError 回调各自属于哪条流？">
+  <title>langchain4j/langchain4j #7165 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/langchain4j--langchain4j--7165.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/langchain4j--langchain4j--7165.html" lang="en" hreflang="en">English</a><a href="langchain4j--langchain4j--7165.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">langchain4j/langchain4j #7165</p>
+        <h1>延后的 onError 回调各自属于哪条流？</h1>
+        <div class="case-links"><a href="https://github.com/langchain4j/langchain4j/issues/7165">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>异常、取消与任务生命周期</dd></div>
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>GitHub 状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/langchain4j/langchain4j/pull/7217">已在修复对照中验证 · PR 已合并 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Java</dd></div>
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>用同一个流式响应处理器和异常对象，将延后的用户回调接回已抛出该流异常的 capture，定位原集成测试为何读到了空列表。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 3</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1474</span></li><li><code>dev.langchain4j.test.mock.MockStreamingChatModel.lambda$doChat$4</code><span>MockStreamingChatModel.java:447</span></li><li><code>dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.withLoggingExceptions</code><span>InternalStreamingChatResponseHandlerUtils.java:26</span></li><li><code>dev.langchain4j.test.mock.MockStreamingChatModel.lambda$doChat$5</code><span>MockStreamingChatModel.java:447</span></li><li><code>com.example.support.StreamingHandoffReplayTest$RecordingModel$1.onError</code><span>StreamingHandoffReplayTest.java:192</span></li><li><code>dev.langchain4j.model.chat.StreamingChatModel$1.onError</code><span>StreamingChatModel.java:128</span></li><li><code>dev.langchain4j.internal.HandlerWithoutInvocation.onError</code><span>HandlerWithoutInvocation.java:80</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.runWithout</code><span>CurrentInvocation.java:101</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.callWithout</code><span>CurrentInvocation.java:114</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.lambda$runWithout$0</code><span>CurrentInvocation.java:102</span></li><li><code>dev.langchain4j.internal.HandlerWithoutInvocation.lambda$onError$0</code><span>HandlerWithoutInvocation.java:80</span></li><li><code>dev.langchain4j.service.AiServiceStreamingResponseHandler.onError</code><span>AiServiceStreamingResponseHandler.java:602</span></li><li><code>com.example.support.StreamingHandoffReplayTest$Job.onError</code><span>StreamingHandoffReplayTest.java:164</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>3 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1474</span></li><li><code>dev.langchain4j.test.mock.MockStreamingChatModel.lambda$doChat$4</code><span>MockStreamingChatModel.java:447</span></li><li><code>dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.withLoggingExceptions</code><span>InternalStreamingChatResponseHandlerUtils.java:26</span></li><li><code>dev.langchain4j.test.mock.MockStreamingChatModel.lambda$doChat$5</code><span>MockStreamingChatModel.java:447</span></li><li><code>com.example.support.StreamingHandoffReplayTest$RecordingModel$1.onError</code><span>StreamingHandoffReplayTest.java:192</span></li><li><code>dev.langchain4j.model.chat.StreamingChatModel$1.onError</code><span>StreamingChatModel.java:128</span></li><li><code>dev.langchain4j.internal.HandlerWithoutInvocation.onError</code><span>HandlerWithoutInvocation.java:80</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.runWithout</code><span>CurrentInvocation.java:101</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.callWithout</code><span>CurrentInvocation.java:114</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.lambda$runWithout$0</code><span>CurrentInvocation.java:102</span></li><li><code>dev.langchain4j.internal.HandlerWithoutInvocation.lambda$onError$0</code><span>HandlerWithoutInvocation.java:80</span></li><li><code>dev.langchain4j.service.AiServiceStreamingResponseHandler.onError</code><span>AiServiceStreamingResponseHandler.java:602</span></li><li><code>com.example.support.StreamingHandoffReplayTest$Job.onError</code><span>StreamingHandoffReplayTest.java:164</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>回调由交给模型的同一个响应处理器触发，收到的也是 capture 重新抛出的同一个 Throwable。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 0 → 3</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1474</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:614</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1090</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:328</span></li><li><code>java.util.concurrent.Executors$RunnableAdapter.call</code><span>Executors.java:545</span></li><li><code>com.example.support.StreamingHandoffReplayTest.lambda$start$0</code><span>StreamingHandoffReplayTest.java:94</span></li><li><code>com.example.support.StreamingHandoffReplayTest.launchInteractive</code><span>StreamingHandoffReplayTest.java:100</span></li><li><code>com.example.support.StreamingHandoffReplayTest.invoke</code><span>StreamingHandoffReplayTest.java:110</span></li><li><code>dev.langchain4j.test.service.AiServiceCapture.capture</code><span>AiServiceCapture.java:195</span></li><li><code>dev.langchain4j.test.service.Capturer.capture</code><span>Capturer.java:98</span></li><li><code>dev.langchain4j.test.service.Capturer.run</code><span>Capturer.java:152</span></li><li><code>dev.langchain4j.test.service.Capturer.lambda$supplier$0</code><span>Capturer.java:87</span></li><li><code>com.example.support.StreamingHandoffReplayTest.lambda$invoke$0</code><span>StreamingHandoffReplayTest.java:110</span></li><li><code>dev.langchain4j.service.AiServiceTokenStream.start</code><span>AiServiceTokenStream.java:213</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.callWithout</code><span>CurrentInvocation.java:114</span></li><li><code>dev.langchain4j.service.AiServiceTokenStream.lambda$start$0</code><span>AiServiceTokenStream.java:214</span></li><li><code>dev.langchain4j.service.AiServiceTokenStream.startRun</code><span>AiServiceTokenStream.java:227</span></li><li><code>dev.langchain4j.service.AiServiceTokenStream.start</code><span>AiServiceTokenStream.java:293</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.runWith</code><span>CurrentInvocation.java:42</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.callWith</code><span>CurrentInvocation.java:53</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.callWithId</code><span>CurrentInvocation.java:67</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.lambda$runWith$0</code><span>CurrentInvocation.java:43</span></li><li><code>dev.langchain4j.service.AiServiceTokenStream.lambda$start$2</code><span>AiServiceTokenStream.java:293</span></li><li><code>dev.langchain4j.model.chat.StreamingChatModel.chat</code><span>StreamingChatModel.java:53</span></li><li><code>dev.langchain4j.model.chat.StreamingChatModel.chat</code><span>StreamingChatModel.java:133</span></li><li><code>com.example.support.StreamingHandoffReplayTest$RecordingModel.doChat</code><span>StreamingHandoffReplayTest.java:180</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1474</span></li><li><code>dev.langchain4j.test.mock.MockStreamingChatModel.lambda$doChat$4</code><span>MockStreamingChatModel.java:447</span></li><li><code>dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.withLoggingExceptions</code><span>InternalStreamingChatResponseHandlerUtils.java:26</span></li><li><code>dev.langchain4j.test.mock.MockStreamingChatModel.lambda$doChat$5</code><span>MockStreamingChatModel.java:447</span></li><li><code>com.example.support.StreamingHandoffReplayTest$RecordingModel$1.onError</code><span>StreamingHandoffReplayTest.java:192</span></li><li><code>dev.langchain4j.model.chat.StreamingChatModel$1.onError</code><span>StreamingChatModel.java:128</span></li><li><code>dev.langchain4j.internal.HandlerWithoutInvocation.onError</code><span>HandlerWithoutInvocation.java:80</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.runWithout</code><span>CurrentInvocation.java:101</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.callWithout</code><span>CurrentInvocation.java:114</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.lambda$runWithout$0</code><span>CurrentInvocation.java:102</span></li><li><code>dev.langchain4j.internal.HandlerWithoutInvocation.lambda$onError$0</code><span>HandlerWithoutInvocation.java:80</span></li><li><code>dev.langchain4j.service.AiServiceStreamingResponseHandler.onError</code><span>AiServiceStreamingResponseHandler.java:602</span></li><li><code>com.example.support.StreamingHandoffReplayTest$Job.onError</code><span>StreamingHandoffReplayTest.java:164</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 2 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>2 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-2"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1474</span></li><li><code>dev.langchain4j.test.mock.MockStreamingChatModel.lambda$doChat$4</code><span>MockStreamingChatModel.java:447</span></li><li><code>dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.withLoggingExceptions</code><span>InternalStreamingChatResponseHandlerUtils.java:26</span></li><li><code>dev.langchain4j.test.mock.MockStreamingChatModel.lambda$doChat$5</code><span>MockStreamingChatModel.java:447</span></li><li><code>com.example.support.StreamingHandoffReplayTest$RecordingModel$1.onError</code><span>StreamingHandoffReplayTest.java:192</span></li><li><code>dev.langchain4j.model.chat.StreamingChatModel$1.onError</code><span>StreamingChatModel.java:128</span></li><li><code>dev.langchain4j.internal.HandlerWithoutInvocation.onError</code><span>HandlerWithoutInvocation.java:80</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.runWithout</code><span>CurrentInvocation.java:101</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.callWithout</code><span>CurrentInvocation.java:114</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.lambda$runWithout$0</code><span>CurrentInvocation.java:102</span></li><li><code>dev.langchain4j.internal.HandlerWithoutInvocation.lambda$onError$0</code><span>HandlerWithoutInvocation.java:80</span></li><li><code>dev.langchain4j.service.AiServiceStreamingResponseHandler.onError</code><span>AiServiceStreamingResponseHandler.java:602</span></li><li><code>com.example.support.StreamingHandoffReplayTest$Job.onError</code><span>StreamingHandoffReplayTest.java:164</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-2">记录 2</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>回调由交给模型的同一个响应处理器触发，收到的也是 capture 重新抛出的同一个 Throwable。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 1 → 2</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1474</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:614</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1090</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:328</span></li><li><code>java.util.concurrent.Executors$RunnableAdapter.call</code><span>Executors.java:545</span></li><li><code>com.example.support.StreamingHandoffReplayTest.lambda$start$1</code><span>StreamingHandoffReplayTest.java:96</span></li><li><code>com.example.support.StreamingHandoffReplayTest.launchBatch</code><span>StreamingHandoffReplayTest.java:104</span></li><li><code>com.example.support.StreamingHandoffReplayTest.invoke</code><span>StreamingHandoffReplayTest.java:110</span></li><li><code>dev.langchain4j.test.service.AiServiceCapture.capture</code><span>AiServiceCapture.java:195</span></li><li><code>dev.langchain4j.test.service.Capturer.capture</code><span>Capturer.java:98</span></li><li><code>dev.langchain4j.test.service.Capturer.run</code><span>Capturer.java:152</span></li><li><code>dev.langchain4j.test.service.Capturer.lambda$supplier$0</code><span>Capturer.java:87</span></li><li><code>com.example.support.StreamingHandoffReplayTest.lambda$invoke$0</code><span>StreamingHandoffReplayTest.java:110</span></li><li><code>dev.langchain4j.service.AiServiceTokenStream.start</code><span>AiServiceTokenStream.java:213</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.callWithout</code><span>CurrentInvocation.java:114</span></li><li><code>dev.langchain4j.service.AiServiceTokenStream.lambda$start$0</code><span>AiServiceTokenStream.java:214</span></li><li><code>dev.langchain4j.service.AiServiceTokenStream.startRun</code><span>AiServiceTokenStream.java:227</span></li><li><code>dev.langchain4j.service.AiServiceTokenStream.start</code><span>AiServiceTokenStream.java:293</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.runWith</code><span>CurrentInvocation.java:42</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.callWith</code><span>CurrentInvocation.java:53</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.callWithId</code><span>CurrentInvocation.java:67</span></li><li><code>dev.langchain4j.internal.CurrentInvocation.lambda$runWith$0</code><span>CurrentInvocation.java:43</span></li><li><code>dev.langchain4j.service.AiServiceTokenStream.lambda$start$2</code><span>AiServiceTokenStream.java:293</span></li><li><code>dev.langchain4j.model.chat.StreamingChatModel.chat</code><span>StreamingChatModel.java:53</span></li><li><code>dev.langchain4j.model.chat.StreamingChatModel.chat</code><span>StreamingChatModel.java:133</span></li><li><code>com.example.support.StreamingHandoffReplayTest$RecordingModel.doChat</code><span>StreamingHandoffReplayTest.java:180</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>在用户回调被暂时拦住时，修复前的原版 StreamingTest 如期重新抛出流异常，随后因为列表为空而断言失败。合入版会等在原有的 latch 辅助方法，待回调完成后通过。双调用者对照中，两次 capture 都重新抛出各自的原始异常，此时两个回调列表仍为空。立即断言时两条请求均失败，等待回调通知后均通过。反转发起顺序得到相同结果。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两个随后执行的用户回调在 AiServiceStreamingResponseHandler.onError 中经过完全相同的物理栈。核对交给异步 mock 的实际响应处理器和同一个 Throwable 对象，把批处理记录 2 接到创建记录 1，把交互式记录 3 接到创建记录 0。后发起的回调先写入结果，每条创建栈都包含该调用者的 capture 与 TokenStream.start。反转发起和放行顺序后，两次拼接仍正确。拼接明确了同一条流中，capture 收到终止事件和用户回调写入结果的两个时间点。</dd></div><div><dt>适用范围与局限</dt><dd>JDK 25 实验使用已发布的 LangChain4j 1.24.0、langchain4j-test 1.24.0-beta34、固定版本的修复前及合入版 StreamingTest，以及本地 MockStreamingChatModel。已发布包与合入前提交的相关 onError 源码、capture 帮助类及 mock 一致。受控实验仅暂停用户错误回调。合入版的十项常规 StreamingTest 测试也全部通过。GitHub 上 issue #7165 仍开放，测试修复 PR #7217 已合入。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

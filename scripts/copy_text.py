@@ -263,6 +263,10 @@ LABELS = {
         "The original ChatMessage is still in the follow-up model input while the same IAsyncEnumerator is progressing through MoveNextAsync.",
         "后续模型输入仍持有同一个原始 ChatMessage，对应的 IAsyncEnumerator 正在执行 MoveNextAsync。",
     ),
+    "langchain4j-stream-handler-and-exception": (
+        "The callback uses the same response handler handed to the model and the same Throwable rethrown by capture.",
+        "回调由交给模型的同一个响应处理器触发，收到的也是 capture 重新抛出的同一个 Throwable。",
+    ),
     "dotnet-task-fault-object": (
         "The root Task's fault contains the exact Exception object observed at the rethrow. That Task identifies the earlier launch stack.",
         "根 Task 保存的正是重抛时观测到的同一个 Exception 对象。用该 Task 可以找回早先的发起栈。",

@@ -147,7 +147,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "actual-rpc-handler-and-submitted-work-item", "active-work-item-object",
         "live-child-node", "same-dequeued-request-in-work-item", "jdi-fiber-receiver", "dart-callback-object",
         "go-opener-signal", "dotnet-task-fault-object", "buffered-result-object", "stored-exception-object-handoff",
-        "dotnet-chat-iterator-and-message",
+        "dotnet-chat-iterator-and-message", "langchain4j-stream-handler-and-exception",
         "taskgroup-internal-cancel", "taskgroup-outer-cancel", "same-frozen-result-object", "captured-goroutine-id",
         "asyncio-live-task-at-snapshot", "asyncio-task-and-stream-frame",
         "rust-engine-launch-token", "reactor-scheduled-tool-callback",
