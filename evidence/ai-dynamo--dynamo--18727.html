@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which Dynamo stream incurs the repeated token-prefix scans?">
+  <title>ai-dynamo/dynamo #18727 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/ai-dynamo--dynamo--18727.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="ai-dynamo--dynamo--18727.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/ai-dynamo--dynamo--18727.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ai-dynamo/dynamo #18727</p>
+        <h1>Which Dynamo stream incurs the repeated token-prefix scans?</h1>
+        <div class="case-links"><a href="https://github.com/ai-dynamo/dynamo/issues/18727">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Performance cost attribution</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/ai-dynamo/dynamo/pull/18728">Proposed fix tested locally · PR open ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The same parser stack serves two requests. Matching the actual Task, generator frame, and dispatch Handle restores the interactive and batch submissions and assigns repeated prefix processing to each stream.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_stream_prefix.py:332</span></li><li><code>main</code><span>check_stream_prefix.py:321</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>collect</code><span>check_stream_prefix.py:159</span></li><li><code>VllmProcessor._generate_and_stream</code><span>vllm_processor.py:1497</span></li><li><code>StreamingPostProcessor.process_output</code><span>prepost.py:1596</span></li><li><code>DeepSeekR1ReasoningParser.extract_reasoning_streaming</code><span>deepseek_r1_reasoning_parser.py:36</span></li><li><code>BaseThinkingReasoningParser.extract_reasoning_streaming</code><span>basic_parsers.py:133</span></li></ol></section>
+          <p class="small trace-note">Frames from record 4 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>4 → 2</code></a><a href="#join-1-point-1">Join point 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_stream_prefix.py:332</span></li><li><code>main</code><span>check_stream_prefix.py:321</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>collect</code><span>check_stream_prefix.py:159</span></li><li><code>VllmProcessor._generate_and_stream</code><span>vllm_processor.py:1497</span></li><li><code>StreamingPostProcessor.process_output</code><span>prepost.py:1596</span></li><li><code>DeepSeekR1ReasoningParser.extract_reasoning_streaming</code><span>deepseek_r1_reasoning_parser.py:36</span></li><li><code>BaseThinkingReasoningParser.extract_reasoning_streaming</code><span>basic_parsers.py:133</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">Record 4</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The parser stack belongs to the same live asyncio Task and async-generator frame recorded at dispatch. The frame holds the postprocessor that owns this parser.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_stream_prefix.py:332</span></li><li><code>main</code><span>check_stream_prefix.py:321</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>dispatch</code><span>check_stream_prefix.py:249</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_stream_prefix.py:332</span></li><li><code>main</code><span>check_stream_prefix.py:321</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>trace</code><span>check_stream_prefix.py:274</span></li><li><code>launch_interactive</code><span>check_stream_prefix.py:262</span></li><li><code>submit_stream</code><span>check_stream_prefix.py:257</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_stream_prefix.py:332</span></li><li><code>main</code><span>check_stream_prefix.py:321</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>collect</code><span>check_stream_prefix.py:159</span></li><li><code>VllmProcessor._generate_and_stream</code><span>vllm_processor.py:1497</span></li><li><code>StreamingPostProcessor.process_output</code><span>prepost.py:1596</span></li><li><code>DeepSeekR1ReasoningParser.extract_reasoning_streaming</code><span>deepseek_r1_reasoning_parser.py:36</span></li><li><code>BaseThinkingReasoningParser.extract_reasoning_streaming</code><span>basic_parsers.py:133</span></li></ol></section>
+          <p class="small trace-note">Frames from record 5 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>5 → 3</code></a><a href="#join-2-point-1">Join point 1 <code>3 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 5</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_stream_prefix.py:332</span></li><li><code>main</code><span>check_stream_prefix.py:321</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>collect</code><span>check_stream_prefix.py:159</span></li><li><code>VllmProcessor._generate_and_stream</code><span>vllm_processor.py:1497</span></li><li><code>StreamingPostProcessor.process_output</code><span>prepost.py:1596</span></li><li><code>DeepSeekR1ReasoningParser.extract_reasoning_streaming</code><span>deepseek_r1_reasoning_parser.py:36</span></li><li><code>BaseThinkingReasoningParser.extract_reasoning_streaming</code><span>basic_parsers.py:133</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">Record 5</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The parser stack belongs to the same live asyncio Task and async-generator frame recorded at dispatch. The frame holds the postprocessor that owns this parser.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_stream_prefix.py:332</span></li><li><code>main</code><span>check_stream_prefix.py:321</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>dispatch</code><span>check_stream_prefix.py:249</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Async parent → child creation</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">Record 3</a></p>
+          <p>The recorded graph identifies the asynchronous parent of this creation record.</p>
+          <p>The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.</p>
+          <p class="join-verification">Graph edge <code>parent_to_create · 1 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Async parent creation stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_stream_prefix.py:332</span></li><li><code>main</code><span>check_stream_prefix.py:321</span></li><li><code>run</code><span>runners.py:194</span></li><li><code>Runner.run</code><span>runners.py:118</span></li><li><code>BaseEventLoop.run_until_complete</code><span>base_events.py:674</span></li><li><code>BaseEventLoop.run_forever</code><span>base_events.py:641</span></li><li><code>BaseEventLoop._run_once</code><span>base_events.py:1979</span></li><li><code>Handle._run</code><span>events.py:88</span></li><li><code>trace</code><span>check_stream_prefix.py:274</span></li><li><code>launch_batch</code><span>check_stream_prefix.py:266</span></li><li><code>submit_stream</code><span>check_stream_prefix.py:257</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The pinned Dynamo Python frontend repeatedly copies the token-ID prefix while the vLLM DeepSeek-R1 parser scans it for a reasoning delimiter. At 8,192 single-token reasoning chunks, two run orders give median frontend thread CPU times of 328–330 ms for the base and 120–121 ms for PR #18728. At 16,384 chunks, the medians are 1,097–1,100 ms and 243–245 ms. The per-chunk envelopes, final content, and token usage match in every arm after removing the wall-clock created field. The proposed token-prefix implementation passes all eight selected upstream tests.</dd></div><div><dt>What CoroPerf showed</dt><dd>The two parser samples have identical execution frames on one event-loop thread. The actual Task and async-generator frame identify each request&#x27;s postprocessor, joining record 4 to 2 and 5 to 3 at the common dispatch site. The same scheduled asyncio Handle and request object reach records 0 and 1, the interactive and batch submissions. Stock asyncio debug Task creation traceback reaches dispatch and omits the two application launchers. The joins follow the right request in both launch orders on both revisions. The interactive request performs 66 parser calls and the batch request performs 258.</dd></div><div><dt>Scope and limits</dt><dd>The component replay runs Dynamo&#x27;s original _generate_and_stream and StreamingPostProcessor with vLLM 0.33.0&#x27;s DeepSeek-R1 parser. It supplies prepared token chunks in process and substitutes the detokenizer interface. The benchmark measures thread CPU for stream consumption on CPython 3.12.4, with a warm-up and five measured trials per arm per order. Model inference, transport, and other parser families were outside the comparison. The issue and candidate PR are open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -175,6 +175,10 @@ LABELS = {
         "The pending snapshot identifies the same asyncio Task recorded when the pool started waiting for this holder.",
         "阻塞快照和连接池开始等待此连接槽时的创建记录指向同一个 asyncio Task。",
     ),
+    "asyncio-task-and-stream-frame": (
+        "The parser stack belongs to the same live asyncio Task and async-generator frame recorded at dispatch. The frame holds the postprocessor that owns this parser.",
+        "解析执行栈属于 dispatch 登记的同一个 asyncio Task 和异步生成器帧。该帧持有这次解析所用的后处理器。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",

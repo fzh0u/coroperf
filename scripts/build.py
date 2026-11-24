@@ -148,7 +148,8 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "live-child-node", "same-dequeued-request-in-work-item", "jdi-fiber-receiver", "dart-callback-object",
         "go-opener-signal", "dotnet-task-fault-object", "buffered-result-object", "stored-exception-object-handoff",
         "taskgroup-internal-cancel", "taskgroup-outer-cancel", "same-frozen-result-object", "captured-goroutine-id",
-        "asyncio-live-task-at-snapshot", "rust-engine-launch-token", "reactor-scheduled-tool-callback",
+        "asyncio-live-task-at-snapshot", "asyncio-task-and-stream-frame",
+        "rust-engine-launch-token", "reactor-scheduled-tool-callback",
     ) else ""
     return f"""
         <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">
