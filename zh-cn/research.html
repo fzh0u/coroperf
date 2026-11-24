@@ -42,7 +42,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(17)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(15)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(22)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(14)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(17)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(15)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(22)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(15)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -520,12 +520,17 @@
       </div>
     </section>
     <section class="block" id="cost_attribution" aria-labelledby="assembly">
-      <div class="section-head"><h2 id="assembly">性能开销归因</h2><span class="case-kind">14 个案例</span></div>
+      <div class="section-head"><h2 id="assembly">性能开销归因</h2><span class="case-kind">15 个案例</span></div>
       <p class="section-copy">将测得的 CPU 工作、分配开销或等待时间归到对应的应用调用者。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="assembly">
           <thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 证据说明</th><th scope="col">GitHub 状态<small>修复证据</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--67867.html#call-stack"><span>ray-project/ray #67867</span>各数据流的背压更新来自哪个请求？</a></th>
+        <td><p>按实际生成器和执行器 WorkItem，把相同的驱动线程栈接回目录和研究 Task。32 对已就绪的块和元数据，逐对象读取产生 64 条更新，成对读取产生 32 条。反转测试顺序后更新数一致，驱动线程 CPU 耗时区间有重叠。</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/67867">开放</a><span class="fix-label">修复待核实</span></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/ericlbuehler--mistral.rs--1293.html#call-stack"><span>EricLBuehler/mistral.rs #1293</span>各条占用 CPU 的空闲循环由哪个模型入口启动？</a></th>
         <td><p>两条执行栈相同。按引擎标识将每条空闲采样接回 Future 创建栈，再接回目录或搜索入口。修复前两个调度线程各占用约一个核，修复后空闲窗口内两者都没有增加一个 10 毫秒 CPU 计量单位。</p></td>

@@ -42,7 +42,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(17)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(22)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(14)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(17)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(22)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(15)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -520,12 +520,17 @@
       </div>
     </section>
     <section class="block" id="cost_attribution" aria-labelledby="assembly">
-      <div class="section-head"><h2 id="assembly">Performance cost attribution</h2><span class="case-kind">14 issues</span></div>
+      <div class="section-head"><h2 id="assembly">Performance cost attribution</h2><span class="case-kind">15 issues</span></div>
       <p class="section-copy">Assign measured CPU work, allocations, or waiting time to the application caller that incurred them.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="assembly">
           <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--67867.html#call-stack"><span>ray-project/ray #67867</span>Which request owns each generator&#x27;s backpressure updates?</a></th>
+        <td><p>The same driver stack joins to the catalog and research Tasks by their actual generator and executor WorkItem. For 32 known-ready block/metadata pairs, the actor receives 64 updates by object and 32 by pair in both trial orders. The driver CPU ranges overlap.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/67867">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/ericlbuehler--mistral.rs--1293.html#call-stack"><span>EricLBuehler/mistral.rs #1293</span>Which model launch owns each idle CPU loop?</a></th>
         <td><p>The execution stacks are identical. Each engine token connects the idle sample to future creation and then to the catalog or search launch. Both scheduler threads use about one core before the merged fix. Afterwards neither advances by one 10 ms CPU tick in the idle window.</p></td>
