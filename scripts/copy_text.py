@@ -195,6 +195,10 @@ LABELS = {
         "The original request Task is active when the Batcher starts its reader. Its creation stack contains the application launcher.",
         "Batcher 启动读取 Task 时，实际运行的是原请求 Task。该请求 Task 的创建栈包含应用侧发起入口。",
     ),
+    "sglang-detokenizer-ipc-row-and-request-task": (
+        "The exact token row identifies its position in the detokenizer's received packet. That row's request ID connects it to the live frontend Task that receives the decoded result.",
+        "解码时的实际 token 行确定了它在 IPC 数据包里的位置。用该行的请求 ID 接回接收解码结果的前端 Task。",
+    ),
     "scheduled-handle-running-at-task-creation": (
         "The exact Handle returned by call_soon is running when dispatch creates this Task. Its recorded scheduling stack contains the original launcher.",
         "dispatch 创建此 Task 时正在执行 call_soon 返回的同一个 Handle。这条 Handle 的调度栈记录了原始发起者。",

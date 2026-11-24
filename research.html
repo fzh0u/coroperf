@@ -42,7 +42,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(19)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(25)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(17)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(19)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(25)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(18)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -559,12 +559,17 @@
       </div>
     </section>
     <section class="block" id="cost_attribution" aria-labelledby="assembly">
-      <div class="section-head"><h2 id="assembly">Performance cost attribution</h2><span class="case-kind">17 issues</span></div>
+      <div class="section-head"><h2 id="assembly">Performance cost attribution</h2><span class="case-kind">18 issues</span></div>
       <p class="section-copy">Assign measured CPU work, allocations, or waiting time to the application caller that incurred them.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="assembly">
           <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/sgl-project--sglang--23393.html#call-stack"><span>sgl-project/sglang #23393</span>Which requests repeat the Kimi special-token lookup?</a></th>
+        <td><p>Two identical decode stacks join to separate frontend Tasks by their actual packet rows. The old tokenizer repeats the original property lookup 20 times per traced row. With special-token filtering, the merged cache reduces the three-packet, 1,024-row CPU comparison from 4.27–4.37 s to 51.7–52.2 ms.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sgl-project/sglang/issues/23393">Closed</a><a class="fix-label" href="https://github.com/sgl-project/sglang/pull/23409">Repair verified · PR merged</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/ray-project--ray--63585.html#call-stack"><span>ray-project/ray #63585</span>Where did two equally slow Ray Serve first replies spend their time?</a></th>
         <td><p>Identical enqueue stacks join to two request launchers. Both first replies take about 46 ms. One stream spends about 40 ms in Ray output batching. The other spends about 33 ms below the engine boundary. A local patch records the engine interval directly for percentiles.</p></td>
