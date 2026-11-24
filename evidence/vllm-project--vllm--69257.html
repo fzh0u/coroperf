@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which failed callbacks belong to the missing vLLM probe count?">
+  <title>vllm-project/vllm #69257 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/vllm-project--vllm--69257.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="vllm-project--vllm--69257.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/vllm-project--vllm--69257.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">vllm-project/vllm #69257</p>
+        <h1>Which failed callbacks belong to the missing vLLM probe count?</h1>
+        <div class="case-links"><a href="https://github.com/vllm-project/vllm/issues/69257">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Request and result handoffs</dd></div>
+          <div><dt>Issue type</dt><dd>Performance profiling</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/vllm-project/vllm/pull/69262">Proposed fix tested locally · PR open ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Full local reproduction</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Match identical HTTP failure callbacks to live senders and the exact result objects delivered to reporting. Two failures belong to the probe Task and disappear from the original report. The third belongs to a workload Task and is already counted.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · diagnostic_stacktrace</span></div><ol class="frames"><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_read_ready</code><span>selector_events.py:970</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1027</span></li><li><code>data_received</code><span>client_proto.py:316</span></li></ol></section>
+          <p class="small trace-note">Frames from record 1 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · diagnostic_stacktrace</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_read_ready</code><span>selector_events.py:970</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1027</span></li><li><code>data_received</code><span>client_proto.py:316</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">Record 1</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The receiving callback and ClientRequest.send use the same live ResponseHandler. At send time, the active asyncio Task matches the one recorded when the benchmark created it.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>main_async</code><span>serve.py:2349</span></li><li><code>benchmark</code><span>serve.py:1108</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>create_task</code><span>base_events.py:464</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 2</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic_stacktrace</span></div><ol class="frames"><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_read_ready</code><span>selector_events.py:970</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1027</span></li><li><code>data_received</code><span>client_proto.py:316</span></li></ol></section>
+          <p class="small trace-note">Frames from record 2 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-2"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 2 · diagnostic_stacktrace</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_read_ready</code><span>selector_events.py:970</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1027</span></li><li><code>data_received</code><span>client_proto.py:316</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-2-record-2">Record 2</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The receiving callback and ClientRequest.send use the same live ResponseHandler. At send time, the active asyncio Task matches the one recorded when the benchmark created it.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 0 → 2</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>main_async</code><span>serve.py:2349</span></li><li><code>benchmark</code><span>serve.py:1108</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>create_task</code><span>base_events.py:464</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>Observation 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · diagnostic_stacktrace</span></div><ol class="frames"><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_read_ready</code><span>selector_events.py:970</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1027</span></li><li><code>data_received</code><span>client_proto.py:316</span></li></ol></section>
+          <p class="small trace-note">Frames from record 4 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-3-point-1">Join point 1 <code>4 → 3</code></a></nav>
+          <section class="stack observed" id="join-3-record-4"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · diagnostic_stacktrace</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>_run_once</code><span>base_events.py:1987</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>_read_ready</code><span>selector_events.py:970</span></li><li><code>_read_ready__data_received</code><span>selector_events.py:1027</span></li><li><code>data_received</code><span>client_proto.py:316</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-3-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-3-record-4">Record 4</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The receiving callback and ClientRequest.send use the same live ResponseHandler. At send time, the active asyncio Task matches the one recorded when the benchmark created it.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 3 → 4</code></p>
+        </aside><section class="stack " id="join-3-record-3"><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>main_async</code><span>serve.py:2349</span></li><li><code>benchmark</code><span>serve.py:1174</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>create_task</code><span>base_events.py:464</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The reported revision and checked main run two probes that both return HTTP 503. Each run also completes one workload request and records one workload failure. The console and saved JSON omit both probe counters. Open PR #69262 and the same patch applied to main report 0 completed probes and 2 failed probes. Probe latency fields remain absent when every probe fails. The mixed, success-only, and disabled-probe controls preserve the expected reports.</dd></div><div><dt>What CoroPerf showed</dt><dd>All three failed responses reach the same aiohttp receive stack outside an active Task. The live ResponseHandler links each callback to its send. The sending asyncio Task links observations 1 and 2 to one probe creation at record 0, and observation 4 to the workload creation at record 3. The returned RequestFuncOutput objects are the same objects in the benchmark&#x27;s two result lists, so the missing counters can be attributed to the two verified probe failures.</dd></div><div><dt>Scope and limits</dt><dd>The original benchmark parser, scheduler, HTTP client, console summary and JSON writer run against fixed responses on a loopback endpoint. This verifies reporting and ownership in the benchmark client. Model inference and serving throughput are unmeasured. The issue and PR remain open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
