@@ -195,6 +195,14 @@ LABELS = {
         "The original request Task is active when the Batcher starts its reader. Its creation stack contains the application launcher.",
         "Batcher 启动读取 Task 时，实际运行的是原请求 Task。该请求 Task 的创建栈包含应用侧发起入口。",
     ),
+    "ray-cache-loader-task-object": (
+        "The sampled loader is the exact Task stored under this model ID in the replica's load map.",
+        "观测到的加载 Task 就是副本加载表中该模型 ID 对应的同一个 Task。",
+    ),
+    "ray-model-loader-created-by-request-task": (
+        "This request Task is active when the replica creates the cache loader. Its creation stack contains the interactive or batch launcher.",
+        "副本创建加载 Task 时正在执行这个请求 Task。它的创建栈包含交互式或批处理入口。",
+    ),
     "sglang-detokenizer-ipc-row-and-request-task": (
         "The exact token row identifies its position in the detokenizer's received packet. That row's request ID connects it to the live frontend Task that receives the decoded result.",
         "解码时的实际 token 行确定了它在 IPC 数据包里的位置。用该行的请求 ID 接回接收解码结果的前端 Task。",

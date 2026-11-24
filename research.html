@@ -42,7 +42,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(19)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(25)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(18)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(19)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(26)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(18)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -431,12 +431,17 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">25 issues</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">26 issues</span></div>
       <p class="section-copy">Connect a delayed task to the execution order, poll interval, or resource that held it up.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
           <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--65346.html#call-stack"><span>ray-project/ray #65346</span>Which cold model load waited behind the replica lock?</a></th>
+        <td><p>The base serializes two distinct cold model loads. The open PR overlaps 45.1 ms of loader work, bringing pair time from 111.4 ms to 66.2 ms in the component replay. Live loader Tasks and their creating requests distinguish the two identical loader stacks.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/65346">Open</a><a class="fix-label" href="https://github.com/ray-project/ray/pull/65825">Proposal tested · PR open</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/ai-dynamo--dynamo--18671.html#call-stack"><span>ai-dynamo/dynamo #18671</span>Which Dynamo worker waited for its first canary?</a></th>
         <td><p>Actual Tokio Tasks and registration notifiers join identical timer stacks to two worker registrations. At the default ten-second interval, the successful worker reaches Ready in 10.004 s on the base and 4.8 ms on the open PR. The other worker stays NotReady until its retry succeeds.</p></td>

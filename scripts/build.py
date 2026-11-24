@@ -152,6 +152,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "rust-engine-launch-token", "reactor-scheduled-tool-callback",
         "tokio-join-handle-and-running-task", "same-dynamo-endpoint-notifier",
         "ray-batcher-task-and-queue-object", "ray-batcher-reader-created-by-request-task",
+        "ray-cache-loader-task-object", "ray-model-loader-created-by-request-task",
         "sglang-detokenizer-ipc-row-and-request-task",
     ) else ""
     return f"""
