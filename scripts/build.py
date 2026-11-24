@@ -128,6 +128,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "batch_input": "batch_input_proof",
         "channel_handoff": "channel_handoff_proof",
         "engine_launch": "engine_launch_proof",
+        "tool_registration": "tool_registration_proof",
         "result_dependency": "result_dependency_proof",
         "release_dependency": "release_dependency_proof",
     }[relation]
@@ -147,7 +148,7 @@ def join_marker(source, target, kind, relation, trace_number, number, text, iden
         "live-child-node", "same-dequeued-request-in-work-item", "jdi-fiber-receiver", "dart-callback-object",
         "go-opener-signal", "dotnet-task-fault-object", "buffered-result-object", "stored-exception-object-handoff",
         "taskgroup-internal-cancel", "taskgroup-outer-cancel", "same-frozen-result-object", "captured-goroutine-id",
-        "asyncio-live-task-at-snapshot", "rust-engine-launch-token",
+        "asyncio-live-task-at-snapshot", "rust-engine-launch-token", "reactor-scheduled-tool-callback",
     ) else ""
     return f"""
         <aside class="join-marker" id="{prefix}-point-{number}" aria-label="{text["join_number"].format(n=number)}">
@@ -189,7 +190,10 @@ def trace(join, number, text):
             title = text["batch_request_stack"]
         elif ancestor_link and identity == "rust-engine-thread-launch":
             relation = "engine_launch"
-            title = text["engine_launch_stack"]
+            title = text["application_launch_stack"]
+        elif ancestor_link and identity == "same-reactor-tool-batch":
+            relation = "tool_registration"
+            title = text["application_launch_stack"]
         elif ancestor_link:
             relation = "async_parent" if kind == "parent_to_create" else "parent"
             title = text["async_ancestor_stack" if relation == "async_parent" else "ancestor_stack"]

@@ -75,7 +75,7 @@ LABELS = {
     ),
     "origin_stack": ("Creation stack", "创建时的物理栈"),
     "channel_submission_stack": ("Go channel submission stack", "Go channel 提交栈"),
-    "engine_launch_stack": ("Application launch stack", "应用发起栈"),
+    "application_launch_stack": ("Application launch stack", "应用发起栈"),
     "cancellation_stack": ("Cancellation request stack", "取消请求的调用栈"),
     "ancestor_stack": ("Ancestor creation stack", "上游协程创建时的物理栈"),
     "async_ancestor_stack": ("Async parent creation stack", "异步父级的创建栈"),
@@ -94,6 +94,10 @@ LABELS = {
     "engine_launch_proof": (
         "The application moves the recorded engine token into the native thread closure. That thread creates and polls the engine future.",
         "应用把记录的引擎标识传入原生线程闭包。该线程负责创建并轮询引擎 Future。",
+    ),
+    "tool_registration_proof": (
+        "The tool callback reads the exact request batch object passed by the application in Spring AI's ToolContext.",
+        "工具回调从 Spring AI 的 ToolContext 取到应用传入的同一个请求批次对象。",
     ),
     "cancellation_proof": (
         "The request and the observation refer to the same target Task at different points in its recorded cancellation timeline.",
@@ -159,6 +163,10 @@ LABELS = {
         "Both records read the token on the engine thread. The first is taken after creating the Tokio engine future. The idle observation is taken while polling that future.",
         "两处记录都从引擎线程读取同一个标识。创建记录紧跟在 Tokio 引擎 Future 创建之后。空闲观测发生在轮询该 Future 时。",
     ),
+    "reactor-scheduled-tool-callback": (
+        "Reactor invokes the exact callback object registered at submission. It completes the same Mono sink on the scheduler thread.",
+        "Reactor 执行提交时登记的同一个回调对象，并在线程上完成这个对象持有的 Mono sink。",
+    ),
     "release_dependency_proof": (
         "The acquisition stores the holder's release Future. The shutdown Task later awaits that exact Future on the same holder.",
         "获取连接时生成了连接槽的归还 Future。关闭连接池的 Task 随后在同一个连接槽上等待这一个 Future。",
@@ -216,6 +224,7 @@ LABELS = {
     "join_creation": ("Creation → observed execution", "创建 → 执行观测"),
     "join_channel_handoff": ("Go channel submission → observed execution", "Go channel 提交 → 执行观测"),
     "join_engine_launch": ("Application launch → engine future creation", "应用发起 → 引擎 Future 创建"),
+    "join_tool_registration": ("Request launch → tool callback registration", "请求发起 → 工具回调登记"),
     "join_cancellation": ("Cancellation request → target observation", "取消请求 → 目标任务观测"),
     "join_tokio": ("Spawn → helper execution", "任务创建 → 任务体执行"),
     "join_parent": ("Creator → child creation", "创建者 → 子协程创建"),

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which Spring AI request owns each scheduled tool callback?">
+  <title>spring-projects/spring-ai #4755 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/spring-projects--spring-ai--4755.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="spring-projects--spring-ai--4755.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/spring-projects--spring-ai--4755.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">spring-projects/spring-ai #4755</p>
+        <h1>Which Spring AI request owns each scheduled tool callback?</h1>
+        <div class="case-links"><a href="https://github.com/spring-projects/spring-ai/issues/4755">Upstream report ↗</a><a href="https://github.com/spring-projects/spring-ai/pull/4756">Follow-up evidence ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Scheduling and contention</dd></div>
+          <div><dt>Issue type</dt><dd>Performance problems</dd></div>
+          <div><dt>GitHub status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd>Local patch tested</dd></div>
+          <div><dt>Case language</dt><dd>Java</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>The same scheduler stack completes tools for two distinct requests. Matching the scheduled callback and the batch carried by Spring AI&#x27;s ToolContext restores each registration and application launcher, so each serial tool sequence is attributed to its own request.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run</code><span>ScheduledThreadPoolExecutor.java:304</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:28</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:68</span></li><li><code>ToolBatchReplay$Work.run</code><span>ToolBatchReplay.java:143</span></li><li><code>ToolBatchReplay$Trace.complete</code><span>ToolBatchReplay.java:76</span></li></ol></section>
+          <p class="small trace-note">Frames from record 4 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>4 → 2</code></a><a href="#join-1-point-1">Join point 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run</code><span>ScheduledThreadPoolExecutor.java:304</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:28</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:68</span></li><li><code>ToolBatchReplay$Work.run</code><span>ToolBatchReplay.java:143</span></li><li><code>ToolBatchReplay$Trace.complete</code><span>ToolBatchReplay.java:76</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">Record 4</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>Reactor invokes the exact callback object registered at submission. It completes the same Mono sink on the scheduler thread.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>ToolBatchReplay.main</code><span>ToolBatchReplay.java:263</span></li><li><code>reactor.core.publisher.Mono.block</code><span>Mono.java:1806</span></li><li><code>reactor.core.publisher.Mono.subscribe</code><span>Mono.java:4576</span></li><li><code>reactor.core.publisher.MonoZip.subscribe</code><span>MonoZip.java:129</span></li><li><code>reactor.core.publisher.BlockingSingleSubscriber.onSubscribe</code><span>BlockingSingleSubscriber.java:54</span></li><li><code>reactor.core.publisher.MonoZip$ZipCoordinator.request</code><span>MonoZip.java:220</span></li><li><code>reactor.core.publisher.InternalMonoOperator.subscribe</code><span>InternalMonoOperator.java:76</span></li><li><code>reactor.core.publisher.FluxIterable.subscribe</code><span>FluxIterable.java:83</span></li><li><code>reactor.core.publisher.FluxIterable.subscribe</code><span>FluxIterable.java:201</span></li><li><code>reactor.core.publisher.FluxConcatMapNoPrefetch$FluxConcatMapNoPrefetchSubscriber.onSubscribe</code><span>FluxConcatMapNoPrefetch.java:164</span></li><li><code>reactor.core.publisher.Operators$BaseFluxToMonoOperator.onSubscribe</code><span>Operators.java:2050</span></li><li><code>reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.onSubscribe</code><span>FluxMapFuseable.java:96</span></li><li><code>reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.onSubscribe</code><span>FluxMapFuseable.java:96</span></li><li><code>reactor.core.publisher.MonoZip$ZipInner.onSubscribe</code><span>MonoZip.java:470</span></li><li><code>reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.request</code><span>FluxMapFuseable.java:171</span></li><li><code>reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.request</code><span>FluxMapFuseable.java:171</span></li><li><code>reactor.core.publisher.Operators$BaseFluxToMonoOperator.request</code><span>Operators.java:2066</span></li><li><code>reactor.core.publisher.FluxConcatMapNoPrefetch$FluxConcatMapNoPrefetchSubscriber.request</code><span>FluxConcatMapNoPrefetch.java:337</span></li><li><code>reactor.core.publisher.FluxIterable$IterableSubscription.request</code><span>FluxIterable.java:294</span></li><li><code>reactor.core.publisher.FluxIterable$IterableSubscription.slowPath</code><span>FluxIterable.java:335</span></li><li><code>reactor.core.publisher.FluxConcatMapNoPrefetch$FluxConcatMapNoPrefetchSubscriber.onNext</code><span>FluxConcatMapNoPrefetch.java:207</span></li><li><code>reactor.core.publisher.Mono.subscribe</code><span>Mono.java:4576</span></li><li><code>reactor.core.publisher.MonoCreate.subscribe</code><span>MonoCreate.java:61</span></li><li><code>ToolBatchReplay$DelayedTool.lambda$callAsync$1</code><span>ToolBatchReplay.java:176</span></li><li><code>ToolBatchReplay$Work.&lt;init&gt;</code><span>ToolBatchReplay.java:131</span></li><li><code>ToolBatchReplay$Trace.submit</code><span>ToolBatchReplay.java:67</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Request launch → tool callback registration</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>The tool callback reads the exact request batch object passed by the application in Spring AI's ToolContext.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Application launch stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>ToolBatchReplay.main</code><span>ToolBatchReplay.java:260</span></li><li><code>ToolBatchReplay.launchCatalog</code><span>ToolBatchReplay.java:206</span></li><li><code>ToolBatchReplay$Batch.&lt;init&gt;</code><span>ToolBatchReplay.java:114</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 6</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run</code><span>ScheduledThreadPoolExecutor.java:304</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:28</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:68</span></li><li><code>ToolBatchReplay$Work.run</code><span>ToolBatchReplay.java:143</span></li><li><code>ToolBatchReplay$Trace.complete</code><span>ToolBatchReplay.java:76</span></li></ol></section>
+          <p class="small trace-note">Frames from record 6 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-2">Join point 2 <code>6 → 3</code></a><a href="#join-2-point-1">Join point 1 <code>3 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-6"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 6</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run</code><span>ScheduledThreadPoolExecutor.java:304</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:28</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:68</span></li><li><code>ToolBatchReplay$Work.run</code><span>ToolBatchReplay.java:143</span></li><li><code>ToolBatchReplay$Trace.complete</code><span>ToolBatchReplay.java:76</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-6">Record 6</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>Reactor invokes the exact callback object registered at submission. It completes the same Mono sink on the scheduler thread.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 3 → 6</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>ToolBatchReplay.main</code><span>ToolBatchReplay.java:263</span></li><li><code>reactor.core.publisher.Mono.block</code><span>Mono.java:1806</span></li><li><code>reactor.core.publisher.Mono.subscribe</code><span>Mono.java:4576</span></li><li><code>reactor.core.publisher.MonoZip.subscribe</code><span>MonoZip.java:129</span></li><li><code>reactor.core.publisher.BlockingSingleSubscriber.onSubscribe</code><span>BlockingSingleSubscriber.java:54</span></li><li><code>reactor.core.publisher.MonoZip$ZipCoordinator.request</code><span>MonoZip.java:220</span></li><li><code>reactor.core.publisher.InternalMonoOperator.subscribe</code><span>InternalMonoOperator.java:76</span></li><li><code>reactor.core.publisher.FluxIterable.subscribe</code><span>FluxIterable.java:83</span></li><li><code>reactor.core.publisher.FluxIterable.subscribe</code><span>FluxIterable.java:201</span></li><li><code>reactor.core.publisher.FluxConcatMapNoPrefetch$FluxConcatMapNoPrefetchSubscriber.onSubscribe</code><span>FluxConcatMapNoPrefetch.java:164</span></li><li><code>reactor.core.publisher.Operators$BaseFluxToMonoOperator.onSubscribe</code><span>Operators.java:2050</span></li><li><code>reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.onSubscribe</code><span>FluxMapFuseable.java:96</span></li><li><code>reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.onSubscribe</code><span>FluxMapFuseable.java:96</span></li><li><code>reactor.core.publisher.MonoZip$ZipInner.onSubscribe</code><span>MonoZip.java:470</span></li><li><code>reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.request</code><span>FluxMapFuseable.java:171</span></li><li><code>reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.request</code><span>FluxMapFuseable.java:171</span></li><li><code>reactor.core.publisher.Operators$BaseFluxToMonoOperator.request</code><span>Operators.java:2066</span></li><li><code>reactor.core.publisher.FluxConcatMapNoPrefetch$FluxConcatMapNoPrefetchSubscriber.request</code><span>FluxConcatMapNoPrefetch.java:337</span></li><li><code>reactor.core.publisher.FluxIterable$IterableSubscription.request</code><span>FluxIterable.java:294</span></li><li><code>reactor.core.publisher.FluxIterable$IterableSubscription.slowPath</code><span>FluxIterable.java:335</span></li><li><code>reactor.core.publisher.FluxConcatMapNoPrefetch$FluxConcatMapNoPrefetchSubscriber.onNext</code><span>FluxConcatMapNoPrefetch.java:207</span></li><li><code>reactor.core.publisher.Mono.subscribe</code><span>Mono.java:4576</span></li><li><code>reactor.core.publisher.MonoCreate.subscribe</code><span>MonoCreate.java:61</span></li><li><code>ToolBatchReplay$DelayedTool.lambda$callAsync$1</code><span>ToolBatchReplay.java:176</span></li><li><code>ToolBatchReplay$Work.&lt;init&gt;</code><span>ToolBatchReplay.java:131</span></li><li><code>ToolBatchReplay$Trace.submit</code><span>ToolBatchReplay.java:67</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Request launch → tool callback registration</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">Record 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">Record 3</a></p>
+          <p>The tool callback reads the exact request batch object passed by the application in Spring AI's ToolContext.</p>
+
+          <p class="join-verification">Graph edge <code>parent_to_create · 1 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>Application launch stack</h4><span>Record 1</span><span class="record-instance">Instance from record 1</span></div><ol class="frames"><li><code>ToolBatchReplay.main</code><span>ToolBatchReplay.java:261</span></li><li><code>ToolBatchReplay.launchResearch</code><span>ToolBatchReplay.java:210</span></li><li><code>ToolBatchReplay$Batch.&lt;init&gt;</code><span>ToolBatchReplay.java:114</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Three local tools have delays of 120, 80 and 40 ms. Both the original manager and the async proposal with concatMap complete the batch in about 242 ms, with one active tool at a time. An opt-in local patch reduces the median to about 162 ms with two active tools and 121 ms with three. The callbacks finish out of order, and the tool results retain their original IDs, payloads and order in the model conversation.</dd></div><div><dt>What CoroPerf showed</dt><dd>Two overview callbacks have identical execution stacks on one Reactor scheduler thread. Matching the exact scheduled Runnable and its Mono sink restores each registration stack. The original Batch object passed through Spring AI&#x27;s ToolContext leads back to the respective application launcher. The catalog path is 4 to 2 to 0 and the research path is 6 to 3 to 1. Reversing launches swaps the request attribution.</dd></div><div><dt>Scope and limits</dt><dd>The replay compiles the actual parent and PR #4756 tool managers against Spring AI Model 1.1.0 dependencies. The responses and delays are synthetic. The local patch applies to the PR checkout and opts explicitly into overlapping independent tools. The provider streaming path and current main-branch decisions API remain outside the runtime test. Both the issue and PR are open.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
