@@ -20,7 +20,7 @@ LABELS = {
         "Reproduction follow-ups on hold. Security impact is pending review.",
         "复现跟进已暂缓，安全影响待评估。",
     ),
-    "safety_review_hold": ("Paused by request for safety review", "按要求暂缓，等待安全审阅"),
+    "safety_review_hold": ("Reproduction follow-up paused under safety restrictions", "因安全限制暂缓复现跟进"),
     "method": ("Method", "分析方法"),
     "top": ("Back to top ↑", "返回顶部 ↑"),
     "record": ("Record {id}", "记录 {id}"),
