@@ -412,6 +412,9 @@ def index_page(snapshot, language):
     checked = text["tracker_checked"].format(time=datetime.fromisoformat(checked_at).strftime("%Y-%m-%d %H:%M UTC"))
     rows = "".join(table_group(name, items, text, language) for name, items in groups.items())
     data = "../data/" if language == "zh-CN" else "data/"
+    followup_link = ""
+    if snapshot.get("deferred_followups"):
+        followup_link = f'<a href="research.html#deferred-followups">{text["deferred_followups"]}</a>'
     body = f"""
     <section class="wrap hero" aria-labelledby="hero-title">
       <div>
@@ -437,7 +440,7 @@ def index_page(snapshot, language):
     <section class="wrap block" id="issues" aria-labelledby="issues-title">
       <div class="section-head"><h2 id="issues-title">{text["issues"]}</h2><a href="{data}cases.json" download>{text["download"]}</a></div>
       <p class="section-copy">{text["index_copy"]}</p>
-      <p class="tracker-summary" id="upstream-status"><strong>{tracker_summary}</strong><time datetime="{escape(checked_at)}">{checked}</time><a href="{data}upstream-status.json" download>{text["tracker_data"]}</a></p>
+      <p class="tracker-summary" id="upstream-status"><strong>{tracker_summary}</strong><time datetime="{escape(checked_at)}">{checked}</time><a href="{data}upstream-status.json" download>{text["tracker_data"]}</a>{followup_link}</p>
       <div class="filters" hidden>
         <div><label for="query">{text["search"]}</label><input type="search" id="query" placeholder="{text["placeholder"]}"></div>
         <div><label for="case-language">{text["case_language"]}</label><select id="case-language"><option value="">{text["any_case_language"]}</option>{language_options}</select></div>
@@ -487,7 +490,32 @@ def research_case(case, note, language):
       </tr>"""
 
 
-def research_page(cases, notes, language):
+def deferred_section(followups, language):
+    if not followups:
+        return ""
+    text = COPY[language]
+    rows = "".join(f"""
+          <tr id="followup-{escape(row["id"])}">
+            <th scope="row">
+              <a href="{escape(row["url"])}"><span>{escape(row["reference"])}</span>{escape(case_title(row, language))}</a>
+              <small>{text["safety_review_hold"]}</small>
+            </th>
+            {table_status(row, text)}
+          </tr>""" for row in followups)
+    return f"""
+    <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
+      <div class="section-head"><h2 id="deferred-title">{text["deferred_followups"]}</h2></div>
+      <p class="section-copy">{text["deferred_copy"]}</p>
+      <div class="table-wrap summary-table">
+        <table aria-labelledby="deferred-title">
+          <thead><tr><th scope="col">{text["issue"]}</th><th scope="col">{text["tracker_status"]}<small>{text["fix_status"]}</small></th></tr></thead>
+          <tbody>{rows}</tbody>
+        </table>
+      </div>
+    </section>"""
+
+
+def research_page(cases, notes, language, followups):
     text = COPY[language]
     groups = {category: [] for category in CONTRIBUTION_KINDS}
     for case in cases:
@@ -519,6 +547,7 @@ def research_page(cases, notes, language):
         <p class="section-copy">{text["research_intro"]}</p>
       </header>
       <nav class="research-categories" aria-label="{text["contribution_kind"]}"><ul>{"".join(categories)}</ul></nav>
+      {deferred_section(followups, language)}
       {"".join(sections)}
     </article>"""
     return document("research.html", text["research"], text["research_description"], body, language)
@@ -538,7 +567,7 @@ def build(snapshot, language, notes):
     for stale in set(evidence.glob("*.html")) - generated:
         stale.unlink()
     (destination / "index.html").write_text(index_page(snapshot, language), encoding="utf-8")
-    research = research_page(snapshot["cases"], notes, language)
+    research = research_page(snapshot["cases"], notes, language, snapshot.get("deferred_followups", []))
     (destination / "research.html").write_text(research, encoding="utf-8")
 
 
@@ -561,7 +590,7 @@ if __name__ == "__main__":
     snapshot = json.loads((ROOT / "data" / "cases.json").read_text(encoding="utf-8"))
     tracker = json.loads((ROOT / "data" / "upstream-status.json").read_text(encoding="utf-8"))
     snapshot["tracker_checked_at"] = tracker["checked_at"]
-    for case in snapshot["cases"]:
+    for case in snapshot["cases"] + snapshot.get("deferred_followups", []):
         entry = tracker["issues"].get(case["id"], {})
         state = entry.get("status")
         case["tracker_status"] = state if entry.get("url") == case["url"] and state in TRACKER_STATES else "unconfirmed"

@@ -122,11 +122,14 @@ def fetch(case):
 
 
 def main():
-    cases = json.loads((DATA / "cases.json").read_text(encoding="utf-8"))["cases"]
-    fix_urls = {(case.get("fix") or {}).get("url", "") for case in cases}
+    catalogue = json.loads((DATA / "cases.json").read_text(encoding="utf-8"))
+    cases = catalogue["cases"]
+    followups = catalogue.get("deferred_followups", [])
+    entries = cases + followups
+    fix_urls = {(case.get("fix") or {}).get("url", "") for case in entries}
     pull_urls = sorted(url for url in fix_urls if pull_route(url))
     with ThreadPoolExecutor(max_workers=5) as pool:
-        results = dict(zip((case["id"] for case in cases), pool.map(fetch, cases), strict=True))
+        results = dict(zip((entry["id"] for entry in entries), pool.map(fetch, entries), strict=True))
         pulls = dict(zip(pull_urls, pool.map(fetch_pull, pull_urls), strict=True))
     snapshot = {
         "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -137,7 +140,9 @@ def main():
         pending = Path(staging) / "upstream-status.json"
         pending.write_text(json.dumps(snapshot, indent=2) + "\n", encoding="utf-8")
         pending.replace(DATA / pending.name)
-    print(dict(Counter(result["status"] for result in results.values())))
+    print("Evidence issues:", dict(Counter(results[case["id"]]["status"] for case in cases)))
+    if followups:
+        print("Deferred follow-ups:", dict(Counter(results[row["id"]]["status"] for row in followups)))
     print("Unconfirmed:", [identifier for identifier, result in results.items() if result["status"] == "unconfirmed"])
     print("Linked pull requests:", dict(Counter(pulls.values())))
     print("Unconfirmed pull requests:", [url for url, state in pulls.items() if state == "unconfirmed"])

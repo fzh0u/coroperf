@@ -20,7 +20,7 @@ python3 -m http.server 8000
 
 - `index.html` groups the cases by language in one table. Each row shows its GitHub state, repair evidence, and primary CoroPerf contribution. Search and filters cover language, GitHub state, contribution, reported issue type, and reproduction scope.
 - `evidence/` contains the static issue pages.
-- `research.html` groups the same issues by their primary diagnostic contribution and links to each call-stack comparison.
+- `research.html` groups the same issues by their primary diagnostic contribution, links to each call-stack comparison, and lists deferred follow-ups.
 - `zh-cn/` mirrors the index, research notes, and evidence pages in Simplified Chinese. Function names, paths to public upstream reports, and evidence labels from the graph retain their original spelling.
 - `data/focus.json` lists the reviewed cases, their reported issue types, primary diagnostic contributions, exact creation/observation pairs, and what each join establishes.
 - `data/cases.json` contains the exported findings, stacks, and graph edges in the public snapshot.

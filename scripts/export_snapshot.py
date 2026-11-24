@@ -286,6 +286,23 @@ def main():
     deferred = read_json(workspace / "research" / "deferred-security-issues.json")["cases"]
     deferred_ids = DEFERRED_IDS | {row["id"] for row in deferred}
     deferred_urls = {row["issue_url"] for row in deferred}
+    followups = []
+    for row in deferred:
+        if not (website := row.get("website")):
+            continue
+        url = row["issue_url"]
+        issue = re.fullmatch(r"https://github\.com/([^/]+/[^/]+)/issues/(\d+)", url)
+        if not issue:
+            raise ValueError(f'{row["id"]}: invalid public follow-up issue URL')
+        repo, number = issue.groups()
+        fix_url = website.get("merged_fix")
+        if fix_url and not re.fullmatch(rf"https://github\.com/{re.escape(repo)}/pull/\d+", fix_url):
+            raise ValueError(f'{row["id"]}: invalid public follow-up pull request URL')
+        followups.append({
+            "id": row["id"], "url": url, "reference": f"{repo} #{number}",
+            "title": website["title"], "title_zh": website["title_zh"],
+            "fix": {"state": "merged", "url": fix_url} if fix_url else None,
+        })
 
     cases = []
     snapshot_date = index["date"]
@@ -349,7 +366,7 @@ def main():
             "contribution": review["en"],
             "contribution_zh": review["zh"],
         })
-    snapshot = {"corpus_date": snapshot_date, "cases": cases}
+    snapshot = {"corpus_date": snapshot_date, "cases": cases, "deferred_followups": followups}
     args.output.write_text(json.dumps(snapshot, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 
 
