@@ -42,7 +42,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(19)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(15)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(26)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(18)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(19)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(15)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(27)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(18)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -431,12 +431,17 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">调度与资源争用定位</h2><span class="case-kind">26 个案例</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">调度与资源争用定位</h2><span class="case-kind">27 个案例</span></div>
       <p class="section-copy">将延迟任务接到造成等待的执行顺序、轮询区间或被占用的资源。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
           <thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 证据说明</th><th scope="col">GitHub 状态<small>修复证据</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/sgl-project--sglang--49190.html#call-stack"><span>sgl-project/sglang #49190</span>哪些请求在 Rust 分词线程前排队？</a></th>
+        <td><p>两条相同的分词执行栈接回各自的 HTTP Task 和发起入口。每轮 8 条请求，每条 8070 个 token，最慢排队时间的中位数从 102.7–103.1 降至 12.5–12.7 毫秒。原版手动设为四线程时与开放 PR 的表现接近，所有 token ID 一致。</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/sgl-project/sglang/issues/49190">开放</a><a class="fix-label" href="https://github.com/sgl-project/sglang/pull/49193">候选补丁已验证 · PR 开放</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/ray-project--ray--65346.html#call-stack"><span>ray-project/ray #65346</span>哪次模型冷加载在等待副本锁？</a></th>
         <td><p>原版把两个不同模型的首次加载串行执行。开放的 PR 让两次加载重叠 45.1 毫秒，组件实验中两条请求的总耗时从 111.4 降到 66.2 毫秒。核对加载 Task 及创建它的请求，区分了两条相同的加载栈。</p></td>

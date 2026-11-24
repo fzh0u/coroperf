@@ -203,6 +203,14 @@ LABELS = {
         "This request Task is active when the replica creates the cache loader. Its creation stack contains the interactive or batch launcher.",
         "副本创建加载 Task 时正在执行这个请求 Task。它的创建栈包含交互式或批处理入口。",
     ),
+    "sglang-tokenizer-internal-request-id": (
+        "The same internal request ID appears in the HTTP Task, the tokenizer queue and worker, and the scheduler input.",
+        "HTTP Task、分词队列与工作线程，以及调度器输入均持有同一个内部请求 ID。",
+    ),
+    "sglang-tokenizer-http-request-id": (
+        "The local HTTP launch supplies this request ID. The server derives its unique internal ID and echoes the caller's ID in the reply.",
+        "本地 HTTP 调用提交这个请求 ID。服务端据此生成唯一的内部 ID，并在响应中返回调用方的 ID。",
+    ),
     "sglang-detokenizer-ipc-row-and-request-task": (
         "The exact token row identifies its position in the detokenizer's received packet. That row's request ID connects it to the live frontend Task that receives the decoded result.",
         "解码时的实际 token 行确定了它在 IPC 数据包里的位置。用该行的请求 ID 接回接收解码结果的前端 Task。",
