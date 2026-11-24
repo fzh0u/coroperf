@@ -365,13 +365,14 @@ def featured_card(case, label, headline):
 
 def table_status(case, text):
     state = case["tracker_status"]
+    label_state = case.get("tracker_display", state)
     fix = case["fix"] or {}
     fix_text = fix_description(case, text, "fix_short_")
     if fix.get("url"):
         fix_label = f'<a class="fix-label" href="{escape(fix["url"])}">{fix_text}</a>'
     else:
         fix_label = f'<span class="fix-label">{fix_text}</span>'
-    return f'<td class="row-status"><a class="state-pill state-{state}" href="{escape(case["url"])}">{text["tracker_" + state]}</a>{fix_label}</td>'
+    return f'<td class="row-status"><a class="state-pill state-{state}" href="{escape(case["url"])}">{text["tracker_" + label_state]}</a>{fix_label}</td>'
 
 
 def table_row(case, text, language):
@@ -572,7 +573,7 @@ def deferred_section(followups, language):
       <p class="section-copy">{text["deferred_copy"]}</p>
       <div class="table-wrap summary-table">
         <table aria-labelledby="deferred-title">
-          <thead><tr><th scope="col">{text["issue"]}</th><th scope="col">{text["tracker_status"]}<small>{text["fix_status"]}</small></th></tr></thead>
+          <thead><tr><th scope="col">{text["issue"]}</th><th scope="col">{text["upstream_status"]}<small>{text["fix_status"]}</small></th></tr></thead>
           <tbody>{rows}</tbody>
         </table>
       </div>
@@ -658,6 +659,8 @@ if __name__ == "__main__":
         entry = tracker["issues"].get(case["id"], {})
         state = entry.get("status")
         case["tracker_status"] = state if entry.get("url") == case["url"] and state in TRACKER_STATES else "unconfirmed"
+        if case["tracker_status"] == "closed" and entry.get("display_status") == "resolved":
+            case["tracker_display"] = "resolved"
         fix_url = (case["fix"] or {}).get("url")
         pull = tracker.get("pull_requests", {}).get(fix_url)
         if pull in {"open", "closed", "merged", "unconfirmed"}:

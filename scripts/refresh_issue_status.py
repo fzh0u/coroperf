@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Refresh the atlas's upstream GitHub status snapshot without changing local evidence."""
+"""Refresh the atlas's upstream tracker snapshot without changing local evidence."""
 
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 import json
 from pathlib import Path
+import re
 from tempfile import TemporaryDirectory
 from urllib.error import URLError
 from urllib.parse import urlsplit
@@ -88,12 +89,41 @@ def fetch_pull(url):
     return "unconfirmed"
 
 
+def apache_jira_key(url):
+    match = re.fullmatch(r"https://issues\.apache\.org/jira/browse/([A-Z][A-Z0-9]*-\d+)", url)
+    return match[1] if match else None
+
+
+def fetch_apache_jira(url, key):
+    result = {"url": url, "status": "unconfirmed"}
+    api = f"https://issues.apache.org/jira/rest/api/2/issue/{key}?fields=status"
+    try:
+        request = Request(api, headers={**HEADERS, "Accept": "application/json"})
+        with urlopen(request, timeout=15) as response:
+            document = json.load(response)
+        if document["key"] != key:
+            return result
+        status = document["fields"]["status"]
+        category = status["statusCategory"]["key"]
+        if category == "done":
+            result["status"] = "closed"
+            if status["name"] == "Resolved":
+                result["display_status"] = "resolved"
+        elif category in {"new", "indeterminate"}:
+            result["status"] = "open"
+    except (URLError, TimeoutError, ValueError, KeyError, TypeError):
+        pass
+    return result
+
+
 def fetch(case):
     url = case["url"]
+    if key := apache_jira_key(url):
+        return fetch_apache_jira(url, key)
     route = urlsplit(url)
     parts = route.path.strip("/").split("/")
     if route.hostname != "github.com" or len(parts) != 4 or parts[2] != "issues" or not parts[3].isdigit():
-        raise ValueError(f'Expected a GitHub issue URL for {case["id"]}')
+        raise ValueError(f'Expected a supported upstream issue URL for {case["id"]}')
     owner, repo, _, issue_number = parts
 
     try:

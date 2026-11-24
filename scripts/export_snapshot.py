@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 
 from copy_text import CASE_LANGUAGES, CONTRIBUTION_KINDS, FIX_STATES, ISSUE_KINDS, SOURCE_TOKEN_STAGES
+from refresh_issue_status import apache_jira_key
 
 
 HERE = Path(__file__).resolve().parents[1]
@@ -299,15 +300,23 @@ def main():
             continue
         url = row["issue_url"]
         issue = re.fullmatch(r"https://github\.com/([^/]+/[^/]+)/issues/(\d+)", url)
-        if not issue:
-            raise ValueError(f'{row["id"]}: invalid public follow-up issue URL')
-        repo, number = issue.groups()
         merged_fix = website.get("merged_fix")
         fix_url = merged_fix or website.get("pull_request")
-        if fix_url and not re.fullmatch(rf"https://github\.com/{re.escape(repo)}/pull/\d+", fix_url):
-            raise ValueError(f'{row["id"]}: invalid public follow-up pull request URL')
+        if issue:
+            repo, number = issue.groups()
+            reference = f"{repo} #{number}"
+            if fix_url and not re.fullmatch(rf"https://github\.com/{re.escape(repo)}/pull/\d+", fix_url):
+                raise ValueError(f'{row["id"]}: invalid public follow-up pull request URL')
+        elif key := apache_jira_key(url):
+            reference = key
+            if website.get("pull_request") or (merged_fix and not re.fullmatch(
+                r"https://github\.com/apache/[A-Za-z0-9_.-]+/commit/[0-9a-f]{40}", merged_fix
+            )):
+                raise ValueError(f'{row["id"]}: invalid public Apache follow-up fix URL')
+        else:
+            raise ValueError(f'{row["id"]}: invalid public follow-up issue URL')
         followups.append({
-            "id": row["id"], "url": url, "reference": f"{repo} #{number}",
+            "id": row["id"], "url": url, "reference": reference,
             "title": website["title"], "title_zh": website["title_zh"],
             "fix": {"state": "merged" if merged_fix else "unconfirmed", "url": fix_url} if fix_url else None,
         })

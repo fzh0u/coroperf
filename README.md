@@ -35,7 +35,7 @@ python3 scripts/refresh_issue_status.py
 python3 scripts/build.py
 ```
 
-Refresh the GitHub snapshot when checking tracker status. The page build uses the saved snapshot offline. Commit the generated HTML with the updated data so GitHub Pages can serve the refreshed site.
+Refresh the upstream snapshot when checking tracker status. The deferred list supports GitHub and Apache Jira reports. The page build uses the saved snapshot offline. Commit the generated HTML with the updated data so GitHub Pages can serve the refreshed site.
 
 ## Reading the stack evidence
 
