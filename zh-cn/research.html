@@ -42,7 +42,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(18)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(15)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(22)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(15)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(28)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(18)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(15)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(23)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(15)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -412,12 +412,17 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">调度与资源争用定位</h2><span class="case-kind">22 个案例</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">调度与资源争用定位</h2><span class="case-kind">23 个案例</span></div>
       <p class="section-copy">将延迟任务接到造成等待的执行顺序、轮询区间或被占用的资源。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
           <thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 证据说明</th><th scope="col">GitHub 状态<small>修复证据</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/huggingface--text-embeddings-inference--798.html#call-stack"><span>huggingface/text-embeddings-inference #798</span>TEI 哪条推理流水线在等预取通道空位？</a></th>
+        <td><p>实际 Tokio Task ID 和通道将相同的等待栈接回不同发起入口。受控暂停期间，本地选项将预取批数从 1 提到 4。真实 CPU 测试中，两种批次条件下的吞吐分别变化约 1%，方向相反。</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/huggingface/text-embeddings-inference/issues/798">开放</a><span class="fix-label">本地补丁已测试</span></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/spring-projects--spring-ai--4755.html#call-stack"><span>spring-projects/spring-ai #4755</span>Spring AI 各次调度的工具回调属于哪个请求？</a></th>
         <td><p>两条相同的 Reactor 调度栈分别拼回工具登记栈和应用请求。开放 PR 的异步路径仍逐个订阅。本地补丁显式启用并发后，将三个工具的批次耗时中位数由约 242 毫秒降到 121 毫秒，同时保留返回给模型的结果顺序。</p></td>

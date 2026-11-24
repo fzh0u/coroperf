@@ -42,7 +42,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(18)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(22)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(15)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(18)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(23)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(15)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -412,12 +412,17 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">22 issues</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">23 issues</span></div>
       <p class="section-copy">Connect a delayed task to the execution order, poll interval, or resource that held it up.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
           <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/huggingface--text-embeddings-inference--798.html#call-stack"><span>huggingface/text-embeddings-inference #798</span>Which TEI pipeline waits for a ready-batch slot?</a></th>
+        <td><p>Actual Tokio Task IDs and channels join identical waits to separate launches. The local option increases ready batches from one to four during a controlled pause. Real CPU throughput changes by about one percent in opposite directions across the two batch regimes.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/huggingface/text-embeddings-inference/issues/798">Open</a><span class="fix-label">Local patch tested</span></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/spring-projects--spring-ai--4755.html#call-stack"><span>spring-projects/spring-ai #4755</span>Which Spring AI request owns each scheduled tool callback?</a></th>
         <td><p>Identical Reactor scheduler stacks join back to the original tool registrations and application requests. The open proposal's async path still subscribes to one tool at a time. The local opt-in patch reduces the three-tool batch median from about 242 to 121 ms and keeps model response order.</p></td>
