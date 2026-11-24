@@ -42,7 +42,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(19)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(24)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(16)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(28)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(19)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(15)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(25)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(16)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -424,15 +424,20 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">24 issues</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">25 issues</span></div>
       <p class="section-copy">Connect a delayed task to the execution order, poll interval, or resource that held it up.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
           <thead><tr><th scope="col">Issue</th><th scope="col">What CoroPerf showed</th><th scope="col">GitHub status<small>Fix evidence</small></th></tr></thead>
           <tbody>
       <tr>
+        <th scope="row"><a href="evidence/ai-dynamo--dynamo--18671.html#call-stack"><span>ai-dynamo/dynamo #18671</span>Which Dynamo worker waited for its first canary?</a></th>
+        <td><p>Actual Tokio Tasks and registration notifiers join identical timer stacks to two worker registrations. At the default ten-second interval, the successful worker reaches Ready in 10.004 s on the base and 4.8 ms on the open PR. The other worker stays NotReady until its retry succeeds.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ai-dynamo/dynamo/issues/18671">Open</a><a class="fix-label" href="https://github.com/ai-dynamo/dynamo/pull/18672">Proposal tested · PR open</a></td>
+      </tr>
+      <tr>
         <th scope="row"><a href="evidence/vllm-project--vllm--42632.html#call-stack"><span>vllm-project/vllm #42632</span>Which startup Task launched each background KV pin?</a></th>
-        <td><p>The two pinning threads have identical stacks. Each joins to the Task that started it. With 512 MiB on A100, the draft returns from worker registration in about 0.10 ms and completes the CUDA DMA round trip after readiness.</p></td>
+        <td><p>The two pinning threads have identical stacks. Each joins to the Task that started it. In a 1 GiB A100 loopback run with CUDA graphs, the draft starts pinning after graph capture and returns the first completion 292 ms before KV connector readiness.</p></td>
         <td class="row-status"><a class="state-pill state-open" href="https://github.com/vllm-project/vllm/issues/42632">Open</a><a class="fix-label" href="https://github.com/vllm-project/vllm/pull/54792">Proposal tested · PR open</a></td>
       </tr>
       <tr>

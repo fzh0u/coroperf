@@ -1,4 +1,15 @@
 {
+  "ai-dynamo--dynamo--18671": {
+    "anchor": "call-stack",
+    "en": {
+      "title": "Which Dynamo worker waited for its first canary?",
+      "summary": "<p>Actual Tokio Tasks and registration notifiers join identical timer stacks to two worker registrations. At the default ten-second interval, the successful worker reaches Ready in 10.004 s on the base and 4.8 ms on the open PR. The other worker stays NotReady until its retry succeeds.</p>"
+    },
+    "zh-CN": {
+      "title": "Dynamo 哪个 worker 在等待首次就绪检查？",
+      "summary": "<p>实际 Tokio Task 和注册通知对象把相同的计时器执行栈接回两次注册。在默认 10 秒配置下，首次检查成功的 worker 从 10.004 秒降至 4.8 毫秒。另一个 worker 仍需等重试成功才会就绪。</p>"
+    }
+  },
   "ai-dynamo--dynamo--18727": {
     "anchor": "call-stack",
     "en": {
@@ -25,11 +36,11 @@
     "anchor": "call-stack",
     "en": {
       "title": "Which startup Task launched each background KV pin?",
-      "summary": "<p>The two pinning threads have identical stacks. Each joins to the Task that started it. With 512 MiB on A100, the draft returns from worker registration in about 0.10 ms and completes the CUDA DMA round trip after readiness.</p>"
+      "summary": "<p>The two pinning threads have identical stacks. Each joins to the Task that started it. In a 1 GiB A100 loopback run with CUDA graphs, the draft starts pinning after graph capture and returns the first completion 292 ms before KV connector readiness.</p>"
     },
     "zh-CN": {
       "title": "每次后台 KV 内存注册由哪个启动 Task 发起？",
-      "summary": "<p>两条后台注册线程的执行栈相同，分别拼回发起它们的 Task。A100 上配置 512 MiB 时，候选异步工作器约 0.10 毫秒返回，就绪后通过真实 CUDA DMA 往返核对。</p>"
+      "summary": "<p>两条后台注册线程的执行栈相同，分别拼回发起它们的 Task。A100 回环服务配置 1 GiB 缓存并启用 CUDA Graph 时，候选补丁在图捕获后开启后台注册，首条结果早于 KV 连接器就绪 292 毫秒。</p>"
     }
   },
   "huggingface--text-embeddings-inference--798": {
