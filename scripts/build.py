@@ -60,6 +60,7 @@ def document(path, title, description, body, language):
       <nav class="site-nav" aria-label="{text["navigation"]}">
         <a href="{prefix}index.html#issues">{text["issues"]}</a>
         <a href="{prefix}research.html">{text["research"]}</a>
+        <a href="{prefix}discovery.html">{"搜索进度" if chinese else "Search progress"}</a>
         <a href="{prefix}index.html#method">{text["method"]}</a>
       </nav>
       <nav class="languages" aria-labelledby="language-label">

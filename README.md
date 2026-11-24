@@ -48,3 +48,7 @@ Refresh the upstream snapshot when checking tracker status. The deferred list su
 - To add an issue, record its primary type, diagnostic contribution, and reviewed record IDs in `data/focus.json`. The exporter checks that each pair is a valid instance join before it can enter the catalog.
 
 Instrument Serif is distributed under the [SIL Open Font License](assets/fonts/OFL.txt).
+
+## Automatic discovery progress
+
+[Search progress](discovery.html) and [搜索进度](zh-cn/discovery.html) show the separate, unverified discovery queue, framework coverage, official tracker windows, skipped review entries, and collection errors. Candidate counts do not change the verified evidence catalog. `scripts/build_discovery.py` renders both pages from `data/discovery.json`. In the research workspace, `research/github-issue-discovery/automation/README.md` describes the read-only scanner and two-hour report service.
