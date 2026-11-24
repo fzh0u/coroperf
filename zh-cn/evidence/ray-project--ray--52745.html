@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="哪些 HTTP 流经过了 Ray Serve 的跨部署转发？">
+  <title>ray-project/ray #52745 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/ray-project--ray--52745.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/ray-project--ray--52745.html" lang="en" hreflang="en">English</a><a href="ray-project--ray--52745.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #52745</p>
+        <h1>哪些 HTTP 流经过了 Ray Serve 的跨部署转发？</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/52745">上游报告 ↗</a><a href="https://github.com/ray-project/ray/issues/52745#issuecomment-4644832444">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>请求与结果交接归因</dd></div>
+          <div><dt>问题类型</dt><dd>性能问题</dd></div>
+          <div><dt>GitHub 状态</dt><dd>已关闭</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/ray-project/ray/issues/52745#issuecomment-2855935707">应用侧替代方案已在本地验证 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>本地完整复现</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>核对真实响应体、Serve handle 和 Ray 结果，把相同的流式读取栈接回各自的 HTTP 路由，定位跨部署流属于哪个应用响应。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:1179</span></li><li><code>TaskHandle._run_coro</code><span>_tasks.py:327</span></li><li><code>StreamingResponse.__call__.&lt;locals&gt;.wrap</code><span>responses.py:266</span></li><li><code>StreamingResponse.stream_response</code><span>responses.py:246</span></li><li><code>Relay.relay</code><span>check_streaming.py:114</span></li><li><code>DeploymentResponseGenerator.__anext__</code><span>handle.py:570</span></li><li><code>ActorReplicaResult._process_response.&lt;locals&gt;.async_wrapper</code><span>replica_result.py:84</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 1 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:1179</span></li><li><code>TaskHandle._run_coro</code><span>_tasks.py:327</span></li><li><code>StreamingResponse.__call__.&lt;locals&gt;.wrap</code><span>responses.py:266</span></li><li><code>StreamingResponse.stream_response</code><span>responses.py:246</span></li><li><code>Relay.relay</code><span>check_streaming.py:114</span></li><li><code>DeploymentResponseGenerator.__anext__</code><span>handle.py:570</span></li><li><code>ActorReplicaResult._process_response.&lt;locals&gt;.async_wrapper</code><span>replica_result.py:84</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">记录 1</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:1179</span></li><li><code>UserCallableWrapper.call_user_method</code><span>replica.py:1623</span></li><li><code>UserCallableWrapper._call_func_or_gen</code><span>replica.py:1341</span></li><li><code>ASGIAppReplicaWrapper.__call__</code><span>http_util.py:502</span></li><li><code>FastAPI.__call__</code><span>applications.py:1054</span></li><li><code>Starlette.__call__</code><span>applications.py:112</span></li><li><code>ServerErrorMiddleware.__call__</code><span>errors.py:165</span></li><li><code>ExceptionMiddleware.__call__</code><span>exceptions.py:62</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>Router.__call__</code><span>routing.py:714</span></li><li><code>Router.app</code><span>routing.py:734</span></li><li><code>Route.handle</code><span>routing.py:288</span></li><li><code>request_response.&lt;locals&gt;.app</code><span>routing.py:76</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>request_response.&lt;locals&gt;.app.&lt;locals&gt;.app</code><span>routing.py:73</span></li><li><code>get_request_handler.&lt;locals&gt;.app</code><span>routing.py:301</span></li><li><code>run_endpoint_function</code><span>routing.py:212</span></li><li><code>Relay.launch_lookup</code><span>check_streaming.py:122</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:1179</span></li><li><code>TaskHandle._run_coro</code><span>_tasks.py:327</span></li><li><code>StreamingResponse.__call__.&lt;locals&gt;.wrap</code><span>responses.py:266</span></li><li><code>StreamingResponse.stream_response</code><span>responses.py:246</span></li><li><code>Relay.relay</code><span>check_streaming.py:114</span></li><li><code>DeploymentResponseGenerator.__anext__</code><span>handle.py:570</span></li><li><code>ActorReplicaResult._process_response.&lt;locals&gt;.async_wrapper</code><span>replica_result.py:84</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>3 → 2</code></a></nav>
+          <section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:1179</span></li><li><code>TaskHandle._run_coro</code><span>_tasks.py:327</span></li><li><code>StreamingResponse.__call__.&lt;locals&gt;.wrap</code><span>responses.py:266</span></li><li><code>StreamingResponse.stream_response</code><span>responses.py:246</span></li><li><code>Relay.relay</code><span>check_streaming.py:114</span></li><li><code>DeploymentResponseGenerator.__anext__</code><span>handle.py:570</span></li><li><code>ActorReplicaResult._process_response.&lt;locals&gt;.async_wrapper</code><span>replica_result.py:84</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>Thread._bootstrap</code><span>threading.py:1030</span></li><li><code>Thread._bootstrap_inner</code><span>threading.py:1073</span></li><li><code>Thread.run</code><span>threading.py:1010</span></li><li><code>UserCallableWrapper.__init__.&lt;locals&gt;._run_user_code_event_loop</code><span>replica.py:1179</span></li><li><code>UserCallableWrapper.call_user_method</code><span>replica.py:1623</span></li><li><code>UserCallableWrapper._call_func_or_gen</code><span>replica.py:1341</span></li><li><code>ASGIAppReplicaWrapper.__call__</code><span>http_util.py:502</span></li><li><code>FastAPI.__call__</code><span>applications.py:1054</span></li><li><code>Starlette.__call__</code><span>applications.py:112</span></li><li><code>ServerErrorMiddleware.__call__</code><span>errors.py:165</span></li><li><code>ExceptionMiddleware.__call__</code><span>exceptions.py:62</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>Router.__call__</code><span>routing.py:714</span></li><li><code>Router.app</code><span>routing.py:734</span></li><li><code>Route.handle</code><span>routing.py:288</span></li><li><code>request_response.&lt;locals&gt;.app</code><span>routing.py:76</span></li><li><code>wrap_app_handling_exceptions.&lt;locals&gt;.wrapped_app</code><span>_exception_handler.py:42</span></li><li><code>request_response.&lt;locals&gt;.app.&lt;locals&gt;.app</code><span>routing.py:73</span></li><li><code>get_request_handler.&lt;locals&gt;.app</code><span>routing.py:301</span></li><li><code>run_endpoint_function</code><span>routing.py:212</span></li><li><code>Relay.launch_summary</code><span>check_streaming.py:129</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>Ray 2.45.0 在 32 个并发 HTTP 流中各发送 64 个有序事件。逐事件跨部署转发需要 2048 次 Ray 结果交接，两种测试顺序下吞吐为每秒 3250–3476 个事件。首个事件立即发送，其余每 8 个一组后，交接降到 288 次，吞吐为每秒 8787–8802 个。生成器与入口同部署时，省去跨部署转发，吞吐约为每秒 9200 个。三种路径的事件内容和顺序一致。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两次读取经过同一个 Ray 结果包装器，物理执行栈完全相同。核对实际 DeploymentResponseGenerator、ActorReplicaResult 和所属的 Python 异步生成器帧，可以把读取接回 HTTP 响应体的创建位置。观测 1 接回记录 0 的 launch_lookup，观测 3 接回记录 2 的 launch_summary。反转客户端发起顺序后，相同执行栈分别归到交换后的路由。</dd></div><div><dt>适用范围与局限</dt><dd>实验使用本地 HTTP 入口、两个实际的 Serve 副本和合成 SSE 输出，两种测试顺序下每种配置各跑五次。吞吐按客户端收到的事件计数，分组会改变到达节奏。同部署对照用于隔离 Ray 2.45.0 上的跨部署转发开销。报告者在 HAProxy 和直接流式传输可用后关闭了 Issue，本次测试验证的是应用侧分组方案。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

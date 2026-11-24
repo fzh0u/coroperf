@@ -112,7 +112,7 @@
       </section>
       <section class="findings" aria-labelledby="findings-title">
         <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
-        <dl><div><dt>本地复现结果</dt><dd>单张 A100 上设置 512 MiB CPU KV 缓存。原版工作器注册耗时中位数为 126.5–143.6 毫秒，候选 PR 的同步路径为 123.6–124.4 毫秒。启用异步后，注册入口约 0.10 毫秒返回，紧接着开始轮询时，工作器从进入注册到就绪仍需 129.4–134.2 毫秒。十次异步试验中，独立 GPU 归约均在工作器就绪前完成。CPU 缓存首尾两个位置均通过真实 DMA 往返核对。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两个 pin_tensor 从不同原生线程返回，执行栈完全相同。核对真实 Thread、AsyncHostBuffer 和分配回调，将后台注册接回 get_init_state 内的创建栈，再沿实际初始化 Task 接回 launch_interactive 或 launch_batch。反转发起顺序后，归属仍正确。</dd></div><div><dt>适用范围与局限</dt><dd>对照运行固定的原版和候选工作器，实际调用 CUDA 注册和 DMA。实验提供 KV 布局，并在本地 CUDA 环境适配 PyTorch 设备 API。计时边界是 register_kv_caches 返回。服务启动和模型延迟待端到端对照。Issue 和候选 PR 均仍开放。</dd></div></dl>
+        <dl><div><dt>本地复现结果</dt><dd>单张 A100 上设置 512 MiB CPU KV 缓存。原版工作器注册耗时中位数为 126.5–143.6 毫秒，候选 PR 的同步路径为 123.6–124.4 毫秒。启用异步后，注册入口约 0.10 毫秒返回，紧接着开始轮询时，工作器从进入注册到就绪仍需 129.4–134.2 毫秒。十次异步试验中，独立 GPU 归约均在工作器就绪前完成。CPU 缓存首尾两个位置均通过真实 DMA 往返核对。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两个 pin_tensor 从不同原生线程返回，执行栈完全相同。核对真实 Thread、AsyncHostBuffer 和分配回调，将后台注册接回 get_init_state 内的创建栈，再沿实际初始化 Task 接回 launch_interactive 或 launch_batch。反转发起顺序后，归属仍正确。</dd></div><div><dt>适用范围与局限</dt><dd>对照运行固定的原版和候选工作器，实际调用 CUDA 注册和 DMA。实验提供 KV 布局，并在本地 CUDA 环境适配 PyTorch 设备 API。计时边界是 register_kv_caches 返回。独立的 CPU 测试通过所选的 37 项上游就绪和内存缓冲区测试。服务启动和模型延迟待端到端对照。Issue 和候选 PR 均仍开放。</dd></div></dl>
       </section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
