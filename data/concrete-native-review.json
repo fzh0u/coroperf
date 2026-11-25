@@ -1,0 +1,283 @@
+{
+  "checked_at": "2026-11-25T18:08:49.126238+00:00",
+  "kind": "source_review_and_one_native_component",
+  "reviewed": 12,
+  "dispositions": {
+    "component_reproduced": 1,
+    "external_environment_required": 4,
+    "excluded_after_review": 5,
+    "needs_review": 2
+  },
+  "new_selected_coroperf_cases": 0,
+  "issue_program_executions": 1,
+  "native_component_successes": 1,
+  "coroperf_attribution_verified": false,
+  "unsafe_or_user_held_programs_executed": 0,
+  "successful_reproductions_replayed": 0,
+  "source_archives": {
+    "dotnet--runtime--127951": {
+      "title": "[ci-scan] Test failure: System.Threading.Tasks.Tests.AsyncProfilerTests.RuntimeAsync_* on android and tvos",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/40783d78b2a22e17deb557fe4976fa5817902352910e802e4e012ce895783376.json"
+    },
+    "dotnet--runtime--137083": {
+      "title": "AsyncProfilerTests fail with \"Collection was empty\"",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/40783d78b2a22e17deb557fe4976fa5817902352910e802e4e012ce895783376.json"
+    },
+    "dotnet--runtime--17844": {
+      "title": "Deadlock in WinHttpResponseStream",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/d9a76b007bf67d6c727188f3ae7c1d670d3b29b3c644f2fd282e9f262169b88a.json"
+    },
+    "magicstack--asyncpg--220": {
+      "title": "Connection not being returned to the pool after connection loss",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/e0aa03340b83d92c3bb613c27105dfa49cab3528126dcae5cf1e0a0ce305bcee.json"
+    },
+    "sqlalchemy--sqlalchemy--10765": {
+      "title": "MappedAsDataclass causes joinedload option to fail when async",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/e829a941828cf857e29c9b720f293c71e48de5873cebaebd2ae2b7d42a066b14.json"
+    },
+    "mysql-net--mysqlconnector--1290": {
+      "title": "Excessive lock contention and CPU usage in TimerQueue",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/5bcc749b5da999d9139c1eb9119b370ed55d6981e0c91247d0ad939a9ef0398d.json"
+    },
+    "psycopg--psycopg--1401": {
+      "title": "_getconn_with_check_loop absorbs CancelledError, making asyncio.wait_for ineffective for bounding connection acquisition (3.2.8+)",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/bcf619f2373d94dd643e10c90ecd47ab765bd2ac0b3440bee482bf8b72c42540.json"
+    },
+    "magicstack--asyncpg--1307": {
+      "title": "bug: Possible connection pool deadlock",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/fc27bca303f70af5bd011d285e09dcdccbb08f570d20c02fd768254b718abfda.json"
+    },
+    "tokio-rs--tokio--5403": {
+      "title": "Watch channel with many subscribers has sub-optimal multithreaded performance",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/197cf0e98c36b7d893c855d90aa0817f19af912ff77bef2b117ee31a32ad3a8d.json"
+    },
+    "golang--go--83361": {
+      "title": "runtime: cleanups can get stuck after GOMAXPROCS is lowered during sweep (since Go 1.25)",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/3208d61259c35f895f691585205d52911e63ba57ab8e72b92d351f5578f489e3.json"
+    },
+    "mysql-net--mysqlconnector--851": {
+      "title": "Async null reference exceptions",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/ff45f51c948ba4899238e4a121f1cbd3d9bab7525ba2bf02da531eb48a4788b7.json"
+    },
+    "tokio-rs--tokio--1899": {
+      "title": "mpsc channel recv or send will block in tokio 0.2 local thread runtime",
+      "archive": "perf-out/github-issue-discovery/automatic/runs/20261125T160026Z/raw/4af2daa9aa7b4971c4b78a6a46b66759fbbe14c9e5dc0fd6524eb08d63977fda.json"
+    }
+  },
+  "reviews": {
+    "magicstack--asyncpg--1307": {
+      "status": "component_reproduced",
+      "reason": "One unpatched abort/release component reproduced with asyncpg 0.29.0: the sole holder remains in use and absent from the queue; one subsequent acquire times out after two seconds. CoroPerf attribution and the reported HA failover remain unverified. Freeze this success; do not replay for capture or fix validation.",
+      "reason_zh": "asyncpg 0.29.0 的一次未修复 abort/release 组件运行复现：唯一 holder 仍占用且未归还队列，后续一次获取连接在两秒后超时。coroPerf 归属和报告中的 HA 切换尚未验证。冻结成功证据，不为补采集或验修复而重跑。",
+      "sources": [
+        "https://github.com/MagicStack/asyncpg/issues/1307"
+      ],
+      "reviewed_at": "2026-11-25T18:07:18.363417+00:00",
+      "locally_executed": true,
+      "successful_reproduction_runs": 1,
+      "successful_reproduction_replay_authorized": false,
+      "coroperf_attribution_verified": false
+    },
+    "magicstack--asyncpg--220": {
+      "status": "external_environment_required",
+      "reason": "The supplied application omits database configuration and queries and relies on unplugging a physical network cable during queries under the 2017 environment. Pending release stacks suggest a provenance question, but there is no directly runnable bounded original input. No replacement network-fault workload is run.",
+      "reason_zh": "提供的应用缺少数据库配置与查询输入，并依赖 2017 年环境中执行查询时拔掉网线。pending release 栈可作归属线索，但没有可直接运行的有界原始输入，不另造网络故障工作负载。",
+      "sources": [
+        "https://github.com/MagicStack/asyncpg/issues/220"
+      ],
+      "reviewed_at": "2026-11-25T18:07:18.363417+00:00",
+      "locally_executed": false
+    },
+    "mysql-net--mysqlconnector--1290": {
+      "status": "excluded_after_review",
+      "reason": "The original profile already identifies TimerQueue lock contention and the report names timer churn at MySqlCommand.SetTimeout and the socket/stream byte handlers. A fifteen-minute external Docker workload is proposed, but no missing async creator or historical caller is established by this report. No workload is executed.",
+      "reason_zh": "原始 profile 已定位 TimerQueue 锁竞争，报告也列出 MySqlCommand.SetTimeout 与 socket/stream byte handler 的 timer 更新来源。提供的是依赖外部 Docker 工程的十五分钟负载，尚未建立异步创建者或历史调用者缺失，不执行工作负载。",
+      "sources": [
+        "https://github.com/mysql-net/MySqlConnector/issues/1290"
+      ],
+      "reviewed_at": "2026-11-25T18:07:18.363417+00:00",
+      "locally_executed": false
+    },
+    "psycopg--psycopg--1401": {
+      "status": "needs_review",
+      "reason": "The source alleges cancellation swallowing, but the supplied snippet uses async with asyncio.wait_for(...), whose coroutine is not an asynchronous context manager, and the pool exhaustion example does not establish the claimed check-loop path. Retain the semantic question without executing or presenting that snippet as a confirmed incident; no CoroPerf attribution gap is verified.",
+      "reason_zh": "报告称取消被吞掉，但示例把 asyncio.wait_for(...) 的协程直接用于 async with，且耗尽连接池的示例未建立所称 check-loop 路径。保留语义问题，不执行或将此片段列为已确认事故；未验证 coroPerf 归属缺口。",
+      "sources": [
+        "https://github.com/psycopg/psycopg/issues/1401"
+      ],
+      "reviewed_at": "2026-11-25T18:07:18.363417+00:00",
+      "locally_executed": false
+    },
+    "dotnet--runtime--137083": {
+      "status": "external_environment_required",
+      "reason": "The report is a CI assertion on missing async-profiler events in runtime build 1665581, referencing tests from PR 137008. The exact runtime build/test harness is absent locally; a generic released-runtime Task sample would not reproduce this CI event contract. No runtime build or workload is attempted.",
+      "reason_zh": "报告是 runtime 构建 1665581 中异步 profiler 事件缺失的 CI 断言，引用 PR 137008 的测试。本地缺少对应 runtime 构建与测试环境，普通发布版 Task 示例不能代表该 CI 事件约定；未构建 runtime 或执行负载。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/137083"
+      ],
+      "reviewed_at": "2026-11-25T18:07:18.363417+00:00",
+      "locally_executed": false
+    },
+    "dotnet--runtime--127951": {
+      "status": "external_environment_required",
+      "reason": "The reported async-profiler failures require Android/tvOS arm64 CoreCLR CI environments. These target platforms are unavailable locally. Assertion failures alone do not establish unsafe behavior; no substituted Linux sample or mobile setup is attempted.",
+      "reason_zh": "异步 profiler 失败依赖 Android/tvOS arm64 CoreCLR CI 环境，本地没有目标平台。断言失败本身不构成 unsafe 结论；不以 Linux 示例替代，也未准备或运行移动平台环境。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/127951"
+      ],
+      "reviewed_at": "2026-11-25T18:07:18.363417+00:00",
+      "locally_executed": false
+    },
+    "dotnet--runtime--17844": {
+      "status": "external_environment_required",
+      "reason": "The supplied Windows WinHTTP stacks already expose both sides of a cancellation-registration lock cycle. The author could not reproduce it reliably and observed it under WinDBG. No bounded original reproducer or local Windows target exists; no generic CancellationToken deadlock is substituted.",
+      "reason_zh": "提供的 Windows WinHTTP 栈已显示取消注册锁循环两端；作者也无法稳定复现，且是在 WinDBG 下观察到。本地没有 Windows 目标与有界原始复现程序，不用普通 CancellationToken 死锁替代。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/17844"
+      ],
+      "reviewed_at": "2026-11-25T18:07:18.363417+00:00",
+      "locally_executed": false
+    },
+    "sqlalchemy--sqlalchemy--10765": {
+      "status": "excluded_after_review",
+      "reason": "The supplied native traceback already identifies print(child.parent), the generated dataclass __repr__, and the lazy-loader path to MissingGreenlet. This is implicit IO during representation, with no missing async creation ancestry established. The controlled managed exception is not an unsafe finding; no extra run is needed.",
+      "reason_zh": "原始 traceback 已指出 print(child.parent)、dataclass 自动生成的 __repr__ 与触发 MissingGreenlet 的 lazy-loader 路径。属于 repr 时隐式 IO，尚未建立异步创建祖先缺失；普通受控异常不作 unsafe 结论，无需额外运行。",
+      "sources": [
+        "https://github.com/sqlalchemy/sqlalchemy/issues/10765"
+      ],
+      "reviewed_at": "2026-11-25T18:07:18.363417+00:00",
+      "locally_executed": false
+    },
+    "golang--go--83361": {
+      "status": "excluded_after_review",
+      "reason": "The supplied program measures runtime cleanup delivery and exposes queued/executed cleanup counters. Its proposed cause is per-P cleanup blocks stranded during GOMAXPROCS shrink; it does not establish missing coroutine creation ancestry. Historical cleanup resource provenance is not a goroutine creation join. No repeated GC/300-round workload is run.",
+      "reason_zh": "示例测量 runtime cleanup 投递，并已有 queued/executed 计数；提出的原因是 GOMAXPROCS 缩小时遗留在 P 上的 cleanup block，未建立协程创建祖先缺失。历史 cleanup 资源来源不能充当 goroutine 创建关系，不执行反复 GC 的 300 轮负载。",
+      "sources": [
+        "https://github.com/golang/go/issues/83361"
+      ],
+      "reviewed_at": "2026-11-25T18:08:49.068649+00:00",
+      "locally_executed": false
+    },
+    "mysql-net--mysqlconnector--851": {
+      "status": "excluded_after_review",
+      "reason": "The supplied application waits on ContinueWith(task => TestReader(...)), which yields a nested task, before leaving the connection using scope. The code already exposes a possible unawaited inner reader/disposal lifetime issue; the report supplies no complete native exception stack, exact connector version, schema or bounded local input establishing a historical-caller gap. No controlled NullReferenceException is classified as unsafe, and no replacement CTS or database workload is run.",
+      "reason_zh": "示例等待 ContinueWith(task => TestReader(...)) 所返回的嵌套 Task，随后离开连接 using 作用域；代码已暴露内部 reader 未等待完成便释放连接的可能性。报告没有完整原生异常栈、精确 connector 版本、表结构或建立历史调用者缺口的有界本地输入。普通 NullReferenceException 不作 unsafe 结论，不另造 CTS 或数据库工作负载。",
+      "sources": [
+        "https://github.com/mysql-net/mysqlconnector/issues/851"
+      ],
+      "reviewed_at": "2026-11-25T18:08:49.068649+00:00",
+      "locally_executed": false
+    },
+    "tokio-rs--tokio--5403": {
+      "status": "excluded_after_review",
+      "reason": "The original strace already exposes futex traffic and the report identifies the Notify waiter-list mutex as the proposed contention source. Every subscriber in the supplied sample is spawned at the same main call site; no missing historical caller is established by that program. CoroPerf creator stitching would not by itself fix the mutex trade-off. No extra throughput matrix is run.",
+      "reason_zh": "原始 strace 已显示 futex 调用，报告将 Notify waiter-list mutex 列为竞争来源。示例所有订阅者均在 main 同一调用点创建，没有建立历史调用者缺失；coroPerf 创建关系拼接本身不能修复 mutex 取舍，不额外跑吞吐矩阵。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/5403"
+      ],
+      "reviewed_at": "2026-11-25T18:08:49.068649+00:00",
+      "locally_executed": false
+    },
+    "tokio-rs--tokio--1899": {
+      "status": "needs_review",
+      "reason": "The issue supplies a Tokio 0.2 server and a 1,000-client/400-request load generator with indefinite thread parking and variable missing replies. It does not provide a bounded diagnostic sample or native caller evidence. Retain the channel/scheduling lead without running or redesigning the legacy load workload in this screen.",
+      "reason_zh": "报告给出 Tokio 0.2 server 及 1,000 个客户端、每个 400 请求的负载程序，使用无限期 thread park，缺失响应数不稳定。没有有界诊断样例或原生调用者证据；保留 channel/调度线索，本轮不执行或重新设计该历史负载。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/1899"
+      ],
+      "reviewed_at": "2026-11-25T18:08:49.068649+00:00",
+      "locally_executed": false
+    }
+  },
+  "native_result": {
+    "checked_at": "2026-11-25T18:07:18.363417+00:00",
+    "id": "magicstack--asyncpg--1307",
+    "issue_url": "https://github.com/MagicStack/asyncpg/issues/1307",
+    "kind": "native_component_only",
+    "selected_creation_join_catalogue": false,
+    "successful_reproduction_runs": 1,
+    "coroperf_attribution_verified": false,
+    "coroperf_captures": 0,
+    "execution": {
+      "id": "magicstack--asyncpg--1307",
+      "issue_url": "https://github.com/MagicStack/asyncpg/issues/1307",
+      "argv": [
+        "/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/bin/python",
+        "-B",
+        "/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1307/native.py",
+        "/tmp/coroperf-pg340-zgxsd45j"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds_including_cluster": 2.6023953009862453,
+      "owned_postgres_stopped": true,
+      "temporary_data_removed": true,
+      "target_executions": 1,
+      "coroperf_captures": 0,
+      "sources": {
+        "run_native.py": "a371840d675a8b7b67a9092566adece9e052ccbfd28b846edcb1aa7d0e47e7a4",
+        "native.py": "ca25a3f096d24e81fffcef0d7fd4a3a0a85429a50959768d4b77879bd16728fb"
+      },
+      "adaptations": [
+        "Cached local PostgreSQL 14 replaces podman container; private Unix socket replaces TCP.",
+        "Only the unpatched branch executes; native task snapshot added without a second acquisition attempt."
+      ]
+    },
+    "observations": {
+      "asyncpg_version": "0.29.0",
+      "native_task_snapshots": [
+        {
+          "coroutine": "main",
+          "stack": [
+            {
+              "file": "/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1307/native.py",
+              "line": 41,
+              "function": "main"
+            }
+          ]
+        }
+      ],
+      "holder_in_use_after_abort": true,
+      "queue_size_after_abort": 0,
+      "acquire_succeeded": false,
+      "reported_component_reproduced": true,
+      "elapsed_seconds": 2.0077992351725698,
+      "scope": "One unpatched abort/release component from the upstream supplied program. No HA failover, original production incident, fix validation, or CoroPerf attribution claim."
+    },
+    "successful_reproduction_replay_authorized": false,
+    "evidence_sha256": {
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout.json": "72280985f74735b5a1367824ec8feb3ffaa05cf4f08daf6f63dc096cc7ca8f7c",
+      "execution.json": "9b610dde8739b1f377575433ec1532f87dd46054703dc3cf45796b6d9e911f8e",
+      "initdb.log": "278cdcf50dd7b73c0523c991abf8935b1571ff2aa57283c0c6aed1a3ace728f6",
+      "server-command.json": "47133857420cc77163c125225169ca128acfca86489100c5777b84bcf59967f1",
+      "postgres.log": "211459cfd7edecafb9e7379fa77b43803cc46135f25950ff891ca670b8b85dd6"
+    }
+  },
+  "scope": "Source decisions use previously archived public issue bodies. One unpatched asyncpg abort/release component ran once; no HA incident or CoroPerf creator-attribution result is claimed. Ordinary managed exceptions and CI assertions are not classified as security findings.",
+  "source_collection": {
+    "run_directory": "perf-out/github-issue-discovery/automatic/runs/20261125T180030Z",
+    "started_at": "2026-11-25T18:00:30+00:00",
+    "finished_at": "2026-11-25T18:12:57+00:00",
+    "github_repositories": 28,
+    "github_search_windows": 72,
+    "github_unique_hits": 1264,
+    "official_trackers_complete": 5,
+    "collection_errors": 0,
+    "new_search_candidates": 413,
+    "window_comparable_to_previous": false,
+    "github_rate_control": {
+      "http_requests": 107,
+      "cache_hits": 0,
+      "rate_limit_responses": 6,
+      "incomplete_read_responses": 1,
+      "retried_requests": 7,
+      "deferred_requests": 0,
+      "rate_wait_seconds": 79.45952142798342,
+      "rate_wait_budget_seconds": 90,
+      "blocked_until_epoch": 0,
+      "requests_serialized": true
+    },
+    "archived_failures_then_successful_complete_response": 7,
+    "scope": "GitHub hits and official tracker records are separate metrics; rotating depth windows differ from the preceding run. Transient response failures are retained, even though every configured window ultimately completed."
+  }
+}
