@@ -1,0 +1,1164 @@
+{
+  "checked_at": "2026-11-25T20:28:16.175707+00:00",
+  "id": "omnilib--aiosqlite--259",
+  "selected_creation_join_catalogue": false,
+  "verification": {
+    "issue": "https://github.com/omnilib/aiosqlite/issues/259",
+    "native_reproductions": 1,
+    "python": "3.11.6 (main, Oct  3 2023, 01:26:22) [Clang 17.0.1 ]",
+    "aiosqlite": "0.19.0",
+    "verdict": "Reported cancellation/worker-lifetime behavior reproduced once on Linux.",
+    "observation": "Five completed cancelled Tasks leave five live queue-waiting worker threads and five database FDs at five seconds. Main returns, then the parent timeout terminates the otherwise live process.",
+    "attribution": "The generic asyncio graph identifies the five cancelled Tasks and their main_loop creation stacks. An explicit extra Thread.start observer joins each actual worker to its Task, recovering connect_to_db and the batch origin absent from worker physical stacks.",
+    "diagnosis_from_source": "CancelledError bypasses _connect except Exception in Python 3.11; __aenter__ never finishes, so __aexit__ does not run. The worker keeps its running flag. This is source-supported interpretation, not an autonomous detector.",
+    "repair_guidance_not_tested": "Handle cancellation during connection entry, stop the worker, and close a connector result that completes after cancellation in its owning worker. No patch or alternate version was executed.",
+    "limits": [
+      "Linux 3.11.6 adapts a Windows 3.11.5 report.",
+      "Only a five-second observation establishes retained resources; no claim of infinite lifetime from the snapshot alone.",
+      "No cancellation/write locking workload ran; no database corruption claim.",
+      "The extra thread producer is required for resource attribution; the generic asyncio collector alone has no thread join.",
+      "No new selected coroutine-creation case is claimed from the worker relation."
+    ],
+    "relations": [
+      {
+        "creator_task_id": "task:0x72d70dc86440",
+        "creation_segment": 1,
+        "sample_segment": 6,
+        "cancellation_segment": 11,
+        "thread_object_id": "0x72d70dcdc0d0",
+        "native_thread_id": 3778126,
+        "relation_kind": "worker_thread_started_by_task",
+        "identity_scope": "Same retained Connection/Thread object; current frame selected by its thread.ident.",
+        "resource_relation_is_coroutine_creation_join": false
+      },
+      {
+        "creator_task_id": "task:0x72d70dc86740",
+        "creation_segment": 2,
+        "sample_segment": 7,
+        "cancellation_segment": 12,
+        "thread_object_id": "0x72d70dcdcb10",
+        "native_thread_id": 3778127,
+        "relation_kind": "worker_thread_started_by_task",
+        "identity_scope": "Same retained Connection/Thread object; current frame selected by its thread.ident.",
+        "resource_relation_is_coroutine_creation_join": false
+      },
+      {
+        "creator_task_id": "task:0x72d70dc86800",
+        "creation_segment": 3,
+        "sample_segment": 8,
+        "cancellation_segment": 13,
+        "thread_object_id": "0x72d70dcc43d0",
+        "native_thread_id": 3778128,
+        "relation_kind": "worker_thread_started_by_task",
+        "identity_scope": "Same retained Connection/Thread object; current frame selected by its thread.ident.",
+        "resource_relation_is_coroutine_creation_join": false
+      },
+      {
+        "creator_task_id": "task:0x72d70dc868c0",
+        "creation_segment": 4,
+        "sample_segment": 9,
+        "cancellation_segment": 14,
+        "thread_object_id": "0x72d70dc44390",
+        "native_thread_id": 3778129,
+        "relation_kind": "worker_thread_started_by_task",
+        "identity_scope": "Same retained Connection/Thread object; current frame selected by its thread.ident.",
+        "resource_relation_is_coroutine_creation_join": false
+      },
+      {
+        "creator_task_id": "task:0x72d70dc86980",
+        "creation_segment": 5,
+        "sample_segment": 10,
+        "cancellation_segment": 15,
+        "thread_object_id": "0x72d70dc44ad0",
+        "native_thread_id": 3778130,
+        "relation_kind": "worker_thread_started_by_task",
+        "identity_scope": "Same retained Connection/Thread object; current frame selected by its thread.ident.",
+        "resource_relation_is_coroutine_creation_join": false
+      }
+    ],
+    "first_check_elapsed_seconds": 75.239385,
+    "artifact_sha256": {
+      "snapshot.json": "af89f98f8ef5156989aaf011b7cb7533050358dc56864bbeaa6fd3d781199d0e",
+      "graph.json": "f48332cd5895c9d7663c741768799d825befe594106dfb0012b7067283b9497f",
+      "tasks.json": "dfaf5c44edb5daa67786e6907dc98962c737fde06bbbc86ebdd0e61c5d04dbf7",
+      "process.json": "4dc92617f68d3aac0357659eae0ddc0ada9377b55fde5ebb14c3847e88e8afda",
+      "environment.json": "9adb7629f9e61e62123bb9a6b2a7277e3e54518c00ae15efe9a28587afe4d0e0"
+    }
+  },
+  "task_capture": {
+    "language": "python",
+    "runtime": "asyncio",
+    "segments": [
+      {
+        "id": 1,
+        "capture_reason": "create",
+        "coroutine_id": "task:0x72d70dc86440",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8844514,
+        "frames": [
+          {
+            "function": "task_factory",
+            "file": "./scripts/python_asyncio_debugger.py",
+            "line": 59
+          },
+          {
+            "function": "create_task",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 442
+          },
+          {
+            "function": "create_task",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/tasks.py",
+            "line": 384
+          },
+          {
+            "function": "<listcomp>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 70
+          },
+          {
+            "function": "main_loop",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 70
+          },
+          {
+            "function": "_run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 1922
+          },
+          {
+            "function": "run_forever",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 607
+          },
+          {
+            "function": "run_until_complete",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 640
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 190
+          },
+          {
+            "function": "<module>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 94
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "capture_reason": "create",
+        "coroutine_id": "task:0x72d70dc86740",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8844848,
+        "frames": [
+          {
+            "function": "task_factory",
+            "file": "./scripts/python_asyncio_debugger.py",
+            "line": 59
+          },
+          {
+            "function": "create_task",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 442
+          },
+          {
+            "function": "create_task",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/tasks.py",
+            "line": 384
+          },
+          {
+            "function": "<listcomp>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 70
+          },
+          {
+            "function": "main_loop",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 70
+          },
+          {
+            "function": "_run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 1922
+          },
+          {
+            "function": "run_forever",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 607
+          },
+          {
+            "function": "run_until_complete",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 640
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 190
+          },
+          {
+            "function": "<module>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 94
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "capture_reason": "create",
+        "coroutine_id": "task:0x72d70dc86800",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8845036,
+        "frames": [
+          {
+            "function": "task_factory",
+            "file": "./scripts/python_asyncio_debugger.py",
+            "line": 59
+          },
+          {
+            "function": "create_task",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 442
+          },
+          {
+            "function": "create_task",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/tasks.py",
+            "line": 384
+          },
+          {
+            "function": "<listcomp>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 70
+          },
+          {
+            "function": "main_loop",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 70
+          },
+          {
+            "function": "_run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 1922
+          },
+          {
+            "function": "run_forever",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 607
+          },
+          {
+            "function": "run_until_complete",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 640
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 190
+          },
+          {
+            "function": "<module>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 94
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "capture_reason": "create",
+        "coroutine_id": "task:0x72d70dc868c0",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.884519,
+        "frames": [
+          {
+            "function": "task_factory",
+            "file": "./scripts/python_asyncio_debugger.py",
+            "line": 59
+          },
+          {
+            "function": "create_task",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 442
+          },
+          {
+            "function": "create_task",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/tasks.py",
+            "line": 384
+          },
+          {
+            "function": "<listcomp>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 70
+          },
+          {
+            "function": "main_loop",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 70
+          },
+          {
+            "function": "_run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 1922
+          },
+          {
+            "function": "run_forever",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 607
+          },
+          {
+            "function": "run_until_complete",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 640
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 190
+          },
+          {
+            "function": "<module>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 94
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "capture_reason": "create",
+        "coroutine_id": "task:0x72d70dc86980",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8845341,
+        "frames": [
+          {
+            "function": "task_factory",
+            "file": "./scripts/python_asyncio_debugger.py",
+            "line": 59
+          },
+          {
+            "function": "create_task",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 442
+          },
+          {
+            "function": "create_task",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/tasks.py",
+            "line": 384
+          },
+          {
+            "function": "<listcomp>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 70
+          },
+          {
+            "function": "main_loop",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 70
+          },
+          {
+            "function": "_run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 1922
+          },
+          {
+            "function": "run_forever",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 607
+          },
+          {
+            "function": "run_until_complete",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 640
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 190
+          },
+          {
+            "function": "<module>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 94
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "capture_reason": "sample",
+        "coroutine_id": "task:0x72d70dc86440",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8872056,
+        "frames": [
+          {
+            "function": "connect_to_db",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 64
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "capture_reason": "sample",
+        "coroutine_id": "task:0x72d70dc86740",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8872197,
+        "frames": [
+          {
+            "function": "connect_to_db",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 64
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "capture_reason": "sample",
+        "coroutine_id": "task:0x72d70dc86800",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8872275,
+        "frames": [
+          {
+            "function": "connect_to_db",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 64
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "capture_reason": "sample",
+        "coroutine_id": "task:0x72d70dc868c0",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.887235,
+        "frames": [
+          {
+            "function": "connect_to_db",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 64
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "capture_reason": "sample",
+        "coroutine_id": "task:0x72d70dc86980",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8872402,
+        "frames": [
+          {
+            "function": "connect_to_db",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 64
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "capture_reason": "cancel",
+        "coroutine_id": "task:0x72d70dc86440",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.887521,
+        "frames": []
+      },
+      {
+        "id": 12,
+        "capture_reason": "cancel",
+        "coroutine_id": "task:0x72d70dc86740",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8875563,
+        "frames": []
+      },
+      {
+        "id": 13,
+        "capture_reason": "cancel",
+        "coroutine_id": "task:0x72d70dc86800",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.887563,
+        "frames": []
+      },
+      {
+        "id": 14,
+        "capture_reason": "cancel",
+        "coroutine_id": "task:0x72d70dc868c0",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8875675,
+        "frames": []
+      },
+      {
+        "id": 15,
+        "capture_reason": "cancel",
+        "coroutine_id": "task:0x72d70dc86980",
+        "thread_id": 3778125,
+        "timestamp": 1795638109.8875716,
+        "frames": []
+      }
+    ],
+    "edges": [
+      {
+        "from_segment_id": 1,
+        "to_segment_id": 6,
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "task:0x72d70dc86440"
+      },
+      {
+        "from_segment_id": 1,
+        "to_segment_id": 6,
+        "edge_kind": "same_coroutine_next_sample",
+        "coroutine_id": "task:0x72d70dc86440"
+      },
+      {
+        "from_segment_id": 2,
+        "to_segment_id": 7,
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "task:0x72d70dc86740"
+      },
+      {
+        "from_segment_id": 2,
+        "to_segment_id": 7,
+        "edge_kind": "same_coroutine_next_sample",
+        "coroutine_id": "task:0x72d70dc86740"
+      },
+      {
+        "from_segment_id": 3,
+        "to_segment_id": 8,
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "task:0x72d70dc86800"
+      },
+      {
+        "from_segment_id": 3,
+        "to_segment_id": 8,
+        "edge_kind": "same_coroutine_next_sample",
+        "coroutine_id": "task:0x72d70dc86800"
+      },
+      {
+        "from_segment_id": 4,
+        "to_segment_id": 9,
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "task:0x72d70dc868c0"
+      },
+      {
+        "from_segment_id": 4,
+        "to_segment_id": 9,
+        "edge_kind": "same_coroutine_next_sample",
+        "coroutine_id": "task:0x72d70dc868c0"
+      },
+      {
+        "from_segment_id": 5,
+        "to_segment_id": 10,
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "task:0x72d70dc86980"
+      },
+      {
+        "from_segment_id": 5,
+        "to_segment_id": 10,
+        "edge_kind": "same_coroutine_next_sample",
+        "coroutine_id": "task:0x72d70dc86980"
+      },
+      {
+        "from_segment_id": 6,
+        "to_segment_id": 11,
+        "edge_kind": "same_coroutine_cancel",
+        "coroutine_id": "task:0x72d70dc86440"
+      },
+      {
+        "from_segment_id": 7,
+        "to_segment_id": 12,
+        "edge_kind": "same_coroutine_cancel",
+        "coroutine_id": "task:0x72d70dc86740"
+      },
+      {
+        "from_segment_id": 8,
+        "to_segment_id": 13,
+        "edge_kind": "same_coroutine_cancel",
+        "coroutine_id": "task:0x72d70dc86800"
+      },
+      {
+        "from_segment_id": 9,
+        "to_segment_id": 14,
+        "edge_kind": "same_coroutine_cancel",
+        "coroutine_id": "task:0x72d70dc868c0"
+      },
+      {
+        "from_segment_id": 10,
+        "to_segment_id": 15,
+        "edge_kind": "same_coroutine_cancel",
+        "coroutine_id": "task:0x72d70dc86980"
+      }
+    ],
+    "active_coroutines": [],
+    "thread_current": {},
+    "exited_coroutines": [
+      "task:0x72d70dc86440",
+      "task:0x72d70dc86740",
+      "task:0x72d70dc86800",
+      "task:0x72d70dc868c0",
+      "task:0x72d70dc86980"
+    ]
+  },
+  "resource_snapshot": {
+    "timestamp_ns": 1846734284818347,
+    "threads": [
+      {
+        "thread_object_id": "0x72d70dcdc0d0",
+        "creator_task_id": "task:0x72d70dc86440",
+        "timestamp_ns": 1846729276919477,
+        "creation_stack": [
+          {
+            "function": "__await__",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 150
+          },
+          {
+            "function": "__aenter__",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 154
+          },
+          {
+            "function": "connect_to_db",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 64
+          },
+          {
+            "function": "_run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 1922
+          },
+          {
+            "function": "run_forever",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 607
+          },
+          {
+            "function": "run_until_complete",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 640
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 190
+          },
+          {
+            "function": "<module>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 94
+          }
+        ],
+        "thread_ident": 126267974219328,
+        "native_thread_id": 3778126,
+        "alive": true,
+        "running_flag": true,
+        "connection_assigned": false,
+        "physical_stack": [
+          {
+            "function": "wait",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 331
+          },
+          {
+            "function": "get",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/queue.py",
+            "line": 180
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 99
+          },
+          {
+            "function": "_bootstrap_inner",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 1045
+          },
+          {
+            "function": "_bootstrap",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 1002
+          }
+        ]
+      },
+      {
+        "thread_object_id": "0x72d70dcdcb10",
+        "creator_task_id": "task:0x72d70dc86740",
+        "timestamp_ns": 1846729277724184,
+        "creation_stack": [
+          {
+            "function": "__await__",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 150
+          },
+          {
+            "function": "__aenter__",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 154
+          },
+          {
+            "function": "connect_to_db",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 64
+          },
+          {
+            "function": "_run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 1922
+          },
+          {
+            "function": "run_forever",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 607
+          },
+          {
+            "function": "run_until_complete",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 640
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 190
+          },
+          {
+            "function": "<module>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 94
+          }
+        ],
+        "thread_ident": 126267965826624,
+        "native_thread_id": 3778127,
+        "alive": true,
+        "running_flag": true,
+        "connection_assigned": false,
+        "physical_stack": [
+          {
+            "function": "wait",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 331
+          },
+          {
+            "function": "get",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/queue.py",
+            "line": 180
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 99
+          },
+          {
+            "function": "_bootstrap_inner",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 1045
+          },
+          {
+            "function": "_bootstrap",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 1002
+          }
+        ]
+      },
+      {
+        "thread_object_id": "0x72d70dcc43d0",
+        "creator_task_id": "task:0x72d70dc86800",
+        "timestamp_ns": 1846729278179803,
+        "creation_stack": [
+          {
+            "function": "__await__",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 150
+          },
+          {
+            "function": "__aenter__",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 154
+          },
+          {
+            "function": "connect_to_db",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 64
+          },
+          {
+            "function": "_run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 1922
+          },
+          {
+            "function": "run_forever",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 607
+          },
+          {
+            "function": "run_until_complete",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 640
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 190
+          },
+          {
+            "function": "<module>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 94
+          }
+        ],
+        "thread_ident": 126267957433920,
+        "native_thread_id": 3778128,
+        "alive": true,
+        "running_flag": true,
+        "connection_assigned": false,
+        "physical_stack": [
+          {
+            "function": "wait",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 331
+          },
+          {
+            "function": "get",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/queue.py",
+            "line": 180
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 99
+          },
+          {
+            "function": "_bootstrap_inner",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 1045
+          },
+          {
+            "function": "_bootstrap",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 1002
+          }
+        ]
+      },
+      {
+        "thread_object_id": "0x72d70dc44390",
+        "creator_task_id": "task:0x72d70dc868c0",
+        "timestamp_ns": 1846729278558289,
+        "creation_stack": [
+          {
+            "function": "__await__",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 150
+          },
+          {
+            "function": "__aenter__",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 154
+          },
+          {
+            "function": "connect_to_db",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 64
+          },
+          {
+            "function": "_run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 1922
+          },
+          {
+            "function": "run_forever",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 607
+          },
+          {
+            "function": "run_until_complete",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 640
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 190
+          },
+          {
+            "function": "<module>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 94
+          }
+        ],
+        "thread_ident": 126267743532608,
+        "native_thread_id": 3778129,
+        "alive": true,
+        "running_flag": true,
+        "connection_assigned": false,
+        "physical_stack": [
+          {
+            "function": "wait",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 331
+          },
+          {
+            "function": "get",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/queue.py",
+            "line": 180
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 99
+          },
+          {
+            "function": "_bootstrap_inner",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 1045
+          },
+          {
+            "function": "_bootstrap",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 1002
+          }
+        ]
+      },
+      {
+        "thread_object_id": "0x72d70dc44ad0",
+        "creator_task_id": "task:0x72d70dc86980",
+        "timestamp_ns": 1846729279039891,
+        "creation_stack": [
+          {
+            "function": "__await__",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 150
+          },
+          {
+            "function": "__aenter__",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 154
+          },
+          {
+            "function": "connect_to_db",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 64
+          },
+          {
+            "function": "_run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 1922
+          },
+          {
+            "function": "run_forever",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 607
+          },
+          {
+            "function": "run_until_complete",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "line": 640
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "line": 190
+          },
+          {
+            "function": "<module>",
+            "file": "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+            "line": 94
+          }
+        ],
+        "thread_ident": 126267735139904,
+        "native_thread_id": 3778130,
+        "alive": true,
+        "running_flag": true,
+        "connection_assigned": false,
+        "physical_stack": [
+          {
+            "function": "wait",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 331
+          },
+          {
+            "function": "get",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/queue.py",
+            "line": 180
+          },
+          {
+            "function": "run",
+            "file": "./.tools/aiosqlite-259-0.19.0/aiosqlite/core.py",
+            "line": 99
+          },
+          {
+            "function": "_bootstrap_inner",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 1045
+          },
+          {
+            "function": "_bootstrap",
+            "file": "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/lib/python3.11/threading.py",
+            "line": 1002
+          }
+        ]
+      }
+    ],
+    "database_fds": [
+      {
+        "fd": "6",
+        "target": "./perf-out/github-issue-discovery/automatic/aiosqlite-259-first-check-20261126/test.db"
+      },
+      {
+        "fd": "7",
+        "target": "./perf-out/github-issue-discovery/automatic/aiosqlite-259-first-check-20261126/test.db"
+      },
+      {
+        "fd": "8",
+        "target": "./perf-out/github-issue-discovery/automatic/aiosqlite-259-first-check-20261126/test.db"
+      },
+      {
+        "fd": "9",
+        "target": "./perf-out/github-issue-discovery/automatic/aiosqlite-259-first-check-20261126/test.db"
+      },
+      {
+        "fd": "10",
+        "target": "./perf-out/github-issue-discovery/automatic/aiosqlite-259-first-check-20261126/test.db"
+      }
+    ]
+  },
+  "task_terminal_state": [
+    {
+      "task_id": "task:0x72d70dc86440",
+      "done": true,
+      "cancelled": true
+    },
+    {
+      "task_id": "task:0x72d70dc86740",
+      "done": true,
+      "cancelled": true
+    },
+    {
+      "task_id": "task:0x72d70dc86800",
+      "done": true,
+      "cancelled": true
+    },
+    {
+      "task_id": "task:0x72d70dc868c0",
+      "done": true,
+      "cancelled": true
+    },
+    {
+      "task_id": "task:0x72d70dc86980",
+      "done": true,
+      "cancelled": true
+    }
+  ],
+  "process": {
+    "exit_code": null,
+    "stdout": "EVIDENCE_SAVED_MAIN_RETURNED\n",
+    "stderr": null,
+    "timed_out": true,
+    "timeout_seconds": 8,
+    "command": [
+      "./.tools/aiosqlite-cursor-connection/python/cpython-3.11.6-linux-x86_64-gnu/bin/python3.11",
+      "./research/github-issue-discovery/aiosqlite-259/first_check.py",
+      "./perf-out/github-issue-discovery/automatic/aiosqlite-259-first-check-20261126"
+    ],
+    "elapsed_seconds": 8.006096835015342,
+    "finished_at": "2026-11-25T20:21:57.576960+00:00",
+    "first_check_elapsed_seconds": 75.239385
+  }
+}
