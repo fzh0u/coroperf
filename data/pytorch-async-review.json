@@ -1,0 +1,450 @@
+{
+  "schema": "coroperf.pytorch-async-review/v1",
+  "reviewed_at": "2026-11-25T07:22:57.892778+00:00",
+  "new_verified_coroperf_cases": 0,
+  "selected_catalogue_entries": 126,
+  "manual_review_counts": {
+    "skipped_review": 3,
+    "excluded_after_review": 5,
+    "needs_review": 2
+  },
+  "manual_reviews": [
+    {
+      "id": "pytorch--pytorch--176178",
+      "status": "skipped_review",
+      "reason": "The supplied CuTeDSL grouped GEMM workload reports CUDA_ERROR_ILLEGAL_ADDRESS from a TMA descriptor shape mismatch. Keep reproduction on hold; native memory-access impact is unassessed. No tensor allocation, compilation, autotuning, GPU kernel or supplied script was executed.",
+      "reason_zh": "附带 CuTeDSL 分组 GEMM 工作负载报告 TMA 描述符形状不匹配及 CUDA_ERROR_ILLEGAL_ADDRESS。按原生非法地址访问线索暂缓，影响未评估；未分配张量、编译、自动调优、启动 GPU kernel 或运行附带脚本。",
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/176178"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    },
+    {
+      "id": "pytorch--pytorch--206193",
+      "status": "skipped_review",
+      "reason": "The report deliberately orders two XCCL collectives differently across ranks and streams and records UR_RESULT_ERROR_DEVICE_LOST. Keep this device/availability workload on hold; impact unassessed. No process group, device stream, collective, busy loop or supplied script was executed.",
+      "reason_zh": "报告故意让两个 XCCL collective 在不同 rank 与 stream 上以不同顺序就绪，并记录 UR_RESULT_ERROR_DEVICE_LOST。按设备与可用性线索暂缓，影响未评估；未创建进程组、设备 stream、运行 collective、忙循环或附带脚本。",
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/206193"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    },
+    {
+      "id": "pytorch--pytorch--92294",
+      "status": "skipped_review",
+      "reason": "The original infinite IterableDataset mixes main-process and forked-worker jit.fork calls, with an upstream-confirmed stall. Keep this unbounded multiprocessing workload on hold. The issue was closed by a TorchScript deprecation notice, which does not establish a repair. No DataLoader worker, jit.fork call or supplied program was executed.",
+      "reason_zh": "原始无限 IterableDataset 混合主进程与 fork worker 中的 jit.fork，上游评论确认会卡住。该无界多进程工作负载保持暂缓；关闭原因是 TorchScript 弃用通知，不能据此认定已修复。未启动 DataLoader worker、调用 jit.fork 或运行附带程序。",
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/92294",
+        "https://github.com/pytorch/pytorch/issues/92294#issuecomment-1397768211",
+        "https://github.com/pytorch/pytorch/issues/92294#issuecomment-5221078226"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    },
+    {
+      "id": "pytorch--pytorch--47932",
+      "status": "excluded_after_review",
+      "reason": "This is a jit.fork documentation formatting/example report; its closing comment points to a documentation PR. It does not establish a missing asynchronous caller or a runtime diagnostic comparison. No workload or fix tested.",
+      "reason_zh": "这是 jit.fork 文档排版与示例问题，关闭评论指向文档 PR；尚未建立异步调用者缺失或运行时诊断对照。未执行工作负载或验证修复。",
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/47932"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    },
+    {
+      "id": "pytorch--pytorch--44827",
+      "status": "excluded_after_review",
+      "reason": "This RFC proposes pipeline-parallel APIs and scheduling tradeoffs; its Future.then example is design material. It provides no concrete missing-caller incident for the current evidence catalogue. No model training or pipeline workload tested.",
+      "reason_zh": "该 RFC 讨论流水线并行 API 与调度取舍，Future.then 示例属于设计材料；没有为当前证据目录建立具体的调用者缺失事件。未运行模型训练或流水线工作负载。",
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/44827"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    },
+    {
+      "id": "pytorch--pytorch--41123",
+      "status": "excluded_after_review",
+      "reason": "The report identifies RRef proxy _local_invoke failing to preserve the async_execution decorator attribute and returning the wrapped Future. This API metadata propagation defect does not establish missing caller attribution. Its closing comment lists two PRs; neither was locally tested.",
+      "reason_zh": "报告已定位 RRef 代理 _local_invoke 没有保留 async_execution 装饰器属性及返回 Future 的问题。这一 API 元数据传播缺陷尚未建立调用归属缺失；关闭评论列出两个 PR，本地均未测试。",
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/41123"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    },
+    {
+      "id": "tikv--tikv--11872",
+      "status": "excluded_after_review",
+      "reason": "This is a tracing implementation/GSoC task list, including exporters and client trace-context support. It does not supply a concrete missing coroutine-caller incident or a stock-versus-CoroPerf comparison. No TiKV/TiDB service, exporter or tracing patch tested.",
+      "reason_zh": "这是 tracing 实现与 GSoC 任务清单，涉及导出器及客户端 trace context；尚未给出具体协程调用者缺失事件或原生与 coroPerf 对照。未运行 TiKV/TiDB、导出器或 tracing 补丁。",
+      "sources": [
+        "https://github.com/tikv/tikv/issues/11872"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    },
+    {
+      "id": "tikv--tikv--2469",
+      "status": "excluded_after_review",
+      "reason": "This general OpenTracing proposal discusses integration and overhead preferences, without a concrete incident demonstrating lost asynchronous caller attribution. It is not selected as a verified case. No database benchmark, integration or performance claim tested.",
+      "reason_zh": "这是一般性的 OpenTracing 引入建议，讨论集成与开销取舍，尚无具体事件证明异步调用归属丢失。不选为已验证案例；未执行数据库基准、集成或性能测试。",
+      "sources": [
+        "https://github.com/tikv/tikv/issues/2469"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    },
+    {
+      "id": "tikv--tikv--5714",
+      "status": "needs_review",
+      "reason": "The report identifies a real per-request phase-cost observability gap and asks for context across thread pools. Retain as a candidate: a TiKV coprocessor workload, current native trace/slow-log comparison and independently checked extra CoroPerf fact are still needed. No runtime result or performance benefit is claimed.",
+      "reason_zh": "报告提出真实的单请求阶段耗时观测缺口，并要求跨线程池传递上下文。保留候选：仍需 TiKV coprocessor 工作负载、当前原生 trace/慢日志对照，以及独立核对的 coroPerf 新增事实。尚无运行结果或性能收益声明。",
+      "sources": [
+        "https://github.com/tikv/tikv/issues/5714"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    },
+    {
+      "id": "apache--flink--flink-38180",
+      "status": "needs_review",
+      "reason": "The official report and source change identify cleanup-triggered failExternally replacing the original Task failure. Preserve as a candidate pending a bounded native control and extra CoroPerf attribution. Jira is Closed/Fixed and lists 2.1.0, but released artifact membership was not checked. The exact author-referenced commit was inspected; no Task, cluster, upstream test or repair executed.",
+      "reason_zh": "官方报告与源码变更定位了清理触发的 failExternally 覆盖 Task 原始失败。保留候选，仍需有界原生对照及 coroPerf 新增归属事实。Jira 为 Closed/Fixed 并列出 2.1.0，但尚未核对发行制品是否包含修复；已检查作者所指的精确提交，未执行 Task、集群、上游测试或修复。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/FLINK-38180",
+        "https://github.com/apache/flink/pull/26861",
+        "https://github.com/apache/flink/commit/dc2627b565d88b70b25d74e2da237450a267a8da"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    }
+  ],
+  "scheduled_reclassification": {
+    "github_hits": 800,
+    "windows": 48,
+    "same_issue_id_set": true,
+    "same_search_windows": true,
+    "http_requests": 0,
+    "cache_hits": 68,
+    "remaining_source_errors": 0
+  },
+  "focused_search": {
+    "initial_broad_windows": [
+      {
+        "repository": "pytorch/pytorch",
+        "query": "repo:pytorch/pytorch is:issue (\"torch.jit.fork\" OR \"jit.fork\") (exception OR traceback) sort:comments-desc",
+        "url": "https://api.github.com/search/issues?q=repo%3Apytorch%2Fpytorch+is%3Aissue+%28%22torch.jit.fork%22+OR+%22jit.fork%22%29+%28exception+OR+traceback%29+sort%3Acomments-desc&per_page=20",
+        "archive": "b1af8d326f8a4b656c06f092f27e4eb1b6814c10b72cdd50fffccb77bc55845e",
+        "observed_at": "2026-11-25T07:15:28+00:00",
+        "total_count": 16822,
+        "returned": 20,
+        "incomplete_results": false
+      },
+      {
+        "repository": "pytorch/pytorch",
+        "query": "repo:pytorch/pytorch is:issue \"Future\" (\"callback\" OR \"stack trace\") sort:comments-desc",
+        "url": "https://api.github.com/search/issues?q=repo%3Apytorch%2Fpytorch+is%3Aissue+%22Future%22+%28%22callback%22+OR+%22stack+trace%22%29+sort%3Acomments-desc&per_page=20",
+        "archive": "3a1a47038495180a0d5e498e1b4bb4f77fe6b6ab1221c7259ceb5a5d65d1c6a7",
+        "observed_at": "2026-11-25T07:15:35+00:00",
+        "total_count": 3406,
+        "returned": 20,
+        "incomplete_results": false
+      },
+      {
+        "repository": "pytorch/pytorch",
+        "query": "repo:pytorch/pytorch is:issue \"async_execution\" (exception OR debug) sort:comments-desc",
+        "url": "https://api.github.com/search/issues?q=repo%3Apytorch%2Fpytorch+is%3Aissue+%22async_execution%22+%28exception+OR+debug%29+sort%3Acomments-desc&per_page=20",
+        "archive": "948f91673e9fc369262fef14784e5c290b72cc3bb2f3dec97d1a6cf326709da0",
+        "observed_at": "2026-11-25T07:15:41+00:00",
+        "total_count": 4,
+        "returned": 4,
+        "incomplete_results": false
+      },
+      {
+        "repository": "tikv/tikv",
+        "query": "repo:tikv/tikv is:issue \"tracing\" (future OR span) sort:comments-desc",
+        "url": "https://api.github.com/search/issues?q=repo%3Atikv%2Ftikv+is%3Aissue+%22tracing%22+%28future+OR+span%29+sort%3Acomments-desc&per_page=20",
+        "archive": "659ce697ee0d7074da13b8146ff41fe58739ac39c1a2a9881de9e4c0ed4686b6",
+        "observed_at": "2026-11-25T07:15:47+00:00",
+        "total_count": 138,
+        "returned": 20,
+        "incomplete_results": false
+      }
+    ],
+    "initial_raw_hits": 64,
+    "initial_unique_issues": 56,
+    "refined_windows": [
+      {
+        "repository": "pytorch/pytorch",
+        "query": "repo:pytorch/pytorch is:issue \"jit.fork\" in:body sort:comments-desc",
+        "url": "https://api.github.com/search/issues?q=repo%3Apytorch%2Fpytorch+is%3Aissue+%22jit.fork%22+in%3Abody+sort%3Acomments-desc&per_page=20",
+        "archive": "35f9bc1441394cf7b2a53ce27f90af5af7c903eecd24d88e0c7fa82f3a9d2362",
+        "observed_at": "2026-11-25T07:16:43+00:00",
+        "total_count": 2,
+        "returned": 2,
+        "incomplete_results": false
+      },
+      {
+        "repository": "pytorch/pytorch",
+        "query": "repo:pytorch/pytorch is:issue \"Future.then\" in:body sort:comments-desc",
+        "url": "https://api.github.com/search/issues?q=repo%3Apytorch%2Fpytorch+is%3Aissue+%22Future.then%22+in%3Abody+sort%3Acomments-desc&per_page=20",
+        "archive": "2055d5f31a76d3209651a22b541585c1afbbd0933b3ae1c7bd53ad88c1af6b01",
+        "observed_at": "2026-11-25T07:16:49+00:00",
+        "total_count": 1,
+        "returned": 1,
+        "incomplete_results": false
+      },
+      {
+        "repository": "pytorch/pytorch",
+        "query": "repo:pytorch/pytorch is:issue \"async_execution\" in:title sort:comments-desc",
+        "url": "https://api.github.com/search/issues?q=repo%3Apytorch%2Fpytorch+is%3Aissue+%22async_execution%22+in%3Atitle+sort%3Acomments-desc&per_page=20",
+        "archive": "0c313a253e9ed0377e996a516e6a5cfec7440b78f6570718de0a1dbdce1f5976",
+        "observed_at": "2026-11-25T07:16:56+00:00",
+        "total_count": 1,
+        "returned": 1,
+        "incomplete_results": false
+      },
+      {
+        "repository": "tikv/tikv",
+        "query": "repo:tikv/tikv is:issue tracing in:title sort:comments-desc",
+        "url": "https://api.github.com/search/issues?q=repo%3Atikv%2Ftikv+is%3Aissue+tracing+in%3Atitle+sort%3Acomments-desc&per_page=20",
+        "archive": "8aea69253d99701176b4914de1b2b17fd2fb993e47b07d05a61e841a11604aef",
+        "observed_at": "2026-11-25T07:17:02+00:00",
+        "total_count": 3,
+        "returned": 3,
+        "incomplete_results": false
+      }
+    ],
+    "refined_raw_hits": 7,
+    "refined_unique_issues": 7,
+    "combined_unique_issues": 61,
+    "http_requests": 8,
+    "errors": [],
+    "scope": "The initial queries returned many unrelated high-discussion platform and release issues. Their exact queries/results are retained. Explicit body/title qualifiers produced the seven-item refined review set. These separate windows are not added to the 800 scheduled hits or 48 scheduled windows."
+  },
+  "persistent_holds": {
+    "automatic_total": 197,
+    "manual_total": 45,
+    "displayed_rows_after_deduplication": 232,
+    "new_automatic_signals": [
+      {
+        "id": "pytorch--pytorch--176178",
+        "title": "[CuTeDSL] grouped_mm illegal address from TMA descriptor init/update shape mismatch",
+        "url": "https://github.com/pytorch/pytorch/issues/176178",
+        "repository": "pytorch/pytorch",
+        "status": "skipped_review",
+        "risk_signal": "illegal address",
+        "signal_title": "[CuTeDSL] grouped_mm illegal address from TMA descriptor init/update shape mismatch",
+        "risk_signal_source": "title_or_labels",
+        "first_seen": "2026-11-25T06:03:23+00:00",
+        "last_seen": "2026-11-25T06:03:23+00:00"
+      },
+      {
+        "id": "pytorch--pytorch--206193",
+        "title": "[XPU] xccl: collectives of one process group issued from two unordered streams hang the device (UR_RESULT_ERROR_DEVICE_LOST)",
+        "url": "https://github.com/pytorch/pytorch/issues/206193",
+        "repository": "pytorch/pytorch",
+        "status": "skipped_review",
+        "risk_signal": "UR_RESULT_ERROR_DEVICE_LOST",
+        "signal_title": "[XPU] xccl: collectives of one process group issued from two unordered streams hang the device (UR_RESULT_ERROR_DEVICE_LOST)",
+        "risk_signal_source": "title_or_labels",
+        "first_seen": "2026-11-25T06:03:23+00:00",
+        "last_seen": "2026-11-25T06:03:23+00:00"
+      },
+      {
+        "id": "pytorch--pytorch--21819",
+        "title": "RuntimeError: CUDA error: an illegal memory access was encountered",
+        "url": "https://github.com/pytorch/pytorch/issues/21819",
+        "repository": "pytorch/pytorch",
+        "status": "skipped_review",
+        "risk_signal": "CUDA error: an illegal memory access",
+        "signal_title": "RuntimeError: CUDA error: an illegal memory access was encountered",
+        "risk_signal_source": "body_error_signature",
+        "first_seen": "2026-11-25T07:15:28+00:00",
+        "last_seen": "2026-11-25T07:15:28+00:00"
+      },
+      {
+        "id": "pytorch--pytorch--30664",
+        "title": "AssertionError: Torch not compiled with CUDA enabled",
+        "url": "https://github.com/pytorch/pytorch/issues/30664",
+        "repository": "pytorch/pytorch",
+        "status": "skipped_review",
+        "risk_signal": "AssertionError",
+        "signal_title": "AssertionError: Torch not compiled with CUDA enabled",
+        "risk_signal_source": "title_or_labels",
+        "first_seen": "2026-11-25T07:15:35+00:00",
+        "last_seen": "2026-11-25T07:15:35+00:00"
+      },
+      {
+        "id": "tikv--tikv--2643",
+        "title": "storage::test_raftkv::test_read_leader_in_lease randomly failed",
+        "url": "https://github.com/tikv/tikv/issues/2643",
+        "repository": "tikv/tikv",
+        "status": "skipped_review",
+        "risk_signal": "thread 'storage::test_raftkv::test_read_leader_in_lease' panicked at",
+        "signal_title": "storage::test_raftkv::test_read_leader_in_lease randomly failed",
+        "risk_signal_source": "body_error_signature",
+        "first_seen": "2026-11-25T07:15:47+00:00",
+        "last_seen": "2026-11-25T07:15:47+00:00"
+      },
+      {
+        "id": "tikv--tikv--2863",
+        "title": "test_server_partition_write  failed on master",
+        "url": "https://github.com/tikv/tikv/issues/2863",
+        "repository": "tikv/tikv",
+        "status": "skipped_review",
+        "risk_signal": "thread 'raftstore_cases::test_transport::test_server_partition_write' panicked at",
+        "signal_title": "test_server_partition_write  failed on master",
+        "risk_signal_source": "body_error_signature",
+        "first_seen": "2026-11-25T07:15:47+00:00",
+        "last_seen": "2026-11-25T07:15:47+00:00"
+      },
+      {
+        "id": "tikv--tikv--3147",
+        "title": "Test test_node_learner_conf_change failed",
+        "url": "https://github.com/tikv/tikv/issues/3147",
+        "repository": "tikv/tikv",
+        "status": "skipped_review",
+        "risk_signal": "thread 'raftstore_cases::test_conf_change::test_node_learner_conf_change' panicked at",
+        "signal_title": "Test test_node_learner_conf_change failed",
+        "risk_signal_source": "body_error_signature",
+        "first_seen": "2026-11-25T07:15:47+00:00",
+        "last_seen": "2026-11-25T07:15:47+00:00"
+      },
+      {
+        "id": "tikv--tikv--3217",
+        "title": "test raftstore_cases::test_compact_after_delete::test_node_compact_after_delete failed",
+        "url": "https://github.com/tikv/tikv/issues/3217",
+        "repository": "tikv/tikv",
+        "status": "skipped_review",
+        "risk_signal": "thread 'raftstore_cases::test_compact_after_delete::test_node_compact_after_delete' panicked at",
+        "signal_title": "test raftstore_cases::test_compact_after_delete::test_node_compact_after_delete failed",
+        "risk_signal_source": "body_error_signature",
+        "first_seen": "2026-11-25T07:15:47+00:00",
+        "last_seen": "2026-11-25T07:15:47+00:00"
+      },
+      {
+        "id": "tikv--tikv--3255",
+        "title": "test failpoints_cases::test_merge::test_node_merge_restart  failed",
+        "url": "https://github.com/tikv/tikv/issues/3255",
+        "repository": "tikv/tikv",
+        "status": "skipped_review",
+        "risk_signal": "thread 'failpoints_cases::test_merge::test_node_merge_restart' panicked at",
+        "signal_title": "test failpoints_cases::test_merge::test_node_merge_restart  failed",
+        "risk_signal_source": "body_error_signature",
+        "first_seen": "2026-11-25T07:15:47+00:00",
+        "last_seen": "2026-11-25T07:15:47+00:00"
+      },
+      {
+        "id": "tikv--tikv--4309",
+        "title": "MustConsumeVec double-panics in dtor",
+        "url": "https://github.com/tikv/tikv/issues/4309",
+        "repository": "tikv/tikv",
+        "status": "skipped_review",
+        "risk_signal": "panics",
+        "signal_title": "MustConsumeVec double-panics in dtor",
+        "risk_signal_source": "title_or_labels",
+        "first_seen": "2026-11-25T07:15:47+00:00",
+        "last_seen": "2026-11-25T07:15:47+00:00"
+      },
+      {
+        "id": "tikv--tikv--4609",
+        "title": "Fuzz test failed for tikv::coprocessor::codec::mysql::Duration",
+        "url": "https://github.com/tikv/tikv/issues/4609",
+        "repository": "tikv/tikv",
+        "status": "skipped_review",
+        "risk_signal": "thread '<unnamed>' panicked at",
+        "signal_title": "Fuzz test failed for tikv::coprocessor::codec::mysql::Duration",
+        "risk_signal_source": "body_error_signature",
+        "first_seen": "2026-11-25T07:15:47+00:00",
+        "last_seen": "2026-11-25T07:15:47+00:00"
+      }
+    ],
+    "previously_missed_gpu_issue_ids": [
+      "pytorch--pytorch--176178",
+      "pytorch--pytorch--206193"
+    ],
+    "new_manual_hold_ids": [
+      "pytorch--pytorch--176178",
+      "pytorch--pytorch--206193",
+      "pytorch--pytorch--92294"
+    ],
+    "newly_held_programs_executed": 0,
+    "scope": "Failure wording is a reproduction hold signal, not a finding of a security vulnerability. Previous selected cases and all previous manual hold records are unchanged."
+  },
+  "remaining_candidates": [
+    {
+      "id": "tikv--tikv--5714",
+      "status": "needs_review",
+      "reason": "The report identifies a real per-request phase-cost observability gap and asks for context across thread pools. Retain as a candidate: a TiKV coprocessor workload, current native trace/slow-log comparison and independently checked extra CoroPerf fact are still needed. No runtime result or performance benefit is claimed.",
+      "reason_zh": "报告提出真实的单请求阶段耗时观测缺口，并要求跨线程池传递上下文。保留候选：仍需 TiKV coprocessor 工作负载、当前原生 trace/慢日志对照，以及独立核对的 coroPerf 新增事实。尚无运行结果或性能收益声明。",
+      "sources": [
+        "https://github.com/tikv/tikv/issues/5714"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    },
+    {
+      "id": "apache--flink--flink-38180",
+      "status": "needs_review",
+      "reason": "The official report and source change identify cleanup-triggered failExternally replacing the original Task failure. Preserve as a candidate pending a bounded native control and extra CoroPerf attribution. Jira is Closed/Fixed and lists 2.1.0, but released artifact membership was not checked. The exact author-referenced commit was inspected; no Task, cluster, upstream test or repair executed.",
+      "reason_zh": "官方报告与源码变更定位了清理触发的 failExternally 覆盖 Task 原始失败。保留候选，仍需有界原生对照及 coroPerf 新增归属事实。Jira 为 Closed/Fixed 并列出 2.1.0，但尚未核对发行制品是否包含修复；已检查作者所指的精确提交，未执行 Task、集群、上游测试或修复。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/FLINK-38180",
+        "https://github.com/apache/flink/pull/26861",
+        "https://github.com/apache/flink/commit/dc2627b565d88b70b25d74e2da237450a267a8da"
+      ],
+      "reviewed_at": "2026-11-25T07:22:57.892778+00:00"
+    }
+  ],
+  "flink_source_review": {
+    "official_status": "Closed",
+    "official_resolution": "Fixed",
+    "listed_fix_versions": [
+      "2.1.0"
+    ],
+    "author_referenced_commit": "dc2627b565d88b70b25d74e2da237450a267a8da",
+    "pull_request_merge_commit": "ae96dc0a0063ce2dbe9bc381a391cf4512784410",
+    "native_regression_test_source_inspected": true,
+    "upstream_tests_executed": false,
+    "released_fix_artifact_verified": false,
+    "scope": "The two new native tests assert that the original exception remains the Task failure cause when cleanup fails or cancels externally. Reading the tests is not executing them. Jira version metadata is not a verified release-membership result."
+  },
+  "automation_checks": {
+    "offline_tests_passed": 48,
+    "extended_title_and_body_variants": [
+      "illegal address",
+      "CUDA_ERROR_ILLEGAL_ADDRESS",
+      "UR_RESULT_ERROR_DEVICE_LOST",
+      "ZE_RESULT_ERROR_DEVICE_LOST",
+      "VK_ERROR_DEVICE_LOST"
+    ],
+    "programs_executed": 0
+  },
+  "cloud_reporting": {
+    "saved_and_enabled": true,
+    "timezone": "Asia/Shanghai",
+    "first_scheduled_run": "2026-11-25T16:30:00+08:00",
+    "interval_hours": 2,
+    "first_actual_delivery_verified": false,
+    "source_url": "https://fzh0u.github.io/coroperf/zh-cn/discovery.html",
+    "scope": "Reads and reports existing published results. The existing local search/publication timer continues at even hours. No associated Sites source/version/audience changes."
+  },
+  "upstream_source_sha256": {
+    "flink-26861-files.json": "98166ff40d7cae0f5178db85338fe9f5035345d1819b08e623eb5da7365286f6",
+    "flink-26861.json": "2a1793628d2c0df634825ff13617a8895a7f7f79105a41dc59ec70b90d5ccf1d",
+    "flink-38180.json": "e3ac27b0f08ed502db7d05556e9680772ddca3962fc61600bd3d706ad66baae2",
+    "flink-dc2627b565d.json": "7ec5e6ae43e8ef78978d8e767ae5b60c31b0b48bbb678b4b72b4f29ae038a859",
+    "issue-176178.json": "decbb48d7a3d8cd40a525550c95ba8dd0332610216b453b41c8dd100e1bc8444",
+    "issue-206193.json": "0302ee4596e202baf245fc3b22f66c7d648b4e4e39862468c21326deb602720b",
+    "pytorch-pytorch-41123-comments.json": "bd4102a4b0dfd0cab3fe0eedbe30924fe8a87b2cf298968b94ef0cf75db79b3e",
+    "pytorch-pytorch-41123.json": "8ab8a45330fe639e1200ed70251736e2b24c0163889307404688538e06d8e97b",
+    "pytorch-pytorch-44827-comments.json": "83a0eaad19a1d386b8058029dfbf4672e36155fe4bc686a625c38e9456b9729f",
+    "pytorch-pytorch-44827.json": "3ef7247b70708bfe4899b4f67dace8cef76d99bddac8e844c9fc76566dc4a21c",
+    "pytorch-pytorch-47932-comments.json": "88c5495fcac2f4ae76c8476ca341e9f49c679e62c78c5333315d08dd1a3b6740",
+    "pytorch-pytorch-47932.json": "3b496cd59e6f75e47f16751eeadbaa9d268cb6a72ddc02de357612764c4edd30",
+    "pytorch-pytorch-92294-comments.json": "b0aeedc173b212a6c55b7286fa40457ad9b09b6e5c4613c9ad2018870d46f694",
+    "pytorch-pytorch-92294.json": "ec8fd9870ec002d179ec43c78b0eefddcd339218a8e166d354184d54555c34b2",
+    "tikv-tikv-11872-comments.json": "d4629732a8c395e34780d1ca6123ee80b5a901a9750a15395520974b1fd8a51e",
+    "tikv-tikv-11872.json": "047757386f5f0d40bf814ac43a72e85f87f7194fc04a5a12c3219a1eb5f33361",
+    "tikv-tikv-2469-comments.json": "d1b8722e8fdae1b3495d02d6a6a29a77786ffb7fc5410f7b55ffb608918ddac2",
+    "tikv-tikv-2469.json": "1cbf70313e36e61550e6a4e5deaea50a7806ffb5c16ed91cb6e8e1885cd88304",
+    "tikv-tikv-5714-comments.json": "4ae21f3de2c6284c448eec31672d823e348cfb3e5ba51eb82eaf83c4bd3eb0c6",
+    "tikv-tikv-5714.json": "54030376911ccf19ed2e1ac89cd7c89e7da00f54567f656da68523787d113f4d"
+  },
+  "runtime_scope": "Read-only API/source review and offline automation checks only. No PyTorch runtime, GPU workload, jit.fork/DataLoader process, TiKV/TiDB service, Flink Task/cluster or supplied issue program was executed. This review adds zero verified CoroPerf cases."
+}
