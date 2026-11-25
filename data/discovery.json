@@ -43095,13 +43095,15 @@
       "locally_executed": false
     },
     "grpc--grpc-go--2942": {
-      "status": "needs_review",
-      "reason": "Retained for a pinned historical performance check: Go 1.12 and the referenced gRPC revision/benchmark are needed. No modern-toolchain control is presented as the old stack-growth incident.",
-      "reason_zh": "保留待做固定历史环境的性能检查，需要 Go 1.12、所指 gRPC 修订与 benchmark。未把现代工具链上的对照冒充旧栈增长事故。",
+      "status": "skipped_review",
+      "skip_reason": "user_request",
+      "reason": "Skipped at the user’s explicit request, superseding the retained historical-performance candidate. Archives were prepared, but no benchmark build/run or CoroPerf capture occurred. Preserve preparation evidence; stop further reproduction and attribution.",
+      "reason_zh": "按用户明确要求跳过，取代此前历史性能候选状态。已准备归档资料，但未构建或运行 benchmark，未进行 CoroPerf 采集；保留准备证据，停止后续复现与归属工作。",
       "sources": [
-        "https://github.com/grpc/grpc-go/issues/2942"
+        "https://github.com/grpc/grpc-go/issues/2942",
+        "https://fzh0u.github.io/coroperf/data/grpc-2942-user-skip.json"
       ],
-      "reviewed_at": "2026-11-25T17:24:42.087503+00:00",
+      "reviewed_at": "2026-11-25T17:54:34.388477+00:00",
       "locally_executed": false
     },
     "seredis--stackexchange.redis--1448": {
@@ -43462,6 +43464,15 @@
       "summary_zh": "用户在客户端试验程序构建前要求跳过。保留下载的包和 proxy 来源资料，未启动 Redis/proxy 工作负载或 CoroPerf 采集；旧 StackExchange 与正式 seredis 编号均保持暂缓。",
       "path": "data/redis-3292-user-skip.json",
       "checked_at": "2026-11-25T17:46:25.503228+00:00"
+    },
+    {
+      "id": "grpc-2942-user-skip-20261126",
+      "title": "gRPC-Go #2942 skipped at user request",
+      "title_zh": "按用户要求跳过 gRPC-Go #2942",
+      "summary": "This supersedes the earlier retained historical-performance candidate. Toolchain/source archives were downloaded and extracted, but no benchmark build, benchmark run or CoroPerf capture occurred. Preserve preparation evidence and continue other candidates.",
+      "summary_zh": "此状态取代此前保留的历史性能候选状态。已下载并解包工具链与源码，但未构建或运行 benchmark，未进行 CoroPerf 采集；保留准备证据，继续其他候选。",
+      "path": "data/grpc-2942-user-skip.json",
+      "checked_at": "2026-11-25T17:55:46.850524+00:00"
     }
   ],
   "deferred_registry": [
@@ -44076,6 +44087,15 @@
       "security_impact": "跳过依据是用户指示，不是安全评估或漏洞结论。",
       "prior_local_execution": false,
       "review_note_zh": "按用户要求跳过；保留已下载的包和来源资料，未构建或执行客户端，未启动 Redis/proxy，不新增案例。 跳过依据是用户指示，不是安全评估或漏洞结论。"
+    },
+    {
+      "id": "grpc--grpc-go--2942",
+      "url": "https://github.com/grpc/grpc-go/issues/2942",
+      "title": "gRPC-Go #2942 skipped at user request",
+      "title_zh": "gRPC-Go #2942，按用户要求跳过",
+      "security_impact": "跳过依据是用户指示，不是安全评估或漏洞结论。",
+      "prior_local_execution": false,
+      "review_note_zh": "按用户要求跳过。仅下载并解包历史工具链与源码，未构建或运行 benchmark，未进行 CoroPerf 采集，不新增案例。 跳过依据是用户指示，不是安全评估或漏洞结论。"
     }
   ],
   "signal_holds": [
@@ -49541,34 +49561,17 @@
   },
   "progress_summary": {
     "source": "report_update",
-    "assembled_at": "2026-11-25T17:46:25.503228+00:00",
-    "comparison_reported_at": "2026-11-25T17:19:03.504860+00:00",
+    "assembled_at": "2026-11-25T17:55:46.850524+00:00",
+    "comparison_reported_at": "2026-11-25T17:49:33.293323+00:00",
     "verified_catalogue_entries": 127,
     "new_verified_ids": [],
     "review_decisions": 117,
-    "new_review_decision_ids": [
-      "dotnet--aspnetcore--48830",
-      "dotnet--runtime--11474",
-      "dotnet--runtime--137660",
-      "dotnet--runtime--14434",
-      "dotnet--runtime--70081",
-      "grpc--grpc-dotnet--1107",
-      "grpc--grpc-go--2942",
-      "grpc--grpc-go--4301",
-      "grpc--grpc-go--7979",
-      "mysql-net--mysqlconnector--1524",
-      "npgsql--npgsql--3079",
-      "npgsql--npgsql--3430",
-      "npgsql--npgsql--439",
-      "npgsql--npgsql--5788",
-      "npgsql--npgsql--6255",
-      "seredis--stackexchange.redis--1448",
-      "seredis--stackexchange.redis--2897",
-      "seredis--stackexchange.redis--3127",
-      "stackexchange--stackexchange.redis--3292"
+    "new_review_decision_ids": [],
+    "updated_review_decision_ids": [
+      "grpc--grpc-go--2942"
     ],
-    "manual_holds": 68,
+    "manual_holds": 69,
     "automatic_signal_holds": 454,
-    "scope": "Framework coverage expansion and source reviews, plus the explicit Redis skip before execution. No new selected case; user skips remain in force under both repository identities."
+    "scope": "Explicit user skip supersedes the pending gRPC performance candidate. Source collection and selected case catalogue are unchanged; no issue workload executed."
   }
 }
