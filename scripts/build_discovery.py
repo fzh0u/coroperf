@@ -16,6 +16,7 @@ STATUSES = {
     'excluded_after_review': ('Excluded after review', '审阅后排除'),
     'no_async_signal': ('No concrete async keyword', '未检出具体异步关键词'),
     'external_environment_required': ('External environment required', '依赖外部环境，已跳过'),
+    'verified_case': ('Verified diagnostic case', '已验证诊断案例'),
 }
 
 

@@ -1,0 +1,647 @@
+{
+  "case": "SPARK-47833",
+  "scope": "Real released DataSource local-file checks, with a separate controlled application-executor extension.",
+  "canonical_nested": {
+    "verified": true,
+    "verified_callers": 16,
+    "traced_replays": 8,
+    "stock_replays": 8,
+    "healthy_replays": 8,
+    "results": [
+      {
+        "batch": 5,
+        "version": "3.5.1",
+        "launch_order": "forward",
+        "verified_callers": 2,
+        "base_joins": [
+          {
+            "from": "2",
+            "to": "4",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "3",
+            "to": "5",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "parent_joins": [
+          {
+            "from": "2",
+            "to": "0",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          },
+          {
+            "from": "3",
+            "to": "1",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          }
+        ],
+        "log_sha256": "eefa84060b9d1ab35f5795b67ac897a69ec728d89f5177542e2f527c85361a9e",
+        "source_and_worker_stacks_match": true,
+        "native_stack_omits_historical_launchers": true,
+        "ablation_controls": 3
+      },
+      {
+        "batch": 5,
+        "version": "3.5.1",
+        "launch_order": "reverse",
+        "verified_callers": 2,
+        "base_joins": [
+          {
+            "from": "3",
+            "to": "4",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "2",
+            "to": "5",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "parent_joins": [
+          {
+            "from": "2",
+            "to": "0",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          },
+          {
+            "from": "3",
+            "to": "1",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          }
+        ],
+        "log_sha256": "3e2bdf7c05622c70d8485e8da235b6824baa5db9d0845523bbc38641614f5083",
+        "source_and_worker_stacks_match": true,
+        "native_stack_omits_historical_launchers": true,
+        "ablation_controls": 3
+      },
+      {
+        "batch": 5,
+        "version": "4.1.1",
+        "launch_order": "forward",
+        "verified_callers": 2,
+        "base_joins": [
+          {
+            "from": "3",
+            "to": "4",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "2",
+            "to": "5",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "parent_joins": [
+          {
+            "from": "2",
+            "to": "1",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          },
+          {
+            "from": "3",
+            "to": "0",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          }
+        ],
+        "log_sha256": "bd6d36f647aaed8d84317073ad0ee6c9bea1a8a2e6c555d566a940d220aca52d",
+        "source_and_worker_stacks_match": true,
+        "native_stack_omits_historical_launchers": true,
+        "ablation_controls": 3
+      },
+      {
+        "batch": 5,
+        "version": "4.1.1",
+        "launch_order": "reverse",
+        "verified_callers": 2,
+        "base_joins": [
+          {
+            "from": "2",
+            "to": "4",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "3",
+            "to": "5",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "parent_joins": [
+          {
+            "from": "2",
+            "to": "0",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          },
+          {
+            "from": "3",
+            "to": "1",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          }
+        ],
+        "log_sha256": "c5e54b5726e8df9d5e832f686981a53e0d2a7e46816f916fdb2eb2c3dcfe2276",
+        "source_and_worker_stacks_match": true,
+        "native_stack_omits_historical_launchers": true,
+        "ablation_controls": 3
+      },
+      {
+        "batch": 6,
+        "version": "3.5.1",
+        "launch_order": "forward",
+        "verified_callers": 2,
+        "base_joins": [
+          {
+            "from": "3",
+            "to": "4",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "2",
+            "to": "5",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "parent_joins": [
+          {
+            "from": "2",
+            "to": "0",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          },
+          {
+            "from": "3",
+            "to": "1",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          }
+        ],
+        "log_sha256": "94c1ec3dad813c28e72bef9630a303d1f96d3caad0c8fedf8da5c5c852dba5a7",
+        "source_and_worker_stacks_match": true,
+        "native_stack_omits_historical_launchers": true,
+        "ablation_controls": 3
+      },
+      {
+        "batch": 6,
+        "version": "3.5.1",
+        "launch_order": "reverse",
+        "verified_callers": 2,
+        "base_joins": [
+          {
+            "from": "2",
+            "to": "4",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "3",
+            "to": "5",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "parent_joins": [
+          {
+            "from": "2",
+            "to": "0",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          },
+          {
+            "from": "3",
+            "to": "1",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          }
+        ],
+        "log_sha256": "d33acef96abc7eeb4071ab4cdbed8ceffbefdd419019c797d053b4eafd7a5a31",
+        "source_and_worker_stacks_match": true,
+        "native_stack_omits_historical_launchers": true,
+        "ablation_controls": 3
+      },
+      {
+        "batch": 6,
+        "version": "4.1.1",
+        "launch_order": "forward",
+        "verified_callers": 2,
+        "base_joins": [
+          {
+            "from": "3",
+            "to": "4",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "2",
+            "to": "5",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "parent_joins": [
+          {
+            "from": "2",
+            "to": "0",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          },
+          {
+            "from": "3",
+            "to": "1",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          }
+        ],
+        "log_sha256": "c9aee0e9fe0fa308c805f1361b17769d85910e9fb80f5bee9bed99d9c3938498",
+        "source_and_worker_stacks_match": true,
+        "native_stack_omits_historical_launchers": true,
+        "ablation_controls": 3
+      },
+      {
+        "batch": 6,
+        "version": "4.1.1",
+        "launch_order": "reverse",
+        "verified_callers": 2,
+        "base_joins": [
+          {
+            "from": "2",
+            "to": "4",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "3",
+            "to": "5",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "parent_joins": [
+          {
+            "from": "2",
+            "to": "0",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          },
+          {
+            "from": "3",
+            "to": "1",
+            "kind": "coroutine_created_by",
+            "evidence": "same-executing-futuretask"
+          }
+        ],
+        "log_sha256": "4749ed376f76b019f7a7bb8e7511a149f7dede5a144f502f8a7d6217e84f9c5e",
+        "source_and_worker_stacks_match": true,
+        "native_stack_omits_historical_launchers": true,
+        "ablation_controls": 3
+      }
+    ]
+  },
+  "direct_native_comparison": {
+    "verified": true,
+    "verified_joins": 16,
+    "traced_replays": 8,
+    "stock_replays": 8,
+    "results": [
+      {
+        "batch": 1,
+        "version": "3.5.1",
+        "order": "forward",
+        "joins": [
+          {
+            "from": "0",
+            "to": "2",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "1",
+            "to": "3",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "log_sha256": "36634b5d8b737e0d670fde8e91117318b1164e1131fe8c6e090d067e83459fc7",
+        "native_stack_contains_caller": false,
+        "same_worker_stacks": true,
+        "oracle_verified": true,
+        "ablation_checks": 2
+      },
+      {
+        "batch": 1,
+        "version": "3.5.1",
+        "order": "reverse",
+        "joins": [
+          {
+            "from": "1",
+            "to": "2",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "0",
+            "to": "3",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "log_sha256": "15bb653ae0845d564a9e240795cdd961dfd50cca0d257ccf820bfd743a807e1a",
+        "native_stack_contains_caller": false,
+        "same_worker_stacks": true,
+        "oracle_verified": true,
+        "ablation_checks": 2
+      },
+      {
+        "batch": 1,
+        "version": "4.1.1",
+        "order": "forward",
+        "joins": [
+          {
+            "from": "0",
+            "to": "2",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "1",
+            "to": "3",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "log_sha256": "908667f3b7bd709ad5eebaff7ba9854114714dad452b7d6d7c38868f4a58bf3b",
+        "native_stack_contains_caller": true,
+        "same_worker_stacks": true,
+        "oracle_verified": true,
+        "ablation_checks": 2
+      },
+      {
+        "batch": 1,
+        "version": "4.1.1",
+        "order": "reverse",
+        "joins": [
+          {
+            "from": "1",
+            "to": "2",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "0",
+            "to": "3",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "log_sha256": "d0f08e375a87335d50766325262def6a2649788b2afb0e1a9126b967b030f6e7",
+        "native_stack_contains_caller": true,
+        "same_worker_stacks": true,
+        "oracle_verified": true,
+        "ablation_checks": 2
+      },
+      {
+        "batch": 2,
+        "version": "3.5.1",
+        "order": "forward",
+        "joins": [
+          {
+            "from": "0",
+            "to": "2",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "1",
+            "to": "3",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "log_sha256": "9ffad49b1f73ef45fd95f2cb8d8ac9e30138810028a128cf13b96ea5a8bdb65c",
+        "native_stack_contains_caller": false,
+        "same_worker_stacks": true,
+        "oracle_verified": true,
+        "ablation_checks": 2
+      },
+      {
+        "batch": 2,
+        "version": "3.5.1",
+        "order": "reverse",
+        "joins": [
+          {
+            "from": "1",
+            "to": "2",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "0",
+            "to": "3",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "log_sha256": "8dfeca6794472e99e958bde6da8a2a88de9a38c2dfc71d9f78c222d7601a074e",
+        "native_stack_contains_caller": false,
+        "same_worker_stacks": true,
+        "oracle_verified": true,
+        "ablation_checks": 2
+      },
+      {
+        "batch": 2,
+        "version": "4.1.1",
+        "order": "forward",
+        "joins": [
+          {
+            "from": "0",
+            "to": "2",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "1",
+            "to": "3",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "log_sha256": "82cbba0ceb5b755482dab764bf7c7a053a3bed03b8e0b87d36730edd135d1a54",
+        "native_stack_contains_caller": true,
+        "same_worker_stacks": true,
+        "oracle_verified": true,
+        "ablation_checks": 2
+      },
+      {
+        "batch": 2,
+        "version": "4.1.1",
+        "order": "reverse",
+        "joins": [
+          {
+            "from": "1",
+            "to": "2",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          },
+          {
+            "from": "0",
+            "to": "3",
+            "kind": "base_to_sample",
+            "evidence": "same-submitted-scala-Future-body-and-returned-Future"
+          }
+        ],
+        "log_sha256": "7c1b367f88d5871eb540344c8b03ed9bae562720461391a126c929d9a3f6a2b4",
+        "native_stack_contains_caller": true,
+        "same_worker_stacks": true,
+        "oracle_verified": true,
+        "ablation_checks": 2
+      }
+    ]
+  },
+  "stock_jfr_controls": {
+    "3.5.1": {
+      "analysis_exception_events": 2,
+      "both_historical_launchers_absent": true,
+      "rows": [
+        {
+          "exception_thread": 44,
+          "parent_thread": 35,
+          "throw_frames": [
+            "java.lang.Throwable.<init>",
+            "java.lang.Exception.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>"
+          ],
+          "worker_start_frames": [
+            "java.util.concurrent.ForkJoinPool.createWorker",
+            "java.util.concurrent.ForkJoinPool.signalWork",
+            "java.util.concurrent.ForkJoinPool.externalPush",
+            "java.util.concurrent.ForkJoinPool.externalSubmit",
+            "java.util.concurrent.ForkJoinPool.execute"
+          ],
+          "parent_start_frames": [
+            "java.util.concurrent.ThreadPoolExecutor.addWorker",
+            "java.util.concurrent.ThreadPoolExecutor.prestartAllCoreThreads",
+            "SparkPathReplay.main"
+          ],
+          "historical_launcher_present": false
+        },
+        {
+          "exception_thread": 43,
+          "parent_thread": 34,
+          "throw_frames": [
+            "java.lang.Throwable.<init>",
+            "java.lang.Exception.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>"
+          ],
+          "worker_start_frames": [
+            "java.util.concurrent.ForkJoinPool.createWorker",
+            "java.util.concurrent.ForkJoinPool.signalWork",
+            "java.util.concurrent.ForkJoinPool.externalPush",
+            "java.util.concurrent.ForkJoinPool.externalSubmit",
+            "java.util.concurrent.ForkJoinPool.execute"
+          ],
+          "parent_start_frames": [
+            "java.util.concurrent.ThreadPoolExecutor.addWorker",
+            "java.util.concurrent.ThreadPoolExecutor.prestartAllCoreThreads",
+            "SparkPathReplay.main"
+          ],
+          "historical_launcher_present": false
+        }
+      ]
+    },
+    "4.1.1": {
+      "analysis_exception_events": 2,
+      "both_historical_launchers_absent": true,
+      "rows": [
+        {
+          "exception_thread": 43,
+          "parent_thread": 34,
+          "throw_frames": [
+            "java.lang.Throwable.<init>",
+            "java.lang.Exception.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>"
+          ],
+          "worker_start_frames": [
+            "java.util.concurrent.ForkJoinPool.createWorker",
+            "java.util.concurrent.ForkJoinPool.signalWork",
+            "java.util.concurrent.ForkJoinPool.externalPush",
+            "java.util.concurrent.ForkJoinPool.externalSubmit",
+            "java.util.concurrent.ForkJoinPool.execute"
+          ],
+          "parent_start_frames": [
+            "java.util.concurrent.ThreadPoolExecutor.addWorker",
+            "java.util.concurrent.ThreadPoolExecutor.prestartAllCoreThreads",
+            "SparkPathReplay.main"
+          ],
+          "historical_launcher_present": false
+        },
+        {
+          "exception_thread": 44,
+          "parent_thread": 35,
+          "throw_frames": [
+            "java.lang.Throwable.<init>",
+            "java.lang.Exception.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>",
+            "org.apache.spark.sql.AnalysisException.<init>"
+          ],
+          "worker_start_frames": [
+            "java.util.concurrent.ForkJoinPool.createWorker",
+            "java.util.concurrent.ForkJoinPool.signalWork",
+            "java.util.concurrent.ForkJoinPool.externalPush",
+            "java.util.concurrent.ForkJoinPool.externalSubmit",
+            "java.util.concurrent.ForkJoinPool.execute"
+          ],
+          "parent_start_frames": [
+            "java.util.concurrent.ThreadPoolExecutor.addWorker",
+            "java.util.concurrent.ThreadPoolExecutor.prestartAllCoreThreads",
+            "SparkPathReplay.main"
+          ],
+          "historical_launcher_present": false
+        }
+      ]
+    }
+  },
+  "failed_exploratory_captures": [
+    {
+      "batch": "nested-batch-3",
+      "condition": "4.1.1-reverse-trace",
+      "exit_code": 1,
+      "log_sha256": "cc1e1f9b0240bb50db9fc998df28a040fd6d6d3172950be9a23a182fd6cfb31b",
+      "outcome": "The capture recorded both failures and catch oracles but the application reached its initial 20-second termination limit. Excluded from canonical success counts."
+    }
+  ],
+  "source_sha256": {
+    "SparkPathReplay.java": "eef663a77314e9743645eea32036fcc303ee16a485384aa01768036de6bed719",
+    "TraceSpark.java": "20bedcbca1d807ece10dc32a1de91a5507d65489940da3c434728fd486415a8b"
+  },
+  "same_source_in_both_canonical_batches": true,
+  "jfr_source_sha256": {
+    "SparkPathReplay.java": "fb5311a2e2655465f5e61a28e2ec1daf5f75c4f2b280f891e35b668b74a89719"
+  },
+  "source_notes": "The JFR fixture predates the added lock around source-oracle reads; its exact source is retained under jfr-control/source. No oracle labels are graph-construction inputs.",
+  "no_performance_claim": true,
+  "error_semantics": "Missing paths continue to produce expected AnalysisException input errors."
+}

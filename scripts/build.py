@@ -334,7 +334,7 @@ def case_page(case, language):
         <dl class="case-status">
           <div><dt>{text["contribution_kind"]}</dt><dd>{text[case["contribution_kind"]]}</dd></div>
           <div><dt>{text["issue_kind"]}</dt><dd>{text[case["kind"]]}</dd></div>
-          <div><dt>{text["tracker_status"]}</dt><dd>{text["tracker_" + case["tracker_status"]]}</dd></div>
+          <div><dt>{text["tracker_status"]}</dt><dd>{text["tracker_" + case.get("tracker_display", case["tracker_status"])]}</dd></div>
           <div><dt>{text["fix_status"]}</dt><dd>{fix_label}</dd></div>
           <div><dt>{text["case_language"]}</dt><dd>{escape(case["language"])}</dd></div>
           <div><dt>{text["reproduction"]}</dt><dd>{text[case["reproduction"]]}</dd></div>
@@ -642,7 +642,7 @@ def write_classification(snapshot):
         writer = csv.writer(output, lineterminator="\n")
         writer.writerow(("issue", "issue_url", "language", "contribution_key", "contribution_en",
                          "contribution_zh", "reported_issue_type", "reproduction", "diagnosis",
-                         "github_status", "fix_evidence", "fix_url", "fix_pr_status", "status_checked_at"))
+                         "upstream_status", "fix_evidence", "fix_url", "fix_pr_status", "status_checked_at"))
         for case in snapshot["cases"]:
             tag = case["contribution_kind"]
             fix = case["fix"] or {}

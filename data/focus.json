@@ -1,11 +1,45 @@
 {
+  "apache--spark--spark-47833": {
+    "contribution_kind": "caller_recovery",
+    "language": "Scala",
+    "kind": "debugging",
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/apache/spark/blob/v4.1.1/sql/core/src/main/scala/org/apache/spark/sql/execution/datasources/DataSource.scala"
+    },
+    "case_file": "research/github-issue-discovery/spark-47833/case.json",
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
+    "en": "Join the failing Scala Future through its exact submitted callable and the executing application FutureTask. The parent task creation restores two historical file-read entries from identical dispatch and worker stacks.",
+    "zh": "用同一个提交函数对象识别失败的 Scala Future，再通过实际正在执行的应用 FutureTask 接回父任务创建记录，从相同分派栈和工作栈恢复两个历史文件读取入口。"
+  },
   "langchain4j--langchain4j--7069": {
     "contribution_kind": "failure_lifecycle",
     "language": "Java",
     "kind": "functional",
-    "fix": {"state": "proposed", "url": "https://github.com/langchain4j/langchain4j/pull/7070"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/langchain4j/langchain4j/pull/7070"
+    },
     "case_file": "research/github-issue-discovery/langchain4j-retry/case.json",
-    "records": [["1", "2"], ["0", "3"]],
+    "records": [
+      [
+        "1",
+        "2"
+      ],
+      [
+        "0",
+        "3"
+      ]
+    ],
     "en": "Match each exception-mapper callback's captured CompletableFuture to the Future from its first retry attempt. Identical execution stacks then reveal which caller is left pending.",
     "zh": "把异常映射回调捕获的 CompletableFuture 接回首次尝试时的同一个 Future。这样，两条相同的执行栈也能定位各自仍在等待的调用者。"
   },
@@ -13,9 +47,20 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/vllm-58324/case.json",
-    "records": [["3", "4"], ["2", "5"]],
+    "records": [
+      [
+        "3",
+        "4"
+      ],
+      [
+        "2",
+        "5"
+      ]
+    ],
     "en": "Match each scheduler snapshot to the exact persistent Request and to the generation Task that first submitted it. The two otherwise identical stacks expose separate callers and account for 63 and three redundant feature copies.",
     "zh": "用持续存在的同一个 Request 将调度观测接回首次提交的生成 Task。两条相同的执行栈接回不同入口，并分别对应 63 次和 3 次历史特征复制。"
   },
@@ -23,9 +68,20 @@
     "contribution_kind": "scheduling_contention",
     "language": "Rust",
     "kind": "performance",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/tei-65/case.json",
-    "records": [["0", "1"], ["2", "3"]],
+    "records": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "2",
+        "3"
+      ]
+    ],
     "en": "Join the identical native response-resume stacks to separate search and catalog launches. Match the same Task IDs again in batch metadata to find which short request is padded alongside long inputs.",
     "zh": "将相同的原生响应恢复栈接回搜索和索引两个入口。在实际批次元数据里再次核对相同的 Task ID，确认哪条短请求跟长输入同批填充。"
   },
@@ -33,9 +89,24 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "functional",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/verl-7938/case.json",
-    "records": [["1", "2"], ["3", "4"], ["0", "5"]],
+    "records": [
+      [
+        "1",
+        "2"
+      ],
+      [
+        "3",
+        "4"
+      ],
+      [
+        "0",
+        "5"
+      ]
+    ],
     "en": "The two matching publication stacks belong to separate sample Tasks. Object identity separates the sample already taken by the consumer from one still queued. Both Tasks remain counted, and the same processor pauses at 76 instead of dispatching the next batch.",
     "zh": "两条相同的发布栈属于不同的样本 Task。按对象身份核对，一个结果已被训练端取走，另一个仍在队列。两个已完成 Task 都被计入，同一个处理器在计数为 76 时暂停接纳。"
   },
@@ -43,9 +114,25 @@
     "contribution_kind": "request_handoff",
     "language": "Python",
     "kind": "profiling",
-    "fix": {"state": "proposed", "url": "https://github.com/vllm-project/vllm/pull/69262"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/vllm-project/vllm/pull/69262"
+    },
     "case_file": "research/github-issue-discovery/vllm-69257/case.json",
-    "records": [["0", "1"], ["0", "2"], ["3", "4"]],
+    "records": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "0",
+        "2"
+      ],
+      [
+        "3",
+        "4"
+      ]
+    ],
     "en": "Match identical HTTP failure callbacks to live senders and the exact result objects delivered to reporting. Two failures belong to the probe Task and disappear from the original report. The third belongs to a workload Task and is already counted.",
     "zh": "将相同的 HTTP 失败回调接回实际发送的 Task，再核对进入报告的结果对象。两次失败属于探针 Task，原报告漏掉了这两次。第三次属于主负载 Task，原报告已计入。"
   },
@@ -53,9 +140,29 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/ray-project/ray/pull/67572"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ray-project/ray/pull/67572"
+    },
     "case_file": "research/github-issue-discovery/ray-67547/case.json",
-    "records": [["1", "2"], ["3", "4"], ["6", "7"], ["8", "9"]],
+    "records": [
+      [
+        "1",
+        "2"
+      ],
+      [
+        "3",
+        "4"
+      ],
+      [
+        "6",
+        "7"
+      ],
+      [
+        "8",
+        "9"
+      ]
+    ],
     "en": "Match the zero-byte read of the ready generator to its registration. The native Ray task ID reaches the actor asyncio.Task, and the operator identity reaches the original training or validation iterator.",
     "zh": "把已就绪却读取零字节的生成器接回登记位置。Ray 原生任务 ID 将它接到 actor 的 asyncio.Task，算子身份将它接回训练或验证迭代器的发起位置。"
   },
@@ -63,9 +170,29 @@
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
     "kind": "functional",
-    "fix": {"state": "proposed", "url": "https://github.com/vllm-project/vllm/pull/57181"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/vllm-project/vllm/pull/57181"
+    },
     "case_file": "research/github-issue-discovery/vllm-57173/case.json",
-    "records": [["1", "2"], ["1", "3"], ["5", "6"], ["5", "7"]],
+    "records": [
+      [
+        "1",
+        "2"
+      ],
+      [
+        "1",
+        "3"
+      ],
+      [
+        "5",
+        "6"
+      ],
+      [
+        "5",
+        "7"
+      ]
+    ],
     "en": "Identical receive and exit stacks join to two separate client Tasks and their launches in the parent process. Matching each admitted conversation to its socket and final Task state shows two requests were never sent.",
     "zh": "把相同的接收栈和退出栈分别接回两个客户端 Task 及其主进程启动位置。用同一个对话对象核对实际接收和退出状态，确认有两轮请求从未发出。"
   },
@@ -73,9 +200,36 @@
     "contribution_kind": "scheduling_contention",
     "language": "Rust",
     "kind": "performance",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/polars-29256/case.json",
-    "records": [["0", "1"], ["2", "3"], ["2", "4"], ["2", "5"], ["6", "7"], ["8", "9"]],
+    "records": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "2",
+        "3"
+      ],
+      [
+        "2",
+        "4"
+      ],
+      [
+        "2",
+        "5"
+      ],
+      [
+        "6",
+        "7"
+      ],
+      [
+        "8",
+        "9"
+      ]
+    ],
     "en": "Match the exact native Tasks to their launches and follow each SourceToken from its write to its check. Identical stripped bridge stacks belong to separate input tasks. The left scan sees the stop while the right scan continues to deliver rows.",
     "zh": "用实际原生 Task 接回创建栈，并通过同一个 SourceToken 追踪每次停止信号的写入和读取。剥离符号后，两条完全相同的扫描桥执行栈分别属于左右输入。左侧收到停止信号时，右侧仍在交付数据。"
   },
@@ -83,9 +237,21 @@
     "contribution_kind": "request_handoff",
     "language": "Python",
     "kind": "functional",
-    "fix": {"state": "proposed", "url": "https://github.com/vllm-project/vllm/pull/66260"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/vllm-project/vllm/pull/66260"
+    },
     "case_file": "research/github-issue-discovery/vllm-66246/case.json",
-    "records": [["0", "1"], ["2", "3"]],
+    "records": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "2",
+        "3"
+      ]
+    ],
     "en": "Two identical response stacks and request bodies join to separate probe and workload Task creations. The exact aiohttp protocol and sending Task identify which 64-token POST belongs to the one-token probe.",
     "zh": "两条响应接收栈和请求体完全相同，却分别接回探针和主负载 Task 的创建位置。通过同一个 aiohttp 协议对象与发送 Task，可确认哪条上限为 64 token 的请求来自本应只请求 1 token 的探针。"
   },
@@ -93,9 +259,21 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/NVIDIA/TensorRT-LLM/pull/22280"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/NVIDIA/TensorRT-LLM/pull/22280"
+    },
     "case_file": "research/github-issue-discovery/tensorrt-llm-22278/case.json",
-    "records": [["1", "8"], ["4", "9"]],
+    "records": [
+      [
+        "1",
+        "8"
+      ],
+      [
+        "4",
+        "9"
+      ]
+    ],
     "en": "Identical recount stacks join through live worker Tasks to the batch Tasks created by two HTTP submissions. The shared batch record assigns each repeated scan to the right evaluation or indexing batch.",
     "zh": "通过实际 worker Task，把相同的重复计数栈接回两次 HTTP 提交所创建的批次 Task。用同一个批次对象确认每次重复扫描属于评估批次还是索引批次。"
   },
@@ -103,9 +281,21 @@
     "contribution_kind": "cost_attribution",
     "language": "Go",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/ollama/ollama/pull/7424"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ollama/ollama/pull/7424"
+    },
     "case_file": "research/github-issue-discovery/ollama-7400/case.json",
-    "records": [["0", "1"], ["2", "3"]],
+    "records": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "2",
+        "3"
+      ]
+    ],
     "en": "Identical embedding stacks join to separate HTTP requests through the original request and row carried by the worker's Go context. The joins distinguish the first caller that paid for vocabulary loading from the next request's warm preflight.",
     "zh": "通过 worker 的 Go context 携带的原始 HTTP 请求和输入行，把相同的 embedding 执行栈接回各自的请求，区分先承担词表加载的请求与随后仅做预热后分词的请求。"
   },
@@ -113,9 +303,21 @@
     "contribution_kind": "scheduling_contention",
     "language": "Rust",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/ai-dynamo/dynamo/pull/9487"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ai-dynamo/dynamo/pull/9487"
+    },
     "case_file": "research/github-issue-discovery/dynamo-9466/case.json",
-    "records": [["0", "1"], ["2", "3"]],
+    "records": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "2",
+        "3"
+      ]
+    ],
     "en": "The stripped native address stacks match. Tokio Task and request identities recover the launchers and identify which large JSON serialization prevents another ready task from running on the occupied worker.",
     "zh": "两条剥离符号的原生地址栈一致。Tokio Task 与请求身份恢复各自的发起入口，并确定哪次大型 JSON 序列化占用了 worker，使另一条已就绪任务无法运行。"
   },
@@ -123,9 +325,20 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/sglang-36226/case.json",
-    "records": [["0", "2"], ["1", "3"]],
+    "records": [
+      [
+        "0",
+        "2"
+      ],
+      [
+        "1",
+        "3"
+      ]
+    ],
     "en": "Matching the live Task, notification Event, and its drained list joins identical coalescer stacks to the interactive and batch launches. The joins identify which launch pays for the 32-chunk backlog and its per-token metadata.",
     "zh": "核对实际 Task、通知 Event 和取出的列表，把两条相同的合并执行栈接回交互式与批处理入口，确定哪次发起承担了 32 个积压块及其逐 token 元数据的处理开销。"
   },
@@ -133,9 +346,21 @@
     "contribution_kind": "failure_lifecycle",
     "language": "Java",
     "kind": "debugging",
-    "fix": {"state": "verified", "url": "https://github.com/langchain4j/langchain4j/pull/7217"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/langchain4j/langchain4j/pull/7217"
+    },
     "case_file": "research/github-issue-discovery/langchain4j-7165/case.json",
-    "records": [["0", "3"], ["1", "2"]],
+    "records": [
+      [
+        "0",
+        "3"
+      ],
+      [
+        "1",
+        "2"
+      ]
+    ],
     "en": "The same streaming response handler and exception join each delayed user callback to the capture that had already rethrown that stream's failure. This identifies why the original integration test checked an empty list.",
     "zh": "用同一个流式响应处理器和异常对象，将延后的用户回调接回已抛出该流异常的 capture，定位原集成测试为何读到了空列表。"
   },
@@ -143,9 +368,21 @@
     "contribution_kind": "request_handoff",
     "language": "C#",
     "kind": "profiling",
-    "fix": {"state": "verified", "url": "https://github.com/dotnet/extensions/pull/7321"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/dotnet/extensions/pull/7321"
+    },
     "case_file": "research/github-issue-discovery/dotnet-extensions-7320/case.json",
-    "records": [["0", "3"], ["1", "2"]],
+    "records": [
+      [
+        "0",
+        "3"
+      ],
+      [
+        "1",
+        "2"
+      ]
+    ],
     "en": "Two identical follow-up stacks carry new native trace IDs. Matching the active enumerator and original ChatMessage object joins each stack to the launch that created its agent trace.",
     "zh": "两条相同的后续模型调用栈各自带有新的原生 TraceId。核对活跃的异步枚举器及原始 ChatMessage 对象，把每条栈接回创建其 agent trace 的发起入口。"
   },
@@ -153,9 +390,21 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/ray-project/ray/pull/62674"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ray-project/ray/pull/62674"
+    },
     "case_file": "research/github-issue-discovery/ray-62619/case.json",
-    "records": [["1", "4"], ["3", "5"]],
+    "records": [
+      [
+        "1",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "The live reporting Task and the exact cross-thread scheduling Handle join two identical metric flush stacks to separate deployment-handle initializers. The base's per-handle wake-ups explain the extra router CPU against the shared reporter control.",
     "zh": "实际指标汇报 Task 和跨线程调度的同一个 asyncio Handle，把两条相同的指标刷新栈分别接回部署句柄的初始化。与共享汇报任务对照后，可将原版增加的路由线程 CPU 开销归到逐句柄唤醒。"
   },
@@ -163,9 +412,21 @@
     "contribution_kind": "scheduling_contention",
     "language": "Rust",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/sgl-project/sglang/pull/49193"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/sgl-project/sglang/pull/49193"
+    },
     "case_file": "research/github-issue-discovery/sglang-49190/case.json",
-    "records": [["2", "3"], ["4", "5"]],
+    "records": [
+      [
+        "2",
+        "3"
+      ],
+      [
+        "4",
+        "5"
+      ]
+    ],
     "en": "The same internal request ID joins two identical tokenizer worker stacks to their Tokio HTTP Tasks. The HTTP request and echoed response IDs recover the original launchers and distinguish which caller incurred each queue wait.",
     "zh": "相同的内部请求 ID 将两条相同的分词执行栈分别接回对应的 Tokio HTTP Task。HTTP 请求与响应中的公开 ID 再接到最初的发起入口，区分每次排队等待属于哪个调用方。"
   },
@@ -173,9 +434,21 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/ray-project/ray/pull/65825"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ray-project/ray/pull/65825"
+    },
     "case_file": "research/github-issue-discovery/ray-65346/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "Matching the live loader Task and its active creating request recovers both request entries from identical post-patch loader stacks. On the base, the same request identities show which cold load waited behind the other model.",
     "zh": "核对实际运行的加载 Task 及创建时的请求 Task，从候选修复后的两条相同加载栈恢复各自的请求入口。用相同的请求身份方法核对原版，可确定哪次冷加载排在另一模型后面。"
   },
@@ -183,9 +456,21 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "verified", "url": "https://github.com/sgl-project/sglang/pull/23409"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/sgl-project/sglang/pull/23409"
+    },
     "case_file": "research/github-issue-discovery/sglang-23393/case.json",
-    "records": [["0", "2"], ["1", "3"]],
+    "records": [
+      [
+        "0",
+        "2"
+      ],
+      [
+        "1",
+        "3"
+      ]
+    ],
     "en": "Two equal token rows enter identical decoder stacks. Their actual positions and request IDs join each worker observation to the frontend Task that receives its text, attributing the repeated special-token work.",
     "zh": "两行内容相同的 token 经过相同的解码栈。核对其实际行位置及请求 ID，把每次工作线程观测接回接收其文本的前端 Task，定位特殊 token 重复计算属于哪个请求。"
   },
@@ -193,9 +478,21 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "profiling",
-    "fix": {"state": "proposed", "url": "https://github.com/ray-project/ray/pull/67968"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ray-project/ray/pull/67968"
+    },
     "case_file": "research/github-issue-discovery/ray-63585/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "The exact reader Task, Batcher queue, and creating request Task join identical first-chunk enqueue stacks to distinct callers. This identifies which equal-TTFT stream spent its time below the engine boundary and which waited for batching.",
     "zh": "核对读取 Task、Batcher 队列和创建它的请求 Task，把相同的首块入队栈接回各自的调用者，区分两个首包时间相同的流中，哪条耗在引擎侧，哪条耗在输出批处理。"
   },
@@ -203,9 +500,21 @@
     "contribution_kind": "scheduling_contention",
     "language": "Rust",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/ai-dynamo/dynamo/pull/18672"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ai-dynamo/dynamo/pull/18672"
+    },
     "case_file": "research/github-issue-discovery/dynamo-18671/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "The live Tokio Task and the registration notifier join identical timer-expiry stacks to two worker registrations. The joins identify which worker waited for its first check and which also had to retry.",
     "zh": "实际 Tokio Task 和注册通知对象把相同的计时器执行栈接回两次 worker 注册，区分了等待首次检查的 worker 和需要额外重试的 worker。"
   },
@@ -213,9 +522,21 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/ai-dynamo/dynamo/pull/18728"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ai-dynamo/dynamo/pull/18728"
+    },
     "case_file": "research/github-issue-discovery/dynamo-18727/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "The same parser stack serves two requests. Matching the actual Task, generator frame, and dispatch Handle restores the interactive and batch submissions and assigns repeated prefix processing to each stream.",
     "zh": "两条请求流经过相同的解析执行栈。核对实际 Task、生成器帧和调度 Handle 后，分别找回交互式与批处理提交入口，并把重复的前缀处理归到各自的请求流。"
   },
@@ -223,9 +544,21 @@
     "contribution_kind": "request_handoff",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "workaround", "url": "https://github.com/ray-project/ray/issues/52745#issuecomment-2855935707"},
+    "fix": {
+      "state": "workaround",
+      "url": "https://github.com/ray-project/ray/issues/52745#issuecomment-2855935707"
+    },
     "case_file": "research/github-issue-discovery/ray-52745/case.json",
-    "records": [["0", "1"], ["2", "3"]],
+    "records": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "2",
+        "3"
+      ]
+    ],
     "en": "The actual response body, Serve handle and Ray result connect each identical streaming read to its HTTP route. The join identifies which application response uses each inter-deployment stream.",
     "zh": "核对真实响应体、Serve handle 和 Ray 结果，把相同的流式读取栈接回各自的 HTTP 路由，定位跨部署流属于哪个应用响应。"
   },
@@ -233,9 +566,21 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/vllm-project/vllm/pull/54792"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/vllm-project/vllm/pull/54792"
+    },
     "case_file": "research/github-issue-discovery/vllm-42632/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "Two native pinning threads have identical execution stacks. Matching the Thread and AsyncHostBuffer objects joins each observation to the separate startup Task that initiated it.",
     "zh": "两条后台注册线程的执行栈相同。核对真实 Thread 和 AsyncHostBuffer，将每条观测接回各自的启动 Task。"
   },
@@ -243,9 +588,20 @@
     "contribution_kind": "scheduling_contention",
     "language": "Rust",
     "kind": "performance",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/tei-798/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "Identical Tokio reserve stacks belong to two separate batch channels. Matching the actual Task and channel restores each spawn and launcher, attributing the full-channel wait to its own pipeline.",
     "zh": "相同的 Tokio 通道空位等待栈属于两条不同的批处理通道。核对实际 Task 和通道，可找回各自的创建栈和发起入口，将通道已满导致的等待归到对应流水线。"
   },
@@ -253,9 +609,21 @@
     "contribution_kind": "request_handoff",
     "language": "Python",
     "kind": "functional",
-    "fix": {"state": "proposed", "url": "https://github.com/sgl-project/sglang/pull/50427"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/sgl-project/sglang/pull/50427"
+    },
     "case_file": "research/github-issue-discovery/sglang-50424/case.json",
-    "records": [["2", "5"], ["3", "4"]],
+    "records": [
+      [
+        "2",
+        "5"
+      ],
+      [
+        "3",
+        "4"
+      ]
+    ],
     "en": "The same client execution stack and identical rejected input appear twice. Joining each request Task to its creation and parent identifies the benchmark run whose summary credits eight nonexistent tokens. The returned objects independently confirm the assignments.",
     "zh": "两次拒绝响应的输入与客户端执行栈均相同。将实际请求 Task 接回创建栈和父 Task，找出哪些基准汇总各误计了 8 个未生成的 token，再用实际返回对象独立核对归属。"
   },
@@ -263,9 +631,20 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/ray-67867/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "Both Ray Data reads have the same driver stack. The actual generator, WorkItem, and Future connect each observation to the Task that submitted it. This attributes the measured driver work and actor backpressure messages to the corresponding request.",
     "zh": "两次 Ray Data 读取的驱动线程栈相同。核对实际的生成器、WorkItem 和 Future 后，可以把每条观测接回提交它的 Task，将驱动线程开销和 actor 接收的背压消息归到相应请求。"
   },
@@ -273,9 +652,20 @@
     "contribution_kind": "scheduling_contention",
     "language": "Java",
     "kind": "performance",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/spring-ai-4755/case.json",
-    "records": [["2", "4"], ["3", "6"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "6"
+      ]
+    ],
     "en": "The same scheduler stack completes tools for two distinct requests. Matching the scheduled callback and the batch carried by Spring AI's ToolContext restores each registration and application launcher, so each serial tool sequence is attributed to its own request.",
     "zh": "同一个调度器执行栈完成了两个请求的工具调用。核对调度的回调及 Spring AI ToolContext 传递的批次对象，可接回各自的登记栈和应用发起栈，并将每段串行工具等待归到正确的请求。"
   },
@@ -283,9 +673,21 @@
     "contribution_kind": "cost_attribution",
     "language": "Rust",
     "kind": "performance",
-    "fix": {"state": "verified", "url": "https://github.com/EricLBuehler/mistral.rs/pull/1655"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/EricLBuehler/mistral.rs/pull/1655"
+    },
     "case_file": "research/github-issue-discovery/mistralrs-1293/case.json",
-    "records": [["1", "2"], ["4", "5"]],
+    "records": [
+      [
+        "1",
+        "2"
+      ],
+      [
+        "4",
+        "5"
+      ]
+    ],
     "en": "The idle engine futures have identical execution stacks. Each engine token connects its sample to its future creation and then to the separate application caller that launched that engine, attributing the measured thread CPU time.",
     "zh": "两条空闲引擎 Future 的执行栈相同。实际引擎标识把每条观测接回 Future 的创建栈，再接回启动它的应用调用者，从而为测得的线程 CPU 时间归因。"
   },
@@ -293,9 +695,20 @@
     "contribution_kind": "cost_attribution",
     "language": "Go",
     "kind": "performance",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/ollama-19767/case.json",
-    "records": [["7", "8"], ["10", "11"]],
+    "records": [
+      [
+        "7",
+        "8"
+      ],
+      [
+        "10",
+        "11"
+      ]
+    ],
     "en": "Two repeat-prefill timings have identical worker stacks. Matching the same work item across a Go channel recovers its submission, and the submit goroutine's creation stack attributes each cost to its own session launcher.",
     "zh": "两次重复预填充计时的 worker 栈相同。核对 Go channel 交接的同一个工作项可找回提交栈，再沿提交 goroutine 的创建栈，将每次预填充开销归到对应的会话入口。"
   },
@@ -303,9 +716,21 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "profiling",
-    "fix": {"state": "merged", "url": "https://github.com/vllm-project/vllm/pull/61690"},
+    "fix": {
+      "state": "merged",
+      "url": "https://github.com/vllm-project/vllm/pull/61690"
+    },
     "case_file": "research/github-issue-discovery/vllm-61423/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "The exact pending timing snapshots restore the original schedule stacks. The real Request objects connect those stacks to the two submission Tasks, so timings exported together in a later dummy reply are attributed to their original requests.",
     "zh": "实际等待上报的计时快照接回原调度栈，实际 Request 对象再把调度栈接回两个提交 Task。这样可以将后来随空跑回复一起上报的计时归到各自原始请求。"
   },
@@ -313,9 +738,29 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "verified", "url": "https://github.com/vllm-project/vllm-omni/pull/8675"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/vllm-project/vllm-omni/pull/8675"
+    },
     "case_file": "research/github-issue-discovery/vllm-omni-4561/case.json",
-    "records": [["0", "11"], ["1", "12"], ["3", "9"], ["4", "10"]],
+    "records": [
+      [
+        "0",
+        "11"
+      ],
+      [
+        "1",
+        "12"
+      ],
+      [
+        "3",
+        "9"
+      ],
+      [
+        "4",
+        "10"
+      ]
+    ],
     "en": "The two identical frontend stacks join to the interactive and batch launches. The same audio objects identify the two replica reads, which join to their individual reader creations. This identifies the ready replies delayed by serial polling of idle peers in the legacy comparison.",
     "zh": "两条相同的前端执行栈分别接回交互和批量请求的创建栈。按实际音频对象找到各自副本的读取记录，再接回两个 reader 的创建位置。旧轮询对照由此确定了依次等待空闲副本时延迟的是哪两条已就绪回复。"
   },
@@ -323,9 +768,21 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "profiling",
-    "fix": {"state": "proposed", "url": "https://github.com/sgl-project/sglang/pull/45036"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/sgl-project/sglang/pull/45036"
+    },
     "case_file": "research/github-issue-discovery/sglang-43304/case.json",
-    "records": [["1", "4"], ["2", "6"]],
+    "records": [
+      [
+        "1",
+        "4"
+      ],
+      [
+        "2",
+        "6"
+      ]
+    ],
     "en": "The exact waiting Events and Tasks connect two identical reply stacks to the interactive and batch callers. The matching request IDs attribute the measured transfer time of one scheduler packet to both request origins across its two detokenizer routes.",
     "zh": "核对实际等待的 Event 和 Task，将两个相同的回复执行栈接回交互和批量请求的创建栈。再用实际请求 ID 跨两条 detokenizer 路由，将同一个调度器消息的传输耗时归到两个调用者。"
   },
@@ -333,9 +790,21 @@
     "contribution_kind": "request_handoff",
     "language": "Python",
     "kind": "functional",
-    "fix": {"state": "proposed", "url": "https://github.com/vllm-project/vllm/pull/68700"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/vllm-project/vllm/pull/68700"
+    },
     "case_file": "research/github-issue-discovery/vllm-68610/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "The full ADD messages and queued Request objects reconnect two identical scheduler observations to the interactive and batch Task launches. Both arrived after the current scheduling pass and before the waiting count was recorded.",
     "zh": "完整 ADD 消息和实际入队的 Request 对象将两条相同的调度器观测接回交互与批量 Task 的创建栈。两条请求都在本次调度之后、等待计数生成之前到达。"
   },
@@ -344,7 +813,16 @@
     "language": "Python",
     "kind": "performance",
     "case_file": "research/github-issue-discovery/vllm-58266/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "The exact WorkItems connect two identical renderer stacks to different requests. The timestamps identify the document preprocessing that owns the single slot while the thumbnail is waiting to start.",
     "zh": "实际 WorkItem 将两条相同的 renderer 执行栈拼回不同请求。时间戳显示缩略图等待开始时，文档的预处理仍占用唯一的 worker。"
   },
@@ -352,9 +830,29 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/ray-project/ray/pull/64040"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ray-project/ray/pull/64040"
+    },
     "case_file": "research/github-issue-discovery/ray-64036/case.json",
-    "records": [["8", "9"], ["10", "11"], ["1", "2"], ["4", "5"]],
+    "records": [
+      [
+        "8",
+        "9"
+      ],
+      [
+        "10",
+        "11"
+      ],
+      [
+        "1",
+        "2"
+      ],
+      [
+        "4",
+        "5"
+      ]
+    ],
     "en": "The same request Futures join the identical batch execution stacks to the caption and embeddings submissions. That identifies which queued batches begin after the old slots drain and which one enters after the limit is raised.",
     "zh": "用实际请求 Future 把相同的批处理执行栈拼回图像说明和嵌入请求。这样可以区分旧批次结束后获准执行的请求，以及调高并发上限后进入的请求。"
   },
@@ -362,9 +860,29 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/run-llama/llama_index/pull/22370"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/run-llama/llama_index/pull/22370"
+    },
     "case_file": "research/github-issue-discovery/llama-index-22369/case.json",
-    "records": [["29", "38"], ["36", "44"], ["28", "31"], ["43", "46"]],
+    "records": [
+      [
+        "29",
+        "38"
+      ],
+      [
+        "36",
+        "44"
+      ],
+      [
+        "28",
+        "31"
+      ],
+      [
+        "43",
+        "46"
+      ]
+    ],
     "en": "The second router’s blocking read and the first router’s delayed child have different callers. The joined Task identities and timestamps distinguish the read that occupies the loop from the child that is ready to run.",
     "zh": "第二条阻塞读取和第一个已创建的下游任务属于不同调用者。拼接得到的 Task 归属和时间戳分辨了占住事件循环的读取，以及已就绪却等着运行的下游任务。"
   },
@@ -372,9 +890,29 @@
     "contribution_kind": "request_handoff",
     "language": "Python",
     "kind": "functional",
-    "fix": {"state": "verified", "url": "https://github.com/ray-project/ray/pull/59334"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/ray-project/ray/pull/59334"
+    },
     "case_file": "research/github-issue-discovery/ray-56633/case.json",
-    "records": [["101", "106"], ["78", "80"], ["63", "68"], ["53", "56"]],
+    "records": [
+      [
+        "101",
+        "106"
+      ],
+      [
+        "78",
+        "80"
+      ],
+      [
+        "63",
+        "68"
+      ],
+      [
+        "53",
+        "56"
+      ]
+    ],
     "en": "The two model-context reads join through different handler Tasks to the same queue Task first created by the first request. The later enqueue joins to its own request Task, making the context inherited by the handler visible.",
     "zh": "两次模型上下文读取经过不同处理 Task，最终都拼回首个请求创建的同一个队列 Task。后续入队则拼回它自己的请求 Task，因此可以定位处理任务继承了哪条创建链。"
   },
@@ -382,9 +920,29 @@
     "contribution_kind": "request_handoff",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/sgl-project/sglang/pull/44382"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/sgl-project/sglang/pull/44382"
+    },
     "case_file": "research/github-issue-discovery/sglang-44374/case.json",
-    "records": [["2", "3"], ["4", "5"], ["8", "10"], ["9", "11"]],
+    "records": [
+      [
+        "2",
+        "3"
+      ],
+      [
+        "4",
+        "5"
+      ],
+      [
+        "8",
+        "10"
+      ],
+      [
+        "9",
+        "11"
+      ]
+    ],
     "en": "The collector stacks are identical. The actual submit callbacks connect both results to their original Tasks, and the matching Futures independently confirm delivery in the worker-pool draft.",
     "zh": "两条结果的收集栈完全相同。实际提交回调将两个结果分别拼回原请求 Task，worker 草案中的对应 Future 进一步核实了交付归属。"
   },
@@ -392,9 +950,29 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "verified", "url": "https://github.com/vllm-project/vllm/pull/49608"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/vllm-project/vllm/pull/49608"
+    },
     "case_file": "research/github-issue-discovery/vllm-49317/case.json",
-    "records": [["0", "2"], ["1", "3"], ["6", "8"], ["7", "9"]],
+    "records": [
+      [
+        "0",
+        "2"
+      ],
+      [
+        "1",
+        "3"
+      ],
+      [
+        "6",
+        "8"
+      ],
+      [
+        "7",
+        "9"
+      ]
+    ],
     "en": "The identical preprocessing stacks belong to different generate calls. The live Tasks identify each launcher on the original loop, and the exact executor WorkItems restore both launchers after preprocessing moves to a worker.",
     "zh": "两条相同的图像预处理栈属于不同的 generate 请求。原版用实际 Task 找回两个入口，修复后用实际执行器 WorkItem 跨线程找回同样的两个入口。"
   },
@@ -402,9 +980,37 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "proposed", "url": "https://github.com/ray-project/ray/pull/67985"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ray-project/ray/pull/67985"
+    },
     "case_file": "research/github-issue-discovery/ray-67984/case.json",
-    "records": [["3", "4"], ["2", "6"], ["0", "1"], ["13", "14"], ["10", "15"], ["8", "9"]],
+    "records": [
+      [
+        "3",
+        "4"
+      ],
+      [
+        "2",
+        "6"
+      ],
+      [
+        "0",
+        "1"
+      ],
+      [
+        "13",
+        "14"
+      ],
+      [
+        "10",
+        "15"
+      ],
+      [
+        "8",
+        "9"
+      ]
+    ],
     "en": "The live transform coroutines distinguish the two inputs at identical formatter stacks. The UDF’s resume leads to a different launcher from the converter that held the loop. In the proposal, the submitted callable preserves that distinction across the executor boundary.",
     "zh": "按实际转换协程在两条相同的格式转换栈中分辨两个发起者。被拖延的 UDF 与占住事件循环的格式转换来自不同入口。应用提案后，按实际提交给执行器的可调用对象，也能跨线程保留这一区分。"
   },
@@ -412,9 +1018,29 @@
     "contribution_kind": "request_handoff",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "verified", "url": "https://github.com/sgl-project/sglang/pull/30682"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/sgl-project/sglang/pull/30682"
+    },
     "case_file": "research/github-issue-discovery/sglang-29367/case.json",
-    "records": [["0", "6"], ["2", "7"], ["1", "4"], ["3", "5"]],
+    "records": [
+      [
+        "0",
+        "6"
+      ],
+      [
+        "2",
+        "7"
+      ],
+      [
+        "1",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "The live receiver joins recover each worker’s launcher at identical SGLang delivery stacks. The IPC endpoint and the exact Event then identify the waiting request, whose execution separately joins to request creation.",
     "zh": "从两条相同的 SGLang 结果交付栈分别拼回各自接收任务的创建入口。实际 IPC 端点和 Event 找到等待该结果的请求，请求的执行栈也独立拼回其创建记录。"
   },
@@ -422,9 +1048,25 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "unconfirmed", "url": "https://github.com/sgl-project/sglang/pull/17069"},
+    "fix": {
+      "state": "unconfirmed",
+      "url": "https://github.com/sgl-project/sglang/pull/17069"
+    },
     "case_file": "research/github-issue-discovery/sglang-17021/case.json",
-    "records": [["0", "5"], ["1", "3"], ["2", "4"]],
+    "records": [
+      [
+        "0",
+        "5"
+      ],
+      [
+        "1",
+        "3"
+      ],
+      [
+        "2",
+        "4"
+      ]
+    ],
     "en": "The receiver resumes after the real PyZMQ Future is ready. Matching the receiver and both tokenizer Tasks recovers the separate launchers for work that runs during that delay.",
     "zh": "实际 PyZMQ Future 已就绪，接收任务仍须等待。按三个实际 Task 拼回创建栈，可以分辨接收入口和等待区间内两个分词任务各自的发起者。"
   },
@@ -432,9 +1074,29 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "merged", "url": "https://github.com/vllm-project/vllm/pull/54136"},
+    "fix": {
+      "state": "merged",
+      "url": "https://github.com/vllm-project/vllm/pull/54136"
+    },
     "case_file": "research/github-issue-discovery/vllm-54101/case.json",
-    "records": [["4", "5"], ["4", "17"], ["15", "16"], ["15", "22"]],
+    "records": [
+      [
+        "4",
+        "5"
+      ],
+      [
+        "4",
+        "17"
+      ],
+      [
+        "15",
+        "16"
+      ],
+      [
+        "15",
+        "22"
+      ]
+    ],
     "en": "The live Task joins each semaphore wait and later HTTP backend entry to a single benchmark request. Their timestamps place the missing delay before the backend's E2EL clock.",
     "zh": "实际 Task 将 semaphore 等待和随后进入 HTTP backend 的记录接回同一个请求。时间戳说明，遗漏的延迟发生在原端到端计时启动前。"
   },
@@ -442,9 +1104,29 @@
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
     "kind": "functional",
-    "fix": {"state": "proposed", "url": "https://github.com/vllm-project/vllm/pull/61562"},
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/vllm-project/vllm/pull/61562"
+    },
     "case_file": "research/github-issue-discovery/vllm-61561/case.json",
-    "records": [["2", "6"], ["3", "7"], ["0", "4"], ["1", "5"]],
+    "records": [
+      [
+        "2",
+        "6"
+      ],
+      [
+        "3",
+        "7"
+      ],
+      [
+        "0",
+        "4"
+      ],
+      [
+        "1",
+        "5"
+      ]
+    ],
     "en": "Each failed read joins to its own request Task. The actual collector and exception link each read to its frontend output handler, whose task creation is also recorded.",
     "zh": "两个读取异常分别接回自己的请求 Task。实际 collector 和异常对象将每次读取连到对应的前端输出处理任务，后者也有独立的创建栈。"
   },
@@ -452,9 +1134,20 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/vllm-58145/case.json",
-    "records": [["0", "2"], ["1", "3"]],
+    "records": [
+      [
+        "0",
+        "2"
+      ],
+      [
+        "1",
+        "3"
+      ]
+    ],
     "en": "CoroPerf joins each identical lexer-construction path to its original request Task. With the local patch, the cold construction follows the first launcher and the second caller reuses the lexer shape.",
     "zh": "CoroPerf 将两条相同的词法器构建路径接回各自的任务。用本地补丁后，冷构建随首个入口移动，第二次调用复用词法器结构。"
   },
@@ -462,9 +1155,25 @@
     "contribution_kind": "cost_attribution",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "merged", "url": "https://github.com/sgl-project/sglang/pull/50741"},
+    "fix": {
+      "state": "merged",
+      "url": "https://github.com/sgl-project/sglang/pull/50741"
+    },
     "case_file": "research/github-issue-discovery/sglang-50722/case.json",
-    "records": [["1463", "1977"], ["1208", "1978"], ["951", "2881"]],
+    "records": [
+      [
+        "1463",
+        "1977"
+      ],
+      [
+        "1208",
+        "1978"
+      ],
+      [
+        "951",
+        "2881"
+      ]
+    ],
     "en": "Two identical receive stacks join to separate stream-body Tasks and their ASGI request creation stacks. Joining the listener sample to the same parent request identifies the per-chunk checks as additional work in the output Task.",
     "zh": "两条相同的接收栈分别接回各自的输出 Task 和 ASGI 请求创建栈。监听样本也能接回其中同一个请求，表明逐块检查是输出 Task 上的额外工作。"
   },
@@ -472,9 +1181,20 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "local"},
+    "fix": {
+      "state": "local"
+    },
     "case_file": "research/github-issue-discovery/ray-65038/case.json",
-    "records": [["0", "3"], ["1", "2"]],
+    "records": [
+      [
+        "0",
+        "3"
+      ],
+      [
+        "1",
+        "2"
+      ]
+    ],
     "en": "Matching live producer Tasks distinguishes the first and second input batches at identical yield stacks. The first chunk waits for its own batch to be fully collected even with another producer already running.",
     "zh": "通过实际生产 Task，在相同的 yield 栈中分辨第一批和第二批。即使另一个生产者已运行，第一块仍要等本批输出全部收集后才能交付。"
   },
@@ -482,9 +1202,29 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "fix": {"state": "merged", "url": "https://github.com/huggingface/huggingface_hub/pull/5200"},
+    "fix": {
+      "state": "merged",
+      "url": "https://github.com/huggingface/huggingface_hub/pull/5200"
+    },
     "case_file": "research/github-issue-discovery/hf-hub-5186/case.json",
-    "records": [["0", "1"], ["2", "3"], ["5", "6"], ["8", "9"]],
+    "records": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "2",
+        "3"
+      ],
+      [
+        "5",
+        "6"
+      ],
+      [
+        "8",
+        "9"
+      ]
+    ],
     "en": "The status GET joins to the request Task on the affected event loop. After the merged change it joins through the exact executor WorkItem to the same request launcher.",
     "zh": "受影响版本的状态查询在事件循环中接回原请求 Task。上游修复后，查询通过实际执行器 WorkItem 接回同一个请求入口。"
   },
@@ -493,8 +1233,24 @@
     "kind": "performance",
     "language": "Python",
     "case_file": "research/github-issue-discovery/ray-53071/case.json",
-    "fix": {"state": "verified", "url": "https://github.com/ray-project/ray/pull/53096"},
-    "records": [["1", "11"], ["1", "26"], ["1", "27"]],
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/ray-project/ray/pull/53096"
+    },
+    "records": [
+      [
+        "1",
+        "11"
+      ],
+      [
+        "1",
+        "26"
+      ],
+      [
+        "1",
+        "27"
+      ]
+    ],
     "en": "Matching all request Futures identifies the three ready batches. Their execution stacks lead back to the same queue Task, created in the first enqueue.",
     "zh": "按实际 Future 核对三批已就绪请求。三个执行栈都接回在首次入队时创建的同一个队列 Task。"
   },
@@ -503,8 +1259,20 @@
     "kind": "performance",
     "language": "Python",
     "case_file": "research/github-issue-discovery/transformers-46315/case.json",
-    "fix": {"state": "verified", "url": "https://github.com/huggingface/transformers/pull/46323"},
-    "records": [["2", "3"], ["4", "5"]],
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/huggingface/transformers/pull/46323"
+    },
+    "records": [
+      [
+        "2",
+        "3"
+      ],
+      [
+        "4",
+        "5"
+      ]
+    ],
     "en": "The executor WorkItem reconnects both identical token conversion stacks to their callers and attributes the different counts of vocabulary rebuilds.",
     "zh": "按实际 WorkItem 把两条相同的 token 转换栈接回各自的调用者，将不同的词表重建次数归到对应请求。"
   },
@@ -513,8 +1281,20 @@
     "kind": "performance",
     "language": "Python",
     "case_file": "research/github-issue-discovery/ray-63901/case.json",
-    "fix": {"state": "proposed", "url": "https://github.com/ray-project/ray/pull/64094"},
-    "records": [["3", "6"], ["4", "7"]],
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ray-project/ray/pull/64094"
+    },
+    "records": [
+      [
+        "3",
+        "6"
+      ],
+      [
+        "4",
+        "7"
+      ]
+    ],
     "en": "The live Task and frame connect each prompt's enqueue stack to the completion request, even when different requests stream the same prompts.",
     "zh": "用实际的 Task 和协程帧，把 prompt 的入队栈接回各自的流式请求。两个请求生成相同的 prompt 时仍可区分。"
   },
@@ -523,8 +1303,20 @@
     "kind": "performance",
     "language": "Python",
     "case_file": "research/github-issue-discovery/sglang-29163/case.json",
-    "fix": {"state": "proposed", "url": "https://github.com/sgl-project/sglang/pull/29164"},
-    "records": [["4", "8"], ["5", "9"]],
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/sgl-project/sglang/pull/29164"
+    },
+    "records": [
+      [
+        "4",
+        "8"
+      ],
+      [
+        "5",
+        "9"
+      ]
+    ],
     "en": "The actual WorkItem, prompt object and result Future distinguish requests with the same worker stack inside one tokenizer batch.",
     "zh": "同一批次的 tokenizer 工作线程栈相同。通过实际的 WorkItem、输入对象和结果 Future，找回每个请求的发起者。"
   },
@@ -533,8 +1325,20 @@
     "kind": "functional",
     "language": "Python",
     "case_file": "research/github-issue-discovery/ray-67404/case.json",
-    "fix": {"state": "proposed", "url": "https://github.com/ray-project/ray/pull/67405"},
-    "records": [["0", "1"], ["12", "13"]],
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/ray-project/ray/pull/67405"
+    },
+    "records": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "12",
+        "13"
+      ]
+    ],
     "en": "The Task, coroutine and frame link each identical-looking merge stack to its own batch creation in _process_sub_batches. The selected batches retain the actual arguments that were swapped.",
     "zh": "通过 Task、协程和协程帧，把物理栈相同的两次合并分别接回 _process_sub_batches 中创建各批任务的位置，并保留实际被交换的参数。"
   },
@@ -543,8 +1347,20 @@
     "kind": "performance",
     "language": "Python",
     "case_file": "research/github-issue-discovery/vllm-57350/case.json",
-    "fix": {"state": "verified", "url": "https://github.com/vllm-project/vllm/pull/57528"},
-    "records": [["4", "5"], ["6", "8"]],
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/vllm-project/vllm/pull/57528"
+    },
+    "records": [
+      [
+        "4",
+        "5"
+      ],
+      [
+        "6",
+        "8"
+      ]
+    ],
     "en": "The exact executor WorkItem connects two identical worker stacks to their separate chat and completion submissions and the creation of each stream Task.",
     "zh": "用实际的 WorkItem 把两条相同的工作线程栈分别接回聊天和文本补全协程的提交位置，再接到各自的流任务创建栈。"
   },
@@ -553,8 +1369,20 @@
     "kind": "functional",
     "language": "Python",
     "case_file": "research/github-issue-discovery/sglang-39689/case.json",
-    "fix": {"state": "proposed", "url": "https://github.com/sgl-project/sglang/pull/39693"},
-    "records": [["11", "20"], ["35", "44"]],
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/sgl-project/sglang/pull/39693"
+    },
+    "records": [
+      [
+        "11",
+        "20"
+      ],
+      [
+        "35",
+        "44"
+      ]
+    ],
     "en": "The same pending Future connects each pause or continue call to the Task that processes its broadcast. Both processing stacks lead back to receive-loop creation in initialize.",
     "zh": "用同一个 Future 将暂停或继续请求接到实际处理广播的任务，再从两个处理栈接回 initialize 创建接收循环的位置。"
   },
@@ -585,17 +1413,38 @@
     "language": "Python",
     "kind": "profiling",
     "case_file": "research/github-issue-discovery/cpython-115218/case.json",
-    "records": [["2", "4"], ["3", "5"]],
+    "records": [
+      [
+        "2",
+        "4"
+      ],
+      [
+        "3",
+        "5"
+      ]
+    ],
     "en": "The async-aware profile distinguishes the waiting Tasks. CoroPerf measures their actual suspensions and follows each dispatch Handle back to the application caller responsible for that wait.",
     "zh": "原生异步采样能区分等待中的 Task。CoroPerf 测量实际挂起时间，并沿各自的调度 Handle 找回发起读取的应用调用者。"
   },
   "magicstack--asyncpg--547": {
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
-    "fix": {"state": "verified", "url": "https://github.com/MagicStack/asyncpg/pull/608"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/MagicStack/asyncpg/pull/608"
+    },
     "kind": "functional",
     "case_file": "research/github-issue-discovery/asyncpg-547/case.json",
-    "records": [["6", "8"], ["7", "9"]],
+    "records": [
+      [
+        "6",
+        "8"
+      ],
+      [
+        "7",
+        "9"
+      ]
+    ],
     "en": "Both shutdown waiters stop at the same line. The exact release Future on each holder connects that blocked stack to the original application request, even after the acquiring Task has been collected.",
     "zh": "两个关闭等待者都停在同一行。按各连接槽的实际归还 Future 拼接，即使获取连接的 Task 已被回收，也能找回各自的原始请求。"
   },
@@ -604,37 +1453,90 @@
     "language": "Go",
     "kind": "functional",
     "case_file": "research/github-issue-discovery/go-52557/case.json",
-    "records": [["2", "9"], ["5", "11"]],
+    "records": [
+      [
+        "2",
+        "9"
+      ],
+      [
+        "5",
+        "11"
+      ]
+    ],
     "en": "Both waiters have the same stack. CoroPerf follows each result channel through the shared call to the original launcher of the producer that exited without sending a result.",
     "zh": "两个等待者的栈完全相同。CoroPerf 沿各自的结果通道找到对应的共享调用，再接回未发送结果就退出的生产者的原始发起者。"
   },
   "sqlalchemy--sqlalchemy--13689": {
     "contribution_kind": "request_handoff",
     "language": "Python",
-    "fix": {"state": "verified", "url": "https://github.com/sqlalchemy/sqlalchemy/commit/7ca9b3d88a2d47a079c7c14fa37f254c48ab1cf2"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/sqlalchemy/sqlalchemy/commit/7ca9b3d88a2d47a079c7c14fa37f254c48ab1cf2"
+    },
     "kind": "functional",
     "case_file": "research/github-issue-discovery/sqlalchemy-13689/case.json",
-    "records": [["17", "20"], ["18", "22"]],
+    "records": [
+      [
+        "17",
+        "20"
+      ],
+      [
+        "18",
+        "22"
+      ]
+    ],
     "en": "The allocation and read errors look identical for both entries. The exact FrozenResult connects each read to the async caller that filled its cache entry, even after the writer Task has been collected.",
     "zh": "两个条目的分配位置和读取异常完全相同。按实际 FrozenResult 对象拼接，即使写入 Task 已被回收，也能找回各个缓存条目的原始写入者。"
   },
   "python--cpython--157157": {
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
-    "fix": {"state": "merged", "url": "https://github.com/python/cpython/pull/157158"},
+    "fix": {
+      "state": "merged",
+      "url": "https://github.com/python/cpython/pull/157158"
+    },
     "kind": "functional",
     "case_file": "research/github-issue-discovery/cpython-157157/case.json",
-    "records": [["2", "5"], ["4", "8"]],
+    "records": [
+      [
+        "2",
+        "5"
+      ],
+      [
+        "4",
+        "8"
+      ]
+    ],
     "en": "The target Task accepts two cancellation requests. The recorded Task and completion Future identify the request behind the propagated error and the separate accepted request whose message was lost.",
     "zh": "同一个 Task 接受两次取消。记录实际 Task 和完成 Future 后，可以区分最终异常来自哪次取消，以及是哪次已接受的取消丢失了消息。"
   },
   "nuitka--nuitka--4073": {
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
-    "fix": {"state": "verified", "url": "https://github.com/Nuitka/Nuitka/releases/tag/4.3"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/Nuitka/Nuitka/releases/tag/4.3"
+    },
     "kind": "debugging",
     "case_file": "research/github-issue-discovery/nuitka-4073/case.json",
-    "records": [["7", "9"], ["8", "10"], ["1", "3"], ["2", "4"]],
+    "records": [
+      [
+        "7",
+        "9"
+      ],
+      [
+        "8",
+        "10"
+      ],
+      [
+        "1",
+        "3"
+      ],
+      [
+        "2",
+        "4"
+      ]
+    ],
     "en": "Both stored errors reach identical generator tracebacks. The same exception object connects each receiver Task to its distinct producer Task and the original launcher. The first-raise observations show the frame lost by the affected build.",
     "zh": "两个保存的异常到达生成器后，回溯完全相同。按异常对象身份，将两个接收 Task 分别接回各自的生产者 Task 与原始发起者。首次抛出的观测显示了受影响版本丢掉的帧。"
   },
@@ -643,8 +1545,20 @@
     "language": "Rust",
     "kind": "performance",
     "case_file": "research/github-issue-discovery/futures-rs-2387/case.json",
-    "fix": {"state": "workaround", "url": "https://github.com/rust-lang/futures-rs/issues/2387#issuecomment-1482910959"},
-    "records": [["1", "23"], ["13", "15"]],
+    "fix": {
+      "state": "workaround",
+      "url": "https://github.com/rust-lang/futures-rs/issues/2387#issuecomment-1482910959"
+    },
+    "records": [
+      [
+        "1",
+        "23"
+      ],
+      [
+        "13",
+        "15"
+      ]
+    ],
     "en": "One stream task drives two handshakes and the work between them. The poll intervals recover the caller of the delayed handshake. The exact result object recovers the other caller, whose result triggered the work that held the consumer.",
     "zh": "同一个流任务负责两次握手和中间的结果处理。轮询区间将超时握手接回原始调用者，同一个结果对象将占住消费循环的工作接回另一个调用者。"
   },
@@ -653,17 +1567,38 @@
     "language": "C++",
     "kind": "debugging",
     "case_file": "research/github-issue-discovery/llvm-121092/case.json",
-    "records": [["1", "2"], ["4", "5"]],
+    "records": [
+      [
+        "1",
+        "2"
+      ],
+      [
+        "4",
+        "5"
+      ]
+    ],
     "en": "Four coroutine lifetimes share one address and one worker stack. Stripped instructions recover the active frame. Recorded creations and retirements identify the original caller of each lifetime.",
     "zh": "四个协程实例复用同一个帧地址，工作线程的栈也相同。CoroPerf 用去符号的指令恢复活动帧，再沿创建和销毁记录找回各次调用的原始发起者。"
   },
   "aio-libs--async-lru--480": {
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
-    "fix": {"state": "verified", "url": "https://github.com/aio-libs/async-lru/pull/481"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/aio-libs/async-lru/pull/481"
+    },
     "kind": "functional",
     "case_file": "research/github-issue-discovery/async-lru-480/case.json",
-    "records": [["26", "52"], ["21", "141"]],
+    "records": [
+      [
+        "26",
+        "52"
+      ],
+      [
+        "21",
+        "141"
+      ]
+    ],
     "en": "The actual result Future connects the cache eviction to the request left waiting. Two recorded dispatch Handles recover the distinct original callers that triggered the eviction and awaited the result.",
     "zh": "用实际结果 Future 对上缓存淘汰和仍在等待的请求，再沿各自记录的调度 Handle，分别找回触发淘汰和等待结果的原始调用者。"
   },
@@ -672,18 +1607,42 @@
     "language": "C#",
     "kind": "performance",
     "case_file": "research/github-issue-discovery/dotnet-38904/case.json",
-    "fix": {"state": "workaround", "url": "https://github.com/dotnet/runtime/issues/38904"},
-    "records": [["1", "4"], ["0", "5"]],
+    "fix": {
+      "state": "workaround",
+      "url": "https://github.com/dotnet/runtime/issues/38904"
+    },
+    "records": [
+      [
+        "1",
+        "4"
+      ],
+      [
+        "0",
+        "5"
+      ]
+    ],
     "en": "Two fault chains interleave on one worker with identical rethrow stacks. The actual exception object in each root Task connects the rethrows to its original caller.",
     "zh": "两条失败链在同一个工作线程交错执行，重抛栈相同。用根 Task 实际保存的异常对象，可以把重抛接回各自的原始调用者。"
   },
   "oven-sh--bun--45020": {
     "contribution_kind": "scheduling_contention",
     "language": "JavaScript / TypeScript",
-    "fix": {"state": "verified", "url": "https://github.com/oven-sh/bun/pull/44833"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/oven-sh/bun/pull/44833"
+    },
     "kind": "performance",
     "case_file": "research/github-issue-discovery/bun-45020/case.json",
-    "records": [["1", "2"], ["0", "3"]],
+    "records": [
+      [
+        "1",
+        "2"
+      ],
+      [
+        "0",
+        "3"
+      ]
+    ],
     "en": "Two ready continuations share one long poll. Matching their Promise objects to their creation stacks recovers the two callers even when the second launch resumes first.",
     "zh": "两个已就绪的协程被同一次长轮询拖延。按实际 Promise 对象拼回创建栈，即使后发起的协程先恢复，也能找出各自的调用者。"
   },
@@ -692,7 +1651,16 @@
     "language": "Go",
     "kind": "performance",
     "case_file": "research/github-issue-discovery/go-64614/case.json",
-    "records": [["0", "3"], ["1", "6"]],
+    "records": [
+      [
+        "0",
+        "3"
+      ],
+      [
+        "1",
+        "6"
+      ]
+    ],
     "en": "Matching a buffered opener signal's FIFO position and the actual dial interval connects identical opener stacks to the two callers that invalidated connections.",
     "zh": "用补拨信号在同一通道中的 FIFO 顺序和实际拨号区间，将两条相同的拨号栈分别接回丢弃连接的调用者。"
   },
@@ -701,7 +1669,16 @@
     "language": "Dart",
     "kind": "debugging",
     "case_file": "research/github-issue-discovery/dart-61585/case.json",
-    "records": [["1", "2"], ["0", "3"]],
+    "records": [
+      [
+        "1",
+        "2"
+      ],
+      [
+        "0",
+        "3"
+      ]
+    ],
     "en": "The async stack reaches the shared interceptor chain. The identical Future listener callback connects each invocation to the distinct feature that launched it.",
     "zh": "异步栈只能追到共享的拦截器链。CoroPerf 用同一个 Future 监听器回调对象，将每次执行接回发起它的功能入口。"
   },
@@ -710,27 +1687,60 @@
     "language": "C++",
     "kind": "performance",
     "case_file": "research/github-issue-discovery/llvm-56972/case.json",
-    "records": [["1", "3"], ["2", "4"]],
+    "records": [
+      [
+        "1",
+        "3"
+      ],
+      [
+        "2",
+        "4"
+      ]
+    ],
     "en": "Two extra frame allocations return the same child address. Instruction dataflow recovers the two distinct active parent frames and connects the allocation sites to their original application callers.",
     "zh": "两次额外分配返回相同的子协程帧地址。用机器码数据流恢复两个不同的活动父协程帧，就能把分配现场分别接回最初的应用调用者。"
   },
   "rust-lang--futures-rs--2047": {
     "contribution_kind": "scheduling_contention",
     "language": "Rust",
-    "fix": {"state": "verified", "url": "https://github.com/rust-lang/futures-rs/pull/2049"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/rust-lang/futures-rs/pull/2049"
+    },
     "kind": "performance",
     "case_file": "research/github-issue-discovery/futures-rs-2047/case.json",
-    "records": [["0", "6"], ["1", "9"]],
+    "records": [
+      [
+        "0",
+        "6"
+      ],
+      [
+        "1",
+        "9"
+      ]
+    ],
     "en": "Identical retry stacks hid which caller kept a ready heartbeat waiting. The actual child poll interval and original push stack attribute 96 retries to one caller and six to the other.",
     "zh": "相同的重试栈看不出是谁让已就绪的心跳任务等待。CoroPerf 用实际子节点的轮询区间接回入队栈，将 96 次和 6 次重试分别归到两个调用者。"
   },
   "python--cpython--90155": {
     "contribution_kind": "scheduling_contention",
     "language": "Python",
-    "fix": {"state": "verified", "url": "https://github.com/python/cpython/pull/93222"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/python/cpython/pull/93222"
+    },
     "kind": "functional",
     "case_file": "research/github-issue-discovery/cpython-90155/case.json",
-    "records": [["3", "6"], ["4", "7"]],
+    "records": [
+      [
+        "3",
+        "6"
+      ],
+      [
+        "4",
+        "7"
+      ]
+    ],
     "en": "The woken waiter and the next permit recipient are different Tasks on 3.10.3. The matching dispatch Handles restore the separate application callers.",
     "zh": "在 3.10.3 中，被唤醒的等待者和下一次实际获得许可的是不同 Task。用各自的调度 Handle 拼回创建栈，可以区分两个原始调用者。"
   },
@@ -739,27 +1749,60 @@
     "language": "Scala",
     "kind": "debugging",
     "case_file": "research/github-issue-discovery/zio-1003/case.json",
-    "records": [["0", "9"], ["1", "8"]],
+    "records": [
+      [
+        "0",
+        "9"
+      ],
+      [
+        "1",
+        "8"
+      ]
+    ],
     "en": "The two worker failures have the same native trace. Matching each FiberContext receiver to its construction recovers the precise unsafeRun caller.",
     "zh": "两条 worker 失败的原生栈相同。根据实际 FiberContext 对象拼回创建栈，可以找回每次 unsafeRun 的确切调用者。"
   },
   "python--cpython--112169": {
     "contribution_kind": "scheduling_contention",
     "language": "Python",
-    "fix": {"state": "guidance", "url": "https://github.com/python/cpython/pull/112191"},
+    "fix": {
+      "state": "guidance",
+      "url": "https://github.com/python/cpython/pull/112191"
+    },
     "kind": "performance",
     "case_file": "research/github-issue-discovery/cpython-112169/case.json",
-    "records": [["10", "15"], ["11", "16"]],
+    "records": [
+      [
+        "10",
+        "15"
+      ],
+      [
+        "11",
+        "16"
+      ]
+    ],
     "en": "Matching the blocked worker to its exact executor WorkItem and the broker's earlier queue request identifies which application caller occupied the DNS worker.",
     "zh": "把被占用的工作线程接回实际 WorkItem，再沿调度器取出的同一个请求找到入队栈，可以辨认占用 DNS 工作线程的应用调用者。"
   },
   "tokio-rs--tokio--8434": {
     "contribution_kind": "failure_lifecycle",
     "language": "Rust",
-    "fix": {"state": "verified", "url": "https://github.com/tokio-rs/tokio/pull/8445"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/tokio-rs/tokio/pull/8445"
+    },
     "kind": "functional",
     "case_file": "research/github-issue-discovery/tokio-8434/case.json",
-    "records": [["0", "7"], ["1", "10"]],
+    "records": [
+      [
+        "0",
+        "7"
+      ],
+      [
+        "1",
+        "10"
+      ]
+    ],
     "en": "The stock trace shows the two lock operations. The actual FuturesUnordered child poll intervals link those samples to the application callers that submitted them.",
     "zh": "原生追踪能看到两个锁操作。CoroPerf 用 FuturesUnordered 实际子节点的 poll 区间把采样连回提交它们的应用调用者。"
   },
@@ -768,17 +1811,38 @@
     "language": "Python",
     "kind": "functional",
     "case_file": "research/github-issue-discovery/grpc-37881/case.json",
-    "records": [["11", "12"], ["16", "17"]],
+    "records": [
+      [
+        "11",
+        "12"
+      ],
+      [
+        "16",
+        "17"
+      ]
+    ],
     "en": "The two workers have identical stacks and both lose the request ID. Joining the active WorkItem to its submission and the exact per-RPC handler restores the original interceptor route.",
     "zh": "两个工作线程的栈完全相同，请求 ID 也都丢失。用实际 WorkItem 接回提交栈，再按同一个 RPC 处理器对象拼接，就能找回最初的拦截器路径。"
   },
   "python--cpython--157213": {
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
-    "fix": {"state": "verified", "url": "https://github.com/python/cpython/pull/157313"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/python/cpython/pull/157313"
+    },
     "kind": "debugging",
     "case_file": "research/github-issue-discovery/cpython-157213/case.json",
-    "records": [["3", "12"], ["4", "13"]],
+    "records": [
+      [
+        "3",
+        "12"
+      ],
+      [
+        "4",
+        "13"
+      ]
+    ],
     "en": "The fixed await graph shows who still waits. Matching each survivor Task to the Handle that dispatched its creation recovers who originally launched it.",
     "zh": "修复后的等待图能显示谁仍在等待。CoroPerf 把每个存活 Task 接回触发其创建的 Handle，找出最初是谁发起的。"
   },
@@ -786,7 +1850,12 @@
     "contribution_kind": "caller_recovery",
     "language": "C#",
     "kind": "debugging",
-    "records": [["0", "6"]],
+    "records": [
+      [
+        "0",
+        "6"
+      ]
+    ],
     "en": "The constructor stack begins on a timer worker. Joining it to creation recovers Program.Main as the initiator of this Foo state machine.",
     "zh": "构造函数的物理栈起于计时器工作线程。拼回创建栈后，可以确定这次 Foo 状态机由 Program.Main 发起。"
   },
@@ -795,7 +1864,16 @@
     "language": "C#",
     "kind": "debugging",
     "case_file": "research/github-issue-discovery/dotnet-125417/case.json",
-    "records": [["2", "5"], ["0", "10"]],
+    "records": [
+      [
+        "2",
+        "5"
+      ],
+      [
+        "0",
+        "10"
+      ]
+    ],
     "en": "The same callee runs for two synchronous forwarders. TPL execution intervals and recorded task creation stacks connect each worker observation to its original caller.",
     "zh": "两个同步转发方法调用同一个协程。CoroPerf 用 TPL 执行区间和已记录的任务创建栈，把每个工作线程观测分别连回原始调用者。"
   },
@@ -803,7 +1881,12 @@
     "contribution_kind": "scheduling_contention",
     "language": "C++",
     "kind": "performance",
-    "records": [["105", "158"]],
+    "records": [
+      [
+        "105",
+        "158"
+      ]
+    ],
     "en": "Two request entries use shared_lookup. The stopped sample's owner and the recorded creator chain identify profile_entry as the origin of the blocked request.",
     "zh": "两个请求入口都使用 shared_lookup。将停止现场归到具体协程后，沿创建关系可以确认卡住的是由 profile_entry 发起的请求。"
   },
@@ -812,7 +1895,16 @@
     "language": "C++",
     "kind": "functional",
     "case_file": "research/github-issue-discovery/llvm-37601/case.json",
-    "records": [["2", "3"], ["1", "4"]],
+    "records": [
+      [
+        "2",
+        "3"
+      ],
+      [
+        "1",
+        "4"
+      ]
+    ],
     "en": "The same worker stack and stale thread ID describe two instances. The stripped machine code identifies the frame at each resume, and its recorded creation stack restores the launcher.",
     "zh": "同一个工作线程的调用栈和旧线程 ID 对应两个不同的协程实例。CoroPerf 用去符号的机器码定位各自恢复的帧，再拼回创建栈找出原始调用者。"
   },
@@ -820,17 +1912,34 @@
     "contribution_kind": "scheduling_contention",
     "language": "Rust",
     "kind": "performance",
-    "records": [["31", "52"]],
+    "records": [
+      [
+        "31",
+        "52"
+      ]
+    ],
     "en": "The matched spawn and helper-body stacks identify which parent launched the delayed task in the controlled LIFO-slot run.",
     "zh": "在受控的 LIFO 槽位复现中，将任务创建栈和任务体执行栈对齐，能找到被延迟调度的任务由哪个父任务发起。"
   },
   "tokio-rs--tokio--8760": {
     "contribution_kind": "cost_attribution",
     "language": "Rust",
-    "fix": {"state": "verified", "url": "https://github.com/tokio-rs/tokio/pull/8761"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/tokio-rs/tokio/pull/8761"
+    },
     "kind": "performance",
     "case_file": "research/github-issue-discovery/tokio-8760/case.json",
-    "records": [["34", "159"], ["76", "161"]],
+    "records": [
+      [
+        "34",
+        "159"
+      ],
+      [
+        "76",
+        "161"
+      ]
+    ],
     "en": "Both callers produce the same timer-clear stack. The poll interval identifies the running task, and its creation stack identifies which application entry launched it.",
     "zh": "两条路径的工作线程只看到同一种定时器清理栈。用 poll 区间定位执行中的任务，拼回创建栈后就能找出发起该任务的应用入口。"
   },
@@ -838,7 +1947,12 @@
     "contribution_kind": "scheduling_contention",
     "language": "Java",
     "kind": "performance",
-    "records": [["1", "3"]],
+    "records": [
+      [
+        "1",
+        "3"
+      ]
+    ],
     "en": "Stock JFR shows the JDBC pin and the virtual thread's own entry. Joining the pin to the factory's creation record by JVM thread ID recovers the earlier Quarkus caller.",
     "zh": "原生 JFR 显示 JDBC 钉住位置和虚拟线程自己的入口。用 JVM 线程 ID 拼回工厂采集的创建记录后，才能看到更早的 Quarkus 请求分派调用者。"
   },
@@ -846,7 +1960,12 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["5", "13"]],
+    "records": [
+      [
+        "5",
+        "13"
+      ]
+    ],
     "en": "The resumed diagnostic contains sub. The Promise creation stack restores its synchronous initiator, main.",
     "zh": "恢复后的诊断栈只有 sub。拼上对应 Promise 的创建栈后，可以找回同步发起者 main。"
   },
@@ -854,7 +1973,12 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["7", "12"]],
+    "records": [
+      [
+        "7",
+        "12"
+      ]
+    ],
     "en": "The early post-await diagnostic in foo omits main and indirectCall. The matching Promise creation record retains both.",
     "zh": "foo 第一次 await 之后的诊断栈缺少 main 和 indirectCall。匹配到的 Promise 创建记录保留了这两个调用者。"
   },
@@ -862,7 +1986,12 @@
     "contribution_kind": "request_handoff",
     "language": "Python",
     "kind": "debugging",
-    "records": [["1", "15"]],
+    "records": [
+      [
+        "1",
+        "15"
+      ]
+    ],
     "en": "The suspended task is linked to the task creation in f2. The crossed-await control checks creator and current waiter independently.",
     "zh": "挂起现场被连回 f2 中的任务创建位置。交叉 await 对照对创建者和当前等待者做了独立核对。"
   },
@@ -871,8 +2000,20 @@
     "language": "Python",
     "kind": "debugging",
     "case_file": "research/github-issue-discovery/cpython-156278/case.json",
-    "fix": {"state": "proposed", "url": "https://github.com/python/cpython/pull/156286"},
-    "records": [["5", "19"], ["10", "13"]],
+    "fix": {
+      "state": "proposed",
+      "url": "https://github.com/python/cpython/pull/156286"
+    },
+    "records": [
+      [
+        "5",
+        "19"
+      ],
+      [
+        "10",
+        "13"
+      ]
+    ],
     "en": "Two final tracebacks point to stream cleanup. The saved first-raise stacks identify the two failed reads, and their Task creation records identify the distinct callers.",
     "zh": "两条最终异常栈都指向流清理。首次抛出时保留的栈指出两个真正失败的读取，再拼回各自的 Task 创建栈，就能确定不同的发起者。"
   },
@@ -880,7 +2021,12 @@
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
     "kind": "functional",
-    "records": [["3", "43"]],
+    "records": [
+      [
+        "3",
+        "43"
+      ]
+    ],
     "en": "Finalization evidence identifies the pending task, and the identity-matched capture traces the task to its creation.",
     "zh": "终结现场识别出仍未完成的任务，再通过匹配实例的采集记录追溯它的创建位置。"
   },
@@ -888,16 +2034,29 @@
     "contribution_kind": "caller_recovery",
     "language": "Python",
     "kind": "debugging",
-    "records": [["1", "2"]],
+    "records": [
+      [
+        "1",
+        "2"
+      ]
+    ],
     "en": "The active stack shows bar. Its child-task creation stack recovers foo and main and identifies the first caller among several waiters.",
     "zh": "当前栈显示 bar。拼回子任务的创建栈后可恢复 foo 和 main，并从多个等待者中区分最早的发起者。"
   },
   "kludex--starlette--1438": {
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
-    "fix": {"state": "verified", "url": "https://github.com/Kludex/starlette/pull/1715#issue-1289392289"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/Kludex/starlette/pull/1715#issue-1289392289"
+    },
     "kind": "functional",
-    "records": [["13", "65"]],
+    "records": [
+      [
+        "13",
+        "65"
+      ]
+    ],
     "en": "The task creation link connects the request middleware to the background execution that received cancellation.",
     "zh": "任务创建关系把请求中间件和收到取消的后台执行连在一起。"
   },
@@ -905,7 +2064,12 @@
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
     "kind": "functional",
-    "records": [["13", "554"]],
+    "records": [
+      [
+        "13",
+        "554"
+      ]
+    ],
     "en": "Joining the pending subscription stack to request-task creation identifies which request was still live at shutdown.",
     "zh": "将仍在等待的订阅栈拼回请求任务的创建处，可以确定服务关闭时仍存活的是哪个请求。"
   },
@@ -913,7 +2077,12 @@
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
     "kind": "functional",
-    "records": [["1", "254"]],
+    "records": [
+      [
+        "1",
+        "254"
+      ]
+    ],
     "en": "The cleanup sample links back to the same Task created by main. Pool records then identify the matching checked-out connection left by the cancellation.",
     "zh": "把清理现场连回 main 创建的同一个任务。连接池记录进一步核对出取消后遗留的已借出连接。"
   },
@@ -921,7 +2090,16 @@
     "contribution_kind": "caller_recovery",
     "language": "Kotlin",
     "kind": "debugging",
-    "records": [["4", "72"], ["5", "67"]],
+    "records": [
+      [
+        "4",
+        "72"
+      ],
+      [
+        "5",
+        "67"
+      ]
+    ],
     "en": "Captured Kotlin Job identities connect the two failure samples to their respective launch sites, even with identical messages and reversed reply order.",
     "zh": "用采集到的 Kotlin Job 身份，将两处失败分别匹配到各自的启动位置。消息相同、响应顺序反转时也能区分两次调用。"
   },
@@ -929,7 +2107,16 @@
     "contribution_kind": "caller_recovery",
     "language": "Kotlin",
     "kind": "debugging",
-    "records": [["81", "104"], ["5", "22"]],
+    "records": [
+      [
+        "81",
+        "104"
+      ],
+      [
+        "5",
+        "22"
+      ]
+    ],
     "en": "Job lifecycle joins attribute the identical requestSuspend failures to the separate async and launch callers.",
     "zh": "沿 Job 生命周期将两个相同的 requestSuspend 失败分别连回 async 和 launch 的发起者。"
   },
@@ -937,7 +2124,12 @@
     "contribution_kind": "caller_recovery",
     "language": "Kotlin",
     "kind": "debugging",
-    "records": [["0", "9"]],
+    "records": [
+      [
+        "0",
+        "9"
+      ]
+    ],
     "en": "The throw sample and its continuation chain are joined to the runBlocking Job; this recovers the caller path across suspension.",
     "zh": "将抛异常时的续体栈连回 runBlocking 创建的 Job，恢复挂起前的调用路径。"
   },
@@ -945,25 +2137,50 @@
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
     "kind": "debugging",
-    "records": [["1", "4"]],
+    "records": [
+      [
+        "1",
+        "4"
+      ]
+    ],
     "en": "Creation-to-cancellation attribution identifies which of two similarly executing tasks came from the unresponsive branch.",
     "zh": "把取消现场连回任务的创建位置，区分执行路径相似的两个任务，定位无响应的一侧。"
   },
   "huggingface--huggingface_hub--2521": {
     "contribution_kind": "request_handoff",
     "language": "Python",
-    "fix": {"state": "verified", "url": "https://github.com/huggingface/huggingface_hub/pull/2528"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/huggingface/huggingface_hub/pull/2528"
+    },
     "kind": "functional",
-    "records": [["43", "55"], ["3", "18"]],
+    "records": [
+      [
+        "43",
+        "55"
+      ],
+      [
+        "3",
+        "18"
+      ]
+    ],
     "en": "Two requests shared a URL. The captured task lineage and response identities let the warning be attributed to submit_alpha.",
     "zh": "两个请求使用同一 URL。沿任务创建关系并核对响应对象身份，可以将告警归到 submit_alpha。"
   },
   "automattic--mongoose--15317": {
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
-    "fix": {"state": "verified", "url": "https://github.com/Automattic/mongoose/commit/f4840bbbf7e81107e5a34cdfe964b7eab22bb12e"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/Automattic/mongoose/commit/f4840bbbf7e81107e5a34cdfe964b7eab22bb12e"
+    },
     "kind": "debugging",
-    "records": [["70", "124"]],
+    "records": [
+      [
+        "70",
+        "124"
+      ]
+    ],
     "en": "The validation stack starts at Document.invalidate. The Promise creation record recovers the originating model.save call in runDemo.",
     "zh": "校验栈起于 Document.invalidate。拼上 Promise 创建记录可以找回 runDemo 中发起的 model.save。"
   },
@@ -971,7 +2188,12 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["43", "81"]],
+    "records": [
+      [
+        "43",
+        "81"
+      ]
+    ],
     "en": "The creation record shows Query.then starting exec internally and recovers the application context missing from the error.",
     "zh": "创建记录显示 Query.then 在内部启动 exec，并恢复错误栈里丢失的应用调用上下文。"
   },
@@ -979,7 +2201,16 @@
     "contribution_kind": "request_handoff",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["6", "112"], ["14", "186"]],
+    "records": [
+      [
+        "6",
+        "112"
+      ],
+      [
+        "14",
+        "186"
+      ]
+    ],
     "en": "Matching Promise, Error, and ClientRequest identities lets the two reports be traced to separate axios.get callers.",
     "zh": "对齐 Promise、Error 和 ClientRequest 身份后，可以把两条错误记录分别追溯到对应的 axios.get 调用者。"
   },
@@ -987,7 +2218,12 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["1", "74"]],
+    "records": [
+      [
+        "1",
+        "74"
+      ]
+    ],
     "en": "The rejection's Promise identity identifies the creation stack in the application test where the missing async caller originated.",
     "zh": "通过发生拒绝的 Promise 身份，可以恢复应用测试中缺失的异步调用者。"
   },
@@ -995,7 +2231,12 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["705", "870"]],
+    "records": [
+      [
+        "705",
+        "870"
+      ]
+    ],
     "en": "Stitching the second create call to its catch reconnects the lost application call site to the driver-error path.",
     "zh": "将第二次 create 的创建栈拼到 catch 现场，把错误栈中缺失的应用调用行连到驱动报错路径。"
   },
@@ -1003,7 +2244,16 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["75", "98"], ["77", "120"]],
+    "records": [
+      [
+        "75",
+        "98"
+      ],
+      [
+        "77",
+        "120"
+      ]
+    ],
     "en": "The two query Promise identities tie similar failures to readAccount and readInvoice separately.",
     "zh": "两次查询的 Promise 身份将相似的错误分别归到 readAccount 和 readInvoice。"
   },
@@ -1011,7 +2261,16 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["10", "11"], ["0", "1"]],
+    "records": [
+      [
+        "10",
+        "11"
+      ],
+      [
+        "0",
+        "1"
+      ]
+    ],
     "en": "Promise and timer identities recover which initiating caller hit its connect-phase deadline in the timing control.",
     "zh": "用 Promise 和计时器身份核对超时现场，找出触发连接阶段时限的发起者。"
   },
@@ -1019,7 +2278,16 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["0", "1"], ["2", "3"]],
+    "records": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "2",
+        "3"
+      ]
+    ],
     "en": "The same SQL produces the same error text in two callers. Matching each Promise and await continuation distinguishes importOrders from refreshCatalog.",
     "zh": "两个调用者执行相同 SQL 并得到相同报错。拼接各自 Promise 的创建栈和 await 恢复栈，可以区分 importOrders 和 refreshCatalog。"
   },
@@ -1027,7 +2295,16 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["0", "2"], ["1", "4"]],
+    "records": [
+      [
+        "0",
+        "2"
+      ],
+      [
+        "1",
+        "4"
+      ]
+    ],
     "en": "At the custom thenable boundary, query-object identity reconnects each rejection to its own application creation site.",
     "zh": "在自定义 thenable 边界，用查询对象身份将各次拒绝连回对应的应用创建位置。"
   },
@@ -1035,16 +2312,37 @@
     "contribution_kind": "request_handoff",
     "language": "Python",
     "kind": "functional",
-    "records": [["6", "156"], ["7", "189"], ["9", "205"]],
+    "records": [
+      [
+        "6",
+        "156"
+      ],
+      [
+        "7",
+        "189"
+      ],
+      [
+        "9",
+        "205"
+      ]
+    ],
     "en": "Task joins identify which concurrent gather callers received each lastrowid observation, so the reported values can be compared with the correct committed rows.",
     "zh": "通过任务拼接找出每次 lastrowid 观测来自哪个 gather 子任务，进而用正确的已提交数据行核对返回值。"
   },
   "tortoise--tortoise-orm--2060": {
     "contribution_kind": "request_handoff",
     "language": "Python",
-    "fix": {"state": "verified", "url": "https://github.com/tortoise/tortoise-orm/pull/2276"},
+    "fix": {
+      "state": "verified",
+      "url": "https://github.com/tortoise/tortoise-orm/pull/2276"
+    },
     "kind": "functional",
-    "records": [["6", "95"]],
+    "records": [
+      [
+        "6",
+        "95"
+      ]
+    ],
     "en": "The join identifies the gather caller whose defaults were lost and traces its task to the conflict-handling path that returned the competing caller's value.",
     "zh": "拼接确定了 gather 中哪一个调用者的默认值丢失，并将它的任务追溯到返回竞争方数据的冲突处理路径。"
   },
@@ -1052,7 +2350,12 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["370", "502"]],
+    "records": [
+      [
+        "370",
+        "502"
+      ]
+    ],
     "en": "The default diagnostic omits reader.read() on line 10. In three stock Inspector runs with async ancestry enabled, the debugger shows the DNS connect from line 4 and still omits the later read. The matched read Promise reconnects line 10 to the error.",
     "zh": "默认异常栈缺少第 10 行的 reader.read()。三次开启异步归属的原生 Inspector 对照都看到了第 4 行的 DNS connect，却依然缺少后续的 read。匹配读取 Promise 后，CoroPerf 把第 10 行接回出错现场。"
   },
@@ -1060,7 +2363,20 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["17", "26"], ["20", "24"], ["21", "28"]],
+    "records": [
+      [
+        "17",
+        "26"
+      ],
+      [
+        "20",
+        "24"
+      ],
+      [
+        "21",
+        "28"
+      ]
+    ],
     "en": "The affected runner's assertion stack omits its outer page-object method. Matching the returned step Promises recovers shouldBeCorrect and separates two inner step launches with identical error stacks.",
     "zh": "受影响版本的断言栈缺少外层页面对象方法。匹配各 test.step 返回的 Promise 后，可以找回 shouldBeCorrect，并区分异常栈完全相同的两次内层调用。"
   },
@@ -1068,7 +2384,16 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["11", "132"], ["17", "107"]],
+    "records": [
+      [
+        "11",
+        "132"
+      ],
+      [
+        "17",
+        "107"
+      ]
+    ],
     "en": "Even with Bluebird long-stack traces enabled, direct await omits the test1 query line. Matching each query continuation reconnects the database error to test1 or test2.",
     "zh": "开启 Bluebird 长栈后，直接 await 的异常栈还是缺少 test1 的查询行。拼回各查询续体的创建栈后，数据库报错可以分别归到 test1 和 test2。"
   },
@@ -1076,7 +2401,12 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["9", "21"]],
+    "records": [
+      [
+        "9",
+        "21"
+      ]
+    ],
     "en": "The rejection stack starts in Knex query compilation. Matching the rejected Promise recovers the runCase dispatch line before the await boundary.",
     "zh": "拒绝发生时的栈起于 Knex 查询编译。匹配被拒绝的 Promise 后，可以补回 await 之前 runCase 发起查询的代码行。"
   },
@@ -1084,7 +2414,12 @@
     "contribution_kind": "caller_recovery",
     "language": "JavaScript / TypeScript",
     "kind": "debugging",
-    "records": [["0", "2"]],
+    "records": [
+      [
+        "0",
+        "2"
+      ]
+    ],
     "en": "The affected MySQL error stack starts in driver code and omits myNamedFunction1234. The returned Promise identity recovers that initiator and distinguishes it from the test callback reading the error.",
     "zh": "受影响版本的 MySQL 异常栈起于驱动代码，缺少 myNamedFunction1234。用返回 Promise 的身份拼回发起者，并能把它和读取该异常的测试回调区分开。"
   },
@@ -1092,7 +2427,12 @@
     "contribution_kind": "scheduling_contention",
     "language": "Python",
     "kind": "performance",
-    "records": [["2", "29"]],
+    "records": [
+      [
+        "2",
+        "29"
+      ]
+    ],
     "en": "The sample shows consume blocked in _bind_exec. Joining it to start_export identifies the export cursor task in the two-cursor performance control. Protocol records independently establish that rows had arrived before delivery to the application.",
     "zh": "物理栈看到 consume 等在 _bind_exec。把采样接回 start_export 后，可在双游标性能对照中确认等待的是导出游标任务。协议记录独立验证了数据行已到达而应用仍未收到。"
   },
@@ -1101,7 +2441,16 @@
     "language": "JavaScript / TypeScript",
     "kind": "profiling",
     "case_file": "research/github-issue-discovery/node-50056/case.json",
-    "records": [["4", "18"], ["8", "126"]],
+    "records": [
+      [
+        "4",
+        "18"
+      ],
+      [
+        "8",
+        "126"
+      ]
+    ],
     "en": "The two callers share one sampled CPU stack after await. CoroPerf joins the active Promise generation to its creation so the same callee is attributed separately to launchProfile and launchInventory.",
     "zh": "两个调用者在 await 后的热点调用栈相同。CoroPerf 先确定当时活跃的 Promise 实例，再拼回其创建栈，把同一个被调用者分别连到 launchProfile 和 launchInventory。"
   },
@@ -1128,7 +2477,16 @@
     "language": "Kotlin",
     "kind": "debugging",
     "case_file": "research/github-issue-discovery/kotlin-1660/case.json",
-    "records": [["4", "32"], ["9", "18"]],
+    "records": [
+      [
+        "4",
+        "32"
+      ],
+      [
+        "9",
+        "18"
+      ]
+    ],
     "en": "The same worker exception stack can come from profileCaller or inventoryCaller. The Job taken from the throwing continuation links that exception to the correct caller at DispatchedCoroutine creation.",
     "zh": "同一个 worker 异常栈可能来自 profileCaller 或 inventoryCaller。从抛出异常的 continuation 取到的 Job，把异常接回 DispatchedCoroutine 创建时的正确调用者。"
   },
@@ -1137,17 +2495,46 @@
     "language": "Scala",
     "kind": "debugging",
     "case_file": "research/github-issue-discovery/cats-effect-2620/case.json",
-    "records": [["1", "8"], ["2", "13"], ["3", "6"], ["4", "7"]],
+    "records": [
+      [
+        "1",
+        "8"
+      ],
+      [
+        "2",
+        "13"
+      ],
+      [
+        "3",
+        "6"
+      ],
+      [
+        "4",
+        "7"
+      ]
+    ],
     "en": "The stock monitor gives four WAITING rows with no frames. CoroPerf joins each worker's wait registration to its creation and then to the application's dispatcher initialization at AppLoader.scala:32.",
     "zh": "原生监控器显示四条没有栈帧的 WAITING 记录。CoroPerf 把各 worker 的等待登记接回自己的创建栈，再接回应用在 AppLoader.scala:32 初始化 Dispatcher 的位置。"
   },
   "tokio-rs--tokio--8527": {
     "contribution_kind": "cost_attribution",
     "language": "Rust",
-    "fix": {"state": "merged", "url": "https://github.com/tokio-rs/tokio/pull/8532"},
+    "fix": {
+      "state": "merged",
+      "url": "https://github.com/tokio-rs/tokio/pull/8532"
+    },
     "kind": "performance",
     "case_file": "research/github-issue-discovery/tokio-8527/case.json",
-    "records": [["3130", "30036"], ["1264", "29932"]],
+    "records": [
+      [
+        "3130",
+        "30036"
+      ],
+      [
+        "1264",
+        "29932"
+      ]
+    ],
     "en": "Two delayed blocking jobs have the same worker stack and stock submit location. Following each blocking span through its creation and its async producer recovers the original application caller, launch_profile or launch_inventory.",
     "zh": "两个排队慢的阻塞任务拥有相同的 worker 栈和原生提交位置。CoroPerf 沿各自的阻塞 span、创建栈和异步创建者，找回最初的应用调用者 launch_profile 或 launch_inventory。"
   },
@@ -1156,17 +2543,38 @@
     "language": "C++",
     "kind": "debugging",
     "case_file": "research/github-issue-discovery/asio-1239/case.json",
-    "records": [["5", "15"], ["7", "10"]],
+    "records": [
+      [
+        "5",
+        "15"
+      ],
+      [
+        "7",
+        "10"
+      ]
+    ],
     "en": "Asio's live awaiter chain ends at the detached entry. Instruction dataflow recovers the timer's active instance, and its two recorded creation edges lead back to launch_profile or launch_inventory.",
     "zh": "Asio 的实时 awaiter 链止于 detached 入口。指令数据流恢复定时器唤醒的实例，两处创建关系将它接回 launch_profile 或 launch_inventory。"
   },
   "python--cpython--105836": {
     "contribution_kind": "failure_lifecycle",
     "language": "Python",
-    "fix": {"state": "merged", "url": "https://github.com/python/cpython/pull/142358"},
+    "fix": {
+      "state": "merged",
+      "url": "https://github.com/python/cpython/pull/142358"
+    },
     "kind": "functional",
     "case_file": "research/github-issue-discovery/cpython-105836/case.json",
-    "records": [["2", "10"], ["3", "9"]],
+    "records": [
+      [
+        "2",
+        "10"
+      ],
+      [
+        "3",
+        "9"
+      ]
+    ],
     "en": "Both cancelled bridge Futures conceal the same pending cleanup path. The recorded Task-to-Future object relationship connects each Task snapshot to the original cross-thread submitter.",
     "zh": "两个外层 Future 已取消，内层 Task 都停在同一段清理路径。通过记录下来的 Task 与 Future 对象关系，各自的清理快照可以接回真正的跨线程提交者。"
   }

@@ -25,6 +25,7 @@ PARENT_WITNESSES = {
     "trtllm-batch-task-and-worker-record",
     "same-vllm-benchmark-process-and-client-task",
     "same-ray-terminal-operator", "same-ray-task-id-and-index", "verl-live-processor-task",
+    "same-executing-futuretask",
 }
 CREATE = {"create", "creation"}
 OBSERVATION = {"sample", "cpu_sample", "diagnostic_stacktrace", "task_snapshot"}
@@ -366,7 +367,7 @@ def main():
             upstream_reference = None
         cases.append({
             "id": identifier,
-            "reference": f'{item["repo"]} #{item["issue"]}',
+            "reference": apache_jira_key(item["url"]) or f'{item["repo"]} #{item["issue"]}',
             "title": safe_text(item["title"]),
             "title_zh": title_zh,
             "url": item["url"],

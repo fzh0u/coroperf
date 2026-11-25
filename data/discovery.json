@@ -1,15 +1,15 @@
 {
   "schema": "coroperf.discovery-run/v1",
-  "started_at": "2026-11-25T00:00:30+00:00",
-  "finished_at": "2026-11-25T00:04:17+00:00",
+  "started_at": "2026-11-25T01:04:11+00:00",
+  "finished_at": "2026-11-25T01:04:19+00:00",
   "run_directory": "perf-out/github-issue-discovery/automatic/runs/20261125T000030Z",
   "selection": "Top discussion and recent-update windows per repository; not an exhaustive or representative survey.",
   "heat_formula": "4*ln(1+comments) + 2*ln(1+positive_reactions) + 0.5*ln(1+repository_stars)",
   "coverage_policy": "In each round, take at most one candidate per repository, cycling through the three domains.",
   "execution_policy": "Read-only metadata collection. No issue code, linked commands or reproductions are executed.",
   "counts": {
-    "no_async_signal": 227,
-    "needs_review": 304,
+    "no_async_signal": 233,
+    "needs_review": 312,
     "external_environment_required": 1,
     "already_catalogued": 5,
     "excluded_after_review": 1,
@@ -204,10 +204,10 @@
       "domain": "Distributed systems",
       "stars": 44617,
       "official_tracker": "https://issues.apache.org/jira/projects/SPARK",
-      "searches": 1,
+      "searches": 2,
       "search_hits": 0,
       "unique_candidates": 0,
-      "complete": false,
+      "complete": true,
       "has_issues": true,
       "canonical_repository": "apache/spark",
       "archive": "9ebcb351c008c55640bec97f5bbfe670edefdf58bee0528c6e21b79e7912ee46",
@@ -251,10 +251,10 @@
       "domain": "Distributed systems",
       "stars": 2182,
       "official_tracker": null,
-      "searches": 1,
-      "search_hits": 20,
-      "unique_candidates": 20,
-      "complete": false,
+      "searches": 2,
+      "search_hits": 40,
+      "unique_candidates": 34,
+      "complete": true,
       "has_issues": true,
       "canonical_repository": "apache/datafusion-ballista",
       "archive": "b910569d7aa7dc9515fa448951c43cf6b420481419ec5146ee73e26939686670"
@@ -561,13 +561,21 @@
       "repository": "apache/spark",
       "query": "repo:apache/spark is:issue (async OR coroutine OR goroutine OR \"thread pool\" OR \"event loop\") sort:updated-desc",
       "kind": "recent",
-      "error": "HTTPError: HTTP Error 403: rate limit exceeded"
+      "total_count": 0,
+      "incomplete_results": false,
+      "returned": 0,
+      "archive": "544584040d6659ea83288595c0d1e836e6847b47e9b685b47ef75c62e69940a1",
+      "observed_at": "2026-11-25T01:04:12+00:00"
     },
     {
       "repository": "apache/datafusion-ballista",
       "query": "repo:apache/datafusion-ballista is:issue (async OR coroutine OR goroutine OR \"thread pool\" OR \"event loop\") sort:comments-desc",
       "kind": "discussion",
-      "error": "HTTPError: HTTP Error 403: rate limit exceeded"
+      "total_count": 57,
+      "incomplete_results": false,
+      "returned": 20,
+      "archive": "54f1095abc02169404adb1c8c742615686715b076209c85ffab1d660903c0f4c",
+      "observed_at": "2026-11-25T01:04:19+00:00"
     },
     {
       "repository": "apache/datafusion-ballista",
@@ -620,18 +628,7 @@
       "observed_at": "2026-11-25T00:04:11+00:00"
     }
   ],
-  "errors": [
-    {
-      "repository": "apache/spark",
-      "phase": "recent",
-      "error": "HTTPError: HTTP Error 403: rate limit exceeded"
-    },
-    {
-      "repository": "apache/datafusion-ballista",
-      "phase": "discussion",
-      "error": "HTTPError: HTTP Error 403: rate limit exceeded"
-    }
-  ],
+  "errors": [],
   "issues": [
     {
       "id": "pytorch--pytorch--494",
@@ -5697,6 +5694,32 @@
       ]
     },
     {
+      "id": "apache--datafusion-ballista--6",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 6,
+      "title": "[Ballista] Support to access remote object store, like HDFS, S3, etc",
+      "url": "https://github.com/apache/datafusion-ballista/issues/6",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2025-04-18T20:04:37Z",
+      "created_at": "2022-01-29T08:23:46Z",
+      "comments": 18,
+      "positive_reactions": 2,
+      "repository_stars": 2182,
+      "labels": [
+        "enhancement"
+      ],
+      "async_signal": false,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 17.8192,
+      "status": "no_async_signal",
+      "reason": "No concrete async keyword in the returned title/body; excluded from the review queue.",
+      "query_kinds": [
+        "discussion"
+      ]
+    },
+    {
       "id": "sqlalchemy--sqlalchemy--10717",
       "repository": "sqlalchemy/sqlalchemy",
       "domain": "Database",
@@ -7531,6 +7554,7 @@
       "status": "no_async_signal",
       "reason": "No concrete async keyword in the returned title/body; excluded from the review queue.",
       "query_kinds": [
+        "discussion",
         "recent"
       ]
     },
@@ -8051,6 +8075,32 @@
       "coverage_rank": 67
     },
     {
+      "id": "apache--datafusion-ballista--862",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 862,
+      "title": "Could not create or read partition table",
+      "url": "https://github.com/apache/datafusion-ballista/issues/862",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2024-02-06T12:56:35Z",
+      "created_at": "2023-08-08T02:54:43Z",
+      "comments": 9,
+      "positive_reactions": 1,
+      "repository_stars": 2182,
+      "labels": [
+        "bug"
+      ],
+      "async_signal": false,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 14.4409,
+      "status": "no_async_signal",
+      "reason": "No concrete async keyword in the returned title/body; excluded from the review queue.",
+      "query_kinds": [
+        "discussion"
+      ]
+    },
+    {
       "id": "apache--datafusion--27239",
       "repository": "apache/datafusion",
       "domain": "Database",
@@ -8212,9 +8262,36 @@
       "status": "needs_review",
       "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
       "query_kinds": [
+        "discussion",
         "recent"
       ],
       "coverage_rank": 9
+    },
+    {
+      "id": "apache--datafusion-ballista--8",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 8,
+      "title": "Improvements to Ballista extensibility",
+      "url": "https://github.com/apache/datafusion-ballista/issues/8",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2022-05-20T15:18:06Z",
+      "created_at": "2022-01-25T20:09:19Z",
+      "comments": 12,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "enhancement"
+      ],
+      "async_signal": false,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 14.104,
+      "status": "no_async_signal",
+      "reason": "No concrete async keyword in the returned title/body; excluded from the review queue.",
+      "query_kinds": [
+        "discussion"
+      ]
     },
     {
       "id": "vllm-project--vllm--51986",
@@ -8298,6 +8375,33 @@
       "coverage_rank": 145
     },
     {
+      "id": "apache--datafusion-ballista--1316",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 1316,
+      "title": "[EPIC] Improve job data cleanup logic",
+      "url": "https://github.com/apache/datafusion-ballista/issues/1316",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2025-09-15T04:34:51Z",
+      "created_at": "2025-09-11T10:37:05Z",
+      "comments": 11,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "enhancement"
+      ],
+      "async_signal": true,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 13.7839,
+      "status": "needs_review",
+      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "query_kinds": [
+        "discussion"
+      ],
+      "coverage_rank": 24
+    },
+    {
       "id": "etcd-io--etcd--22264",
       "repository": "etcd-io/etcd",
       "domain": "Distributed systems",
@@ -8377,6 +8481,32 @@
         "recent"
       ],
       "coverage_rank": 108
+    },
+    {
+      "id": "apache--datafusion-ballista--353",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 353,
+      "title": "Scheduler silently replaces `ParquetExec` with `EmptyExec` if data path is not correctly mounted in container",
+      "url": "https://github.com/apache/datafusion-ballista/issues/353",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2022-10-23T17:05:52Z",
+      "created_at": "2022-10-15T17:26:31Z",
+      "comments": 10,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "bug"
+      ],
+      "async_signal": false,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 13.4358,
+      "status": "no_async_signal",
+      "reason": "No concrete async keyword in the returned title/body; excluded from the review queue.",
+      "query_kinds": [
+        "discussion"
+      ]
     },
     {
       "id": "sidorares--node-mysql2--985",
@@ -8671,6 +8801,33 @@
       "coverage_rank": 171
     },
     {
+      "id": "apache--datafusion-ballista--627",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 627,
+      "title": "Job graph fails to display in UI",
+      "url": "https://github.com/apache/datafusion-ballista/issues/627",
+      "state": "closed",
+      "state_reason": "not_planned",
+      "updated_at": "2025-04-17T21:40:32Z",
+      "created_at": "2023-01-24T10:19:46Z",
+      "comments": 8,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "bug",
+        "web user interface"
+      ],
+      "async_signal": false,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 12.6331,
+      "status": "no_async_signal",
+      "reason": "No concrete async keyword in the returned title/body; excluded from the review queue.",
+      "query_kinds": [
+        "discussion"
+      ]
+    },
+    {
       "id": "apache--datafusion-ballista--2298",
       "repository": "apache/datafusion-ballista",
       "domain": "Distributed systems",
@@ -8691,9 +8848,10 @@
       "status": "needs_review",
       "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
       "query_kinds": [
+        "discussion",
         "recent"
       ],
-      "coverage_rank": 24
+      "coverage_rank": 39
     },
     {
       "id": "etcd-io--etcd--22633",
@@ -8857,6 +9015,33 @@
         "recent"
       ],
       "coverage_rank": 175
+    },
+    {
+      "id": "apache--datafusion-ballista--1164",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 1164,
+      "title": "DDL Statement Propagation (`INSERT INTO` support)",
+      "url": "https://github.com/apache/datafusion-ballista/issues/1164",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2025-04-10T17:07:52Z",
+      "created_at": "2025-01-18T08:38:02Z",
+      "comments": 7,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "enhancement"
+      ],
+      "async_signal": true,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 12.162,
+      "status": "needs_review",
+      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "query_kinds": [
+        "discussion"
+      ],
+      "coverage_rank": 54
     },
     {
       "id": "magicstack--asyncpg--1155",
@@ -9077,6 +9262,60 @@
       "coverage_rank": 185
     },
     {
+      "id": "apache--datafusion-ballista--1180",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 1180,
+      "title": "Unable to query file on Kubernetes on AWS EKS, for remote-sql.rs example",
+      "url": "https://github.com/apache/datafusion-ballista/issues/1180",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2025-04-04T19:16:14Z",
+      "created_at": "2025-02-12T03:13:48Z",
+      "comments": 6,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "bug"
+      ],
+      "async_signal": true,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 11.6279,
+      "status": "needs_review",
+      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "query_kinds": [
+        "discussion"
+      ],
+      "coverage_rank": 69
+    },
+    {
+      "id": "apache--datafusion-ballista--1239",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 1239,
+      "title": "Issue with partitioned `ListingTable`",
+      "url": "https://github.com/apache/datafusion-ballista/issues/1239",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2025-04-17T21:33:14Z",
+      "created_at": "2025-04-14T20:02:46Z",
+      "comments": 6,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "bug"
+      ],
+      "async_signal": true,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 11.6279,
+      "status": "needs_review",
+      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "query_kinds": [
+        "discussion"
+      ],
+      "coverage_rank": 84
+    },
+    {
       "id": "apache--datafusion-ballista--2249",
       "repository": "apache/datafusion-ballista",
       "domain": "Distributed systems",
@@ -9099,6 +9338,7 @@
       "status": "no_async_signal",
       "reason": "No concrete async keyword in the returned title/body; excluded from the review queue.",
       "query_kinds": [
+        "discussion",
         "recent"
       ]
     },
@@ -9756,6 +9996,33 @@
       "coverage_rank": 136
     },
     {
+      "id": "apache--datafusion-ballista--1021",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 1021,
+      "title": "Example program gives `mismatched types` error on `ParquetReadOptions`",
+      "url": "https://github.com/apache/datafusion-ballista/issues/1021",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2025-03-17T21:20:47Z",
+      "created_at": "2024-06-17T10:07:38Z",
+      "comments": 3,
+      "positive_reactions": 1,
+      "repository_stars": 2182,
+      "labels": [
+        "bug"
+      ],
+      "async_signal": true,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 10.7757,
+      "status": "needs_review",
+      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "query_kinds": [
+        "discussion"
+      ],
+      "coverage_rank": 96
+    },
+    {
       "id": "sidorares--node-mysql2--3655",
       "repository": "sidorares/node-mysql2",
       "domain": "Database",
@@ -9814,7 +10081,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 96
+      "coverage_rank": 99
     },
     {
       "id": "tikv--tikv--20171",
@@ -9960,6 +10227,33 @@
       ]
     },
     {
+      "id": "apache--datafusion-ballista--1296",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 1296,
+      "title": "Failed to execute TPC-DS Q47 in ballista",
+      "url": "https://github.com/apache/datafusion-ballista/issues/1296",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2025-09-01T16:02:07Z",
+      "created_at": "2025-08-25T14:23:50Z",
+      "comments": 4,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "bug"
+      ],
+      "async_signal": true,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 10.282,
+      "status": "needs_review",
+      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "query_kinds": [
+        "discussion"
+      ],
+      "coverage_rank": 113
+    },
+    {
       "id": "apache--datafusion-ballista--1563",
       "repository": "apache/datafusion-ballista",
       "domain": "Distributed systems",
@@ -9980,9 +10274,10 @@
       "status": "needs_review",
       "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
       "query_kinds": [
+        "discussion",
         "recent"
       ],
-      "coverage_rank": 39
+      "coverage_rank": 127
     },
     {
       "id": "sqlalchemy--sqlalchemy--13640",
@@ -10012,7 +10307,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 228
+      "coverage_rank": 229
     },
     {
       "id": "sqlalchemy--sqlalchemy--13657",
@@ -10042,7 +10337,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 240
+      "coverage_rank": 242
     },
     {
       "id": "sqlalchemy--sqlalchemy--13772",
@@ -10071,7 +10366,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 251
+      "coverage_rank": 254
     },
     {
       "id": "pytorch--pytorch--203662",
@@ -10709,7 +11004,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 231
+      "coverage_rank": 232
     },
     {
       "id": "psycopg--psycopg--1453",
@@ -10736,6 +11031,33 @@
       ]
     },
     {
+      "id": "apache--datafusion-ballista--1209",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 1209,
+      "title": "Unsupported NdJsonExec plan and extension codec",
+      "url": "https://github.com/apache/datafusion-ballista/issues/1209",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2025-03-20T15:53:49Z",
+      "created_at": "2025-03-19T14:55:28Z",
+      "comments": 3,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "bug"
+      ],
+      "async_signal": true,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 9.3894,
+      "status": "needs_review",
+      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "query_kinds": [
+        "discussion"
+      ],
+      "coverage_rank": 138
+    },
+    {
       "id": "apache--datafusion-ballista--2520",
       "repository": "apache/datafusion-ballista",
       "domain": "Distributed systems",
@@ -10756,8 +11078,62 @@
       "status": "skipped_review",
       "reason": "Previously deferred; keep reproduction on hold.",
       "query_kinds": [
+        "discussion",
         "recent"
       ]
+    },
+    {
+      "id": "apache--datafusion-ballista--470",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 470,
+      "title": "Offload listing files and inferring stats workload to Executors for large tables(>10K+ files)",
+      "url": "https://github.com/apache/datafusion-ballista/issues/470",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2022-10-28T04:41:42Z",
+      "created_at": "2022-10-28T03:45:09Z",
+      "comments": 3,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "enhancement"
+      ],
+      "async_signal": false,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 9.3894,
+      "status": "no_async_signal",
+      "reason": "No concrete async keyword in the returned title/body; excluded from the review queue.",
+      "query_kinds": [
+        "discussion"
+      ]
+    },
+    {
+      "id": "apache--datafusion-ballista--85",
+      "repository": "apache/datafusion-ballista",
+      "domain": "Distributed systems",
+      "number": 85,
+      "title": "Support trace id for each query",
+      "url": "https://github.com/apache/datafusion-ballista/issues/85",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2022-07-19T14:23:32Z",
+      "created_at": "2022-07-13T04:04:18Z",
+      "comments": 3,
+      "positive_reactions": 0,
+      "repository_stars": 2182,
+      "labels": [
+        "enhancement"
+      ],
+      "async_signal": true,
+      "observed_at": "2026-11-25T01:04:19+00:00",
+      "heat": 9.3894,
+      "status": "needs_review",
+      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "query_kinds": [
+        "discussion"
+      ],
+      "coverage_rank": 152
     },
     {
       "id": "tikv--tikv--18247",
@@ -10793,7 +11169,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 138
+      "coverage_rank": 141
     },
     {
       "id": "sqlalchemy--sqlalchemy--12803",
@@ -10822,7 +11198,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 261
+      "coverage_rank": 265
     },
     {
       "id": "sqlalchemy--sqlalchemy--13622",
@@ -10851,7 +11227,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 270
+      "coverage_rank": 275
     },
     {
       "id": "sqlalchemy--sqlalchemy--13639",
@@ -10911,7 +11287,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 279
+      "coverage_rank": 285
     },
     {
       "id": "sqlalchemy--sqlalchemy--13688",
@@ -10994,7 +11370,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 285
+      "coverage_rank": 292
     },
     {
       "id": "apache--datafusion--25797",
@@ -11170,7 +11546,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 243
+      "coverage_rank": 245
     },
     {
       "id": "magicstack--asyncpg--1400",
@@ -11195,7 +11571,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 254
+      "coverage_rank": 257
     },
     {
       "id": "huggingface--text-embeddings-inference--429",
@@ -11271,7 +11647,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 264
+      "coverage_rank": 268
     },
     {
       "id": "sidorares--node-mysql2--3749",
@@ -11299,7 +11675,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 234
+      "coverage_rank": 235
     },
     {
       "id": "pytorch--pytorch--204446",
@@ -11540,7 +11916,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 227
+      "coverage_rank": 228
     },
     {
       "id": "vllm-project--vllm--69408",
@@ -11565,7 +11941,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 239
+      "coverage_rank": 241
     },
     {
       "id": "vllm-project--vllm--69418",
@@ -11590,7 +11966,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 250
+      "coverage_rank": 253
     },
     {
       "id": "vllm-project--vllm--69568",
@@ -11618,7 +11994,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 260
+      "coverage_rank": 264
     },
     {
       "id": "vllm-project--vllm--69661",
@@ -11643,7 +12019,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 269
+      "coverage_rank": 274
     },
     {
       "id": "vllm-project--vllm--69663",
@@ -11670,7 +12046,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 278
+      "coverage_rank": 284
     },
     {
       "id": "huggingface--text-embeddings-inference--662",
@@ -11720,7 +12096,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 224
+      "coverage_rank": 225
     },
     {
       "id": "psycopg--psycopg--1401",
@@ -11745,7 +12121,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 236
+      "coverage_rank": 238
     },
     {
       "id": "psycopg--psycopg--1419",
@@ -11770,7 +12146,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 246
+      "coverage_rank": 248
     },
     {
       "id": "psycopg--psycopg--1435",
@@ -11795,7 +12171,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 256
+      "coverage_rank": 259
     },
     {
       "id": "psycopg--psycopg--1462",
@@ -11844,7 +12220,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 266
+      "coverage_rank": 270
     },
     {
       "id": "psycopg--psycopg--1497",
@@ -11869,7 +12245,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 273
+      "coverage_rank": 278
     },
     {
       "id": "apache--datafusion-ballista--1387",
@@ -11894,7 +12270,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 54
+      "coverage_rank": 166
     },
     {
       "id": "apache--datafusion-ballista--2168",
@@ -11921,7 +12297,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 69
+      "coverage_rank": 180
     },
     {
       "id": "apache--datafusion-ballista--714",
@@ -11948,7 +12324,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 84
+      "coverage_rank": 194
     },
     {
       "id": "etcd-io--etcd--22184",
@@ -12029,7 +12405,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 229
+      "coverage_rank": 230
     },
     {
       "id": "etcd-io--etcd--22635",
@@ -12056,7 +12432,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 241
+      "coverage_rank": 243
     },
     {
       "id": "etcd-io--etcd--22744",
@@ -12083,7 +12459,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 252
+      "coverage_rank": 255
     },
     {
       "id": "etcd-io--etcd--22847",
@@ -12108,7 +12484,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 262
+      "coverage_rank": 266
     },
     {
       "id": "ray-project--ray--66815",
@@ -12275,7 +12651,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 225
+      "coverage_rank": 226
     },
     {
       "id": "duckdb--duckdb--28564",
@@ -12300,7 +12676,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 237
+      "coverage_rank": 239
     },
     {
       "id": "sgl-project--sglang--40797",
@@ -12408,7 +12784,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 152
+      "coverage_rank": 155
     },
     {
       "id": "tikv--tikv--6441",
@@ -12436,7 +12812,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 166
+      "coverage_rank": 169
     },
     {
       "id": "sqlalchemy--sqlalchemy--13694",
@@ -12463,7 +12839,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 290
+      "coverage_rank": 298
     },
     {
       "id": "apache--datafusion--14632",
@@ -12594,7 +12970,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 226
+      "coverage_rank": 227
     },
     {
       "id": "apache--datafusion--27728",
@@ -12621,7 +12997,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 238
+      "coverage_rank": 240
     },
     {
       "id": "ai-dynamo--dynamo--15688",
@@ -12742,7 +13118,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 275
+      "coverage_rank": 280
     },
     {
       "id": "magicstack--asyncpg--1335",
@@ -12767,7 +13143,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 281
+      "coverage_rank": 287
     },
     {
       "id": "magicstack--asyncpg--1402",
@@ -12792,7 +13168,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 287
+      "coverage_rank": 294
     },
     {
       "id": "huggingface--text-embeddings-inference--6",
@@ -12866,7 +13242,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 247
+      "coverage_rank": 250
     },
     {
       "id": "duckdb--duckdb--27088",
@@ -12891,7 +13267,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 248
+      "coverage_rank": 251
     },
     {
       "id": "magicstack--asyncpg--1299",
@@ -12916,7 +13292,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 292
+      "coverage_rank": 300
     },
     {
       "id": "psycopg--psycopg--1428",
@@ -12941,7 +13317,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 282
+      "coverage_rank": 289
     },
     {
       "id": "psycopg--psycopg--1502",
@@ -12966,7 +13342,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 288
+      "coverage_rank": 296
     },
     {
       "id": "apache--datafusion-ballista--1847",
@@ -13015,7 +13391,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 99
+      "coverage_rank": 207
     },
     {
       "id": "apache--datafusion-ballista--2162",
@@ -13069,7 +13445,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 113
+      "coverage_rank": 220
     },
     {
       "id": "apache--datafusion-ballista--2509",
@@ -13094,7 +13470,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 127
+      "coverage_rank": 233
     },
     {
       "id": "apache--datafusion-ballista--2602",
@@ -13124,7 +13500,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 141
+      "coverage_rank": 246
     },
     {
       "id": "apache--datafusion-ballista--2768",
@@ -13151,7 +13527,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 155
+      "coverage_rank": 258
     },
     {
       "id": "apache--datafusion-ballista--405",
@@ -13178,7 +13554,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 169
+      "coverage_rank": 269
     },
     {
       "id": "magicstack--asyncpg--1326",
@@ -13203,7 +13579,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 295
+      "coverage_rank": 303
     },
     {
       "id": "magicstack--asyncpg--1327",
@@ -13228,7 +13604,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 298
+      "coverage_rank": 306
     },
     {
       "id": "pytorch--pytorch--206479",
@@ -13395,7 +13771,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 284
+      "coverage_rank": 291
     },
     {
       "id": "vllm-project--vllm--69643",
@@ -13420,7 +13796,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 289
+      "coverage_rank": 297
     },
     {
       "id": "vllm-project--vllm--69692",
@@ -13448,7 +13824,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 294
+      "coverage_rank": 302
     },
     {
       "id": "vllm-project--vllm--69715",
@@ -13475,7 +13851,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 297
+      "coverage_rank": 305
     },
     {
       "id": "vllm-project--vllm--69739",
@@ -13500,7 +13876,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 300
+      "coverage_rank": 308
     },
     {
       "id": "etcd-io--etcd--22710",
@@ -13525,7 +13901,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 271
+      "coverage_rank": 276
     },
     {
       "id": "etcd-io--etcd--22848",
@@ -13550,7 +13926,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 280
+      "coverage_rank": 286
     },
     {
       "id": "etcd-io--etcd--22862",
@@ -13578,7 +13954,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 286
+      "coverage_rank": 293
     },
     {
       "id": "etcd-io--etcd--22891",
@@ -13627,7 +14003,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 291
+      "coverage_rank": 299
     },
     {
       "id": "ray-project--ray--67984",
@@ -13801,7 +14177,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 230
+      "coverage_rank": 231
     },
     {
       "id": "duckdb--duckdb--27398",
@@ -13826,7 +14202,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 257
+      "coverage_rank": 261
     },
     {
       "id": "duckdb--duckdb--27721",
@@ -13853,7 +14229,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 267
+      "coverage_rank": 272
     },
     {
       "id": "duckdb--duckdb--27816",
@@ -13906,7 +14282,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 276
+      "coverage_rank": 282
     },
     {
       "id": "duckdb--duckdb--28244",
@@ -13933,7 +14309,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 283
+      "coverage_rank": 290
     },
     {
       "id": "duckdb--duckdb--29206",
@@ -14080,7 +14456,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 233
+      "coverage_rank": 234
     },
     {
       "id": "sgl-project--sglang--52883",
@@ -14129,7 +14505,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 242
+      "coverage_rank": 244
     },
     {
       "id": "tikv--tikv--20119",
@@ -14184,7 +14560,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 180
+      "coverage_rank": 183
     },
     {
       "id": "tikv--tikv--20134",
@@ -14214,7 +14590,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 194
+      "coverage_rank": 197
     },
     {
       "id": "tikv--tikv--20135",
@@ -14242,7 +14618,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 207
+      "coverage_rank": 210
     },
     {
       "id": "tikv--tikv--20136",
@@ -14270,7 +14646,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 220
+      "coverage_rank": 223
     },
     {
       "id": "tikv--tikv--20137",
@@ -14353,7 +14729,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 232
+      "coverage_rank": 236
     },
     {
       "id": "tikv--tikv--20204",
@@ -14385,7 +14761,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 244
+      "coverage_rank": 249
     },
     {
       "id": "tikv--tikv--20228",
@@ -14412,7 +14788,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 255
+      "coverage_rank": 260
     },
     {
       "id": "tikv--tikv--20378",
@@ -14440,7 +14816,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 265
+      "coverage_rank": 271
     },
     {
       "id": "tikv--tikv--20403",
@@ -14467,7 +14843,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 274
+      "coverage_rank": 279
     },
     {
       "id": "mysql--mysql-server--780",
@@ -14519,7 +14895,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 249
+      "coverage_rank": 252
     },
     {
       "id": "apache--datafusion--27477",
@@ -14544,7 +14920,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 258
+      "coverage_rank": 262
     },
     {
       "id": "ai-dynamo--dynamo--15759",
@@ -14634,7 +15010,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 223
+      "coverage_rank": 224
     },
     {
       "id": "ai-dynamo--dynamo--18599",
@@ -14694,7 +15070,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 235
+      "coverage_rank": 237
     },
     {
       "id": "ai-dynamo--dynamo--19121",
@@ -14726,7 +15102,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 245
+      "coverage_rank": 247
     },
     {
       "id": "ai-dynamo--dynamo--19221",
@@ -14753,7 +15129,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 253
+      "coverage_rank": 256
     },
     {
       "id": "ai-dynamo--dynamo--19349",
@@ -14783,7 +15159,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 263
+      "coverage_rank": 267
     },
     {
       "id": "ai-dynamo--dynamo--19357",
@@ -14814,7 +15190,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 272
+      "coverage_rank": 277
     },
     {
       "id": "magicstack--asyncpg--1286",
@@ -14863,7 +15239,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 301
+      "coverage_rank": 309
     },
     {
       "id": "magicstack--asyncpg--1328",
@@ -14888,7 +15264,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 302
+      "coverage_rank": 310
     },
     {
       "id": "magicstack--asyncpg--1354",
@@ -14913,7 +15289,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 303
+      "coverage_rank": 311
     },
     {
       "id": "magicstack--asyncpg--1390",
@@ -14938,7 +15314,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 304
+      "coverage_rank": 312
     },
     {
       "id": "huggingface--text-embeddings-inference--274",
@@ -15017,7 +15393,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 259
+      "coverage_rank": 263
     },
     {
       "id": "sidorares--node-mysql2--4521",
@@ -15045,7 +15421,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 268
+      "coverage_rank": 273
     },
     {
       "id": "sidorares--node-mysql2--4651",
@@ -15070,7 +15446,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 277
+      "coverage_rank": 283
     },
     {
       "id": "psycopg--psycopg--1451",
@@ -15095,7 +15471,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 293
+      "coverage_rank": 301
     },
     {
       "id": "psycopg--psycopg--1466",
@@ -15120,7 +15496,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 296
+      "coverage_rank": 304
     },
     {
       "id": "psycopg--psycopg--1468",
@@ -15145,7 +15521,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 299
+      "coverage_rank": 307
     },
     {
       "id": "apache--datafusion-ballista--2532",
@@ -15172,7 +15548,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 183
+      "coverage_rank": 281
     },
     {
       "id": "apache--datafusion-ballista--2596",
@@ -15202,7 +15578,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 197
+      "coverage_rank": 288
     },
     {
       "id": "apache--datafusion-ballista--2881",
@@ -15227,7 +15603,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 210
+      "coverage_rank": 295
     }
   ],
   "official_tracker_results": [
@@ -17503,7 +17879,7 @@
     "tikv--tikv--11148",
     "ray-project--ray--59522",
     "sidorares--node-mysql2--1885",
-    "apache--datafusion-ballista--2298",
+    "apache--datafusion-ballista--1316",
     "ai-dynamo--dynamo--350",
     "magicstack--asyncpg--530",
     "huggingface--text-embeddings-inference--424",
@@ -17518,7 +17894,7 @@
     "tikv--tikv--6973",
     "ray-project--ray--10238",
     "sidorares--node-mysql2--2090",
-    "apache--datafusion-ballista--1563",
+    "apache--datafusion-ballista--2298",
     "ai-dynamo--dynamo--16192",
     "psycopg--psycopg--340",
     "pytorch--pytorch--203662",
@@ -17533,7 +17909,7 @@
     "tikv--tikv--3595",
     "ray-project--ray--15247",
     "apache--datafusion--13692",
-    "apache--datafusion-ballista--1387",
+    "apache--datafusion-ballista--1164",
     "ai-dynamo--dynamo--813",
     "magicstack--asyncpg--573",
     "huggingface--text-embeddings-inference--433",
@@ -17548,7 +17924,7 @@
     "tikv--tikv--5608",
     "ai-dynamo--dynamo--814",
     "magicstack--asyncpg--580",
-    "apache--datafusion-ballista--2168",
+    "apache--datafusion-ballista--1180",
     "ray-project--ray--52970",
     "psycopg--psycopg--77",
     "pytorch--pytorch--205823",
@@ -17563,7 +17939,7 @@
     "tikv--tikv--11187",
     "ai-dynamo--dynamo--4696",
     "magicstack--asyncpg--121",
-    "apache--datafusion-ballista--714",
+    "apache--datafusion-ballista--1239",
     "ray-project--ray--63018",
     "psycopg--psycopg--300",
     "pytorch--pytorch--206314",
@@ -17575,10 +17951,10 @@
     "etcd-io--etcd--22264",
     "sgl-project--sglang--20252",
     "sidorares--node-mysql2--2493",
-    "tikv--tikv--19523",
+    "apache--datafusion-ballista--1021",
     "ai-dynamo--dynamo--1808",
     "magicstack--asyncpg--1292",
-    "apache--datafusion-ballista--2068",
+    "tikv--tikv--19523",
     "ray-project--ray--47449",
     "psycopg--psycopg--415",
     "pytorch--pytorch--206315",
@@ -17592,7 +17968,7 @@
     "tikv--tikv--20171",
     "ai-dynamo--dynamo--19442",
     "magicstack--asyncpg--1058",
-    "apache--datafusion-ballista--2410",
+    "apache--datafusion-ballista--1296",
     "ray-project--ray--62682",
     "psycopg--psycopg--1208",
     "pytorch--pytorch--206416",
@@ -17606,7 +17982,7 @@
     "tikv--tikv--20348",
     "ray-project--ray--67446",
     "sidorares--node-mysql2--604",
-    "apache--datafusion-ballista--2509",
+    "apache--datafusion-ballista--1563",
     "sgl-project--sglang--34719",
     "psycopg--psycopg--708",
     "pytorch--pytorch--206452",
@@ -17617,10 +17993,10 @@
     "etcd-io--etcd--22326",
     "sgl-project--sglang--52345",
     "magicstack--asyncpg--68",
-    "tikv--tikv--18247",
+    "apache--datafusion-ballista--1209",
     "ray-project--ray--68080",
     "sidorares--node-mysql2--930",
-    "apache--datafusion-ballista--2602",
+    "tikv--tikv--18247",
     "ai-dynamo--dynamo--13875",
     "psycopg--psycopg--448",
     "pytorch--pytorch--206503",
@@ -17631,10 +18007,10 @@
     "etcd-io--etcd--22750",
     "ray-project--ray--68249",
     "magicstack--asyncpg--87",
-    "tikv--tikv--20133",
+    "apache--datafusion-ballista--85",
     "sgl-project--sglang--45189",
     "sidorares--node-mysql2--782",
-    "apache--datafusion-ballista--2768",
+    "tikv--tikv--20133",
     "ai-dynamo--dynamo--15688",
     "psycopg--psycopg--765",
     "pytorch--pytorch--206504",
@@ -17645,10 +18021,10 @@
     "etcd-io--etcd--22225",
     "sgl-project--sglang--52090",
     "magicstack--asyncpg--1069",
-    "tikv--tikv--6441",
+    "apache--datafusion-ballista--1387",
     "ray-project--ray--66815",
     "sidorares--node-mysql2--1287",
-    "apache--datafusion-ballista--405",
+    "tikv--tikv--6441",
     "ai-dynamo--dynamo--19347",
     "psycopg--psycopg--73",
     "pytorch--pytorch--206505",
@@ -17659,10 +18035,10 @@
     "etcd-io--etcd--22714",
     "ray-project--ray--68266",
     "sqlalchemy--sqlalchemy--13738",
-    "tikv--tikv--20132",
+    "apache--datafusion-ballista--2168",
     "sgl-project--sglang--41148",
     "sidorares--node-mysql2--985",
-    "apache--datafusion-ballista--2532",
+    "tikv--tikv--20132",
     "ai-dynamo--dynamo--19417",
     "psycopg--psycopg--1371",
     "pytorch--pytorch--206507",
@@ -17673,10 +18049,10 @@
     "etcd-io--etcd--22749",
     "sgl-project--sglang--45847",
     "sqlalchemy--sqlalchemy--13749",
-    "tikv--tikv--20134",
+    "apache--datafusion-ballista--714",
     "ray-project--ray--68297",
     "sidorares--node-mysql2--1917",
-    "apache--datafusion-ballista--2596",
+    "tikv--tikv--20134",
     "ai-dynamo--dynamo--15759",
     "psycopg--psycopg--1345",
     "duckdb--duckdb--19478",
@@ -17686,10 +18062,10 @@
     "etcd-io--etcd--22184",
     "ray-project--ray--68300",
     "sqlalchemy--sqlalchemy--13667",
-    "tikv--tikv--20135",
+    "apache--datafusion-ballista--2068",
     "sgl-project--sglang--52213",
     "psycopg--psycopg--1413",
-    "apache--datafusion-ballista--2881",
+    "tikv--tikv--20135",
     "ai-dynamo--dynamo--17689",
     "sidorares--node-mysql2--1349",
     "duckdb--duckdb--23885",
@@ -17699,9 +18075,10 @@
     "etcd-io--etcd--22296",
     "ray-project--ray--68326",
     "sqlalchemy--sqlalchemy--13673",
-    "tikv--tikv--20136",
+    "apache--datafusion-ballista--2410",
     "sgl-project--sglang--52618",
     "sidorares--node-mysql2--3597",
+    "tikv--tikv--20136",
     "ai-dynamo--dynamo--18573",
     "psycopg--psycopg--1315",
     "duckdb--duckdb--27750",
@@ -17711,9 +18088,10 @@
     "etcd-io--etcd--22480",
     "ray-project--ray--68460",
     "magicstack--asyncpg--1386",
-    "tikv--tikv--20182",
+    "apache--datafusion-ballista--2509",
     "sgl-project--sglang--52619",
     "sidorares--node-mysql2--3749",
+    "tikv--tikv--20182",
     "ai-dynamo--dynamo--18778",
     "psycopg--psycopg--1401",
     "duckdb--duckdb--28564",
@@ -17723,9 +18101,10 @@
     "etcd-io--etcd--22635",
     "sgl-project--sglang--52888",
     "magicstack--asyncpg--1397",
-    "tikv--tikv--20204",
+    "apache--datafusion-ballista--2602",
     "ai-dynamo--dynamo--19121",
     "psycopg--psycopg--1419",
+    "tikv--tikv--20204",
     "sidorares--node-mysql2--4562",
     "duckdb--duckdb--27088",
     "apache--datafusion--26313",
@@ -17734,8 +18113,9 @@
     "etcd-io--etcd--22744",
     "ai-dynamo--dynamo--19221",
     "magicstack--asyncpg--1400",
-    "tikv--tikv--20228",
+    "apache--datafusion-ballista--2768",
     "psycopg--psycopg--1435",
+    "tikv--tikv--20228",
     "duckdb--duckdb--27398",
     "apache--datafusion--27477",
     "sidorares--node-mysql2--4497",
@@ -17744,8 +18124,9 @@
     "etcd-io--etcd--22847",
     "ai-dynamo--dynamo--19349",
     "magicstack--asyncpg--1357",
-    "tikv--tikv--20378",
+    "apache--datafusion-ballista--405",
     "psycopg--psycopg--1475",
+    "tikv--tikv--20378",
     "duckdb--duckdb--27721",
     "sidorares--node-mysql2--4521",
     "vllm-project--vllm--69661",
@@ -17755,18 +18136,21 @@
     "psycopg--psycopg--1497",
     "tikv--tikv--20403",
     "magicstack--asyncpg--1300",
+    "apache--datafusion-ballista--2532",
     "duckdb--duckdb--27896",
     "sidorares--node-mysql2--4651",
     "vllm-project--vllm--69663",
     "sqlalchemy--sqlalchemy--13678",
     "etcd-io--etcd--22848",
     "magicstack--asyncpg--1335",
+    "apache--datafusion-ballista--2596",
     "psycopg--psycopg--1428",
     "duckdb--duckdb--28244",
     "vllm-project--vllm--67962",
     "sqlalchemy--sqlalchemy--13699",
     "etcd-io--etcd--22862",
     "magicstack--asyncpg--1402",
+    "apache--datafusion-ballista--2881",
     "psycopg--psycopg--1502",
     "vllm-project--vllm--69643",
     "sqlalchemy--sqlalchemy--13694",
@@ -17813,6 +18197,17 @@
         "https://github.com/MagicStack/asyncpg/issues/952"
       ],
       "reviewed_at": "2026-11-24T22:34:00Z"
+    },
+    "apache--spark--spark-47833": {
+      "status": "verified_case",
+      "reason": "A released-artifact DataSource replay plus a separate application-executor extension verifies 16 historical callers across two canonical batches. Native 4.1.1 already restores the direct-call endpoint. Missing paths remain expected input failures.",
+      "reason_zh": "发布制品的 DataSource 复现及单独应用执行器扩展，在两组规范重复中验证了 16 个历史调用者。4.1.1 的原生能力已恢复直接调用端点；缺失路径仍按预期报错。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/SPARK-47833",
+        "https://github.com/apache/spark/pull/46028",
+        "https://fzh0u.github.io/coroperf/zh-cn/evidence/apache--spark--spark-47833.html"
+      ],
+      "reviewed_at": "2026-11-25T01:09:52.836575+00:00"
     }
   },
   "deferred_registry": [
@@ -17972,8 +18367,8 @@
     }
   ],
   "delta": {
-    "new_search_candidates": 2,
-    "previous_observed_at": "2026-11-24T22:37:35+00:00",
+    "new_search_candidates": 14,
+    "previous_observed_at": "2026-11-25T00:04:17+00:00",
     "comparable_window": true
   }
 }

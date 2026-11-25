@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="每个失败的 Spark 文件检查 Future 是由哪个读取入口提交的？">
+  <title>SPARK-47833 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/apache--spark--spark-47833.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/apache--spark--spark-47833.html" lang="en" hreflang="en">English</a><a href="apache--spark--spark-47833.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">SPARK-47833</p>
+        <h1>每个失败的 Spark 文件检查 Future 是由哪个读取入口提交的？</h1>
+        <div class="case-links"><a href="https://issues.apache.org/jira/browse/SPARK-47833">上游报告 ↗</a><a href="https://github.com/apache/spark/pull/46028">上游后续证据 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>补回调用来源</dd></div>
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>已解决</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/apache/spark/blob/v4.1.1/sql/core/src/main/scala/org/apache/spark/sql/execution/datasources/DataSource.scala">已在修复对照中验证 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Scala</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>用同一个提交函数对象识别失败的 Scala Future，再通过实际正在执行的应用 FutureTask 接回父任务创建记录，从相同分派栈和工作栈恢复两个历史文件读取入口。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span></div><ol class="frames"><li><code>java.util.concurrent.ForkJoinWorkerThread.run</code><span>ForkJoinWorkerThread.java:165</span></li><li><code>java.util.concurrent.ForkJoinPool.runWorker</code><span>ForkJoinPool.java:1622</span></li><li><code>java.util.concurrent.ForkJoinPool.scan</code><span>ForkJoinPool.java:1655</span></li><li><code>java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec</code><span>ForkJoinPool.java:1182</span></li><li><code>java.util.concurrent.ForkJoinTask.doExec</code><span>ForkJoinTask.java:373</span></li><li><code>java.util.concurrent.ForkJoinTask$RunnableExecuteAction.exec</code><span>ForkJoinTask.java:1395</span></li><li><code>scala.concurrent.impl.CallbackRunnable.run</code><span>Promise.scala:64</span></li><li><code>scala.concurrent.impl.Promise$$Lambda$283/[address].apply</code></li><li><code>scala.concurrent.impl.Promise.$anonfun$transform$1</code><span>Promise.scala:33</span></li><li><code>scala.concurrent.impl.Promise.liftedTree1$1</code><span>Promise.scala:33</span></li><li><code>scala.concurrent.Future$$Lambda$282/[address].apply</code></li><li><code>scala.concurrent.Future.$anonfun$map$1</code><span>Future.scala:292</span></li><li><code>scala.util.Success.map</code><span>Try.scala:213</span></li><li><code>scala.util.Success.$anonfun$map$1</code><span>Try.scala:255</span></li><li><code>scala.concurrent.Future$$$Lambda$295/[address].apply</code></li><li><code>scala.concurrent.Future$.$anonfun$apply$1</code><span>Future.scala:659</span></li><li><code>org.apache.spark.util.ThreadUtils$$$Lambda$293/[address].apply</code></li><li><code>org.apache.spark.util.ThreadUtils$.$anonfun$parmap$2</code><span>ThreadUtils.scala:384</span></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$$$Lambda$291/[address].apply</code></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$checkAndGlobPathIfNecessary$4$adapted</code><span>DataSource.scala:754</span></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$checkAndGlobPathIfNecessary$4</code><span>DataSource.scala:757</span></li><li><code>org.apache.spark.sql.errors.QueryCompilationErrors$.dataPathNotExistError</code><span>QueryCompilationErrors.scala:1500</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>4 → 2</code></a><a href="#join-1-point-1">拼接点 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>java.util.concurrent.ForkJoinWorkerThread.run</code><span>ForkJoinWorkerThread.java:165</span></li><li><code>java.util.concurrent.ForkJoinPool.runWorker</code><span>ForkJoinPool.java:1622</span></li><li><code>java.util.concurrent.ForkJoinPool.scan</code><span>ForkJoinPool.java:1655</span></li><li><code>java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec</code><span>ForkJoinPool.java:1182</span></li><li><code>java.util.concurrent.ForkJoinTask.doExec</code><span>ForkJoinTask.java:373</span></li><li><code>java.util.concurrent.ForkJoinTask$RunnableExecuteAction.exec</code><span>ForkJoinTask.java:1395</span></li><li><code>scala.concurrent.impl.CallbackRunnable.run</code><span>Promise.scala:64</span></li><li><code>scala.concurrent.impl.Promise$$Lambda$283/[address].apply</code></li><li><code>scala.concurrent.impl.Promise.$anonfun$transform$1</code><span>Promise.scala:33</span></li><li><code>scala.concurrent.impl.Promise.liftedTree1$1</code><span>Promise.scala:33</span></li><li><code>scala.concurrent.Future$$Lambda$282/[address].apply</code></li><li><code>scala.concurrent.Future.$anonfun$map$1</code><span>Future.scala:292</span></li><li><code>scala.util.Success.map</code><span>Try.scala:213</span></li><li><code>scala.util.Success.$anonfun$map$1</code><span>Try.scala:255</span></li><li><code>scala.concurrent.Future$$$Lambda$295/[address].apply</code></li><li><code>scala.concurrent.Future$.$anonfun$apply$1</code><span>Future.scala:659</span></li><li><code>org.apache.spark.util.ThreadUtils$$$Lambda$293/[address].apply</code></li><li><code>org.apache.spark.util.ThreadUtils$.$anonfun$parmap$2</code><span>ThreadUtils.scala:384</span></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$$$Lambda$291/[address].apply</code></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$checkAndGlobPathIfNecessary$4$adapted</code><span>DataSource.scala:754</span></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$checkAndGlobPathIfNecessary$4</code><span>DataSource.scala:757</span></li><li><code>org.apache.spark.sql.errors.QueryCompilationErrors$.dataPathNotExistError</code><span>QueryCompilationErrors.scala:1500</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:840</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:635</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1136</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:264</span></li><li><code>java.util.concurrent.Executors$RunnableAdapter.call</code><span>Executors.java:539</span></li><li><code>SparkPathReplay$QueryTask.run</code><span>SparkPathReplay.java:74</span></li><li><code>SparkPathReplay.checkMissing</code><span>SparkPathReplay.java:54</span></li><li><code>java.lang.reflect.Method.invoke</code><span>Method.java:569</span></li><li><code>jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke</code><span>DelegatingMethodAccessorImpl.java:43</span></li><li><code>jdk.internal.reflect.NativeMethodAccessorImpl.invoke</code><span>NativeMethodAccessorImpl.java:77</span></li><li><code>jdk.internal.reflect.NativeMethodAccessorImpl.invoke0</code><span>NativeMethodAccessorImpl.java</span></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$.checkAndGlobPathIfNecessary</code><span>DataSource.scala:754</span></li><li><code>org.apache.spark.util.ThreadUtils$.parmap</code><span>ThreadUtils.scala:384</span></li><li><code>scala.collection.immutable.List.map</code><span>List.scala:293</span></li><li><code>org.apache.spark.util.ThreadUtils$$$Lambda$275/[address].apply</code></li><li><code>org.apache.spark.util.ThreadUtils$.$anonfun$parmap$1</code><span>ThreadUtils.scala:384</span></li><li><code>scala.concurrent.Future$.apply</code><span>Future.scala:659</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 2 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:840</span></li><li><code>SparkPathReplay$$Lambda$3/[address].run</code></li><li><code>SparkPathReplay.lambda$thread$1</code><span>SparkPathReplay.java:87</span></li><li><code>SparkPathReplay.launchInteractive</code><span>SparkPathReplay.java:67</span></li><li><code>SparkPathReplay.enqueue</code><span>SparkPathReplay.java:82</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.execute</code><span>ThreadPoolExecutor.java:1329</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span></div><ol class="frames"><li><code>java.util.concurrent.ForkJoinWorkerThread.run</code><span>ForkJoinWorkerThread.java:165</span></li><li><code>java.util.concurrent.ForkJoinPool.runWorker</code><span>ForkJoinPool.java:1622</span></li><li><code>java.util.concurrent.ForkJoinPool.scan</code><span>ForkJoinPool.java:1655</span></li><li><code>java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec</code><span>ForkJoinPool.java:1182</span></li><li><code>java.util.concurrent.ForkJoinTask.doExec</code><span>ForkJoinTask.java:373</span></li><li><code>java.util.concurrent.ForkJoinTask$RunnableExecuteAction.exec</code><span>ForkJoinTask.java:1395</span></li><li><code>scala.concurrent.impl.CallbackRunnable.run</code><span>Promise.scala:64</span></li><li><code>scala.concurrent.impl.Promise$$Lambda$283/[address].apply</code></li><li><code>scala.concurrent.impl.Promise.$anonfun$transform$1</code><span>Promise.scala:33</span></li><li><code>scala.concurrent.impl.Promise.liftedTree1$1</code><span>Promise.scala:33</span></li><li><code>scala.concurrent.Future$$Lambda$282/[address].apply</code></li><li><code>scala.concurrent.Future.$anonfun$map$1</code><span>Future.scala:292</span></li><li><code>scala.util.Success.map</code><span>Try.scala:213</span></li><li><code>scala.util.Success.$anonfun$map$1</code><span>Try.scala:255</span></li><li><code>scala.concurrent.Future$$$Lambda$295/[address].apply</code></li><li><code>scala.concurrent.Future$.$anonfun$apply$1</code><span>Future.scala:659</span></li><li><code>org.apache.spark.util.ThreadUtils$$$Lambda$293/[address].apply</code></li><li><code>org.apache.spark.util.ThreadUtils$.$anonfun$parmap$2</code><span>ThreadUtils.scala:384</span></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$$$Lambda$291/[address].apply</code></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$checkAndGlobPathIfNecessary$4$adapted</code><span>DataSource.scala:754</span></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$checkAndGlobPathIfNecessary$4</code><span>DataSource.scala:757</span></li><li><code>org.apache.spark.sql.errors.QueryCompilationErrors$.dataPathNotExistError</code><span>QueryCompilationErrors.scala:1500</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>5 → 3</code></a><a href="#join-2-point-1">拼接点 1 <code>3 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>java.util.concurrent.ForkJoinWorkerThread.run</code><span>ForkJoinWorkerThread.java:165</span></li><li><code>java.util.concurrent.ForkJoinPool.runWorker</code><span>ForkJoinPool.java:1622</span></li><li><code>java.util.concurrent.ForkJoinPool.scan</code><span>ForkJoinPool.java:1655</span></li><li><code>java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec</code><span>ForkJoinPool.java:1182</span></li><li><code>java.util.concurrent.ForkJoinTask.doExec</code><span>ForkJoinTask.java:373</span></li><li><code>java.util.concurrent.ForkJoinTask$RunnableExecuteAction.exec</code><span>ForkJoinTask.java:1395</span></li><li><code>scala.concurrent.impl.CallbackRunnable.run</code><span>Promise.scala:64</span></li><li><code>scala.concurrent.impl.Promise$$Lambda$283/[address].apply</code></li><li><code>scala.concurrent.impl.Promise.$anonfun$transform$1</code><span>Promise.scala:33</span></li><li><code>scala.concurrent.impl.Promise.liftedTree1$1</code><span>Promise.scala:33</span></li><li><code>scala.concurrent.Future$$Lambda$282/[address].apply</code></li><li><code>scala.concurrent.Future.$anonfun$map$1</code><span>Future.scala:292</span></li><li><code>scala.util.Success.map</code><span>Try.scala:213</span></li><li><code>scala.util.Success.$anonfun$map$1</code><span>Try.scala:255</span></li><li><code>scala.concurrent.Future$$$Lambda$295/[address].apply</code></li><li><code>scala.concurrent.Future$.$anonfun$apply$1</code><span>Future.scala:659</span></li><li><code>org.apache.spark.util.ThreadUtils$$$Lambda$293/[address].apply</code></li><li><code>org.apache.spark.util.ThreadUtils$.$anonfun$parmap$2</code><span>ThreadUtils.scala:384</span></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$$$Lambda$291/[address].apply</code></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$checkAndGlobPathIfNecessary$4$adapted</code><span>DataSource.scala:754</span></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$checkAndGlobPathIfNecessary$4</code><span>DataSource.scala:757</span></li><li><code>org.apache.spark.sql.errors.QueryCompilationErrors$.dataPathNotExistError</code><span>QueryCompilationErrors.scala:1500</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>base_to_sample · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:840</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:635</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1136</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:264</span></li><li><code>java.util.concurrent.Executors$RunnableAdapter.call</code><span>Executors.java:539</span></li><li><code>SparkPathReplay$QueryTask.run</code><span>SparkPathReplay.java:74</span></li><li><code>SparkPathReplay.checkMissing</code><span>SparkPathReplay.java:54</span></li><li><code>java.lang.reflect.Method.invoke</code><span>Method.java:569</span></li><li><code>jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke</code><span>DelegatingMethodAccessorImpl.java:43</span></li><li><code>jdk.internal.reflect.NativeMethodAccessorImpl.invoke</code><span>NativeMethodAccessorImpl.java:77</span></li><li><code>jdk.internal.reflect.NativeMethodAccessorImpl.invoke0</code><span>NativeMethodAccessorImpl.java</span></li><li><code>org.apache.spark.sql.execution.datasources.DataSource$.checkAndGlobPathIfNecessary</code><span>DataSource.scala:754</span></li><li><code>org.apache.spark.util.ThreadUtils$.parmap</code><span>ThreadUtils.scala:384</span></li><li><code>scala.collection.immutable.List.map</code><span>List.scala:293</span></li><li><code>org.apache.spark.util.ThreadUtils$$$Lambda$275/[address].apply</code></li><li><code>org.apache.spark.util.ThreadUtils$.$anonfun$parmap$1</code><span>ThreadUtils.scala:384</span></li><li><code>scala.concurrent.Future$.apply</code><span>Future.scala:659</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 3 → 1</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:840</span></li><li><code>SparkPathReplay$$Lambda$3/[address].run</code></li><li><code>SparkPathReplay.lambda$thread$1</code><span>SparkPathReplay.java:87</span></li><li><code>SparkPathReplay.launchBatch</code><span>SparkPathReplay.java:70</span></li><li><code>SparkPathReplay.enqueue</code><span>SparkPathReplay.java:82</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.execute</code><span>ThreadPoolExecutor.java:1329</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>直接调用 DataSource 文件检查时，Spark 3.5.1 的异常栈丢失应用调用者，4.1.1 的现有辅助方法可恢复它。在另加的应用异步执行器场景里，两版均在相同工作栈报告同一个本地缺失文件。4.1.1 的辅助方法能接回共享应用任务，但仍省略两个历史入口。文件存在的对照均返回预期的一条路径。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>先记录各入口提交的实际 FutureTask。应用工作线程提交 Scala Future 时，其正在执行的 FutureTask 与先前记录为同一对象。再把交给 Future.apply 的函数对象，与错误栈中仍在执行的同一个函数对象及其返回 Future 关联。两层对象关系将相同的创建栈、执行栈接回交互和批处理入口。独立的 catch 观测用实际 Throwable 核对源任务归属。两组重复、两种启动顺序和两个发布版本共 16 个历史调用者全部匹配。</dd></div><div><dt>适用范围与局限</dt><dd>这是公开 DataSource API 的本地文件组件复现，另含明确区分的应用执行器扩展；未运行报告者的私有 HDFS 作业。扩展中，普通异常栈及所测 JFR 异常和线程祖先记录都缺少历史入口。4.1.1 的原生能力已经解决直接调用的原始端点。去掉 Future 绑定、历史创建或父任务关系后，均无法恢复原始入口。缺失路径仍会按预期报错，coroPerf 补全其调用上下文。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

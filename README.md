@@ -18,14 +18,14 @@ From the repository root, run the following command and open [the local preview]
 python3 -m http.server 8000
 ```
 
-- `index.html` groups the cases by language in one table. Each row shows its GitHub state, repair evidence, and primary CoroPerf contribution. Search and filters cover language, GitHub state, contribution, reported issue type, and reproduction scope.
+- `index.html` groups the cases by language in one table. Each row shows its upstream tracker state, repair evidence, and primary CoroPerf contribution. Search and filters cover language, upstream tracker state, contribution, reported issue type, and reproduction scope.
 - `evidence/` contains the static issue pages.
 - `research.html` groups the same issues by their primary diagnostic contribution, links to each call-stack comparison, and lists deferred follow-ups.
 - `zh-cn/` mirrors the index, research notes, and evidence pages in Simplified Chinese. Function names, paths to public upstream reports, and evidence labels from the graph retain their original spelling.
 - `data/focus.json` lists the reviewed cases, their reported issue types, primary diagnostic contributions, exact creation/observation pairs, and what each join establishes.
 - `data/cases.json` contains the exported findings, stacks, and graph edges in the public snapshot.
 - `data/upstream-status.json` records issue and linked repair PR states at the last check.
-- `data/case-classification.csv` exports the bilingual paper taxonomy, evidence scope, repair evidence, and linked GitHub issue and PR states.
+- `data/case-classification.csv` exports the bilingual paper taxonomy, evidence scope, repair evidence, and upstream issue and linked GitHub PR states.
 
 To update the snapshot from the original research workspace, run the export command first. For a text edit, update the case data, site copy in `scripts/copy_text.py`, or optional case summaries in `scripts/research-notes.json`, then rebuild. The scripts use Python 3.10 or newer and its standard library. Chinese case findings come from the study's Chinese records. Most Chinese index headlines use the leading observation from the same record.
 
@@ -41,7 +41,7 @@ Refresh the upstream snapshot when checking tracker status. The deferred list su
 
 - A coroutine join requires nonempty stacks at both endpoints, the same captured instance, and an explicit graph edge or an audited runtime task ID within one process. Ancestors appear only when the graph records the parent relationship.
 - The connected view starts at the execution stack and follows the joins back to creation. A join point links to the two captured record IDs and names the graph edge or identity check. The instance label uses the first record ID for that instance in the capture.
-- Fix evidence is listed separately from the issue's GitHub status. The evidence page can link to a tested repair, a merged change, a proposal or application workaround tested locally, or an upstream documentation update.
+- Fix evidence is listed separately from the issue's upstream status. The evidence page can link to a tested repair, a merged change, a proposal or application workaround tested locally, or an upstream documentation update.
 - Each selected join supplies missing caller context or attributes the observed behavior to its initiating task or request. The original physical stack remains next to its connected view.
 - Assign one diagnostic contribution from the main fact established by the selected join. Record caller recovery, request and result handoffs, failure and task lifecycle, scheduling and contention, or performance cost attribution.
 - Count each previously reported issue once by its main symptom or diagnostic question. Use `functional` for functional failures and correctness issues, `performance` for observed performance problems, `profiling` for CPU or wait-time attribution, and `debugging` for recovering missing diagnostic context.
@@ -52,3 +52,5 @@ Instrument Serif is distributed under the [SIL Open Font License](assets/fonts/O
 ## Automatic discovery progress
 
 [Search progress](discovery.html) and [搜索进度](zh-cn/discovery.html) show the separate, unverified discovery queue, framework coverage, official tracker windows, skipped review entries, and collection errors. Candidate counts do not change the verified evidence catalog. `scripts/build_discovery.py` renders both pages from `data/discovery.json`. In the research workspace, `research/github-issue-discovery/automation/README.md` describes the read-only scanner and two-hour report service.
+
+The classification CSV uses `upstream_status` for the issue state, covering GitHub and Apache Jira. Its issue URL identifies the tracker.

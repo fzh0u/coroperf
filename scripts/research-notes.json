@@ -1,4 +1,15 @@
 {
+  "apache--spark--spark-47833": {
+    "anchor": "call-stack",
+    "en": {
+      "title": "Recover the file-read entry across two task boundaries",
+      "summary": "<p>The direct missing-path replay loses its caller on 3.5.1 and the existing 4.1.1 helper restores it. In an application-executor extension, exact FutureTask and Scala callable identities recover both historical entries; the selected JFR and native-stack controls omit them.</p><p><a href=\"data/spark-47833-verification.json\">Verification records and retained failed capture</a></p>"
+    },
+    "zh-CN": {
+      "title": "跨两层任务边界找回文件读取入口",
+      "summary": "<p>直接调用的缺失路径复现中，3.5.1 丢失调用者，4.1.1 的现有辅助方法可恢复。另加应用执行器后，通过实际 FutureTask 与 Scala 函数对象的身份恢复两个历史入口；所测 JFR 和原生栈对照均省略这些入口。</p><p><a href=\"../data/spark-47833-verification.json\">验证记录及保留的失败采集</a></p>"
+    }
+  },
   "langchain4j--langchain4j--7069": {
     "anchor": "call-stack",
     "en": {"title": "Which retry callers stay pending after mapping fails?", "summary": "<p>The two identical mapper stacks carry different caller Futures. JDI object identity joins each stack to its first attempt. Open PR #7070 propagates the exact mapper failures to both callers and passes all 24 tests from the PR.</p>"},
