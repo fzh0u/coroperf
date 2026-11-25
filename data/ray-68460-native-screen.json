@@ -14,11 +14,13 @@
   "ray_cluster_started": false,
   "input_sha256": {
     "batch-1.json": "0f9c7780e5882378c15dd1fc80802190096834e57086e51540b80f7a3bacf3de",
-    "batch-2.json": "0f9c7780e5882378c15dd1fc80802190096834e57086e51540b80f7a3bacf3de"
+    "batch-2.json": "0f9c7780e5882378c15dd1fc80802190096834e57086e51540b80f7a3bacf3de",
+    "unretrieved-control.json": "db52dc17cd7aba0195f9a479027c4d9c5c90255a93035ebccfb127862c846fa8"
   },
   "harness_sha256": {
     "replay.py": "be3d9cdc45398325d7ed35be17e79248e0f3ab42a33ac1f42f4644f296c5a36b",
-    "verify.py": "2743e4fd42e6d1c345dbc3f7441189b8797d869832f1a13fd6f099b8c969c674"
+    "verify.py": "fb5d060efe2e1d8d0912fef06699191cf2e18ef562af78503e8a4f4a5ff9a8be",
+    "unretrieved.py": "9d9cdbe625e4404b277f9c9fb7584b7d22bf298f917a6eb4b14318dc97c5d80f"
   },
   "scope": "Unmodified released Ray MetricsPusher class only, with two application registration sites. The upstream report says this pairing is latent in current in-tree callers. No production Serve path or CoroPerf capture was executed.",
   "conclusion": "Physical KeyError traces omit registration sites, but native asyncio debug creation traces and coroutine-origin tracking each recover the correct registration site in all tracked conditions. This screen establishes no extra caller attribution for CoroPerf.",
@@ -3495,5 +3497,260 @@
       "scope": "Unmodified released Ray MetricsPusher class only, with two application registration sites. The upstream report says this pairing is latent in current in-tree callers. No production Serve path or CoroPerf capture was executed.",
       "conclusion": "Physical KeyError traces omit registration sites, but native asyncio debug creation traces and coroutine-origin tracking each recover the correct registration site in all tracked conditions. This screen establishes no extra caller attribution for CoroPerf."
     }
-  ]
+  ],
+  "additional_native_unretrieved_control": {
+    "schema": "coroperf.native-unretrieved-error-control/v1",
+    "conditions": 4,
+    "native_unretrieved_errors": 8,
+    "native_tracked_callers": 4,
+    "harness_retained_failed_tasks": false,
+    "ray_cluster_started": false,
+    "new_verified_coroperf_cases": 0,
+    "results": [
+      {
+        "debug": false,
+        "order": [
+          "report",
+          "refresh"
+        ],
+        "native_exception_reports": [
+          {
+            "task_name": "Task-2",
+            "expected_registration": "report",
+            "message": "Task exception was never retrieved",
+            "exception_type": "KeyError",
+            "exception_args": [
+              "m"
+            ],
+            "exception_functions": [
+              "metrics_task"
+            ],
+            "native_handler_creation_functions": [],
+            "native_coroutine_origin_functions": []
+          },
+          {
+            "task_name": "Task-3",
+            "expected_registration": "refresh",
+            "message": "Task exception was never retrieved",
+            "exception_type": "KeyError",
+            "exception_args": [
+              "m"
+            ],
+            "exception_functions": [
+              "metrics_task"
+            ],
+            "native_handler_creation_functions": [],
+            "native_coroutine_origin_functions": []
+          }
+        ],
+        "default_handler_log": "Task exception was never retrieved\nfuture: <Task finished name='Task-2' coro=<MetricsPusher.metrics_task() done, defined at <workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py:71> exception=KeyError('m')>\nTraceback (most recent call last):\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 94, in metrics_task\n    self._async_sleep(self._tasks[name].interval_s)\n                      ~~~~~~~~~~~^^^^^^\nKeyError: 'm'\nTask exception was never retrieved\nfuture: <Task finished name='Task-3' coro=<MetricsPusher.metrics_task() done, defined at <workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py:71> exception=KeyError('m')>\nTraceback (most recent call last):\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 94, in metrics_task\n    self._async_sleep(self._tasks[name].interval_s)\n                      ~~~~~~~~~~~^^^^^^\nKeyError: 'm'\n"
+      },
+      {
+        "debug": false,
+        "order": [
+          "refresh",
+          "report"
+        ],
+        "native_exception_reports": [
+          {
+            "task_name": "Task-11",
+            "expected_registration": "refresh",
+            "message": "Task exception was never retrieved",
+            "exception_type": "KeyError",
+            "exception_args": [
+              "m"
+            ],
+            "exception_functions": [
+              "metrics_task"
+            ],
+            "native_handler_creation_functions": [],
+            "native_coroutine_origin_functions": []
+          },
+          {
+            "task_name": "Task-12",
+            "expected_registration": "report",
+            "message": "Task exception was never retrieved",
+            "exception_type": "KeyError",
+            "exception_args": [
+              "m"
+            ],
+            "exception_functions": [
+              "metrics_task"
+            ],
+            "native_handler_creation_functions": [],
+            "native_coroutine_origin_functions": []
+          }
+        ],
+        "default_handler_log": "Task exception was never retrieved\nfuture: <Task finished name='Task-11' coro=<MetricsPusher.metrics_task() done, defined at <workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py:71> exception=KeyError('m')>\nTraceback (most recent call last):\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 94, in metrics_task\n    self._async_sleep(self._tasks[name].interval_s)\n                      ~~~~~~~~~~~^^^^^^\nKeyError: 'm'\nTask exception was never retrieved\nfuture: <Task finished name='Task-12' coro=<MetricsPusher.metrics_task() done, defined at <workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py:71> exception=KeyError('m')>\nTraceback (most recent call last):\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 94, in metrics_task\n    self._async_sleep(self._tasks[name].interval_s)\n                      ~~~~~~~~~~~^^^^^^\nKeyError: 'm'\n"
+      },
+      {
+        "debug": true,
+        "order": [
+          "report",
+          "refresh"
+        ],
+        "native_exception_reports": [
+          {
+            "task_name": "Task-20",
+            "expected_registration": "report",
+            "message": "Task exception was never retrieved",
+            "exception_type": "KeyError",
+            "exception_args": [
+              "m"
+            ],
+            "exception_functions": [
+              "metrics_task"
+            ],
+            "native_handler_creation_functions": [
+              "<module>",
+              "run",
+              "run",
+              "run_until_complete",
+              "run_forever",
+              "_run_once",
+              "_run",
+              "trial",
+              "start_report",
+              "register_or_update_task",
+              "create_task"
+            ],
+            "native_coroutine_origin_functions": [
+              "register_or_update_task",
+              "start_report",
+              "trial",
+              "_run",
+              "_run_once",
+              "run_forever",
+              "run_until_complete",
+              "run",
+              "run",
+              "<module>"
+            ]
+          },
+          {
+            "task_name": "Task-21",
+            "expected_registration": "refresh",
+            "message": "Task exception was never retrieved",
+            "exception_type": "KeyError",
+            "exception_args": [
+              "m"
+            ],
+            "exception_functions": [
+              "metrics_task"
+            ],
+            "native_handler_creation_functions": [
+              "<module>",
+              "run",
+              "run",
+              "run_until_complete",
+              "run_forever",
+              "_run_once",
+              "_run",
+              "trial",
+              "start_refresh",
+              "register_or_update_task",
+              "create_task"
+            ],
+            "native_coroutine_origin_functions": [
+              "register_or_update_task",
+              "start_refresh",
+              "trial",
+              "_run",
+              "_run_once",
+              "run_forever",
+              "run_until_complete",
+              "run",
+              "run",
+              "<module>"
+            ]
+          }
+        ],
+        "default_handler_log": "Task exception was never retrieved\nfuture: <Task finished name='Task-20' coro=<MetricsPusher.metrics_task() done, defined at <workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py:71> exception=KeyError('m') created at /home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py:420>\nsource_traceback: Object created at (most recent call last):\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/unretrieved.py\", line 83, in <module>\n    results.append(asyncio.run(trial(debug, order), debug=debug))\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 195, in run\n    return runner.run(main)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 678, in run_until_complete\n    self.run_forever()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 645, in run_forever\n    self._run_once()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 1991, in _run_once\n    handle._run()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py\", line 88, in _run\n    self._context.run(self._callback, *self._args)\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/unretrieved.py\", line 54, in trial\n    {'report': start_report, 'refresh': start_refresh}[name](\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/replay.py\", line 21, in start_report\n    pusher.register_or_update_task('m', callback, 0.01)\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 123, in register_or_update_task\n    self._async_tasks[name] = asyncio.create_task(self.metrics_task(name))\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py\", line 420, in create_task\n    task = loop.create_task(coro)\nTraceback (most recent call last):\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 94, in metrics_task\n    self._async_sleep(self._tasks[name].interval_s)\n                      ~~~~~~~~~~~^^^^^^\nKeyError: 'm'\nTask exception was never retrieved\nfuture: <Task finished name='Task-21' coro=<MetricsPusher.metrics_task() done, defined at <workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py:71> exception=KeyError('m') created at /home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py:420>\nsource_traceback: Object created at (most recent call last):\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/unretrieved.py\", line 83, in <module>\n    results.append(asyncio.run(trial(debug, order), debug=debug))\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 195, in run\n    return runner.run(main)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 678, in run_until_complete\n    self.run_forever()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 645, in run_forever\n    self._run_once()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 1991, in _run_once\n    handle._run()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py\", line 88, in _run\n    self._context.run(self._callback, *self._args)\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/unretrieved.py\", line 54, in trial\n    {'report': start_report, 'refresh': start_refresh}[name](\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/replay.py\", line 25, in start_refresh\n    pusher.register_or_update_task('m', callback, 0.01)\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 123, in register_or_update_task\n    self._async_tasks[name] = asyncio.create_task(self.metrics_task(name))\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py\", line 420, in create_task\n    task = loop.create_task(coro)\nTraceback (most recent call last):\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 94, in metrics_task\n    self._async_sleep(self._tasks[name].interval_s)\n                      ~~~~~~~~~~~^^^^^^\nKeyError: 'm'\n"
+      },
+      {
+        "debug": true,
+        "order": [
+          "refresh",
+          "report"
+        ],
+        "native_exception_reports": [
+          {
+            "task_name": "Task-29",
+            "expected_registration": "refresh",
+            "message": "Task exception was never retrieved",
+            "exception_type": "KeyError",
+            "exception_args": [
+              "m"
+            ],
+            "exception_functions": [
+              "metrics_task"
+            ],
+            "native_handler_creation_functions": [
+              "<module>",
+              "run",
+              "run",
+              "run_until_complete",
+              "run_forever",
+              "_run_once",
+              "_run",
+              "trial",
+              "start_refresh",
+              "register_or_update_task",
+              "create_task"
+            ],
+            "native_coroutine_origin_functions": [
+              "register_or_update_task",
+              "start_refresh",
+              "trial",
+              "_run",
+              "_run_once",
+              "run_forever",
+              "run_until_complete",
+              "run",
+              "run",
+              "<module>"
+            ]
+          },
+          {
+            "task_name": "Task-30",
+            "expected_registration": "report",
+            "message": "Task exception was never retrieved",
+            "exception_type": "KeyError",
+            "exception_args": [
+              "m"
+            ],
+            "exception_functions": [
+              "metrics_task"
+            ],
+            "native_handler_creation_functions": [
+              "<module>",
+              "run",
+              "run",
+              "run_until_complete",
+              "run_forever",
+              "_run_once",
+              "_run",
+              "trial",
+              "start_report",
+              "register_or_update_task",
+              "create_task"
+            ],
+            "native_coroutine_origin_functions": [
+              "register_or_update_task",
+              "start_report",
+              "trial",
+              "_run",
+              "_run_once",
+              "run_forever",
+              "run_until_complete",
+              "run",
+              "run",
+              "<module>"
+            ]
+          }
+        ],
+        "default_handler_log": "Task exception was never retrieved\nfuture: <Task finished name='Task-29' coro=<MetricsPusher.metrics_task() done, defined at <workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py:71> exception=KeyError('m') created at /home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py:420>\nsource_traceback: Object created at (most recent call last):\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/unretrieved.py\", line 83, in <module>\n    results.append(asyncio.run(trial(debug, order), debug=debug))\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 195, in run\n    return runner.run(main)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 678, in run_until_complete\n    self.run_forever()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 645, in run_forever\n    self._run_once()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 1991, in _run_once\n    handle._run()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py\", line 88, in _run\n    self._context.run(self._callback, *self._args)\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/unretrieved.py\", line 54, in trial\n    {'report': start_report, 'refresh': start_refresh}[name](\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/replay.py\", line 25, in start_refresh\n    pusher.register_or_update_task('m', callback, 0.01)\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 123, in register_or_update_task\n    self._async_tasks[name] = asyncio.create_task(self.metrics_task(name))\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py\", line 420, in create_task\n    task = loop.create_task(coro)\nTraceback (most recent call last):\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 94, in metrics_task\n    self._async_sleep(self._tasks[name].interval_s)\n                      ~~~~~~~~~~~^^^^^^\nKeyError: 'm'\nTask exception was never retrieved\nfuture: <Task finished name='Task-30' coro=<MetricsPusher.metrics_task() done, defined at <workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py:71> exception=KeyError('m') created at /home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py:420>\nsource_traceback: Object created at (most recent call last):\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/unretrieved.py\", line 83, in <module>\n    results.append(asyncio.run(trial(debug, order), debug=debug))\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 195, in run\n    return runner.run(main)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 678, in run_until_complete\n    self.run_forever()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 645, in run_forever\n    self._run_once()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 1991, in _run_once\n    handle._run()\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py\", line 88, in _run\n    self._context.run(self._callback, *self._args)\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/unretrieved.py\", line 54, in trial\n    {'report': start_report, 'refresh': start_refresh}[name](\n  File \"<workspace>/research/github-issue-discovery/ray-68460-native-screen/replay.py\", line 21, in start_report\n    pusher.register_or_update_task('m', callback, 0.01)\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 123, in register_or_update_task\n    self._async_tasks[name] = asyncio.create_task(self.metrics_task(name))\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py\", line 420, in create_task\n    task = loop.create_task(coro)\nTraceback (most recent call last):\n  File \"<workspace>/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/metrics_utils.py\", line 94, in metrics_task\n    self._async_sleep(self._tasks[name].interval_s)\n                      ~~~~~~~~~~~^^^^^^\nKeyError: 'm'\n"
+      }
+    ]
+  }
 }
