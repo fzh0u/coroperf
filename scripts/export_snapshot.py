@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 
 from copy_text import CASE_LANGUAGES, CONTRIBUTION_KINDS, FIX_STATES, ISSUE_KINDS, SOURCE_TOKEN_STAGES
-from refresh_issue_status import apache_jira_key
+from refresh_issue_status import apache_jira_key, mysql_bug_number
 
 
 HERE = Path(__file__).resolve().parents[1]
@@ -42,7 +42,7 @@ INTERNAL_PATH = re.compile(
 )
 ADDRESS = re.compile(r"\b0x[0-9a-f]{10,}\b", re.IGNORECASE)
 ANSI_COLOR = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]")
-TRACKERS = {"github.com", "code.djangoproject.com", "issues.apache.org", "sqlite.org"}
+TRACKERS = {"github.com", "code.djangoproject.com", "issues.apache.org", "sqlite.org", "bugs.mysql.com"}
 CHINESE_HEADLINES = {
     "dotnet--runtime--60764": "Foo 恢复后，物理调用栈里找不到 Main",
     "drogonframework--drogon--2331": "Drogon 在数据库事件循环上执行同步 SQL，导致请求超时",
@@ -314,6 +314,10 @@ def main():
                 r"https://github\.com/apache/[A-Za-z0-9_.-]+/commit/[0-9a-f]{40}", merged_fix
             )):
                 raise ValueError(f'{row["id"]}: invalid public Apache follow-up fix URL')
+        elif number := mysql_bug_number(url):
+            reference = f'MySQL Bug #{number}'
+            if fix_url:
+                raise ValueError(f'{row["id"]}: MySQL follow-up repair needs a separate reviewed source')
         else:
             raise ValueError(f'{row["id"]}: invalid public follow-up issue URL')
         followups.append({

@@ -35,7 +35,7 @@ python3 scripts/refresh_issue_status.py
 python3 scripts/build.py
 ```
 
-Refresh the upstream snapshot when checking tracker status. The deferred list supports GitHub and Apache Jira reports. The page build uses the saved snapshot offline. Commit the generated HTML with the updated data so GitHub Pages can serve the refreshed site.
+Refresh the upstream snapshot when checking tracker status. The deferred list supports GitHub, Apache Jira and MySQL Bugs reports. The page build uses the saved snapshot offline. Commit the generated HTML with the updated data so GitHub Pages can serve the refreshed site.
 
 ## Reading the stack evidence
 
@@ -54,3 +54,5 @@ Instrument Serif is distributed under the [SIL Open Font License](assets/fonts/O
 [Search progress](discovery.html) and [搜索进度](zh-cn/discovery.html) show the separate, unverified discovery queue, framework coverage, official tracker windows, skipped review entries, and collection errors. Candidate counts do not change the verified evidence catalog. `scripts/build_discovery.py` renders both pages from `data/discovery.json`. In the research workspace, `research/github-issue-discovery/automation/README.md` describes the read-only scanner and two-hour report service.
 
 The classification CSV uses `upstream_status` for the issue state, covering GitHub and Apache Jira. Its issue URL identifies the tracker.
+
+Official database discovery uses PostgreSQL archive relevance/date windows and MySQL Bugs relevance/update windows. The discovery page counts mail messages separately from approximate subject groups, displays native MySQL categories and states, and keeps these metrics separate from GitHub heat. Source windows and their retrieval times are included in the report download.

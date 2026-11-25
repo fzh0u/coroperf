@@ -1,7 +1,7 @@
 {
   "schema": "coroperf.discovery-run/v1",
-  "started_at": "2026-11-25T01:04:11+00:00",
-  "finished_at": "2026-11-25T01:04:19+00:00",
+  "started_at": "2026-11-25T01:29:24+00:00",
+  "finished_at": "2026-11-25T01:29:25+00:00",
   "run_directory": "perf-out/github-issue-discovery/automatic/runs/20261125T000030Z",
   "selection": "Top discussion and recent-update windows per repository; not an exhaustive or representative survey.",
   "heat_formula": "4*ln(1+comments) + 2*ln(1+positive_reactions) + 0.5*ln(1+repository_stars)",
@@ -105,7 +105,11 @@
       "complete": true,
       "has_issues": true,
       "canonical_repository": "mysql/mysql-server",
-      "archive": "974ebb317b6f41d277f3e25193816a4b0484e6fcfc4a9dd60df60e7e0b683fe0"
+      "archive": "974ebb317b6f41d277f3e25193816a4b0484e6fcfc4a9dd60df60e7e0b683fe0",
+      "official_search_complete": true,
+      "official_candidates": 32,
+      "official_search_windows": 2,
+      "official_entry_kind": "mysql_issues"
     },
     {
       "repository": "postgres/postgres",
@@ -119,7 +123,11 @@
       "has_issues": false,
       "canonical_repository": "postgres/postgres",
       "archive": "af570d064d23b8e9bf6ac24f08fff88b176acd4dfccacdc940e458ec5852059c",
-      "gap": "GitHub Issues disabled; search the official tracker separately."
+      "gap": "GitHub Issues disabled; search the official tracker separately.",
+      "official_search_complete": true,
+      "official_candidates": 62,
+      "official_search_windows": 4,
+      "official_entry_kind": "messages"
     },
     {
       "repository": "apache/datafusion",
@@ -212,7 +220,9 @@
       "canonical_repository": "apache/spark",
       "archive": "9ebcb351c008c55640bec97f5bbfe670edefdf58bee0528c6e21b79e7912ee46",
       "official_search_complete": true,
-      "official_candidates": 40
+      "official_candidates": 40,
+      "official_search_windows": 2,
+      "official_entry_kind": "issues"
     },
     {
       "repository": "apache/flink",
@@ -228,7 +238,9 @@
       "archive": "f1a09578a1446a1dfe08ec43f081b86d1d73dad4425e5aced05252521fad95cf",
       "gap": "GitHub Issues disabled; search the official tracker separately.",
       "official_search_complete": true,
-      "official_candidates": 40
+      "official_candidates": 40,
+      "official_search_windows": 2,
+      "official_entry_kind": "issues"
     },
     {
       "repository": "apache/kafka",
@@ -244,7 +256,9 @@
       "archive": "66a4d34382399588a7b4b3cf9dd87da172b50d5053febe9b0d8e0429e968a260",
       "gap": "GitHub Issues disabled; search the official tracker separately.",
       "official_search_complete": true,
-      "official_candidates": 40
+      "official_candidates": 40,
+      "official_search_windows": 2,
+      "official_entry_kind": "issues"
     },
     {
       "repository": "apache/datafusion-ballista",
@@ -17853,6 +17867,2129 @@
         }
       ],
       "errors": []
+    },
+    {
+      "repository": "mysql/mysql-server",
+      "tracker": "MySQL Bugs",
+      "entry_kind": "mysql_issues",
+      "complete": true,
+      "searches": [
+        {
+          "repository": "mysql/mysql-server",
+          "tracker": "MySQL Bugs",
+          "kind": "relevance",
+          "url": "https://bugs.mysql.com/search.php?cmd=display&search_for=asynchronous&status%5B%5D=All&severity=all&limit=20",
+          "query": "asynchronous; all statuses and severities; first 20 results",
+          "total_count": 78,
+          "returned": 20,
+          "observed_at": "2026-11-25T01:27:16+00:00"
+        },
+        {
+          "repository": "mysql/mysql-server",
+          "tracker": "MySQL Bugs",
+          "kind": "recent",
+          "url": "https://bugs.mysql.com/search.php?cmd=display&search_for=asynchronous&status%5B%5D=All&severity=all&limit=20&order_by=mtime&direction=DESC",
+          "query": "asynchronous; all statuses and severities; first 20 results",
+          "total_count": 78,
+          "returned": 20,
+          "observed_at": "2026-11-25T01:27:16+00:00"
+        }
+      ],
+      "issues": [
+        {
+          "id": "mysql--bugs--96641",
+          "number": 96641,
+          "key": "MySQL Bug #96641",
+          "title": "Support for prepared statements in C API asynchronous interface",
+          "url": "https://bugs.mysql.com/bug.php?id=96641",
+          "tracker_state": "Verified",
+          "created_at": "2019-08-24T17:45:00",
+          "updated_at": "2019-08-26T06:46:00",
+          "category": "MySQL Server: C API (client library)",
+          "severity": "S4",
+          "version": "8.0.17",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--86222",
+          "number": 86222,
+          "key": "MySQL Bug #86222",
+          "title": "GR Member stop must all asynchronous channels that are feeding data into it",
+          "url": "https://bugs.mysql.com/bug.php?id=86222",
+          "tracker_state": "Closed",
+          "created_at": "2017-05-08T17:07:00",
+          "updated_at": "2017-11-08T10:24:00",
+          "category": "MySQL Server: Group Replication",
+          "severity": "S3",
+          "version": "5.7.17",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--115703",
+          "number": 115703,
+          "key": "MySQL Bug #115703",
+          "title": "Asynchronous interface uses unsafe static local variables to (re-)store state",
+          "url": "https://bugs.mysql.com/bug.php?id=115703",
+          "tracker_state": "Closed",
+          "created_at": "2024-07-27T11:55:00",
+          "updated_at": "2024-09-16T11:20:00",
+          "category": "MySQL Server: C API (client library)",
+          "severity": "S2",
+          "version": "8.0",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "risk_signal": "unsafe",
+          "status": "skipped_review",
+          "reason": "Previously deferred; keep reproduction on hold.",
+          "query_windows": [
+            "recent",
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--90822",
+          "number": 90822,
+          "key": "MySQL Bug #90822",
+          "title": "timed auto send “start slave”",
+          "url": "https://bugs.mysql.com/bug.php?id=90822",
+          "tracker_state": "Not a Bug",
+          "created_at": "2018-05-10T10:31:00",
+          "updated_at": "2018-05-14T03:39:00",
+          "category": "MySQL Server: Replication",
+          "severity": "S3",
+          "version": "5.7.18",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--48767",
+          "number": 48767,
+          "key": "MySQL Bug #48767",
+          "title": "IBMDB2I subselect performance degrades when async buffering enabled",
+          "url": "https://bugs.mysql.com/bug.php?id=48767",
+          "tracker_state": "Unsupported",
+          "created_at": "2009-11-13T20:17:00",
+          "updated_at": "2011-01-01T15:49:00",
+          "category": "MySQL Server: DB2SE for IBM i",
+          "severity": "S5",
+          "version": "",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--89057",
+          "number": 89057,
+          "key": "MySQL Bug #89057",
+          "title": "No info about Python async support(yes or no) in X-Dev API user guide",
+          "url": "https://bugs.mysql.com/bug.php?id=89057",
+          "tracker_state": "Closed",
+          "created_at": "2017-12-26T12:02:00",
+          "updated_at": "2021-04-26T18:29:00",
+          "category": "MySQL Server: Documentation",
+          "severity": "S2",
+          "version": "",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--92975",
+          "number": 92975,
+          "key": "MySQL Bug #92975",
+          "title": "SQL thread stuck in init state waiting for asynchronous rollback to complete",
+          "url": "https://bugs.mysql.com/bug.php?id=92975",
+          "tracker_state": "No Feedback",
+          "created_at": "2018-10-27T01:04:00",
+          "updated_at": "2025-12-07T20:45:00",
+          "category": "MySQL Server: Replication",
+          "severity": "S2",
+          "version": "5.7.19, 5.7.21",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent",
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--102548",
+          "number": 102548,
+          "key": "MySQL Bug #102548",
+          "title": "semi-sync replication with ogg",
+          "url": "https://bugs.mysql.com/bug.php?id=102548",
+          "tracker_state": "No Feedback",
+          "created_at": "2021-02-10T02:59:00",
+          "updated_at": "2025-12-07T20:45:00",
+          "category": "MySQL Server",
+          "severity": "S3",
+          "version": "5.7.22",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent",
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--115060",
+          "number": 115060,
+          "key": "MySQL Bug #115060",
+          "title": "Async replication failover doesn't log useful error when connecting to GR source",
+          "url": "https://bugs.mysql.com/bug.php?id=115060",
+          "tracker_state": "Not a Bug",
+          "created_at": "2024-05-20T09:14:00",
+          "updated_at": "2024-05-22T18:03:00",
+          "category": "MySQL Server: Group Replication",
+          "severity": "S3",
+          "version": "8.0.36",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent",
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--114053",
+          "number": 114053,
+          "key": "MySQL Bug #114053",
+          "title": "Rollback of transactions during startup shouldn't delay opening for public",
+          "url": "https://bugs.mysql.com/bug.php?id=114053",
+          "tracker_state": "Verified",
+          "created_at": "2024-02-19T18:42:00",
+          "updated_at": "2026-08-06T15:22:00",
+          "category": "MySQL Server: InnoDB storage engine",
+          "severity": "S3",
+          "version": "8.0",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent",
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--105748",
+          "number": 105748,
+          "key": "MySQL Bug #105748",
+          "title": "Why is group_replication_consistency = AFTER crashing a Group Replication cluste",
+          "url": "https://bugs.mysql.com/bug.php?id=105748",
+          "tracker_state": "Duplicate",
+          "created_at": "2021-11-30T11:47:00",
+          "updated_at": "2025-12-07T20:45:00",
+          "category": "MySQL Server: Group Replication",
+          "severity": "S2",
+          "version": "",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "risk_signal": "crashing",
+          "status": "skipped_review",
+          "reason": "Previously deferred; keep reproduction on hold.",
+          "query_windows": [
+            "recent",
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--117115",
+          "number": 117115,
+          "key": "MySQL Bug #117115",
+          "title": "The server_id of the record written to the error log by semisync is incorrect",
+          "url": "https://bugs.mysql.com/bug.php?id=117115",
+          "tracker_state": "Verified",
+          "created_at": "2025-01-07T07:12:00",
+          "updated_at": "2025-02-10T05:50:00",
+          "category": "MySQL Server: Replication",
+          "severity": "S3",
+          "version": "5.7.44, 8.0.40",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent",
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--114072",
+          "number": 114072,
+          "key": "MySQL Bug #114072",
+          "title": "Group replication slow down existing asynchronous replication",
+          "url": "https://bugs.mysql.com/bug.php?id=114072",
+          "tracker_state": "Unsupported",
+          "created_at": "2024-02-20T21:08:00",
+          "updated_at": "2024-03-08T16:19:00",
+          "category": "MySQL Server: Group Replication",
+          "severity": "S3",
+          "version": "8.0.35-27",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--107523",
+          "number": 107523,
+          "key": "MySQL Bug #107523",
+          "title": "Unclear interaction between `innodb_use_native_aio` and many other parameters",
+          "url": "https://bugs.mysql.com/bug.php?id=107523",
+          "tracker_state": "Not a Bug",
+          "created_at": "2022-06-09T08:50:00",
+          "updated_at": "2022-06-09T12:10:00",
+          "category": "MySQL Server: Documentation",
+          "severity": "S4",
+          "version": "8.0",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--107024",
+          "number": 107024,
+          "key": "MySQL Bug #107024",
+          "title": "Asynchronous Connection Failover for Replicas Different weights",
+          "url": "https://bugs.mysql.com/bug.php?id=107024",
+          "tracker_state": "Verified",
+          "created_at": "2022-04-14T15:06:00",
+          "updated_at": "2022-04-15T08:41:00",
+          "category": "Shell AdminAPI InnoDB Cluster / ReplicaSet",
+          "severity": "S4",
+          "version": "8.0.28",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--104356",
+          "number": 104356,
+          "key": "MySQL Bug #104356",
+          "title": "Semi-sync replication switched OFF",
+          "url": "https://bugs.mysql.com/bug.php?id=104356",
+          "tracker_state": "Can't repeat",
+          "created_at": "2021-07-20T07:11:00",
+          "updated_at": "2021-07-20T19:56:00",
+          "category": "Tests: Group Replication",
+          "severity": "S3",
+          "version": "5.7.21",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--104174",
+          "number": 104174,
+          "key": "MySQL Bug #104174",
+          "title": "MySQL does not start",
+          "url": "https://bugs.mysql.com/bug.php?id=104174",
+          "tracker_state": "Unsupported",
+          "created_at": "2021-06-30T15:01:00",
+          "updated_at": "2021-06-30T15:44:00",
+          "category": "MySQL Server",
+          "severity": "S3",
+          "version": "",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--91151",
+          "number": 91151,
+          "key": "MySQL Bug #91151",
+          "title": "Add a Learner/Observer role to leverage it in WAN setup",
+          "url": "https://bugs.mysql.com/bug.php?id=91151",
+          "tracker_state": "Verified",
+          "created_at": "2018-06-05T17:12:00",
+          "updated_at": "2019-05-06T03:33:00",
+          "category": "MySQL Server: Group Replication",
+          "severity": "S3",
+          "version": "8.0.11",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--82481",
+          "number": 82481,
+          "key": "MySQL Bug #82481",
+          "title": "MySQL Group Replication 0.8 is asynchronous",
+          "url": "https://bugs.mysql.com/bug.php?id=82481",
+          "tracker_state": "Closed",
+          "created_at": "2016-08-06T17:28:00",
+          "updated_at": "2016-12-02T13:01:00",
+          "category": "MySQL Server: Group Replication",
+          "severity": "S1",
+          "version": "5.7.14",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--99805",
+          "number": 99805,
+          "key": "MySQL Bug #99805",
+          "title": "mysql async client is incomplete",
+          "url": "https://bugs.mysql.com/bug.php?id=99805",
+          "tracker_state": "Verified",
+          "created_at": "2020-06-08T15:27:00",
+          "updated_at": "2025-02-21T11:07:00",
+          "category": "MySQL Server: C API (client library)",
+          "severity": "S4",
+          "version": "8.0.16+",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent",
+            "relevance"
+          ]
+        },
+        {
+          "id": "mysql--bugs--121726",
+          "number": 121726,
+          "key": "MySQL Bug #121726",
+          "title": "START REPLICA deadlocks with SET GLOBAL max_relay_log_size, max_binlog_size or gtid_mode",
+          "url": "https://bugs.mysql.com/bug.php?id=121726",
+          "tracker_state": "In progress",
+          "created_at": "2026-11-10T04:29:00",
+          "updated_at": "2026-11-13T15:47:00",
+          "category": "MySQL Server: Replication",
+          "severity": "S2",
+          "version": "trunk, 8.0.40, 8.4.0, 9.7.2, 26.7.0",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--121045",
+          "number": 121045,
+          "key": "MySQL Bug #121045",
+          "title": "Server telemetry metrics (mysql.stats, mysql.stats.handler) always report 0",
+          "url": "https://bugs.mysql.com/bug.php?id=121045",
+          "tracker_state": "Documenting",
+          "created_at": "2026-07-31T23:14:00",
+          "updated_at": "2026-11-05T15:47:00",
+          "category": "MySQL Server: Performance Schema",
+          "severity": "S3",
+          "version": "9.7.2, 8.4 (present since 8.2.0)",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--121587",
+          "number": 121587,
+          "key": "MySQL Bug #121587",
+          "title": "Connector/NET savepoint methods do not match SupportsSavepoints",
+          "url": "https://bugs.mysql.com/bug.php?id=121587",
+          "tracker_state": "Open",
+          "created_at": "2026-10-22T16:14:00",
+          "updated_at": "2026-10-22T16:14:00",
+          "category": "Connector / NET",
+          "severity": "S3",
+          "version": "Connector/NET 8.4.0, 9.7.0, and 26.10.0",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--105006",
+          "number": 105006,
+          "key": "MySQL Bug #105006",
+          "title": "provide per-user login session variable settings",
+          "url": "https://bugs.mysql.com/bug.php?id=105006",
+          "tracker_state": "Verified",
+          "created_at": "2021-09-22T11:46:00",
+          "updated_at": "2026-03-19T08:38:00",
+          "category": "MySQL Server: Options",
+          "severity": "S4",
+          "version": "8.0.26",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--101907",
+          "number": 101907,
+          "key": "MySQL Bug #101907",
+          "title": "Replication sql_thread hung while executing DML in init state",
+          "url": "https://bugs.mysql.com/bug.php?id=101907",
+          "tracker_state": "No Feedback",
+          "created_at": "2020-12-08T11:39:00",
+          "updated_at": "2025-12-07T20:45:00",
+          "category": "MySQL Server: Replication",
+          "severity": "S2",
+          "version": "5.7",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--101274",
+          "number": 101274,
+          "key": "MySQL Bug #101274",
+          "title": "Clone Operation succeed but node failing join GR when relay logs are present",
+          "url": "https://bugs.mysql.com/bug.php?id=101274",
+          "tracker_state": "No Feedback",
+          "created_at": "2020-10-22T11:45:00",
+          "updated_at": "2025-12-07T20:45:00",
+          "category": "MySQL Server: Group Replication",
+          "severity": "S2",
+          "version": "8.0.22",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--115861",
+          "number": 115861,
+          "key": "MySQL Bug #115861",
+          "title": "Issues with strcmp when binlog suffix number exceeds six digits",
+          "url": "https://bugs.mysql.com/bug.php?id=115861",
+          "tracker_state": "Closed",
+          "created_at": "2024-08-19T13:02:00",
+          "updated_at": "2025-08-18T11:50:00",
+          "category": "MySQL Server: Replication",
+          "severity": "S3",
+          "version": "5.7, 8.0",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--114257",
+          "number": 114257,
+          "key": "MySQL Bug #114257",
+          "title": "Error Handling Issue with MySql.EntityFrameworkCore",
+          "url": "https://bugs.mysql.com/bug.php?id=114257",
+          "tracker_state": "Duplicate",
+          "created_at": "2024-03-07T08:48:00",
+          "updated_at": "2025-07-15T12:08:00",
+          "category": "Connector / NET",
+          "severity": "S2",
+          "version": "9.0.3",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--75615",
+          "number": 75615,
+          "key": "MySQL Bug #75615",
+          "title": "Incorrect implementation of Connection.setNetworkTimeout()",
+          "url": "https://bugs.mysql.com/bug.php?id=75615",
+          "tracker_state": "Closed",
+          "created_at": "2015-01-24T05:51:00",
+          "updated_at": "2025-07-09T22:39:00",
+          "category": "Connector / J",
+          "severity": "S2",
+          "version": "",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--118129",
+          "number": 118129,
+          "key": "MySQL Bug #118129",
+          "title": "Is the timing of index statistics update asynchronous when changing the column type with an index?",
+          "url": "https://bugs.mysql.com/bug.php?id=118129",
+          "tracker_state": "Not a Bug",
+          "created_at": "2025-05-08T05:01:00",
+          "updated_at": "2025-05-19T11:44:00",
+          "category": "MySQL Server: DDL",
+          "severity": "S3",
+          "version": "MySQL 8.0",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--116806",
+          "number": 116806,
+          "key": "MySQL Bug #116806",
+          "title": "Support flashback",
+          "url": "https://bugs.mysql.com/bug.php?id=116806",
+          "tracker_state": "Verified",
+          "created_at": "2024-11-27T12:49:00",
+          "updated_at": "2024-12-09T13:08:00",
+          "category": "MySQL Server: Replication",
+          "severity": "S4",
+          "version": "8.0.32",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        },
+        {
+          "id": "mysql--bugs--114642",
+          "number": 114642,
+          "key": "MySQL Bug #114642",
+          "title": "Enhance MySQL protocol to optionally supply an endpoint name to listener/server",
+          "url": "https://bugs.mysql.com/bug.php?id=114642",
+          "tracker_state": "Verified",
+          "created_at": "2024-04-14T11:03:00",
+          "updated_at": "2024-04-15T13:28:00",
+          "category": "MySQL Server: Connection Handling",
+          "severity": "S4",
+          "version": "8.0",
+          "repository": "mysql/mysql-server",
+          "entry_kind": "mysql_issue",
+          "observed_at": "2026-11-25T01:27:16+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "recent"
+          ]
+        }
+      ],
+      "errors": [],
+      "ranking_note": "Official relevance and updated-date order. Severity is not a popularity metric and no synthetic votes or comments are assigned."
+    },
+    {
+      "repository": "postgres/postgres",
+      "tracker": "PostgreSQL mailing lists",
+      "entry_kind": "messages",
+      "complete": true,
+      "searches": [
+        {
+          "repository": "postgres/postgres",
+          "tracker": "PostgreSQL mailing lists",
+          "list": "pgsql-hackers",
+          "kind": "relevance",
+          "url": "https://www.postgresql.org/search/?m=1&q=async&l=1&d=365&s=r",
+          "query": "async; last 365 days; first result page",
+          "total_count": 235,
+          "returned": 20,
+          "observed_at": "2026-11-25T01:23:28+00:00"
+        },
+        {
+          "repository": "postgres/postgres",
+          "tracker": "PostgreSQL mailing lists",
+          "list": "pgsql-hackers",
+          "kind": "recent",
+          "url": "https://www.postgresql.org/search/?m=1&q=async&l=1&d=365&s=d",
+          "query": "async; last 365 days; first result page",
+          "total_count": 235,
+          "returned": 20,
+          "observed_at": "2026-11-25T01:23:29+00:00"
+        },
+        {
+          "repository": "postgres/postgres",
+          "tracker": "PostgreSQL mailing lists",
+          "list": "pgsql-bugs",
+          "kind": "relevance",
+          "url": "https://www.postgresql.org/search/?m=1&q=async&l=8&d=365&s=r",
+          "query": "async; last 365 days; first result page",
+          "total_count": 28,
+          "returned": 20,
+          "observed_at": "2026-11-25T01:23:31+00:00"
+        },
+        {
+          "repository": "postgres/postgres",
+          "tracker": "PostgreSQL mailing lists",
+          "list": "pgsql-bugs",
+          "kind": "recent",
+          "url": "https://www.postgresql.org/search/?m=1&q=async&l=8&d=365&s=d",
+          "query": "async; last 365 days; first result page",
+          "total_count": 28,
+          "returned": 20,
+          "observed_at": "2026-11-25T01:23:33+00:00"
+        }
+      ],
+      "issues": [
+        {
+          "id": "postgres--mail--44222aa5be0f7bb5e50b4848",
+          "title": "aio: Async fsyncs for crash recovery and checkpointer",
+          "url": "https://www.postgresql.org/message-id/CAN55FZ0vLWJQNB=HuHXG2wabFjXJd6OWTa3=kRzwObdZD9poHQ@mail.gmail.com",
+          "message_id": "CAN55FZ0vLWJQNB=HuHXG2wabFjXJd6OWTa3=kRzwObdZD9poHQ@mail.gmail.com",
+          "message_date": "2026-08-25T12:48:15",
+          "subject_group": "aio: async fsyncs for crash recovery and checkpointer",
+          "search_rank": 1,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--3dd2534394bf68a365931344",
+          "title": "Re: Make Append subplans async capable in more cases",
+          "url": "https://www.postgresql.org/message-id/0f96ad6b2f16bd77a33f9bbe330c3fa1@postgrespro.ru",
+          "message_id": "0f96ad6b2f16bd77a33f9bbe330c3fa1@postgrespro.ru",
+          "message_date": "2026-11-03T15:35:07",
+          "subject_group": "make append subplans async capable in more cases",
+          "search_rank": 10,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent",
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--3a30f4cac263439445f1a823",
+          "title": "Re: Bug in asynchronous Append",
+          "url": "https://www.postgresql.org/message-id/CAPmGK14Zq=j7qVt0EyZph2tG7y8soUa9v5yJAgMRakiAm+VLzw@mail.gmail.com",
+          "message_id": "CAPmGK14Zq=j7qVt0EyZph2tG7y8soUa9v5yJAgMRakiAm+VLzw@mail.gmail.com",
+          "message_date": "2026-08-07T10:54:53",
+          "subject_group": "bug in asynchronous append",
+          "search_rank": 3,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--304f21d28d60e065c365af55",
+          "title": "Re: Bug in asynchronous Append",
+          "url": "https://www.postgresql.org/message-id/CAPpHfds5YYZ+wuy_X1x3QTggC_S9Z_nG=P_N+LjAgfUY1WEWkQ@mail.gmail.com",
+          "message_id": "CAPpHfds5YYZ+wuy_X1x3QTggC_S9Z_nG=P_N+LjAgfUY1WEWkQ@mail.gmail.com",
+          "message_date": "2026-07-18T16:00:09",
+          "subject_group": "bug in asynchronous append",
+          "search_rank": 4,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--192fd440e3ae829e960d66b7",
+          "title": "Re: Asynchronous MergeAppend",
+          "url": "https://www.postgresql.org/message-id/CAPpHfdtNOvgKfUFLY84dLtT=m17d=976duxUvvhYGHkLhN8GAw@mail.gmail.com",
+          "message_id": "CAPpHfdtNOvgKfUFLY84dLtT=m17d=976duxUvvhYGHkLhN8GAw@mail.gmail.com",
+          "message_date": "2026-07-03T23:05:32",
+          "subject_group": "asynchronous mergeappend",
+          "search_rank": 5,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--7a685aa8fa68a75f3f83e92c",
+          "title": "Re: AIO / read stream heuristics adjustments for index prefetching",
+          "url": "https://www.postgresql.org/message-id/3gkuvs3lz3u3skuaxfkxnsysfqslf2srigl6546vhesekve6v2@va3r5esummvg",
+          "message_id": "3gkuvs3lz3u3skuaxfkxnsysfqslf2srigl6546vhesekve6v2@va3r5esummvg",
+          "message_date": "2026-04-03T23:10:48",
+          "subject_group": "aio / read stream heuristics adjustments for index prefetching",
+          "search_rank": 6,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--282dc681353bb604088156fc",
+          "title": "Re: Bug in asynchronous Append",
+          "url": "https://www.postgresql.org/message-id/CAPmGK14ZrKXyHbSO70y-p9y5DcbhJ29eka2QCXKsoKpOUyPLUQ@mail.gmail.com",
+          "message_id": "CAPmGK14ZrKXyHbSO70y-p9y5DcbhJ29eka2QCXKsoKpOUyPLUQ@mail.gmail.com",
+          "message_date": "2026-07-15T11:55:16",
+          "subject_group": "bug in asynchronous append",
+          "search_rank": 7,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--610a2734af53a0769ddbc4f3",
+          "title": "Re: Asynchronous MergeAppend",
+          "url": "https://www.postgresql.org/message-id/0bf760a18b139ece9f447c2082499e6d@postgrespro.ru",
+          "message_id": "0bf760a18b139ece9f447c2082499e6d@postgrespro.ru",
+          "message_date": "2026-11-02T06:58:40",
+          "subject_group": "asynchronous mergeappend",
+          "search_rank": 18,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent",
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--0dfb34c3876cb5b5a52bc307",
+          "title": "Re: Make Append subplans async capable in more cases",
+          "url": "https://www.postgresql.org/message-id/CALdSSPiaBg3W3k032bC05uVj7sOAEmxX07+knHuYPBEGeDimOQ@mail.gmail.com",
+          "message_id": "CALdSSPiaBg3W3k032bC05uVj7sOAEmxX07+knHuYPBEGeDimOQ@mail.gmail.com",
+          "message_date": "2026-11-03T15:12:17",
+          "subject_group": "make append subplans async capable in more cases",
+          "search_rank": 11,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent",
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--5324141328b08348598c084d",
+          "title": "Make Append subplans async capable in more cases",
+          "url": "https://www.postgresql.org/message-id/18086964f74852373d993433e7650e82@postgrespro.ru",
+          "message_id": "18086964f74852373d993433e7650e82@postgrespro.ru",
+          "message_date": "2026-11-03T13:34:29",
+          "subject_group": "make append subplans async capable in more cases",
+          "search_rank": 12,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent",
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--3e85bbcff2320084498bc79a",
+          "title": "[POC] Implement async DNS with getaddrinfo_a",
+          "url": "https://www.postgresql.org/message-id/CAOYmi+mBW0h9F5ZKkaUPuK=6T080Qs49+XCsv6Cee=g_zmitbw@mail.gmail.com",
+          "message_id": "CAOYmi+mBW0h9F5ZKkaUPuK=6T080Qs49+XCsv6Cee=g_zmitbw@mail.gmail.com",
+          "message_date": "2026-07-07T21:18:35",
+          "subject_group": "[poc] implement async dns with getaddrinfo_a",
+          "search_rank": 11,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--c44cd7da075c1975a1edba2c",
+          "title": "Re: libpq: Process buffered SSL read bytes to support records >8kB on async API",
+          "url": "https://www.postgresql.org/message-id/be2f229a-25e8-4d19-a307-e4ce3312f212@iki.fi",
+          "message_id": "be2f229a-25e8-4d19-a307-e4ce3312f212@iki.fi",
+          "message_date": "2026-07-07T15:58:42",
+          "subject_group": "libpq: process buffered ssl read bytes to support records >8kb on async api",
+          "search_rank": 12,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--5caa78a80280432bef102159",
+          "title": "Re: libpq: Process buffered SSL read bytes to support records >8kB on async API",
+          "url": "https://www.postgresql.org/message-id/990a4710-fed1-411a-aba4-ddc25825ee48@iki.fi",
+          "message_id": "990a4710-fed1-411a-aba4-ddc25825ee48@iki.fi",
+          "message_date": "2026-07-03T09:25:10",
+          "subject_group": "libpq: process buffered ssl read bytes to support records >8kb on async api",
+          "search_rank": 13,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--4b3bc3937e8c7ac89051376b",
+          "title": "Re: aio: Async fsyncs for crash recovery and checkpointer",
+          "url": "https://www.postgresql.org/message-id/CAN55FZ1wTRvSCnzVH240zb8jEvjSgkc-cOGqMFehGrsQOyK1tA@mail.gmail.com",
+          "message_id": "CAN55FZ1wTRvSCnzVH240zb8jEvjSgkc-cOGqMFehGrsQOyK1tA@mail.gmail.com",
+          "message_date": "2026-09-01T11:50:56",
+          "subject_group": "aio: async fsyncs for crash recovery and checkpointer",
+          "search_rank": 14,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--42a8a7bca654f4a26376c37f",
+          "title": "Re: aio: Async fsyncs for crash recovery and checkpointer",
+          "url": "https://www.postgresql.org/message-id/CAN55FZ2WnU9pMtjKP-=V+41gzPABuY6hXB_xO3CnOuMvhTVJvg@mail.gmail.com",
+          "message_id": "CAN55FZ2WnU9pMtjKP-=V+41gzPABuY6hXB_xO3CnOuMvhTVJvg@mail.gmail.com",
+          "message_date": "2026-09-18T10:54:45",
+          "subject_group": "aio: async fsyncs for crash recovery and checkpointer",
+          "search_rank": 15,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--b82ef5047a436ee5a7807a3b",
+          "title": "Re: aio: Async fsyncs for crash recovery and checkpointer",
+          "url": "https://www.postgresql.org/message-id/D707392D-96FF-4867-943D-564DAD6644B3@gmail.com",
+          "message_id": "D707392D-96FF-4867-943D-564DAD6644B3@gmail.com",
+          "message_date": "2026-09-03T13:15:15",
+          "subject_group": "aio: async fsyncs for crash recovery and checkpointer",
+          "search_rank": 16,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--8cef5c4939eb92c774272814",
+          "title": "Re: [POC] Implement async DNS with getaddrinfo_a",
+          "url": "https://www.postgresql.org/message-id/3931A17F-3AAC-46D8-B1F1-78CD428CBE3A@yandex-team.ru",
+          "message_id": "3931A17F-3AAC-46D8-B1F1-78CD428CBE3A@yandex-team.ru",
+          "message_date": "2026-08-22T11:42:47",
+          "subject_group": "[poc] implement async dns with getaddrinfo_a",
+          "search_rank": 17,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--93cb24d60c4c481a8ce84b6d",
+          "title": "Re: Bug in asynchronous Append",
+          "url": "https://www.postgresql.org/message-id/3a3f949c611835620cf675bdb989b1e7@postgrespro.ru",
+          "message_id": "3a3f949c611835620cf675bdb989b1e7@postgrespro.ru",
+          "message_date": "2026-07-10T10:56:46",
+          "subject_group": "bug in asynchronous append",
+          "search_rank": 18,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--745d52ae54cdafdccb2be1f9",
+          "title": "Re: libpq: Process buffered SSL read bytes to support records >8kB on async API",
+          "url": "https://www.postgresql.org/message-id/34844e8c-267c-4daf-b1e0-f26059a4a7d3@eisentraut.org",
+          "message_id": "34844e8c-267c-4daf-b1e0-f26059a4a7d3@eisentraut.org",
+          "message_date": "2026-07-08T19:16:18",
+          "subject_group": "libpq: process buffered ssl read bytes to support records >8kb on async api",
+          "search_rank": 19,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--0980af45d47c6240b2a8e25d",
+          "title": "Re: libpq: Process buffered SSL read bytes to support records >8kB on async API",
+          "url": "https://www.postgresql.org/message-id/CAF0whuf=-G3SwXSTWyZNO148qoaEmth71cM7XBuX4X+2PnQkPQ@mail.gmail.com",
+          "message_id": "CAF0whuf=-G3SwXSTWyZNO148qoaEmth71cM7XBuX4X+2PnQkPQ@mail.gmail.com",
+          "message_date": "2026-05-14T04:32:10",
+          "subject_group": "libpq: process buffered ssl read bytes to support records >8kb on async api",
+          "search_rank": 20,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:28+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--027d08d3971728d614f0ef52",
+          "title": "Re: [PATCH 0/2] Parallelizing the archiver",
+          "url": "https://www.postgresql.org/message-id/3DA5B8BB-028E-4774-A4DE-8DFBEBF584C8@yandex-team.ru",
+          "message_id": "3DA5B8BB-028E-4774-A4DE-8DFBEBF584C8@yandex-team.ru",
+          "message_date": "2026-11-23T07:47:31",
+          "subject_group": "[patch 0/2] parallelizing the archiver",
+          "search_rank": 1,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--b88100dcd8ae531677c2d47c",
+          "title": "Re: [PATCH 0/2] Parallelizing the archiver",
+          "url": "https://www.postgresql.org/message-id/ECB4BF94-9B6F-4A85-ADA7-4AFBD77C03CD@yandex-team.ru",
+          "message_id": "ECB4BF94-9B6F-4A85-ADA7-4AFBD77C03CD@yandex-team.ru",
+          "message_date": "2026-11-23T07:45:48",
+          "subject_group": "[patch 0/2] parallelizing the archiver",
+          "search_rank": 2,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--054ae7db16afd48e99cda67e",
+          "title": "[PATCH 0/2] Parallelizing the archiver",
+          "url": "https://www.postgresql.org/message-id/CA+Yyo5TfMpUE3s=WKrWcaYbBWbO2VNyRnRt_5hy-VPrMhjXVWg@mail.gmail.com",
+          "message_id": "CA+Yyo5TfMpUE3s=WKrWcaYbBWbO2VNyRnRt_5hy-VPrMhjXVWg@mail.gmail.com",
+          "message_date": "2026-11-22T18:16:33",
+          "subject_group": "[patch 0/2] parallelizing the archiver",
+          "search_rank": 3,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--fc60f8b0873cdcd7d478e3e4",
+          "title": "Re: pg_threads.h take II",
+          "url": "https://www.postgresql.org/message-id/179460480764.2230472.3835011116404408785@burd.me",
+          "message_id": "179460480764.2230472.3835011116404408785@burd.me",
+          "message_date": "2026-11-13T21:52:35",
+          "subject_group": "pg_threads.h take ii",
+          "search_rank": 4,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--d0e78db2fb797cc5ae85eba4",
+          "title": "Re: Teach pg_upgrade to deal with invalid databases",
+          "url": "https://www.postgresql.org/message-id/CALj2ACWWb1G86JX6HehGbrFLPQF3rH1O6SkZmCx4s+67ENCtLA@mail.gmail.com",
+          "message_id": "CALj2ACWWb1G86JX6HehGbrFLPQF3rH1O6SkZmCx4s+67ENCtLA@mail.gmail.com",
+          "message_date": "2026-11-12T17:04:35",
+          "subject_group": "teach pg_upgrade to deal with invalid databases",
+          "search_rank": 5,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--40862d4b95bcaf7dc194e663",
+          "title": "Re: Clarify wait versus poll behavior in ExecAppendAsyncEventWait",
+          "url": "https://www.postgresql.org/message-id/0CB179E3-D12C-4EFB-83CE-5936258D05BC@gmail.com",
+          "message_id": "0CB179E3-D12C-4EFB-83CE-5936258D05BC@gmail.com",
+          "message_date": "2026-11-09T11:16:50",
+          "subject_group": "clarify wait versus poll behavior in execappendasynceventwait",
+          "search_rank": 6,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--36122befc75ee35d44bda51b",
+          "title": "Re: Clarify wait versus poll behavior in ExecAppendAsyncEventWait",
+          "url": "https://www.postgresql.org/message-id/5323BA99-5B93-43D5-BD21-9CF5BE84F00F@gmail.com",
+          "message_id": "5323BA99-5B93-43D5-BD21-9CF5BE84F00F@gmail.com",
+          "message_date": "2026-11-09T11:16:11",
+          "subject_group": "clarify wait versus poll behavior in execappendasynceventwait",
+          "search_rank": 7,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--f04d54204bba5b7bb5911c7b",
+          "title": "Re: Clarify wait versus poll behavior in ExecAppendAsyncEventWait",
+          "url": "https://www.postgresql.org/message-id/CAPmGK144fg2XeeYaviP0x7Ge-h-MHYBw-efm1FW3ObOL=eSGXA@mail.gmail.com",
+          "message_id": "CAPmGK144fg2XeeYaviP0x7Ge-h-MHYBw-efm1FW3ObOL=eSGXA@mail.gmail.com",
+          "message_date": "2026-11-09T09:15:46",
+          "subject_group": "clarify wait versus poll behavior in execappendasynceventwait",
+          "search_rank": 8,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--eec0bef29b832035824214bb",
+          "title": "fix special case during recovery for hot_standby=off",
+          "url": "https://www.postgresql.org/message-id/62b070d14df4d9d5f44cb8da6f15546c30259053.camel@j-davis.com",
+          "message_id": "62b070d14df4d9d5f44cb8da6f15546c30259053.camel@j-davis.com",
+          "message_date": "2026-11-06T23:17:48",
+          "subject_group": "fix special case during recovery for hot_standby=off",
+          "search_rank": 9,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--9d2cdf75eef8532c6fee6319",
+          "title": "Re: Copy-pasto in comment in ExecAppendAsyncReset",
+          "url": "https://www.postgresql.org/message-id/68B0F5C5-A147-4A0B-A63A-5A415E62632F@gmail.com",
+          "message_id": "68B0F5C5-A147-4A0B-A63A-5A415E62632F@gmail.com",
+          "message_date": "2026-11-03T02:51:21",
+          "subject_group": "copy-pasto in comment in execappendasyncreset",
+          "search_rank": 13,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--7d418c545c6ec593380b6f2d",
+          "title": "Copy-pasto in comment in ExecAppendAsyncReset",
+          "url": "https://www.postgresql.org/message-id/CAPmGK1648ovA1i_4X+vO=Ci+kSpvvG0H9jcb2m4inybXtSyw6A@mail.gmail.com",
+          "message_id": "CAPmGK1648ovA1i_4X+vO=Ci+kSpvvG0H9jcb2m4inybXtSyw6A@mail.gmail.com",
+          "message_date": "2026-11-03T02:26:03",
+          "subject_group": "copy-pasto in comment in execappendasyncreset",
+          "search_rank": 14,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--8f5eeaa803d62a1cac8fb110",
+          "title": "Re: Asynchronous MergeAppend",
+          "url": "https://www.postgresql.org/message-id/CAPmGK14YATtpoUk6X54u1sW97mj-tccf4oc0hMX=mzG5mz02VQ@mail.gmail.com",
+          "message_id": "CAPmGK14YATtpoUk6X54u1sW97mj-tccf4oc0hMX=mzG5mz02VQ@mail.gmail.com",
+          "message_date": "2026-11-03T02:20:01",
+          "subject_group": "asynchronous mergeappend",
+          "search_rank": 15,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--63ab2c94efc40d6139c20024",
+          "title": "Re: Commit Sequence Numbers and Visibility",
+          "url": "https://www.postgresql.org/message-id/70959d82f98ef00faa88437f1ed4fe717b6d0407.camel@j-davis.com",
+          "message_id": "70959d82f98ef00faa88437f1ed4fe717b6d0407.camel@j-davis.com",
+          "message_date": "2026-11-02T19:49:32",
+          "subject_group": "commit sequence numbers and visibility",
+          "search_rank": 16,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--12ca1249a1831e3b15891ec1",
+          "title": "Re: Incremental backup accepts a prior backup that extends past a timeline switch",
+          "url": "https://www.postgresql.org/message-id/CAPHduZAAjC3aJdUEoZyAGBpfHOt2_u3ttEcJ5Nfdy=igeoOJQA@mail.gmail.com",
+          "message_id": "CAPHduZAAjC3aJdUEoZyAGBpfHOt2_u3ttEcJ5Nfdy=igeoOJQA@mail.gmail.com",
+          "message_date": "2026-11-02T15:03:10",
+          "subject_group": "incremental backup accepts a prior backup that extends past a timeline switch",
+          "search_rank": 17,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--4769b111f13c905bc7e95eb5",
+          "title": "Re: Asynchronous MergeAppend",
+          "url": "https://www.postgresql.org/message-id/CAPmGK15bYO_A-fTcBQnmjicAn=NPyOUVygDqjByXS=ga16p4Qw@mail.gmail.com",
+          "message_id": "CAPmGK15bYO_A-fTcBQnmjicAn=NPyOUVygDqjByXS=ga16p4Qw@mail.gmail.com",
+          "message_date": "2026-11-01T17:44:52",
+          "subject_group": "asynchronous mergeappend",
+          "search_rank": 19,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--0dbb8a647cfddbdc87d65cb2",
+          "title": "Re: Be strict when request to flush past end of WAL in WaitXLogInsertionsToFinish",
+          "url": "https://www.postgresql.org/message-id/CAOVWO5rGJ8aPMGQfKqiYOh+D8Q4E+jzDbftf3kpQNxrA-f_dAw@mail.gmail.com",
+          "message_id": "CAOVWO5rGJ8aPMGQfKqiYOh+D8Q4E+jzDbftf3kpQNxrA-f_dAw@mail.gmail.com",
+          "message_date": "2026-10-28T21:33:33",
+          "subject_group": "be strict when request to flush past end of wal in waitxloginsertionstofinish",
+          "search_rank": 20,
+          "repository": "postgres/postgres",
+          "key": "pgsql-hackers",
+          "list": "pgsql-hackers",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:29+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-hackers:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--09cba0b88fe467b921f6ec74",
+          "title": "BUG #19357: PostgreSQL generates a custom plan that performs worse than the generic plan for a certain query.",
+          "url": "https://www.postgresql.org/message-id/19357-060d926bff47a613@postgresql.org",
+          "message_id": "19357-060d926bff47a613@postgresql.org",
+          "message_date": "2025-12-17T06:57:30",
+          "subject_group": "bug #19357: postgresql generates a custom plan that performs worse than the generic plan for a certain query.",
+          "search_rank": 1,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:31+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--44e85432b4e6208f36f9e11c",
+          "title": "Re: FDW connection drops with \"Connection timed out\" during async append query due to TCP receive buffer filling up",
+          "url": "https://www.postgresql.org/message-id/CAKFQuwYcEvfna4HUkG9VkX0cR_xbRRhT_0qDaAHhrJ4UX0EW-g@mail.gmail.com",
+          "message_id": "CAKFQuwYcEvfna4HUkG9VkX0cR_xbRRhT_0qDaAHhrJ4UX0EW-g@mail.gmail.com",
+          "message_date": "2026-03-11T05:30:03",
+          "subject_group": "fdw connection drops with \"connection timed out\" during async append query due to tcp receive buffer filling up",
+          "search_rank": 2,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:31+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--70a35c0f9c083748a92a34c2",
+          "title": "Re:Re: FDW connection drops with \"Connection timed out\" during async append query due to TCP receive buffer filling up",
+          "url": "https://www.postgresql.org/message-id/5557f6f5.45bd.19cdb7a1764.Coremail.jiye_sw@126.com",
+          "message_id": "5557f6f5.45bd.19cdb7a1764.Coremail.jiye_sw@126.com",
+          "message_date": "2026-03-11T05:58:57",
+          "subject_group": "fdw connection drops with \"connection timed out\" during async append query due to tcp receive buffer filling up",
+          "search_rank": 20,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--aec4495147464b8ef3e97d94",
+          "title": "Re: BUG #19725: PostgreSQL 18.6: pg_restore read failure with io_uring, not observed with worker",
+          "url": "https://www.postgresql.org/message-id/247F2D6E-6C50-4261-AF29-1CB31A17C317@gmail.com",
+          "message_id": "247F2D6E-6C50-4261-AF29-1CB31A17C317@gmail.com",
+          "message_date": "2026-11-03T01:22:55",
+          "subject_group": "bug #19725: postgresql 18.6: pg_restore read failure with io_uring, not observed with worker",
+          "search_rank": 1,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--f9f1b4e570b0071a9717d96d",
+          "title": "Re: BUG #19725: PostgreSQL 18.6: pg_restore read failure with io_uring, not observed with worker",
+          "url": "https://www.postgresql.org/message-id/CAFQUnFjQV9qD8HuEoV+vqye-OsmopV4k8uwWxa4=R0JXXPX_hA@mail.gmail.com",
+          "message_id": "CAFQUnFjQV9qD8HuEoV+vqye-OsmopV4k8uwWxa4=R0JXXPX_hA@mail.gmail.com",
+          "message_date": "2026-10-24T12:07:36",
+          "subject_group": "bug #19725: postgresql 18.6: pg_restore read failure with io_uring, not observed with worker",
+          "search_rank": 3,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--1a669305a684708ea84e5c45",
+          "title": "Re: BUG #19725: PostgreSQL 18.6: pg_restore read failure with io_uring, not observed with worker",
+          "url": "https://www.postgresql.org/message-id/CAFQUnFgzDMoPx9NzUSHmKKB2evPYDZBNLYNDSkgBO8MV1Ps3vA@mail.gmail.com",
+          "message_id": "CAFQUnFgzDMoPx9NzUSHmKKB2evPYDZBNLYNDSkgBO8MV1Ps3vA@mail.gmail.com",
+          "message_date": "2026-11-03T01:08:59",
+          "subject_group": "bug #19725: postgresql 18.6: pg_restore read failure with io_uring, not observed with worker",
+          "search_rank": 2,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--55a8bc73e68ea85a63647ec9",
+          "title": "Re:Re: FDW connection drops with \"Connection timed out\" during async append query due to TCP receive buffer filling up",
+          "url": "https://www.postgresql.org/message-id/33b43b9c.bf0.19cda727a59.Coremail.jiye_sw@126.com",
+          "message_id": "33b43b9c.bf0.19cda727a59.Coremail.jiye_sw@126.com",
+          "message_date": "2026-03-11T01:11:01",
+          "subject_group": "fdw connection drops with \"connection timed out\" during async append query due to tcp receive buffer filling up",
+          "search_rank": 7,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:31+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--73667564e99d7e85b7e97c94",
+          "title": "FDW connection drops with \"Connection timed out\" during async append query due to TCP receive buffer filling up",
+          "url": "https://www.postgresql.org/message-id/10df46d9.7dc2.19cd740a640.Coremail.jiye_sw@126.com",
+          "message_id": "10df46d9.7dc2.19cd740a640.Coremail.jiye_sw@126.com",
+          "message_date": "2026-03-10T10:17:44",
+          "subject_group": "fdw connection drops with \"connection timed out\" during async append query due to tcp receive buffer filling up",
+          "search_rank": 8,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:31+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--3174db2fd22df905e06ccc14",
+          "title": "Re: BUG #19725: PostgreSQL 18.6: pg_restore read failure with io_uring, not observed with worker",
+          "url": "https://www.postgresql.org/message-id/9ABA0472-4ECF-4DA7-A55F-BB08D7B19495@gmail.com",
+          "message_id": "9ABA0472-4ECF-4DA7-A55F-BB08D7B19495@gmail.com",
+          "message_date": "2026-10-23T07:15:43",
+          "subject_group": "bug #19725: postgresql 18.6: pg_restore read failure with io_uring, not observed with worker",
+          "search_rank": 4,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--fb31d43674e9046a70dcc81a",
+          "title": "Re: Re: FDW connection drops with \"Connection timed out\" during async append query due to TCP receive buffer filling up",
+          "url": "https://www.postgresql.org/message-id/CAPmGK157wTfup6Jqt7K1p1=S0kGoBRSeQ1M50fLt93tcF1NQ5w@mail.gmail.com",
+          "message_id": "CAPmGK157wTfup6Jqt7K1p1=S0kGoBRSeQ1M50fLt93tcF1NQ5w@mail.gmail.com",
+          "message_date": "2026-03-11T08:01:02",
+          "subject_group": "fdw connection drops with \"connection timed out\" during async append query due to tcp receive buffer filling up",
+          "search_rank": 19,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--d1036b81a4c13b61d629382a",
+          "title": "Re: BUG #19725: PostgreSQL 18.6: pg_restore read failure with io_uring, not observed with worker",
+          "url": "https://www.postgresql.org/message-id/CAFQUnFhXYUM1Oj0RqO4UCt92KOk4zqnfGGRVFqxpPSdhrhq7Hw@mail.gmail.com",
+          "message_id": "CAFQUnFhXYUM1Oj0RqO4UCt92KOk4zqnfGGRVFqxpPSdhrhq7Hw@mail.gmail.com",
+          "message_date": "2026-10-21T17:44:37",
+          "subject_group": "bug #19725: postgresql 18.6: pg_restore read failure with io_uring, not observed with worker",
+          "search_rank": 5,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--a9433958fd1e1d899dc9b953",
+          "title": "Re: FDW connection drops with \"Connection timed out\" during async append query due to TCP receive buffer filling up",
+          "url": "https://www.postgresql.org/message-id/f8e40c2970ec116bef448f30e147091b880e5139.camel@cybertec.at",
+          "message_id": "f8e40c2970ec116bef448f30e147091b880e5139.camel@cybertec.at",
+          "message_date": "2026-03-10T17:16:04",
+          "subject_group": "fdw connection drops with \"connection timed out\" during async append query due to tcp receive buffer filling up",
+          "search_rank": 12,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:31+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--2a0a69b1a207bd07cf4492b2",
+          "title": "Re:Re: Re: FDW connection drops with \"Connection timed out\" during async append query due to TCP receive buffer filling up",
+          "url": "https://www.postgresql.org/message-id/705358bc.2ead.19d5154b82f.Coremail.jiye_sw@126.com",
+          "message_id": "705358bc.2ead.19d5154b82f.Coremail.jiye_sw@126.com",
+          "message_date": "2026-04-03T03:13:19",
+          "subject_group": "fdw connection drops with \"connection timed out\" during async append query due to tcp receive buffer filling up",
+          "search_rank": 16,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--d21fbb42c323ef5784c0f18b",
+          "title": "Re: Re: Re: FDW connection drops with \"Connection timed out\" during async append query due to TCP receive buffer filling up",
+          "url": "https://www.postgresql.org/message-id/CAPmGK17zmpCP6NAWWuQ9tPQpvLBRs6FDCMKxd37Chw_81ZnueQ@mail.gmail.com",
+          "message_id": "CAPmGK17zmpCP6NAWWuQ9tPQpvLBRs6FDCMKxd37Chw_81ZnueQ@mail.gmail.com",
+          "message_date": "2026-04-12T07:05:25",
+          "subject_group": "fdw connection drops with \"connection timed out\" during async append query due to tcp receive buffer filling up",
+          "search_rank": 14,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--40f8b174af5f6b41a82fce43",
+          "title": "BUG #19365: postgres 18 pg_dump fails whan drop sequence concurrently",
+          "url": "https://www.postgresql.org/message-id/19365-6245240d8b926327@postgresql.org",
+          "message_id": "19365-6245240d8b926327@postgresql.org",
+          "message_date": "2025-12-27T23:57:29",
+          "subject_group": "bug #19365: postgres 18 pg_dump fails whan drop sequence concurrently",
+          "search_rank": 15,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:31+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--ac500e410cdc313e36fee275",
+          "title": "Re: BUG #19473: regression error in dblink: another command is already in progress",
+          "url": "https://www.postgresql.org/message-id/CALdSSPjUczDBWeqQioyNLSoGsrNBBi9MaQ_zNtN1X60hkf81tA@mail.gmail.com",
+          "message_id": "CALdSSPjUczDBWeqQioyNLSoGsrNBBi9MaQ_zNtN1X60hkf81tA@mail.gmail.com",
+          "message_date": "2026-05-08T21:15:48",
+          "subject_group": "bug #19473: regression error in dblink: another command is already in progress",
+          "search_rank": 13,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--9303b620726e13b859980c46",
+          "title": "Re: BUG #19437: temp_tablespaces doesn't work inside a cursor?",
+          "url": "https://www.postgresql.org/message-id/CA+TefFDrwAppW33A6Y4Cz1f6Zf11bS3+DOqerx8JCnGspg9xKA@mail.gmail.com",
+          "message_id": "CA+TefFDrwAppW33A6Y4Cz1f6Zf11bS3+DOqerx8JCnGspg9xKA@mail.gmail.com",
+          "message_date": "2026-03-25T14:30:38",
+          "subject_group": "bug #19437: temp_tablespaces doesn't work inside a cursor?",
+          "search_rank": 17,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--f53637ed5e30b72a6beaf2e6",
+          "title": "Re: BUG #19437: temp_tablespaces doesn't work inside a cursor?",
+          "url": "https://www.postgresql.org/message-id/CAHLDt=-HP4V8rfxEWE6-xC93YTN2X=KNeyYZsygVqnb-adRe6g@mail.gmail.com",
+          "message_id": "CAHLDt=-HP4V8rfxEWE6-xC93YTN2X=KNeyYZsygVqnb-adRe6g@mail.gmail.com",
+          "message_date": "2026-04-06T01:16:19",
+          "subject_group": "bug #19437: temp_tablespaces doesn't work inside a cursor?",
+          "search_rank": 15,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--9107c066ceee51733cd5e9de",
+          "title": "BUG #19490: Streaming standby on 16.14 stops applying WAL on MultiXactOffsetSLRU when primary is 16.8",
+          "url": "https://www.postgresql.org/message-id/19490-9c59c6a583513b99@postgresql.org",
+          "message_id": "19490-9c59c6a583513b99@postgresql.org",
+          "message_date": "2026-05-20T21:16:59",
+          "subject_group": "bug #19490: streaming standby on 16.14 stops applying wal on multixactoffsetslru when primary is 16.8",
+          "search_rank": 12,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--7e251f4b0ef6c4099c425f05",
+          "title": "Re: BUG #19494: Error on transaction commit inside pipeline triggers psql's Assert",
+          "url": "https://www.postgresql.org/message-id/ahzqaOwc2DprQRrV@paquier.xyz",
+          "message_id": "ahzqaOwc2DprQRrV@paquier.xyz",
+          "message_date": "2026-06-01T02:11:52",
+          "subject_group": "bug #19494: error on transaction commit inside pipeline triggers psql's assert",
+          "search_rank": 11,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent",
+            "pgsql-bugs:relevance"
+          ]
+        },
+        {
+          "id": "postgres--mail--8f8d1e461a58b40a9e406e9f",
+          "title": "Re: BUG #19511: contrib/dblink: NULL dereference in dblink_get_notify() when called without a prior connection",
+          "url": "https://www.postgresql.org/message-id/CADHzGZSFcQrO4yxa3fua=1=tD9UqU55cNq2es4mt-uVUZKv7cg@mail.gmail.com",
+          "message_id": "CADHzGZSFcQrO4yxa3fua=1=tD9UqU55cNq2es4mt-uVUZKv7cg@mail.gmail.com",
+          "message_date": "2026-06-05T10:55:39",
+          "subject_group": "bug #19511: contrib/dblink: null dereference in dblink_get_notify() when called without a prior connection",
+          "search_rank": 6,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--460e0fa31f12b5182fc77c3c",
+          "title": "Re: BUG #19511: contrib/dblink: NULL dereference in dblink_get_notify() when called without a prior connection",
+          "url": "https://www.postgresql.org/message-id/CAHGQGwGt5qAAjgQONmC_sk=O9YtnXxPD12YOy_DODpixPXKU8A@mail.gmail.com",
+          "message_id": "CAHGQGwGt5qAAjgQONmC_sk=O9YtnXxPD12YOy_DODpixPXKU8A@mail.gmail.com",
+          "message_date": "2026-06-05T04:45:06",
+          "subject_group": "bug #19511: contrib/dblink: null dereference in dblink_get_notify() when called without a prior connection",
+          "search_rank": 7,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--900e25ebd46ad50da9e19f28",
+          "title": "Re: BUG #19511: contrib/dblink: NULL dereference in dblink_get_notify() when called without a prior connection",
+          "url": "https://www.postgresql.org/message-id/CADHzGZRAxFYoxMC+g6pEJ0FL0bfVhFi+y0jQ0cRNCC5hFjvJ3Q@mail.gmail.com",
+          "message_id": "CADHzGZRAxFYoxMC+g6pEJ0FL0bfVhFi+y0jQ0cRNCC5hFjvJ3Q@mail.gmail.com",
+          "message_date": "2026-06-05T01:19:48",
+          "subject_group": "bug #19511: contrib/dblink: null dereference in dblink_get_notify() when called without a prior connection",
+          "search_rank": 8,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--6a78518e8dafb1e66745eca7",
+          "title": "BUG #19511: contrib/dblink: NULL dereference in dblink_get_notify() when called without a prior connection",
+          "url": "https://www.postgresql.org/message-id/19511-f9f251767b658232@postgresql.org",
+          "message_id": "19511-f9f251767b658232@postgresql.org",
+          "message_date": "2026-06-05T01:15:40",
+          "subject_group": "bug #19511: contrib/dblink: null dereference in dblink_get_notify() when called without a prior connection",
+          "search_rank": 9,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--643678d6cfab6db7b903fcb4",
+          "title": "Re: BUG #19494: Error on transaction commit inside pipeline triggers psql's Assert",
+          "url": "https://www.postgresql.org/message-id/3f3dc050-aab1-4908-a6b8-bdadafd451cc@gmail.com",
+          "message_id": "3f3dc050-aab1-4908-a6b8-bdadafd451cc@gmail.com",
+          "message_date": "2026-06-01T05:00:01",
+          "subject_group": "bug #19494: error on transaction commit inside pipeline triggers psql's assert",
+          "search_rank": 10,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent"
+          ]
+        },
+        {
+          "id": "postgres--mail--d52c42f48ac20a440a94a9d8",
+          "title": "BUG #19437: temp_tablespaces doesn't work inside a cursor?",
+          "url": "https://www.postgresql.org/message-id/CAKFQuwbtK=HfDsUo7p7zqFUb-h=ZqUS93K4+9nbOPW+bKnQuaA@mail.gmail.com",
+          "message_id": "CAKFQuwbtK=HfDsUo7p7zqFUb-h=ZqUS93K4+9nbOPW+bKnQuaA@mail.gmail.com",
+          "message_date": "2026-03-25T13:52:14",
+          "subject_group": "bug #19437: temp_tablespaces doesn't work inside a cursor?",
+          "search_rank": 18,
+          "repository": "postgres/postgres",
+          "key": "pgsql-bugs",
+          "list": "pgsql-bugs",
+          "entry_kind": "mail_message",
+          "tracker_state": "No formal issue state",
+          "observed_at": "2026-11-25T01:23:33+00:00",
+          "async_signal": true,
+          "status": "needs_review",
+          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "query_windows": [
+            "pgsql-bugs:recent"
+          ]
+        }
+      ],
+      "errors": [],
+      "subject_groups": 25,
+      "ranking_note": "Official relevance and recent-date order; neither is a popularity metric. Messages and normalized subject groups are not counts of unique bugs."
     }
   ],
   "queue": [
@@ -18208,6 +20345,25 @@
         "https://fzh0u.github.io/coroperf/zh-cn/evidence/apache--spark--spark-47833.html"
       ],
       "reviewed_at": "2026-11-25T01:09:52.836575+00:00"
+    },
+    "mysql--bugs--112137": {
+      "status": "needs_review",
+      "reason": "The official performance report identifies simulated AIO and parallel-read handoff. It has not established a missing originating caller beyond native stacks and Performance Schema. The published benchmark and proposed source change were not executed locally.",
+      "reason_zh": "官方性能报告指向模拟 AIO 与并行读取交接。尚未证明其存在原生栈或 Performance Schema 无法回答的发起调用者缺口；未在本地执行报告中的基准或候选改动。",
+      "sources": [
+        "https://bugs.mysql.com/bug.php?id=112137"
+      ],
+      "reviewed_at": "2026-11-25T01:29:24.485849+00:00"
+    },
+    "postgres--mail--da0b1ad82f4faec1b3448678": {
+      "status": "excluded_after_review",
+      "reason": "This specific mail says the async_mode flag placement has no observable effect without timer instrumentation and discusses already-pushed instrumentation changes. It does not establish a reproducible missing-caller problem for CoroPerf. No reproduction was attempted.",
+      "reason_zh": "这封邮件指出，未启用计时观测时 async_mode 标记的位置没有可见影响，并讨论已推送的观测代码改动。它本身未证明存在可由 coroPerf 解决的可复现调用者缺失问题；未尝试复现。",
+      "sources": [
+        "https://www.postgresql.org/message-id/pgvy7lsoa5jldwgyay2g757xivzbmgyan547wealc7cwtduvra@dysyw6dtqdgs",
+        "https://www.postgresql.org/message-id/3xbje45m5knff52mye5dfnrjdnwv7it2bzmqac3jqe66fvop4a@xvhy6zx7n6sb"
+      ],
+      "reviewed_at": "2026-11-25T01:29:24.485849+00:00"
     }
   },
   "deferred_registry": [
@@ -18364,11 +20520,32 @@
       "title": "Async lookup retry completion workers and connector concurrency",
       "title_zh": "Flink 异步 lookup 重试的完成线程与连接器并发",
       "security_impact": "未评估；该标记不代表已确认漏洞。"
+    },
+    {
+      "id": "mysql--bugs--110789",
+      "url": "https://bugs.mysql.com/bug.php?id=110789",
+      "title": "Unhandled background exception in MySQL Connector/NET OpenAsync",
+      "title_zh": "MySQL Connector/NET OpenAsync 的后台未处理异常",
+      "security_impact": "未评估；该标记不代表已确认安全漏洞。"
+    },
+    {
+      "id": "mysql--bugs--115703",
+      "url": "https://bugs.mysql.com/bug.php?id=115703",
+      "title": "Asynchronous state storage in the MySQL C API",
+      "title_zh": "MySQL C API 异步接口的共享状态",
+      "security_impact": "未评估。"
+    },
+    {
+      "id": "mysql--bugs--105748",
+      "url": "https://bugs.mysql.com/bug.php?id=105748",
+      "title": "MySQL Group Replication consistency failure",
+      "title_zh": "MySQL Group Replication 的一致性设置异常",
+      "security_impact": "未评估。"
     }
   ],
   "delta": {
-    "new_search_candidates": 14,
-    "previous_observed_at": "2026-11-25T00:04:17+00:00",
+    "new_search_candidates": 0,
+    "previous_observed_at": "2026-11-25T01:27:16+00:00",
     "comparable_window": true
   }
 }

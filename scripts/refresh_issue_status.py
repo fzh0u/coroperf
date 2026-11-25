@@ -10,7 +10,7 @@ from pathlib import Path
 import re
 from tempfile import TemporaryDirectory
 from urllib.error import URLError
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, parse_qs
 from urllib.request import Request, urlopen
 
 
@@ -94,6 +94,45 @@ def apache_jira_key(url):
     return match[1] if match else None
 
 
+def mysql_bug_number(url):
+    route = urlsplit(url)
+    query = parse_qs(route.query)
+    values = query.get('id', [])
+    if (route.scheme == 'https' and route.hostname == 'bugs.mysql.com' and route.path == '/bug.php'
+            and set(query) == {'id'} and len(values) == 1 and values[0].isdigit()):
+        return values[0]
+    return None
+
+
+class PageText(HTMLParser):
+    def __init__(self):
+        super().__init__(); self.parts = []
+
+    def handle_data(self, value):
+        if value.strip(): self.parts.append(value.strip())
+
+
+def mysql_page_state(html, number):
+    page = PageText(); page.feed(html); text = '\n'.join(page.parts)
+    if not re.search(r'Bug\s*#\s*' + re.escape(number) + r'\b', text):
+        return 'unconfirmed'
+    match = re.search(r'(?:^|\n)Status:\s*(Closed|Duplicate|Verified|Open)\b', text)
+    return {'Closed': 'closed', 'Duplicate': 'closed', 'Verified': 'open', 'Open': 'open'}.get(match[1], 'unconfirmed') if match else 'unconfirmed'
+
+
+def fetch_mysql(url, number):
+    result = {'url': url, 'status': 'unconfirmed'}
+    try:
+        with urlopen(Request(url, headers=HEADERS), timeout=15) as response:
+            if mysql_bug_number(response.url) != number:
+                return result
+            html = response.read(1024 * 1024).decode('utf-8')
+        result['status'] = mysql_page_state(html, number)
+    except (URLError, TimeoutError, ValueError):
+        pass
+    return result
+
+
 def fetch_apache_jira(url, key):
     result = {"url": url, "status": "unconfirmed"}
     api = f"https://issues.apache.org/jira/rest/api/2/issue/{key}?fields=status"
@@ -118,6 +157,8 @@ def fetch_apache_jira(url, key):
 
 def fetch(case):
     url = case["url"]
+    if number := mysql_bug_number(url):
+        return fetch_mysql(url, number)
     if key := apache_jira_key(url):
         return fetch_apache_jira(url, key)
     route = urlsplit(url)
