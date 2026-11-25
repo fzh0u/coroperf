@@ -102,6 +102,9 @@ def render(report, language):
         label = row.get('title_zh', row['title']) if zh else row['title']
         origin = tr('Manual review hold', '人工审阅暂缓') if row['origin'] == 'registry' else tr('Automatic review signal', '自动审阅信号')
         reason = tr('Reproduction skipped; safety impact unassessed.', '已跳过复现；安全影响尚未评估。')
+        if row.get('prior_local_execution') is True:
+            reason = tr('Earlier local attempt recorded; further reproduction remains on hold. Safety impact unassessed.',
+                        '历史上曾有本地尝试；当前暂缓后续复现，安全影响尚未评估。')
         if row.get('risk_signal'):
             reason += tr(' Wording at detection: ', ' 检出时的匹配词：') + e(row['risk_signal']) + '.'
             if row.get('risk_signal_source') == 'body_error_signature':
