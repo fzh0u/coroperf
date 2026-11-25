@@ -20,6 +20,29 @@ STATUSES = {
 }
 
 
+def skipped_entries(report):
+    """Keep persistent holds and current signal-based skips visible together."""
+    entries = {}
+    urls = set()
+    for row in report['deferred_registry']:
+        entries[row['id']] = {**row, 'origin': 'registry', 'urls': [row['url']]}
+        urls.add(row['url'])
+    sources = [report.get('signal_holds', []), report['issues']] + [result['issues'] for result in report.get('official_tracker_results', [])]
+    for source in sources:
+        for row in source:
+            if row['status'] != 'skipped_review' or row['url'] in urls:
+                continue
+            group = row.get('issue_group_id', row['id'])
+            if group in entries:
+                # Explicit bug IDs may group several mail messages; never infer a bug from a subject.
+                if row['id'] != group and row['url'] not in entries[group]['urls']:
+                    entries[group]['urls'].append(row['url'])
+                continue
+            entries[group] = {**row, 'origin': 'signal', 'urls': [row['url']]}
+            urls.add(row['url'])
+    return list(entries.values())
+
+
 def render(report, language):
     zh = language == 'zh-CN'
     def tr(en, cn):
@@ -34,8 +57,8 @@ def render(report, language):
     gaps = sum(not row.get('has_issues', True) for row in coverage)
     official_complete = sum(row.get('official_search_complete', False) for row in coverage)
     summary = tr(
-        f"{len(report['issues'])} unique GitHub search hits · {counts.get('needs_review', 0)} awaiting review · {complete}/{len(coverage)} repositories completed both GitHub windows · {official_complete} official trackers searched · {gaps} repositories have GitHub Issues disabled.",
-        f"{len(report['issues'])} 条去重 GitHub 命中 · {counts.get('needs_review', 0)} 条待审阅 · {complete}/{len(coverage)} 个仓库完成两个 GitHub 窗口 · 已搜索 {official_complete} 个官方跟踪器 · {gaps} 个仓库未启用 GitHub Issues。")
+        f"{len(report['issues'])} unique GitHub search hits · {counts.get('needs_review', 0)} awaiting review · {complete}/{len(coverage)} repositories completed configured GitHub windows · {official_complete} official trackers searched · {gaps} repositories have GitHub Issues disabled.",
+        f"{len(report['issues'])} 条去重 GitHub 命中 · {counts.get('needs_review', 0)} 条待审阅 · {complete}/{len(coverage)} 个仓库完成本轮 GitHub 窗口 · 已搜索 {official_complete} 个官方跟踪器 · {gaps} 个仓库未启用 GitHub Issues。")
     coverage_rows = []
     for row in coverage:
         if row.get('error'):
@@ -45,7 +68,10 @@ def render(report, language):
         elif not row['complete']:
             outcome = tr('Partial or failed search; this is a coverage gap.', '搜索不完整或失败，保留覆盖缺口。')
         else:
-            outcome = tr('Both GitHub search windows completed.', '已完成两个 GitHub 搜索窗口。')
+            windows = row.get('planned_windows', 2)
+            outcome = tr(f'All {windows} configured GitHub windows completed.', f'已完成本轮 {windows} 个 GitHub 搜索窗口。')
+        if row.get('discussion_depth_page'):
+            outcome += tr(f' Rotating discussion page: {row["discussion_depth_page"]}.', f' 轮换热度页：第 {row["discussion_depth_page"]} 页。')
         if row.get('official_tracker'):
             if row.get('official_search_complete'):
                 windows = row.get('official_search_windows', 2)
@@ -71,9 +97,18 @@ def render(report, language):
             f'{row["positive_reactions"]} {tr("reactions", "次关注反应")}</td>'
             f'<td>{tr(row["state"], "开放" if row["state"] == "open" else "已关闭")}</td><td>{reason}</td></tr>')
     deferred_rows = []
-    for row in report['deferred_registry']:
-        deferred_rows.append(f'<tr><th scope="row"><a href="{e(row["url"])}">{e(row["title_zh"] if zh else row["title"])}</a></th>'
-                             f'<td>{tr("Reproduction skipped; safety impact unassessed.", "已跳过复现；安全影响尚未评估。")}</td></tr>')
+    skipped = skipped_entries(report)
+    for row in skipped:
+        label = row.get('title_zh', row['title']) if zh else row['title']
+        origin = tr('Manual review hold', '人工审阅暂缓') if row['origin'] == 'registry' else tr('Automatic review signal', '自动审阅信号')
+        reason = tr('Reproduction skipped; safety impact unassessed.', '已跳过复现；安全影响尚未评估。')
+        if row.get('risk_signal'):
+            reason += tr(' Wording at detection: ', ' 检出时的匹配词：') + e(row['risk_signal']) + '.'
+        if row.get('last_seen'):
+            reason += '<br>' + tr('Last observed: ', '最近观测：') + e(row['last_seen'])
+        links = ' · '.join(f'<a href="{e(url)}">{tr("Related source", "相关来源")} {n}</a>' for n, url in enumerate(row['urls'][1:], 2))
+        deferred_rows.append(f'<tr data-skipped><th scope="row"><a href="{e(row["url"])}">{e(label)}</a>{"<br>" + links if links else ""}</th>'
+                             f'<td>{origin}<br>{reason}</td></tr>')
     decisions = []
     for identifier, decision in report.get('review_decisions', {}).items():
         sources = ' · '.join(f'<a href="{e(url)}">{tr("Source", "来源")} {n}</a>' for n, url in enumerate(decision['sources'], 1))
@@ -134,15 +169,16 @@ def render(report, language):
       <section class="block" id="coverage"><h2>{tr('Framework coverage', '框架覆盖')}</h2>
       <p class="section-copy">{tr('Each enabled repository gets a most-discussed window and a recently-updated window, up to 20 issues each. This bounded survey does not cover every issue or external tracker.', '每个启用 Issues 的仓库分别搜索讨论最多和最近更新的窗口，各取最多 20 条。本轮为有界搜索，未覆盖所有 issue 或外部跟踪器。')}</p>
       <div class="discovery-scroll"><table><thead><tr><th>{tr('Repository', '仓库')}</th><th>{tr('Domain', '领域')}</th><th>Stars</th><th>{tr('Hits', '命中')}</th><th>{tr('Coverage evidence', '覆盖证据')}</th></tr></thead><tbody>{''.join(coverage_rows)}</tbody></table></div></section>
-      <section class="block" id="official-trackers"><h2>{tr('Official tracker searches', '官方跟踪器搜索')}</h2><p class="section-copy">{tr('Apache Jira uses votes and recent updates. PostgreSQL archive windows use relevance and date for async messages from the past year. MySQL Bugs uses relevance and updated dates for asynchronous reports. Each window collects up to 20 entries. These metrics stay separate from GitHub reactions; every entry needs applicability review.', 'Apache Jira 按投票和最近更新搜索；PostgreSQL 档案按相关性和日期检索近一年含 async 的邮件；MySQL Bugs 按相关性与更新日期检索 asynchronous 报告。每窗最多 20 条。各来源指标与 GitHub 关注反应分开；每条仍需审阅适用性。')}</p>{''.join(official_sections)}</section>
+      <section class="block" id="official-trackers"><h2>{tr('Official tracker searches', '官方跟踪器搜索')}</h2><p class="section-copy">{tr('Apache Jira uses votes, recent updates and a title-focused async window. PostgreSQL archive windows use relevance and date for async messages from the past year. MySQL Bugs uses relevance and updated dates for asynchronous reports. Each window collects up to 20 entries. These metrics stay separate from GitHub reactions; every entry needs applicability review.', 'Apache Jira 按投票、最近更新及标题聚焦异步关键词搜索；PostgreSQL 档案按相关性和日期检索近一年含 async 的邮件；MySQL Bugs 按相关性与更新日期检索 asynchronous 报告。每窗最多 20 条。各来源指标与 GitHub 关注反应分开；每条仍需审阅适用性。')}</p>{''.join(official_sections)}</section>
       <section class="block" id="candidates"><h2>{tr('Review queue', '审阅队列')}</h2>
       <p class="section-copy">{tr('Heat uses comments, positive reactions and repository stars. Coverage order rotates domains and takes one issue per repository in each round. Search hits are never counted as CoroPerf successes.', '热度综合评论数、关注反应和仓库 stars。覆盖排序轮转三个领域，每轮每个仓库最多选一条。搜索命中不计为 coroPerf 成功案例。')}</p>
       <details><summary>{tr('Ranking method', '排序方法')}</summary><p><code>{e(report['heat_formula'])}</code></p></details>
+      <p class="section-copy">{tr('Each repository keeps its discussion head and recent-update windows. When more results exist, one deeper discussion page rotates every two hours, within the first 1,000 searchable results. Resuming a run keeps its saved page plan. Live rankings can change, so this is not exhaustive coverage.', '每个仓库保留热度首页和最近更新窗口；有更多结果时，每两小时轮换一个更深的热度页，范围限于可搜索的前 1,000 条。恢复同一轮任务沿用已保存的页码计划。实时排名会变化，因此不代表穷尽覆盖。')}</p>
       <div class="discovery-controls"><div><label for="discovery-search">{tr('Search', '搜索')}</label><input id="discovery-search" type="search" placeholder="{tr('Repository, title or issue number', '仓库、标题或 issue 编号')}"></div>{''.join(selects)}</div>
       <p id="discovery-count" role="status" aria-live="polite">{len(report['issues'])} {tr('search hits', '条搜索命中')}</p>
       <div class="discovery-scroll"><table><thead><tr><th>{tr('Issue', '问题')}</th><th>{tr('Domain', '领域')}</th><th>{tr('Heat', '热度')}</th><th>{tr('GitHub state', 'GitHub 状态')}</th><th>{tr('Review status', '审阅状态')}</th></tr></thead><tbody id="discovery-rows">{''.join(candidate_rows)}</tbody></table></div>
       <div class="discovery-pager" hidden><button id="discovery-previous" type="button">{tr('Previous', '上一页')}</button><span id="discovery-page"></span><button id="discovery-next" type="button">{tr('Next', '下一页')}</button></div></section>
-      <section class="block" id="skipped"><h2>{tr('Skipped for review', '已跳过，待安全审阅')}</h2><p class="section-copy">{tr('Previously deferred entries remain on hold even when absent from these search windows. Security impact is unassessed. New security-related wording is a review signal, not a vulnerability finding.', '历史暂缓条目即使未出现在本轮搜索窗口，也保持跳过。安全影响尚未评估。新命中的安全相关词仅触发审阅，不代表已确认漏洞。')}</p>
+      <section class="block" id="skipped"><h2>{tr('Skipped for review', '已跳过，待安全审阅')}</h2><p class="section-copy">{tr(f'{len(skipped)} displayed review entries or explicit bug groups. Manual holds and automatic wording signals persist across runs, including entries absent from current windows. Security impact is unassessed. A wording signal is not a vulnerability finding. Replies with the same explicit bug number share one row.', f'展示 {len(skipped)} 条审阅记录或明确 bug 编号组。人工暂缓记录和自动词语信号跨轮次保留，包括未出现在本轮窗口的条目。安全影响尚未评估，词语信号不代表已确认漏洞。同一明确 bug 编号的回复合并展示。')}</p>
       <div class="discovery-scroll"><table><thead><tr><th>{tr('Entry', '条目')}</th><th>{tr('Action', '处理')}</th></tr></thead><tbody>{''.join(deferred_rows)}</tbody></table></div></section>
       <section class="block"><h2>{tr('Review decisions', '逐项审阅结论')}</h2><ul>{''.join(decisions)}</ul></section>
       <section class="block"><h2>{tr('Collection failures', '采集失败')}</h2>{'<ul>' + ''.join(failure_rows) + '</ul>' if failure_rows else '<p>' + tr('No request failures in this run.', '本轮没有请求失败。') + '</p>'}</section>
