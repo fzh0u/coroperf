@@ -58,3 +58,7 @@ Instrument Serif is distributed under the [SIL Open Font License](assets/fonts/O
 The classification CSV uses `upstream_status` for the issue state, covering GitHub and Apache Jira. Its issue URL identifies the tracker.
 
 Official database discovery uses PostgreSQL archive relevance/date windows and MySQL Bugs relevance/update windows. The discovery page counts mail messages separately from approximate subject groups, displays native MySQL categories and states, and keeps these metrics separate from GitHub heat. Source windows and their retrieval times are included in the report download.
+
+Regular discovery also covers Reactor, Netty and PostgreSQL JDBC, using framework-specific terms for Mono/Flux, ChannelFuture and LazyCleaner. Preparation failures have their own review status; they are distinct from unavailable external environments and safety holds.
+
+The [Reactor disposal-worker note](evidence/reactor-4478-resource.html) and its [Chinese version](zh-cn/evidence/reactor-4478-resource.html) are supplemental resource provenance outside the selected case catalogue. Rebuild them from `data/reactor-4478-verification.json` with `python3 scripts/build_reactor_resource.py`. They document one execution, the explicit extra factory observer, native versus recovered stacks, and the untested repair direction.

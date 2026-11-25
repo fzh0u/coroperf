@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Reactor #4478：清理工作线程来源">
+  <title>Reactor #4478：清理工作线程来源 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/reactor-4478-resource.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/reactor-4478-resource.html" lang="en" hreflang="en">English</a><a href="reactor-4478-resource.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main"><section class="wrap block">
+      <p class="eyebrow">补充资源来源证据 · 不计入已选目录</p>
+      <h1>Reactor #4478：清理工作线程来源</h1>
+      <p>一次未使用 scheduler 的清理很快返回，但内部非守护工作线程仍存活，JVM 等待其空闲超时后退出。</p>
+      <p><a href="https://github.com/reactor/reactor-core/issues/4478">上游报告</a> · <a href="../../data/reactor-4478-verification.json">保存的证据与哈希</a></p>
+      <table><tbody><tr><th scope="row">库 / JDK</th><td>Reactor 3.8.8 · reactive-streams 1.0.4 · JDK 21.0.1</td></tr><tr><th scope="row">清理返回</th><td>109.00 ms</td></tr><tr><th scope="row">清理后的工作线程</th><td>仍存活 · 非守护 · TIMED_WAITING</td></tr><tr><th scope="row">JVM 自然退出</th><td>10.17 s</td></tr><tr><th scope="row">准备与首轮检查</th><td>84.45 s · 执行一次</td></tr></tbody></table>
+    </section>
+    <section class="wrap block">
+      <h2>接合补充了什么</h2>
+      <p>工作线程的物理栈仅有空闲队列及执行器；创建栈指出 SchedulerState 清理机制和已经返回的 beginDisposeApplication。CoroPerf 共享分析通过同一个保留的 Thread 对象及其 Java Thread ID 接合两条记录。</p>
+      <p>明确新增的 ThreadFactory 观察器调用原工厂，原样返回其 Thread。它记录资源创建，不提供协程父图或自动语义诊断。</p>
+      <table><thead><tr><th>物理观测 · 记录 2</th><th>恢复的创建来源 · 记录 1</th></tr></thead>
+      <tbody><tr><td><pre style="white-space:pre-wrap;overflow-wrap:anywhere">java.base@21.0.1/jdk.internal.misc.Unsafe.park (Native Method)
+java.base@21.0.1/java.util.concurrent.locks.LockSupport.parkNanos (LockSupport.java:269)
+java.base@21.0.1/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos (AbstractQueuedSynchronizer.java:1758)
+java.base@21.0.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.poll (ScheduledThreadPoolExecutor.java:1209)
+java.base@21.0.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.poll (ScheduledThreadPoolExecutor.java:899)
+java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor.getTask (ThreadPoolExecutor.java:1069)
+java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1130)
+java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:642)
+java.base@21.0.1/java.lang.Thread.runWith (Thread.java:1596)
+java.base@21.0.1/java.lang.Thread.run (Thread.java:1583)</pre></td>
+      <td><pre style="white-space:pre-wrap;overflow-wrap:anywhere">FirstCheck.lambda$main$0 (FirstCheck.java:26)
+java.base/java.util.concurrent.ThreadPoolExecutor$Worker.&lt;init&gt; (ThreadPoolExecutor.java:637)
+java.base/java.util.concurrent.ThreadPoolExecutor.addWorker (ThreadPoolExecutor.java:928)
+java.base/java.util.concurrent.ThreadPoolExecutor.ensurePrestart (ThreadPoolExecutor.java:1611)
+java.base/java.util.concurrent.ScheduledThreadPoolExecutor.delayedExecute (ScheduledThreadPoolExecutor.java:346)
+java.base/java.util.concurrent.ScheduledThreadPoolExecutor.schedule (ScheduledThreadPoolExecutor.java:562)
+java.base/java.util.concurrent.ScheduledThreadPoolExecutor.submit (ScheduledThreadPoolExecutor.java:715)
+reactor.core.scheduler.SchedulerState$DisposeAwaiterRunnable.awaitInPool (SchedulerState.java:84)
+reactor.core.scheduler.SchedulerState.lambda$transition$0 (SchedulerState.java:52)
+reactor.core.publisher.FluxCreate.subscribe (FluxCreate.java:97)
+reactor.core.publisher.FluxReplay.connect (FluxReplay.java:1146)
+reactor.core.publisher.FluxRefCount.subscribe (FluxRefCount.java:90)
+reactor.core.publisher.MonoFromFluxOperator.subscribe (MonoFromFluxOperator.java:81)
+reactor.core.publisher.MonoDefer.subscribe (MonoDefer.java:54)
+reactor.core.publisher.Mono.subscribe (Mono.java:4569)
+reactor.core.publisher.Mono.block (Mono.java:1772)
+FirstCheck.beginDisposeApplication (FirstCheck.java:15)
+FirstCheck.main (FirstCheck.java:30)</pre></td></tr></tbody></table>
+      <p>current folded 输出缺少应用调用者，causal folded 输出包含该调用者；两者均随证据下载提供。</p>
+    </section>
+    <section class="wrap block">
+      <h2>修复方向与范围</h2>
+      <p>报告建议让 TRANSITION_AWAIT_POOL 使用守护线程。源码使用默认线程工厂和十秒空闲保留时间。本次没有测试修复或其他版本。</p>
+      <p>这是对 WSL2/JDK27 报告的一次 Linux/JDK21 组件适配。进程正常退出；没有证明永久泄漏、完整 Reactor 订阅关系、通用自动线程采集或生产开销。已选目录仍为 127 条。</p>
+    </section></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

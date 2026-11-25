@@ -1,0 +1,257 @@
+{
+  "id": "reactor--reactor-core--4478",
+  "verification": {
+    "issue": "https://github.com/reactor/reactor-core/issues/4478",
+    "successful_component_runs": 1,
+    "selected_creation_join_catalogue": false,
+    "reactor": "3.8.8",
+    "reactive_streams": "1.0.4",
+    "jdk": "21.0.1+12-LTS",
+    "native_result": {
+      "dispose_returned_ms": 109.004332,
+      "worker_alive_after_dispose": true,
+      "worker_daemon": false,
+      "worker_state": "TIMED_WAITING",
+      "process_exit_seconds": 10.172391617204994,
+      "exit_code": 0
+    },
+    "first_check_seconds": 84.445281,
+    "actual_java_thread_id": "37",
+    "resource_identity_verified": true,
+    "creator_absent_in_physical_stack": true,
+    "diagnosis": "The captured worker belongs to SchedulerState disposal await machinery. Its default-factory Thread is non-daemon and remains parked after disposeGracefully returns; the process exits after the unmodified ten-second idle keep-alive.",
+    "repair_guidance_untested": "The report proposes daemon threads for TRANSITION_AWAIT_POOL. No factory flags, pool timeout, fixed release or alternate version were tested.",
+    "scope": "One Linux/JDK21 component adaptation of the WSL2/JDK27 report. The explicit extra factory observer records resource origins. Native ThreadMXBean alone supplies physical state, not the returned application disposal caller. No automatic semantic root-cause detector, full coroutine parent graph or production overhead result is claimed.",
+    "source_record_sha256": "5b9fdd50d507a317214a02f36821c0c87e1fc5d3222bb5a796108904f04f2786",
+    "checked_at": "2026-11-25T20:44:31.989303+00:00",
+    "coroperf_resource_origin_verified": true,
+    "caller_present_in_causal_output": true,
+    "caller_present_in_current_output": false,
+    "parent_coroutine_graph_verified": false,
+    "native_workload_replays_after_success": 0,
+    "artifact_sha256": {
+      "run.log": "69268eb376934880089c02205eb756e760693c6000eca3b6515a9d0ac5eb975c",
+      "first-check.json": "c0e7ea990cdf641fbbb80d999219ee42891ffedd89a598c018083c7c5880d387",
+      "FirstCheck.java": "4f300bca4c3208383bc2c443a0d3072e96d67240b3bbc6ba2f6502e048d05ac6",
+      "capture.json": "1c2035e0506a80d903c2b7e7bc668918edb3b690eeb12838485c0c49886de2ca"
+    },
+    "dependency_sha256": {
+      "reactive-streams-1.0.4.jar": "f75ca597789b3dac58f61857b9ac2e1034a68fa672db35055a8fb4509e325f28",
+      "reactor-core-3.8.8.jar": "0a4987b728de02b097ca4707493b12771a3b126013c7e25353be32383ede8f12"
+    }
+  },
+  "capture": {
+    "schema_version": 1,
+    "language": "java",
+    "runtime": "Reactor-3.8.8-JDK21",
+    "frame_order": "leaf_to_root",
+    "producer": {
+      "name": "selected-Reactor-ThreadFactory-resource-observer",
+      "frame_order": "leaf_to_root"
+    },
+    "clock": {
+      "domain": "single-JVM-System.nanoTime",
+      "unit": "ns"
+    },
+    "source_metadata": {
+      "identity_domain": "platform-thread",
+      "scope": "Resource provenance only; explicit extra observer, not coroutine creation coverage.",
+      "observer_behavior": "Delegates to the original ThreadFactory and returns that exact Thread unchanged; no daemon or keep-alive modification."
+    },
+    "segments": [
+      {
+        "id": "1",
+        "coroutine_id": "single-jvm:platform-thread:37",
+        "thread_id": "37",
+        "timestamp_ns": "1847893832217581",
+        "capture_reason": "create",
+        "frames": [
+          {
+            "function": "FirstCheck.lambda$main$0",
+            "file": "FirstCheck.java",
+            "line": 26
+          },
+          {
+            "function": "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.<init>",
+            "file": "ThreadPoolExecutor.java",
+            "line": 637
+          },
+          {
+            "function": "java.base/java.util.concurrent.ThreadPoolExecutor.addWorker",
+            "file": "ThreadPoolExecutor.java",
+            "line": 928
+          },
+          {
+            "function": "java.base/java.util.concurrent.ThreadPoolExecutor.ensurePrestart",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1611
+          },
+          {
+            "function": "java.base/java.util.concurrent.ScheduledThreadPoolExecutor.delayedExecute",
+            "file": "ScheduledThreadPoolExecutor.java",
+            "line": 346
+          },
+          {
+            "function": "java.base/java.util.concurrent.ScheduledThreadPoolExecutor.schedule",
+            "file": "ScheduledThreadPoolExecutor.java",
+            "line": 562
+          },
+          {
+            "function": "java.base/java.util.concurrent.ScheduledThreadPoolExecutor.submit",
+            "file": "ScheduledThreadPoolExecutor.java",
+            "line": 715
+          },
+          {
+            "function": "reactor.core.scheduler.SchedulerState$DisposeAwaiterRunnable.awaitInPool",
+            "file": "SchedulerState.java",
+            "line": 84
+          },
+          {
+            "function": "reactor.core.scheduler.SchedulerState.lambda$transition$0",
+            "file": "SchedulerState.java",
+            "line": 52
+          },
+          {
+            "function": "reactor.core.publisher.FluxCreate.subscribe",
+            "file": "FluxCreate.java",
+            "line": 97
+          },
+          {
+            "function": "reactor.core.publisher.FluxReplay.connect",
+            "file": "FluxReplay.java",
+            "line": 1146
+          },
+          {
+            "function": "reactor.core.publisher.FluxRefCount.subscribe",
+            "file": "FluxRefCount.java",
+            "line": 90
+          },
+          {
+            "function": "reactor.core.publisher.MonoFromFluxOperator.subscribe",
+            "file": "MonoFromFluxOperator.java",
+            "line": 81
+          },
+          {
+            "function": "reactor.core.publisher.MonoDefer.subscribe",
+            "file": "MonoDefer.java",
+            "line": 54
+          },
+          {
+            "function": "reactor.core.publisher.Mono.subscribe",
+            "file": "Mono.java",
+            "line": 4569
+          },
+          {
+            "function": "reactor.core.publisher.Mono.block",
+            "file": "Mono.java",
+            "line": 1772
+          },
+          {
+            "function": "FirstCheck.beginDisposeApplication",
+            "file": "FirstCheck.java",
+            "line": 15
+          },
+          {
+            "function": "FirstCheck.main",
+            "file": "FirstCheck.java",
+            "line": 30
+          }
+        ],
+        "resource_kind": "scheduler-disposal-worker",
+        "creation_evidence": "actual-retained-Thread-before-start",
+        "parent_coroutine_id": null
+      },
+      {
+        "id": "2",
+        "coroutine_id": "single-jvm:platform-thread:37",
+        "thread_id": "37",
+        "timestamp_ns": "1847893860079608",
+        "capture_reason": "sample",
+        "frames": [
+          {
+            "function": "java.base@21.0.1/jdk.internal.misc.Unsafe.park",
+            "file": "Native Method",
+            "line": 0
+          },
+          {
+            "function": "java.base@21.0.1/java.util.concurrent.locks.LockSupport.parkNanos",
+            "file": "LockSupport.java",
+            "line": 269
+          },
+          {
+            "function": "java.base@21.0.1/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos",
+            "file": "AbstractQueuedSynchronizer.java",
+            "line": 1758
+          },
+          {
+            "function": "java.base@21.0.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.poll",
+            "file": "ScheduledThreadPoolExecutor.java",
+            "line": 1209
+          },
+          {
+            "function": "java.base@21.0.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.poll",
+            "file": "ScheduledThreadPoolExecutor.java",
+            "line": 899
+          },
+          {
+            "function": "java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor.getTask",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1069
+          },
+          {
+            "function": "java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor.runWorker",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1130
+          },
+          {
+            "function": "java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor$Worker.run",
+            "file": "ThreadPoolExecutor.java",
+            "line": 642
+          },
+          {
+            "function": "java.base@21.0.1/java.lang.Thread.runWith",
+            "file": "Thread.java",
+            "line": 1596
+          },
+          {
+            "function": "java.base@21.0.1/java.lang.Thread.run",
+            "file": "Thread.java",
+            "line": 1583
+          }
+        ],
+        "resource_kind": "scheduler-disposal-worker",
+        "sample_kind": "ThreadMXBean-stack-selected-by-same-retained-Thread.getId"
+      }
+    ],
+    "edges": [
+      {
+        "from_segment_id": "1",
+        "to_segment_id": "2",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "single-jvm:platform-thread:37",
+        "identity_evidence": "Same retained Thread instance supplies both Java Thread IDs."
+      }
+    ],
+    "active_coroutines": null,
+    "capture_loss": null
+  },
+  "analysis": {
+    "instances": 1,
+    "observations": 1,
+    "attributed_observations": 1,
+    "creator_links": 0,
+    "recorded_parent_links": 0,
+    "open_at_trace_end": 1,
+    "completed_storage_observed": 0,
+    "observation_kinds": [
+      "ThreadMXBean-stack-selected-by-same-retained-Thread.getId"
+    ],
+    "diagnostics": 0,
+    "capture_loss": null,
+    "analysis_ms": 2.551863000000001,
+    "query_matches": 1,
+    "schema": "corostitch.evidence/v1"
+  },
+  "current_folded": "java.base@21.0.1/java.lang.Thread.run;java.base@21.0.1/java.lang.Thread.runWith;java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor$Worker.run;java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor.runWorker;java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor.getTask;java.base@21.0.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.poll;java.base@21.0.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.poll;java.base@21.0.1/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos;java.base@21.0.1/java.util.concurrent.locks.LockSupport.parkNanos;java.base@21.0.1/jdk.internal.misc.Unsafe.park 1\n",
+  "causal_folded": "FirstCheck.main;FirstCheck.beginDisposeApplication;reactor.core.publisher.Mono.block;reactor.core.publisher.Mono.subscribe;reactor.core.publisher.MonoDefer.subscribe;reactor.core.publisher.MonoFromFluxOperator.subscribe;reactor.core.publisher.FluxRefCount.subscribe;reactor.core.publisher.FluxReplay.connect;reactor.core.publisher.FluxCreate.subscribe;reactor.core.scheduler.SchedulerState.lambda$transition$0;reactor.core.scheduler.SchedulerState$DisposeAwaiterRunnable.awaitInPool;java.base/java.util.concurrent.ScheduledThreadPoolExecutor.submit;java.base/java.util.concurrent.ScheduledThreadPoolExecutor.schedule;java.base/java.util.concurrent.ScheduledThreadPoolExecutor.delayedExecute;java.base/java.util.concurrent.ThreadPoolExecutor.ensurePrestart;java.base/java.util.concurrent.ThreadPoolExecutor.addWorker;java.base/java.util.concurrent.ThreadPoolExecutor$Worker.<init>;FirstCheck.lambda$main$0;[creation -> observation];java.base@21.0.1/java.lang.Thread.run;java.base@21.0.1/java.lang.Thread.runWith;java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor$Worker.run;java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor.runWorker;java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor.getTask;java.base@21.0.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.poll;java.base@21.0.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.poll;java.base@21.0.1/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos;java.base@21.0.1/java.util.concurrent.locks.LockSupport.parkNanos;java.base@21.0.1/jdk.internal.misc.Unsafe.park 1\n"
+}

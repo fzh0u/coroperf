@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Reactor #4478: disposal worker origin">
+  <title>Reactor #4478: disposal worker origin · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/reactor-4478-resource.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="reactor-4478-resource.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/reactor-4478-resource.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main"><section class="wrap block">
+      <p class="eyebrow">Supplemental resource provenance · outside the selected catalogue</p>
+      <h1>Reactor #4478: disposal worker origin</h1>
+      <p>One unused-scheduler disposal returns promptly but leaves a non-daemon internal worker. The JVM waits for its idle timeout before exiting.</p>
+      <p><a href="https://github.com/reactor/reactor-core/issues/4478">Upstream report</a> · <a href="../data/reactor-4478-verification.json">Saved evidence and hashes</a></p>
+      <table><tbody><tr><th scope="row">Library / JDK</th><td>Reactor 3.8.8 · reactive-streams 1.0.4 · JDK 21.0.1</td></tr><tr><th scope="row">Disposal returned</th><td>109.00 ms</td></tr><tr><th scope="row">Worker after disposal</th><td>Alive · non-daemon · TIMED_WAITING</td></tr><tr><th scope="row">Natural JVM exit</th><td>10.17 s</td></tr><tr><th scope="row">Preparation and first check</th><td>84.45 s · one execution</td></tr></tbody></table>
+    </section>
+    <section class="wrap block">
+      <h2>What the connection adds</h2>
+      <p>The physical worker stack contains only the idle queue and executor. The creation stack identifies SchedulerState disposal machinery and beginDisposeApplication, which has already returned. CoroPerf shared analysis joins the two records by the same retained Thread object and Java Thread ID.</p>
+      <p>An explicit extra ThreadFactory observer delegates to the original factory and returns its Thread unchanged. It records resource creation; it does not provide a coroutine parent graph or automatic semantic diagnosis.</p>
+      <table><thead><tr><th>Physical observation · record 2</th><th>Recovered creation · record 1</th></tr></thead>
+      <tbody><tr><td><pre style="white-space:pre-wrap;overflow-wrap:anywhere">java.base@21.0.1/jdk.internal.misc.Unsafe.park (Native Method)
+java.base@21.0.1/java.util.concurrent.locks.LockSupport.parkNanos (LockSupport.java:269)
+java.base@21.0.1/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos (AbstractQueuedSynchronizer.java:1758)
+java.base@21.0.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.poll (ScheduledThreadPoolExecutor.java:1209)
+java.base@21.0.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.poll (ScheduledThreadPoolExecutor.java:899)
+java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor.getTask (ThreadPoolExecutor.java:1069)
+java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1130)
+java.base@21.0.1/java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:642)
+java.base@21.0.1/java.lang.Thread.runWith (Thread.java:1596)
+java.base@21.0.1/java.lang.Thread.run (Thread.java:1583)</pre></td>
+      <td><pre style="white-space:pre-wrap;overflow-wrap:anywhere">FirstCheck.lambda$main$0 (FirstCheck.java:26)
+java.base/java.util.concurrent.ThreadPoolExecutor$Worker.&lt;init&gt; (ThreadPoolExecutor.java:637)
+java.base/java.util.concurrent.ThreadPoolExecutor.addWorker (ThreadPoolExecutor.java:928)
+java.base/java.util.concurrent.ThreadPoolExecutor.ensurePrestart (ThreadPoolExecutor.java:1611)
+java.base/java.util.concurrent.ScheduledThreadPoolExecutor.delayedExecute (ScheduledThreadPoolExecutor.java:346)
+java.base/java.util.concurrent.ScheduledThreadPoolExecutor.schedule (ScheduledThreadPoolExecutor.java:562)
+java.base/java.util.concurrent.ScheduledThreadPoolExecutor.submit (ScheduledThreadPoolExecutor.java:715)
+reactor.core.scheduler.SchedulerState$DisposeAwaiterRunnable.awaitInPool (SchedulerState.java:84)
+reactor.core.scheduler.SchedulerState.lambda$transition$0 (SchedulerState.java:52)
+reactor.core.publisher.FluxCreate.subscribe (FluxCreate.java:97)
+reactor.core.publisher.FluxReplay.connect (FluxReplay.java:1146)
+reactor.core.publisher.FluxRefCount.subscribe (FluxRefCount.java:90)
+reactor.core.publisher.MonoFromFluxOperator.subscribe (MonoFromFluxOperator.java:81)
+reactor.core.publisher.MonoDefer.subscribe (MonoDefer.java:54)
+reactor.core.publisher.Mono.subscribe (Mono.java:4569)
+reactor.core.publisher.Mono.block (Mono.java:1772)
+FirstCheck.beginDisposeApplication (FirstCheck.java:15)
+FirstCheck.main (FirstCheck.java:30)</pre></td></tr></tbody></table>
+      <p>The current folded output lacks the application caller; the causal folded output contains it. Both are included in the evidence download.</p>
+    </section>
+    <section class="wrap block">
+      <h2>Repair guidance and limits</h2>
+      <p>The report proposes daemon workers for TRANSITION_AWAIT_POOL. The source uses a default thread factory and a ten-second idle keep-alive. No fix or alternate version was executed.</p>
+      <p>This is one Linux/JDK21 component adaptation of a WSL2/JDK27 report. The process exits normally; no permanent leak, full Reactor subscription lineage, generic automatic thread capture or production overhead result is claimed. The selected catalogue remains at 127.</p>
+    </section></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

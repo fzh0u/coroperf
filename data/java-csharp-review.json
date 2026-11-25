@@ -1,0 +1,225 @@
+{
+  "checked_at": "2026-11-25T20:39:32.050258+00:00",
+  "scope": "Ten source reviews plus read-only Java coverage; no successful issue workload.",
+  "regular_repository_count": 31,
+  "new_regular_repositories": [
+    "reactor/reactor-core",
+    "netty/netty",
+    "pgjdbc/pgjdbc"
+  ],
+  "review_decisions": {
+    "reactor--reactor-core--1858": {
+      "status": "excluded_after_review",
+      "reason": "The expression passed to Mono.just throws before Mono.just runs. The maintainer explains that flatMap captures that ordinary exception and recommends Mono.defer or Mono.fromCallable. This does not establish missing historical task ancestry; no issue program ran.",
+      "reason_zh": "传给 Mono.just 的表达式先于 Mono.just 执行并抛出普通异常。维护者说明异常由 flatMap 捕获，并建议 Mono.defer 或 Mono.fromCallable。尚未建立历史任务祖先缺失；未执行 issue 程序。",
+      "sources": [
+        "https://github.com/reactor/reactor-core/issues/1858",
+        "https://github.com/reactor/reactor-core/issues/1858#issuecomment-523354824"
+      ],
+      "reviewed_at": "2026-11-25T20:34:24.672611+00:00",
+      "title": "bad stack trace for Mono.just() operators",
+      "upstream_status": "closed",
+      "comments": 1,
+      "positive_reactions": 0,
+      "repository_stars": 5242,
+      "heat": 7.0549,
+      "source_review_seconds": 112.478764,
+      "coroperf_gap_assessment": "Eager argument evaluation, before a publisher exists; no demonstrated CoroPerf gap.",
+      "reproduction_prerequisites": "Java/Reactor and a simple eager evaluation example; a WebClient request is unnecessary for the explained behavior.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "source_archive_sha256": "44564fab4d103b36363108b1b6a053be9fcd699fc01515c614af914083b99560"
+    },
+    "reactor--reactor-core--2819": {
+      "status": "excluded_after_review",
+      "reason": "The report asks heavy checkpoint rendering to include its supplied name. Its rendered checkpoint already gives the assembly method and source line. No missing coroutine creator or task identity has been established; no program ran.",
+      "reason_zh": "报告请求 heavy checkpoint 显示已提供的名称；现有输出已包含 assembly 方法和源码行。尚未建立协程创建者或任务身份缺失；未执行程序。",
+      "sources": [
+        "https://github.com/reactor/reactor-core/issues/2819"
+      ],
+      "reviewed_at": "2026-11-25T20:34:24.672611+00:00",
+      "title": "Rendering of named checkpoints with forced stacktrace don't show the name",
+      "upstream_status": "closed",
+      "comments": 0,
+      "positive_reactions": 0,
+      "repository_stars": 5242,
+      "heat": 4.2823,
+      "source_review_seconds": 112.478764,
+      "coroperf_gap_assessment": "Formatting of existing assembly metadata; native checkpoint already provides the source.",
+      "reproduction_prerequisites": "A historical Reactor version and controlled exception would suffice for rendering, but would not establish CoroPerf value.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "source_archive_sha256": "1ac579d3e632223c1521f9cfb70365424ae5adbad99e4e654cae33599cbf999c"
+    },
+    "reactor--reactor-core--2774": {
+      "status": "excluded_after_review",
+      "reason": "A cached exception passes the same checkpoint repeatedly during retry. Upstream discussion identifies trace-rendering tuple deduplication and PR #2780 changes representation. The checkpoint origin is already present, so another caller graph has no established diagnostic benefit. No program ran.",
+      "reason_zh": "缓存异常在 retry 时反复经过同一 checkpoint。上游讨论指出 trace 渲染去重元组问题，PR #2780 调整表示；checkpoint 来源本已存在，尚未建立额外调用图的诊断收益。未执行程序。",
+      "sources": [
+        "https://github.com/reactor/reactor-core/issues/2774",
+        "https://github.com/reactor/reactor-core/issues/2774#issuecomment-921380935",
+        "https://github.com/reactor/reactor-core/issues/2774#issuecomment-926431033"
+      ],
+      "reviewed_at": "2026-11-25T20:34:24.672611+00:00",
+      "title": "Repeated checkpoints added when using retry",
+      "upstream_status": "closed",
+      "comments": 7,
+      "positive_reactions": 0,
+      "repository_stars": 5242,
+      "heat": 12.6001,
+      "source_review_seconds": 112.478764,
+      "coroperf_gap_assessment": "Repeated presentation of known checkpoint ancestry, rather than absent ancestry.",
+      "reproduction_prerequisites": "Reactor 3.4.9 StepVerifier example is bounded; do not run merely to collect another unrelated passing case.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "source_archive_sha256": "0330efc6d63f9f3269581836bf82f197f841da5494b7e82a396a42d2e24f6abd"
+    },
+    "netty--netty--16843": {
+      "status": "excluded_after_review",
+      "reason": "The terminal DNS timeout is stackless, but the supplied outer exception chain already names the application request and business callers. The reporter confirms ChannelPerResolution resolves the Kubernetes behavior. No lost request origin that CoroPerf needs to recover is established. No resolver or network workload ran.",
+      "reason_zh": "最内层 DNS timeout 无栈，但完整外层异常链已给出应用请求与业务调用者。报告者确认 ChannelPerResolution 解决 Kubernetes 中的行为。尚未建立需要 CoroPerf 恢复的请求来源缺口；没有运行 resolver 或网络工作负载。",
+      "sources": [
+        "https://github.com/netty/netty/issues/16843",
+        "https://github.com/netty/netty/issues/16843#issuecomment-4541880288"
+      ],
+      "reviewed_at": "2026-11-25T20:34:24.672611+00:00",
+      "title": "io.netty.resolver.dns.DnsNameResolverTimeoutException: [6845: /xx.xx.x.xx:xx] DefaultDnsQuestion(... IN A) query '6845' via UDP timed out after 5000 milliseconds (no stack trace available)",
+      "upstream_status": "closed",
+      "comments": 6,
+      "positive_reactions": 0,
+      "repository_stars": 35071,
+      "heat": 13.0162,
+      "source_review_seconds": 112.478764,
+      "coroperf_gap_assessment": "Stackless leaf alone is insufficient: the enclosing stack already provides caller attribution.",
+      "reproduction_prerequisites": "Reported Kubernetes update, cluster DNS/search domains, GraalVM Java 25 native image and Netty 4.2.12; a generic timeout would not reproduce that deployment.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "source_archive_sha256": "a557d28d5e07df4222a43727003ca6bddddc47ba37c7623a50119680e3649d4a"
+    },
+    "pgjdbc--pgjdbc--3089": {
+      "status": "external_environment_required",
+      "reason": "The shared cleaner thread can retain the creator web application through inheritedAccessControlContext; upstream reports a fix in pgjdbc 42.7.10+. Historical thread creation could help identify its initializing application, but this needs an actual thread-creation/resource capture and a separate heap-root check. The original Tomcat/JBoss redeployment and GC behavior has no supplied self-contained quick program; no issue setup or execution occurred.",
+      "reason_zh": "共享 Cleaner 线程可经 inheritedAccessControlContext 保留创建它的 webapp；上游记录 pgjdbc 42.7.10+ 已修复。历史线程创建证据或可识别初始化应用，但仍需真实线程创建/资源采集及独立 heap-root 核对。原始 Tomcat/JBoss 重部署与 GC 行为没有独立快速程序；没有准备或执行该 issue。",
+      "sources": [
+        "https://github.com/pgjdbc/pgjdbc/issues/3089",
+        "https://github.com/pgjdbc/pgjdbc/issues/3089#issuecomment-2621950441",
+        "https://github.com/pgjdbc/pgjdbc/issues/3089#issuecomment-4160154926"
+      ],
+      "reviewed_at": "2026-11-25T20:34:24.672611+00:00",
+      "title": "Metaspace Memory leak: Thread.inheritedAccessControlContext",
+      "upstream_status": "closed",
+      "comments": 48,
+      "positive_reactions": 0,
+      "repository_stars": 1748,
+      "heat": 19.3007,
+      "source_review_seconds": 112.478764,
+      "coroperf_gap_assessment": "Potential resource creator provenance. A caller join alone cannot prove a retained classloader or repair the leak.",
+      "reproduction_prerequisites": "Tomcat 9.0.80 or reported JBoss, Java 17, affected pgjdbc 42.6.0/42.7.1, PostgreSQL 14, independent heap-root evidence; does not currently fit a 180-second first check.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "source_archive_sha256": "698d58aa8bd1bac20b9211400d2cbe876f6bed0d23e76cfab881e35f5d682b3f"
+    },
+    "dotnet--runtime--117652": {
+      "status": "preparation_deferred",
+      "reason": "The source establishes a real missing WebSocketException origin when ValueTask.FromException wraps a new exception. Bounded component preparation stopped after two compile failures: the SDK glob first included archived upstream source; after restricting compilation, SendAsync lacked the required CancellationToken argument. No workload or capture ran. Temporarily deferred; no further retry in this pass.",
+      "reason_zh": "源码明确指出 ValueTask.FromException 包装新异常时缺少 WebSocketException 来源。首轮组件准备在两次编译失败后停止：先因 SDK glob 误包含归档源码，限制编译后仍缺少 SendAsync 必需的 CancellationToken 参数。没有执行工作负载或采集，暂时挂起，本轮不再重试。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/117652"
+      ],
+      "reviewed_at": "2026-11-25T20:39:32.050258+00:00",
+      "temporary_deferral": true,
+      "first_check": {
+        "started_at": "2026-11-25T20:32:01.179679+00:00",
+        "build_exit_code": 1,
+        "prior_build_failure": "Default SDK source glob included archived upstream source. Restricted compilation to Program.cs.",
+        "runtime_attempts": 0,
+        "finished_at": "2026-11-25T20:34:48.143410+00:00",
+        "first_check_elapsed_seconds": 166.96379
+      },
+      "status_scope": "Preparation failure, not a platform requirement or a confirmed unsafe issue."
+    },
+    "dotnet--runtime--29519": {
+      "status": "excluded_after_review",
+      "reason": "The maintainer explains that the async lambda is converted to async void by Action, so its exception is not a fault of the Task returned by Task.Run. The source and proposed Func<Task> signature already explain the behavior; no missing task ancestry has been established. No program ran.",
+      "reason_zh": "维护者说明 Action 将异步 lambda 转为 async void，异常不是 Task.Run 返回 Task 的失败。源码及建议的 Func<Task> 签名已解释行为，尚未建立任务祖先缺失；未执行程序。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/29519"
+      ],
+      "reviewed_at": "2026-11-25T20:39:32.050258+00:00"
+    },
+    "dotnet--runtime--31494": {
+      "status": "excluded_after_review",
+      "reason": "Await intentionally unwraps one exception while the completed WhenAll Task retains the aggregate. The maintainer supplies direct access through Task.Exception. The report establishes exception presentation semantics, not lost historical task origin; no program ran.",
+      "reason_zh": "await 按设计解包一个异常，完成的 WhenAll Task 仍保留聚合异常。维护者给出通过 Task.Exception 读取的方法；报告涉及异常呈现语义，未建立历史任务来源缺失；未执行程序。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/31494"
+      ],
+      "reviewed_at": "2026-11-25T20:39:32.050258+00:00"
+    },
+    "npgsql--npgsql--5975": {
+      "status": "external_environment_required",
+      "reason": "Original behavior takes about an hour of application-specific Windows notification/cancellation stress and omits ExecuteJobAsync and ListenAsync. The report already identifies conflicting cancellation flags and EnsureLong. No standalone quick input fits the first-check budget; no dependency setup or workload ran.",
+      "reason_zh": "原问题依赖约一小时的 Windows 应用通知/取消压力，并省略 ExecuteJobAsync 与 ListenAsync。报告已有取消状态不一致及 EnsureLong 位置；缺少符合首轮预算的独立输入，没有安装依赖或执行工作负载。",
+      "sources": [
+        "https://github.com/npgsql/npgsql/issues/5975"
+      ],
+      "reviewed_at": "2026-11-25T20:39:32.050258+00:00"
+    },
+    "mysql-net--mysqlconnector--859": {
+      "status": "external_environment_required",
+      "reason": "The report depends on an omitted application validation workload and EF Core/Pomelo scopes; the maintainer could not reproduce it with direct ADO.NET. Published stacks already include application callers. A generic small pool timeout would not establish the original behavior. No workload ran.",
+      "reason_zh": "报告依赖省略的应用校验工作负载及 EF Core/Pomelo scope；维护者用直接 ADO.NET 未能复现。公开堆栈已有应用调用者，普通小连接池超时不能证明原问题；未执行工作负载。",
+      "sources": [
+        "https://github.com/mysql-net/MySqlConnector/issues/859"
+      ],
+      "reviewed_at": "2026-11-25T20:39:32.050258+00:00"
+    }
+  },
+  "metadata_signal_holds": [
+    {
+      "id": "reactor--reactor-core--3212",
+      "title": "Uncontrolled Recursion causing StackOverflowError ",
+      "url": "https://github.com/reactor/reactor-core/issues/3212",
+      "repository": "reactor/reactor-core",
+      "observed_at": "2026-11-25T20:34:44.243738+00:00",
+      "risk_signal": "StackOverflowError",
+      "status": "skipped_review",
+      "reason": "Reported failure wording or runtime error signature; review required before reproduction."
+    },
+    {
+      "id": "reactor--reactor-core--3095",
+      "title": "MonoThen creates deep stack traces leading to StackOverflowError",
+      "url": "https://github.com/reactor/reactor-core/issues/3095",
+      "repository": "reactor/reactor-core",
+      "observed_at": "2026-11-25T20:34:44.264486+00:00",
+      "risk_signal": "StackOverflowError",
+      "status": "skipped_review",
+      "reason": "Reported failure wording or runtime error signature; review required before reproduction."
+    },
+    {
+      "id": "reactor--reactor-core--3726",
+      "title": "i m having an error \"r.core.Exceptions\",\"stack_trace\":\"java.lang.StackOverflowError: null",
+      "url": "https://github.com/reactor/reactor-core/issues/3726",
+      "repository": "reactor/reactor-core",
+      "observed_at": "2026-11-25T20:34:44.265918+00:00",
+      "risk_signal": "StackOverflowError",
+      "status": "skipped_review",
+      "reason": "Reported failure wording or runtime error signature; review required before reproduction."
+    }
+  ],
+  "issue_workloads_executed": 0,
+  "successful_reproductions": 0,
+  "coroperf_captures": 0,
+  "selected_catalogue_entries": 127,
+  "offline_automation_tests_passed": 62,
+  "java_focused_search": {
+    "search_windows": 5,
+    "unique_issues": 81,
+    "note": "Separate focused windows; not additional verified issues or exhaustive coverage."
+  }
+}
