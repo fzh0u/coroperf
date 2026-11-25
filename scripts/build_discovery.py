@@ -131,7 +131,8 @@ def render(report, language):
         unknown = tr('baseline unavailable', '缺少可比较基线')
         added_label = str(len(added)) if added is not None else unknown
         review_label = str(len(reviewed)) if reviewed is not None else unknown
-        progress = (f'<section class="block"><h2>{tr("Periodic progress", "本次定时报告成果")}</h2>'
+        progress_title = tr('Report update progress', '本次更新成果') if facts.get('source') == 'report_update' else tr('Periodic progress', '本次定时报告成果')
+        progress = (f'<section class="block"><h2>{progress_title}</h2>'
                     f'<p>{tr("Verified catalogue entries", "已验证证据目录")} {facts["verified_catalogue_entries"]} · '
                     f'{tr("New entries since the comparison report", "相对基线新增证据")} {e(added_label)} · '
                     f'{tr("Review decisions", "逐项审阅结论")} {facts["review_decisions"]} · '

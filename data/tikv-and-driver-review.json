@@ -1,0 +1,76 @@
+{
+  "schema": "coroperf.read-only-candidate-screen/v1",
+  "reviewed_at": "2026-11-25T04:26:22.808586+00:00",
+  "reviewed": 5,
+  "excluded_after_review": 3,
+  "skipped_review": 2,
+  "new_verified_coroperf_cases": 0,
+  "execution_scope": "All five reports were read only. No supplied program, cluster, benchmark, patch or reproducer executed.",
+  "cases": [
+    {
+      "id": "tikv--tikv--20348",
+      "url": "https://github.com/tikv/tikv/issues/20348",
+      "title": "Leader TiKV OOM when raft log persistence falls behind with apply-before-persist enabled",
+      "state": "open",
+      "state_reason": null,
+      "source_observed_at": "2026-11-25T04:04:52+00:00",
+      "status": "skipped_review",
+      "reason": "The report describes applied-but-unpersisted Raft log growing without store-wide byte admission until the leader is OOM-killed. Held as a resource-exhaustion and availability lead. No TiKV cluster, write benchmark or workaround was executed; safety impact is unassessed.",
+      "reason_zh": "报告描述已应用但未持久化的 Raft 日志缺少 store 级字节准入，持续增长直至 leader 被 OOM 终止；按资源耗尽与可用性线索暂缓。未执行 TiKV 集群、写入基准或临时方案，安全影响未评估。",
+      "locally_executed": false,
+      "source_archive_sha256": "6058e085d62468b33a2b36a793eeb15f1d584298366eeba5d2d189da16e95ed8"
+    },
+    {
+      "id": "tikv--tikv--20133",
+      "url": "https://github.com/tikv/tikv/issues/20133",
+      "title": "bug: in-memory engine eviction controllers stall forever on dropped completion callbacks",
+      "state": "closed",
+      "state_reason": "completed",
+      "source_observed_at": "2026-11-25T04:04:52+00:00",
+      "status": "skipped_review",
+      "reason": "The report describes dropped eviction callbacks leaving controller waits and memory-checking latches permanently pending. Held as an availability lead. No supplied PoC, TiKV engine, controller or patch test was executed; safety impact is unassessed.",
+      "reason_zh": "报告描述淘汰完成回调被丢弃后，控制器等待与内存检查标志永久保留；按可用性线索暂缓。未执行附带 PoC、TiKV 引擎、控制器或补丁测试，安全影响未评估。",
+      "locally_executed": false,
+      "source_archive_sha256": "6058e085d62468b33a2b36a793eeb15f1d584298366eeba5d2d189da16e95ed8"
+    },
+    {
+      "id": "sidorares--node-mysql2--1239",
+      "url": "https://github.com/sidorares/node-mysql2/issues/1239",
+      "title": "Incorrect arguments to mysqld_stmt_execute (MySQL 8.0.22)",
+      "state": "closed",
+      "state_reason": "completed",
+      "source_observed_at": "2026-11-25T04:03:53+00:00",
+      "status": "excluded_after_review",
+      "reason": "The report already includes the SQL, bound parameters, wrapper/PromiseConnection caller frames and a MySQL 8.0.21 versus 8.0.22 comparison. It establishes a prepared-statement execution problem without a demonstrated missing caller or task identity. No local MySQL workload or repair was tested.",
+      "reason_zh": "报告已包含 SQL、绑定参数、包装器与 PromiseConnection 调用帧，以及 MySQL 8.0.21/8.0.22 对照；未证明有需 coroPerf 补出的调用者或任务身份。未执行本地 MySQL 负载或修复。",
+      "locally_executed": false,
+      "source_archive_sha256": "a7b8b9bc6b0233908f4e1ce284405633730fb9ad0edf0da65ce888fe39cfee02"
+    },
+    {
+      "id": "psycopg--psycopg--247",
+      "url": "https://github.com/psycopg/psycopg/issues/247",
+      "title": "Add disconnection detection to pool",
+      "state": "closed",
+      "state_reason": "completed",
+      "source_observed_at": "2026-11-25T04:03:02+00:00",
+      "status": "excluded_after_review",
+      "reason": "A feature request to put disconnection monitoring inside the connection pool, including design constraints and an existing selector recipe. It does not establish a missing asynchronous caller or resource attribution. No pool program or disconnection test was executed.",
+      "reason_zh": "请求将断连监测放入连接池，正文讨论设计约束和已有 selector 配方；未建立异步调用者或资源归属缺失问题。未执行连接池程序或断连测试。",
+      "locally_executed": false,
+      "source_archive_sha256": "2fdd2c80bbdbbf6b332116545297f449e4b148c3b710489313b41b5a700bd48c"
+    },
+    {
+      "id": "huggingface--text-embeddings-inference--388",
+      "url": "https://github.com/huggingface/text-embeddings-inference/issues/388",
+      "title": "Using CPU Image without ONNX",
+      "state": "open",
+      "state_reason": null,
+      "source_observed_at": "2026-11-25T04:01:49+00:00",
+      "status": "excluded_after_review",
+      "reason": "A request for a CPU image or build option that can use a backend other than ONNX. The shown async download function does not establish missing caller or task attribution. No TEI image, model or download program was executed.",
+      "reason_zh": "请求 CPU 镜像或构建选项支持 ONNX 之外的后端；给出的异步下载函数未建立调用者或任务归属缺失问题。未执行 TEI 镜像、模型或下载程序。",
+      "locally_executed": false,
+      "source_archive_sha256": "a3528679d414e06768c2d26e7b64d6b66ce9e5c86c5f8b09ce30560cb772ca13"
+    }
+  ]
+}
