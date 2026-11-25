@@ -1,0 +1,135 @@
+{
+  "checked_at": "2026-11-25T18:51:46.247999+00:00",
+  "id": "jackc--pgx--1641",
+  "issue_url": "https://github.com/jackc/pgx/issues/1641",
+  "kind": "native_trace_creator_stack_recovery",
+  "selected_creation_join_catalogue": false,
+  "successful_component_runs": 1,
+  "successful_workload_replays": 0,
+  "coroperf_attribution_verified": true,
+  "preparation_build_and_run_seconds": 94.86747336387634,
+  "runtime": "go1.23.0 Linux/x86_64",
+  "pgx": "v5.3.1",
+  "native_result": {
+    "component_reproduced": true,
+    "health_check_goroutines_after_close": 1,
+    "health_check_goroutines_after_delay": 0,
+    "pgx": "v5.3.1",
+    "pool_close_ns": 28002,
+    "runtime": "go1.23.0",
+    "scope": "One unhealthy-connection release component; not a permanent leak or a full production incident."
+  },
+  "native_goroutine_id": "196",
+  "native_creation_event_has_full_stack": true,
+  "native_dump_has_historical_release_caller": false,
+  "coroperf_causal_stack_has_historical_release_caller": true,
+  "native_trace_exit_recorded": true,
+  "full_parent_ancestry_verified": false,
+  "production_collector_or_overhead_verified": false,
+  "capture": {
+    "schema_version": 1,
+    "language": "go",
+    "frame_order": "leaf_to_root",
+    "segments": [
+      {
+        "id": "0",
+        "capture_reason": "create",
+        "process_id": null,
+        "thread_id": 3762978,
+        "coroutine_id": "196",
+        "timestamp_ns": 1841114807538816,
+        "frames": [
+          {
+            "function": "github.com/jackc/pgx/v5/pgxpool.(*Pool).triggerHealthCheck",
+            "file": "pool.go",
+            "line": 376,
+            "pc": "0x6e142e"
+          },
+          {
+            "function": "github.com/jackc/pgx/v5/pgxpool.(*Conn).Release",
+            "file": "conn.go",
+            "line": 33,
+            "pc": "0x6e0392"
+          },
+          {
+            "function": "main.releaseClosedConnection",
+            "file": "main.go",
+            "line": 35,
+            "pc": "0x6e51d9"
+          },
+          {
+            "function": "main.run",
+            "file": "main.go",
+            "line": 54,
+            "pc": "0x6e53e5"
+          },
+          {
+            "function": "main.main",
+            "file": "main.go",
+            "line": 72,
+            "pc": "0x6e5ab2"
+          }
+        ],
+        "observation": {
+          "source": "native-Go-execution-trace",
+          "parent_go_id": "1"
+        }
+      },
+      {
+        "id": "1",
+        "capture_reason": "sample",
+        "process_id": null,
+        "thread_id": null,
+        "coroutine_id": "196",
+        "timestamp_ns": 1841114807599616,
+        "frames": [
+          {
+            "function": "time.Sleep",
+            "file": "time.go",
+            "line": 285
+          },
+          {
+            "function": "github.com/jackc/pgx/v5/pgxpool.(*Pool).triggerHealthCheck.func1",
+            "file": "pool.go",
+            "line": 379
+          }
+        ],
+        "observation": {
+          "source": "native-pprof-goroutine-snapshot",
+          "goroutine_state": "sleep"
+        }
+      },
+      {
+        "id": "2",
+        "capture_reason": "exit",
+        "process_id": null,
+        "thread_id": null,
+        "coroutine_id": "196",
+        "timestamp_ns": 1841115308548096,
+        "frames": [],
+        "observation": {
+          "source": "native-Go-execution-trace",
+          "state_transition": "Running->NotExist"
+        }
+      }
+    ],
+    "edges": []
+  },
+  "current_folded": "github.com/jackc/pgx/v5/pgxpool.(*Pool).triggerHealthCheck.func1;time.Sleep 1",
+  "causal_folded": "main.main;main.run;main.releaseClosedConnection;github.com/jackc/pgx/v5/pgxpool.(*Conn).Release;github.com/jackc/pgx/v5/pgxpool.(*Pool).triggerHealthCheck;[creation -> observation];github.com/jackc/pgx/v5/pgxpool.(*Pool).triggerHealthCheck.func1;time.Sleep 1",
+  "adaptations": [
+    "Uses a private disposable PostgreSQL instance instead of the reported local PostgreSQL setup.",
+    "Closes the owned acquired connection before Release to deterministically select the real unhealthy-connection path; ordinary healthy Release is not asserted to trigger the issue.",
+    "Native Go execution trace and goroutine snapshots collected together in the single execution."
+  ],
+  "scope": "Bounded component check of a sleeping health-check goroutine surviving Pool.Close and then exiting. Native execution trace already supplies creation data; CoroPerf joins it to the later goroutine snapshot by actual GoID. This is not a permanent leak, runtime repair, full production incident, or a claim that native trace lacks the creator data.",
+  "evidence_sha256": {
+    "runtime.trace": "8c5f4bc980d6d9ddd994d7a58be3113d4b37b6e6fc262d405bcaaf59f262ad31",
+    "after-close.txt": "cb489db5fb8024075688f45ac672fb5da4753dc7e2e07f6e4a03c00b3ea5dba1",
+    "after-delay.txt": "e45f4773328e199e738969625e6b502ad03f7f92c2547f3b7cb5eb7b34214259",
+    "native": "8b438e6dd9dabac5dde99d251556d8f14f7a828e3e0123bc29369aad0a275663",
+    "capture.json": "ef27e4ac77540984eec0c0037b2b24c2c8a83ddb8f6f04d336f93433c24213c4",
+    "execution.json": "4047d7159bb6001122130792c233bf3398303167a7560f7c5ad88d423b620aaa"
+  },
+  "coroperf_bin_sha256": "2762832bdaaf6302b6fbee873544e5f4750d8e76c24b0ac786be5c3425e19e5a"
+}

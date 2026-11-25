@@ -4666,7 +4666,7 @@
       "observed_at": "2026-11-25T18:09:13+00:00",
       "heat": 24.5917,
       "status": "skipped_review",
-      "reason": "Reported failure wording or runtime error signature; review required before reproduction.",
+      "reason": "Previously deferred; keep reproduction on hold.",
       "query_kinds": [
         "discussion"
       ],
@@ -23688,7 +23688,7 @@
       "observed_at": "2026-11-25T18:08:17+00:00",
       "heat": 10.4148,
       "status": "skipped_review",
-      "reason": "Reported failure wording or runtime error signature; review required before reproduction.",
+      "reason": "Previously deferred; keep reproduction on hold.",
       "query_kinds": [
         "discussion-depth"
       ],
@@ -25112,7 +25112,7 @@
       "observed_at": "2026-11-25T18:02:27+00:00",
       "heat": 10.073,
       "status": "skipped_review",
-      "reason": "Reported failure wording or runtime error signature; review required before reproduction.",
+      "reason": "Previously deferred; keep reproduction on hold.",
       "query_kinds": [
         "discussion-depth"
       ],
@@ -43070,6 +43070,30 @@
       ],
       "reviewed_at": "2026-11-25T18:23:58.665354+00:00",
       "locally_executed": false
+    },
+    "go-sql-driver--mysql--626": {
+      "status": "skipped_review",
+      "reason": "Temporarily deferred at user request after source review/preflight; no source setup, build, workload or CoroPerf capture. Move on now and reconsider in a later bounded batch.",
+      "reason_zh": "按用户澄清先挂起：仅来源审阅和复现前检查，未准备源码、构建、执行或采集；本轮立即换项，后续批次再评估。",
+      "sources": [
+        "https://github.com/go-sql-driver/mysql/issues/626"
+      ],
+      "reviewed_at": "2026-11-25T18:46:41.129552+00:00",
+      "skip_reason": "temporary_user_deferral",
+      "locally_executed": false
+    },
+    "jackc--pgx--1641": {
+      "status": "component_reproduced",
+      "reason": "One bounded pgx v5.3.1 unhealthy-connection Release check confirms one sleeping health-check goroutine after Pool.Close, then normal exit. Native Go trace plus matching GoID lets CoroPerf restore the returned release caller. Native trace already contains that history; no replay, permanent-leak, runtime-fix or full-incident claim.",
+      "reason_zh": "一次 pgx v5.3.1 异常连接 Release 组件检查确认：Pool.Close 后仍有一个休眠的健康检查 goroutine，随后正常退出。CoroPerf 用真实 GoID 将原生 trace 的创建栈接到后续快照，恢复已返回的 release 调用者。原生 trace 本身已有该历史；不重跑，不声称永久泄漏、runtime 修复或完整事故复现。",
+      "sources": [
+        "https://github.com/jackc/pgx/issues/1641",
+        "https://fzh0u.github.io/coroperf/data/pgx-1641-verification.json"
+      ],
+      "reviewed_at": "2026-11-25T18:51:46.247999+00:00",
+      "locally_executed": true,
+      "successful_reproduction_runs": 1,
+      "successful_reproduction_replay_authorized": false
     }
   },
   "supplemental_records": [
@@ -43351,6 +43375,24 @@
       "summary_zh": "Asio、Seastar、cppcoro、Orleans 的八个定向窗口得到 100 条去重 issue，与常规覆盖分开记账。22 条来源审阅：12 条排除、3 条环境缺口、3 条研究线索、4 条暂缓。补齐集群反复启动、明确栈故障及特定 TiKV FATAL 签名的分流，57 项离线检查通过。没有准备或执行 issue 程序，已选目录仍为 127 条。",
       "path": "data/cpp-actor-diagnostic-review.json",
       "checked_at": "2026-11-25T18:25:36.390763+00:00"
+    },
+    {
+      "id": "pgx-1641-and-temporary-deferral-20261126",
+      "title": "pgx: one bounded execution and native-trace creator recovery",
+      "title_zh": "pgx：一次有界验证与原生 trace 创建栈归属",
+      "summary": "One pgx v5.3.1 unhealthy-connection Release check completed in 95 seconds including preparation/build. Pool.Close returned while a health-check goroutine still slept; it then exited normally. CoroPerf joins the native creation stack to the later snapshot by the actual GoID, recovering the returned release caller. Native trace already holds that history; no permanent leak or runtime fix is claimed. MySQL driver #626 is temporarily deferred after source review only. Selected cases stay at 127.",
+      "summary_zh": "pgx v5.3.1 的异常连接 Release 组件仅运行一次，含准备和构建约 95 秒。Pool.Close 返回时健康检查 goroutine 仍休眠，随后正常退出。CoroPerf 以真实 GoID 将原生创建栈接到后续快照，恢复已返回的 release 调用者。原生 trace 本身已有该历史，不声称永久泄漏或 runtime 修复。MySQL 驱动 #626 仅完成来源审阅，现暂时挂起。已选目录仍为 127 条。",
+      "path": "data/pgx-1641-verification.json",
+      "checked_at": "2026-11-25T18:52:54.185105+00:00"
+    },
+    {
+      "id": "mysql-626-temporary-deferral-20261126",
+      "title": "MySQL driver #626 temporarily deferred",
+      "title_zh": "MySQL 驱动 #626，先挂起换项",
+      "summary": "Source review and preflight only; no source setup, build, workload or capture. Reconsider in a later bounded batch.",
+      "summary_zh": "仅来源审阅及复现前检查，没有准备源码、构建、执行或采集；本轮先换项，后续批次再评估。",
+      "path": "data/mysql-626-deferral.json",
+      "checked_at": "2026-11-25T18:52:54.185105+00:00"
     }
   ],
   "deferred_registry": [
@@ -43992,6 +44034,15 @@
       "security_impact": "这里仅作复现暂缓，不构成漏洞发现或安全影响判定。",
       "prior_local_execution": false,
       "review_note_zh": "上游明确报告 OOM 时调度失败会令整个 server abort。暂缓该故障工作负载，不准备或执行内存耗尽试验，不作漏洞判定。 这里仅作复现暂缓，不构成漏洞发现或安全影响判定。"
+    },
+    {
+      "id": "go-sql-driver--mysql--626",
+      "url": "https://github.com/go-sql-driver/mysql/issues/626",
+      "title": "MySQL driver #626 temporarily deferred",
+      "title_zh": "MySQL 驱动 #626，暂时挂起",
+      "security_impact": "这是时间预算暂缓，不是安全故障或漏洞判定。",
+      "prior_local_execution": false,
+      "review_note_zh": "按用户澄清，卡住的准备先停下并换项。仅来源审阅及复现前检查，未下载源码、构建或运行；后续批次再评估，不在本轮重试。 这是时间预算暂缓，不是安全故障或漏洞判定。"
     }
   ],
   "signal_holds": [
@@ -50261,36 +50312,16 @@
   },
   "progress_summary": {
     "source": "report_update",
-    "assembled_at": "2026-11-25T18:25:36.390763+00:00",
-    "comparison_reported_at": "2026-11-25T18:14:10.651215+00:00",
+    "assembled_at": "2026-11-25T18:52:54.185105+00:00",
+    "comparison_reported_at": "2026-11-25T18:25:36.390763+00:00",
     "verified_catalogue_entries": 127,
     "new_verified_ids": [],
-    "review_decisions": 151,
+    "review_decisions": 153,
     "new_review_decision_ids": [
-      "apache--datafusion-ballista--1214",
-      "chriskohlhoff--asio--1274",
-      "chriskohlhoff--asio--1501",
-      "chriskohlhoff--asio--720",
-      "dotnet--orleans--1739",
-      "dotnet--orleans--3470",
-      "dotnet--orleans--5876",
-      "dotnet--orleans--7155",
-      "grpc--grpc-go--2427",
-      "grpc--grpc-go--5891",
-      "lewissbaker--cppcoro--145",
-      "lewissbaker--cppcoro--164",
-      "magicstack--asyncpg--1005",
-      "scylladb--seastar--1035",
-      "scylladb--seastar--1310",
-      "scylladb--seastar--237",
-      "scylladb--seastar--84",
-      "sqlalchemy--sqlalchemy--5895",
-      "tikv--tikv--13926",
-      "tikv--tikv--15454",
-      "tokio-rs--tokio--1696",
-      "tokio-rs--tokio--703"
+      "go-sql-driver--mysql--626",
+      "jackc--pgx--1641"
     ],
-    "manual_holds": 71,
+    "manual_holds": 72,
     "automatic_signal_holds": 521,
     "scope": "Manual review update over the completed source scan; source observation times retained. Search hits and native-only reproductions are not selected CoroPerf cases."
   }
