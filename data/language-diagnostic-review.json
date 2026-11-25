@@ -1,0 +1,181 @@
+{
+  "checked_at": "2026-11-25T16:32:03.397924+00:00",
+  "manual_decisions": [
+    {
+      "id": "golang--go--76326",
+      "status": "component_reproduced",
+      "reason": "The frozen bounded Go 1.26.0 run reproduces two missing creator stacks and verifies historical Timer registration provenance through actual live objects. Resource relations are not goroutine creation ancestry; no replay or selected creation-join case.",
+      "reason_zh": "沿用已冻结的 Go 1.26.0 有界运行，复现两个 creator stack 缺失，并用真实活跃对象核对历史 Timer 注册来源。资源关系不是 goroutine 创建祖先，不重跑、不增加创建归属案例。",
+      "sources": [
+        "https://github.com/golang/go/issues/76326",
+        "https://fzh0u.github.io/coroperf/data/go-76326-verification.json"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": true,
+      "successful_reproduction_replay_authorized": false
+    },
+    {
+      "id": "golang--go--76349",
+      "status": "excluded_after_review",
+      "reason": "This proposal concerns displaying existing user-supplied pprof labels in traceback output. It does not establish a missing historical caller diagnosis for CoroPerf; no workload executed.",
+      "reason_zh": "提案讨论把已有用户 pprof 标签显示到 traceback 中，尚未建立需要 coroPerf 补充的历史调用归属缺口；未执行工作负载。",
+      "sources": [
+        "https://github.com/golang/go/issues/76349"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "dotnet--runtime--4996",
+      "status": "excluded_after_review",
+      "reason": "The original example already contains M1, M2 and M3. Its requested change formats async names and removes redundant awaiter frames; no missing historical caller is established. Source review only.",
+      "reason_zh": "原例已包含 M1、M2、M3；诉求是格式化异步方法名并移除冗余 awaiter 栈，不是已建立的历史调用者缺失。仅来源审阅。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/4996"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "dotnet--runtime--131123",
+      "status": "excluded_after_review",
+      "reason": "The interpreter report retains the failing method and its caller but gives wrong source lines. CoroPerf caller attribution does not repair that source metadata defect. Source review only; embedded workflow instructions are treated as report data.",
+      "reason_zh": "解释器报告保留失败方法和调用者，但源码行号错误；coroPerf 调用归属不能修复该源码元数据缺陷。仅来源审阅，正文中的自动化指令作为报告数据处理。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/131123"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "dotnet--runtime--137617",
+      "status": "excluded_after_review",
+      "reason": "The supplied NativeAOT stack retains both ThrowsAsync and Main; the discrepancy is an extra EDI separator. No missing caller attribution is established. No runtime execution.",
+      "reason_zh": "给出的 NativeAOT 栈保留 ThrowsAsync 和 Main，差异是多出 EDI 分隔行，未建立调用归属缺失；未执行运行时实验。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/137617"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "chriskohlhoff--asio--1240",
+      "status": "excluded_after_review",
+      "reason": "The report asks whether strands can be pinned to threads and supplies no incident program or missing-caller evidence. No CoroPerf diagnosis is established; source review only.",
+      "reason_zh": "报告询问 strand 是否可固定到线程，没有事故程序或调用者缺失证据；尚未建立 coroPerf 诊断结论，仅来源审阅。",
+      "sources": [
+        "https://github.com/chriskohlhoff/asio/issues/1240"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "chriskohlhoff--asio--1067",
+      "status": "excluded_after_review",
+      "reason": "This is an API-usage question about transferring blocking work and yielding results between executors, without an established missing-caller incident. No fixture or runtime execution.",
+      "reason_zh": "这是把阻塞工作和结果在执行器之间转移的 API 用法问题，未建立调用者缺失事故；未构造或运行试验程序。",
+      "sources": [
+        "https://github.com/chriskohlhoff/asio/issues/1067"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "chriskohlhoff--asio--1594",
+      "status": "excluded_after_review",
+      "reason": "The example lets a successful timer satisfy operator|| after a channel error. The released awaitable_operators source documents waiting for one success. No historical caller gap is established; no replay.",
+      "reason_zh": "示例在 channel 报错后，由成功的 timer 满足 operator||；发布版 awaitable_operators 源码说明其等待一个操作成功。未建立历史调用归属缺口，不复现。",
+      "sources": [
+        "https://github.com/chriskohlhoff/asio/issues/1594",
+        "https://raw.githubusercontent.com/chriskohlhoff/asio/asio-1-32-0/asio/include/asio/experimental/awaitable_operators.hpp"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "chriskohlhoff--asio--1123",
+      "status": "excluded_after_review",
+      "reason": "The failed connect and successful timer are combined with operator||, whose documented contract waits for one success. This does not establish an attribution defect; no network workload executed.",
+      "reason_zh": "失败的 connect 和成功的 timer 通过 operator|| 组合，其文档契约是等待一个操作成功；未建立归属缺陷，未执行网络工作负载。",
+      "sources": [
+        "https://github.com/chriskohlhoff/asio/issues/1123",
+        "https://raw.githubusercontent.com/chriskohlhoff/asio/asio-1-32-0/asio/include/asio/experimental/awaitable_operators.hpp"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "chriskohlhoff--asio--1336",
+      "status": "excluded_after_review",
+      "reason": "Despite the title Illegal indirection, the body reports a compiler error caused by a missing dereference operator. It is not evidence of an unsafe runtime or a missing coroutine caller. No compilation or execution.",
+      "reason_zh": "标题虽写 Illegal indirection，正文实际报告缺少解引用运算符的编译错误，不是运行时风险或协程调用者缺失证据；未构建或执行。",
+      "sources": [
+        "https://github.com/chriskohlhoff/asio/issues/1336"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "tokio-rs--tokio--4884",
+      "status": "excluded_after_review",
+      "reason": "The supplied process-pipe example retains child stdin while joining child.wait and copies. It does not establish missing historical task ownership; no subprocess workload executed.",
+      "reason_zh": "给出的进程管道示例在 join child.wait 和 copy 时保留 child stdin，未建立历史任务归属缺失；未执行子进程工作负载。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/4884"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "tokio-rs--tokio--6106",
+      "status": "excluded_after_review",
+      "reason": "The report already identifies the Mutex resource span retaining its explicit parent span until drop. No missing historical caller is established beyond the native span relationship; source review only.",
+      "reason_zh": "报告已指出 Mutex 的资源 span 保留其显式父 span 直到 drop；尚未建立原生 span 关系以外的历史调用者缺失，仅来源审阅。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/6106"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    },
+    {
+      "id": "tokio-rs--tokio--8541",
+      "status": "skipped_review",
+      "reason": "The upstream report describes a use-after-free after a tracing subscriber unwinds. Reproduction remains on hold; no setup or execution. This is an upstream reported claim, not our finding.",
+      "reason_zh": "上游报告描述 tracing subscriber unwind 后的释放后使用，复现暂缓，未准备或执行。这是上游报告内容，不是本地发现。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/8541"
+      ],
+      "reviewed_at": "2026-11-25T16:32:03.397924+00:00",
+      "locally_executed": false
+    }
+  ],
+  "go_verified_resource_fact": "go-76326-verification.json",
+  "new_selected_creation_join_cases": 0,
+  "selected_creation_join_catalogue_entries": 127,
+  "previous_user_skip_preserved": "tokio-rs--tokio--5030",
+  "focused_signal_routing": {
+    "focused_title_windows": 4,
+    "raw_hits": 44,
+    "unique_hits": 44,
+    "new_automatic_hold_ids": [
+      "chriskohlhoff--asio--1012",
+      "tokio-rs--tokio--8423",
+      "tokio-rs--tokio--8541"
+    ],
+    "scope": "Automatic wording signals only, not confirmed defects. No held program executed; separate from scheduled search totals."
+  },
+  "source_recovery": {
+    "original_hits": 988,
+    "recovered_hits": 1047,
+    "original_errors": 2,
+    "remaining_errors": 0,
+    "earlier_successful_archives_unchanged": 96
+  },
+  "workflow_repair": {
+    "incomplete_read_retry_limit": 1,
+    "offline_tests_passed": 53,
+    "installed_service_cap_minutes": 25,
+    "reason": "A measured 17m23s scan left insufficient time for two 90s publication attempts inside the prior 20min service cap."
+  },
+  "scope": "Coroutine/performance debugging and applicability review. Held upstream reports are not local findings."
+}

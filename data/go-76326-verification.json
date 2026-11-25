@@ -1,0 +1,224 @@
+{
+  "checked_at": "2026-11-25T16:32:03.397924+00:00",
+  "issue_url": "https://github.com/golang/go/issues/76326",
+  "kind": "resource_registration_provenance",
+  "selected_creation_join_catalogue": false,
+  "verification": {
+    "verified": true,
+    "successful_reproduction_runs": 1,
+    "runtime": "Go 1.26.0 Linux/amd64",
+    "reported_runtime": "Go 1.25.4 Darwin/arm64; not executed here",
+    "native_trace_creation_events_missing_creator_stack": 2,
+    "tracebackancestors_depth": 8,
+    "native_dump_creator": "time.goFunc",
+    "historical_timer_registrations_verified": 2,
+    "identical_physical_callback_stacks": true,
+    "callback_order_reversed_from_registration": true,
+    "facts": [
+      {
+        "timer_object_id": "0x2a671999c0e0",
+        "goroutine_id": "10",
+        "historical_registration": "main.startRefresh",
+        "independent_timer_oracle_matches": true,
+        "native_creation_event_has_creator_stack": false
+      },
+      {
+        "timer_object_id": "0x2a671999c070",
+        "goroutine_id": "9",
+        "historical_registration": "main.startImport",
+        "independent_timer_oracle_matches": true,
+        "native_creation_event_has_creator_stack": false
+      }
+    ],
+    "resource_relations_are_coroutine_creation_relations": false,
+    "source_sha256": "8dcc269c714e06b868b199131ce431285c7c00c5b26522cece343f7a669905a5",
+    "trace_sha256": "cce20388fd1b2ebc0c4447d3af6ecc1e346bc9bece9975f25297df00d67afc65",
+    "coroperf_bin_sha256": "2762832bdaaf6302b6fbee873544e5f4750d8e76c24b0ac786be5c3425e19e5a",
+    "scope": "Bounded application extension using the real unmodified time.AfterFunc; fixture observer records actual live returned Timer and bound receiver identities. CoroPerf adds registration provenance, not a fabricated goroutine creator or a runtime repair. No production collector or overhead claim."
+  },
+  "capture": {
+    "schema_version": 1,
+    "language": "go",
+    "frame_order": "leaf_to_root",
+    "segments": [
+      {
+        "id": "0",
+        "capture_reason": "register",
+        "process_id": 3681182,
+        "thread_id": null,
+        "coroutine_id": null,
+        "frames": [
+          {
+            "function": "main.observe",
+            "file": "main.go",
+            "line": 36
+          },
+          {
+            "function": "main.schedule",
+            "file": "main.go",
+            "line": 62
+          },
+          {
+            "function": "main.startImport",
+            "file": "main.go",
+            "line": 68
+          },
+          {
+            "function": "main.main",
+            "file": "main.go",
+            "line": 81
+          },
+          {
+            "function": "runtime.main",
+            "file": "proc.go",
+            "line": 290
+          },
+          {
+            "function": "runtime.goexit",
+            "file": "asm_amd64.s",
+            "line": 1771
+          }
+        ],
+        "resource_id": "0x2a671999c070",
+        "observation": {
+          "timer_object_id": "0x2a671999c070",
+          "callback_owner_object_id": "0x2a671994e438"
+        }
+      },
+      {
+        "id": "1",
+        "capture_reason": "register",
+        "process_id": 3681182,
+        "thread_id": null,
+        "coroutine_id": null,
+        "frames": [
+          {
+            "function": "main.observe",
+            "file": "main.go",
+            "line": 36
+          },
+          {
+            "function": "main.schedule",
+            "file": "main.go",
+            "line": 62
+          },
+          {
+            "function": "main.startRefresh",
+            "file": "main.go",
+            "line": 70
+          },
+          {
+            "function": "main.main",
+            "file": "main.go",
+            "line": 82
+          },
+          {
+            "function": "runtime.main",
+            "file": "proc.go",
+            "line": 290
+          },
+          {
+            "function": "runtime.goexit",
+            "file": "asm_amd64.s",
+            "line": 1771
+          }
+        ],
+        "resource_id": "0x2a671999c0e0",
+        "observation": {
+          "timer_object_id": "0x2a671999c0e0",
+          "callback_owner_object_id": "0x2a671994e450"
+        }
+      },
+      {
+        "id": "2",
+        "capture_reason": "sample",
+        "process_id": 3681182,
+        "thread_id": null,
+        "coroutine_id": "10",
+        "frames": [
+          {
+            "function": "main.observe",
+            "file": "main.go",
+            "line": 36
+          },
+          {
+            "function": "main.(*job).run",
+            "file": "main.go",
+            "line": 55
+          },
+          {
+            "function": "runtime.goexit",
+            "file": "asm_amd64.s",
+            "line": 1771
+          }
+        ],
+        "resource_id": "0x2a671999c0e0",
+        "observation": {
+          "timer_object_id": "0x2a671999c0e0",
+          "callback_owner_object_id": "0x2a671994e450"
+        }
+      },
+      {
+        "id": "3",
+        "capture_reason": "sample",
+        "process_id": 3681182,
+        "thread_id": null,
+        "coroutine_id": "9",
+        "frames": [
+          {
+            "function": "main.observe",
+            "file": "main.go",
+            "line": 36
+          },
+          {
+            "function": "main.(*job).run",
+            "file": "main.go",
+            "line": 55
+          },
+          {
+            "function": "runtime.goexit",
+            "file": "asm_amd64.s",
+            "line": 1771
+          }
+        ],
+        "resource_id": "0x2a671999c070",
+        "observation": {
+          "timer_object_id": "0x2a671999c070",
+          "callback_owner_object_id": "0x2a671994e438"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "1",
+        "to": "2",
+        "kind": "timer_registration_to_callback",
+        "evidence": "same-live-time.Timer-and-bound-callback-owner; published-before-callback-through-channel-close"
+      },
+      {
+        "from": "0",
+        "to": "3",
+        "kind": "timer_registration_to_callback",
+        "evidence": "same-live-time.Timer-and-bound-callback-owner; published-before-callback-through-channel-close"
+      }
+    ]
+  },
+  "native_trace_summary": [
+    {
+      "goroutine_id": "10",
+      "creation_transition": "NotExist->Runnable",
+      "creator_stack_present": false,
+      "transition_function": "main.(*job).run-fm",
+      "runtime_stack_creator": "time.goFunc"
+    },
+    {
+      "goroutine_id": "9",
+      "creation_transition": "NotExist->Runnable",
+      "creator_stack_present": false,
+      "transition_function": "main.(*job).run-fm",
+      "runtime_stack_creator": "time.goFunc"
+    }
+  ],
+  "conclusion": "Two real Timer registrations recover distinct historical application entries although native creation traces lack a creator stack. The observer retains actual returned Timer and bound callback receiver identities. This resource relation is separate from goroutine creation ancestry; it adds no selected creation-join case.",
+  "conclusion_zh": "两个真实 Timer 的注册记录在原生创建事件缺少 creator stack 时，仍恢复出不同的历史应用入口。观察器保存实际返回的 Timer 和绑定 callback 接收对象身份。这属于资源来源关系，不冒充 goroutine 创建祖先，不增加创建归属案例计数。"
+}
