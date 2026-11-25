@@ -1,0 +1,123 @@
+{
+  "checked_at": "2026-11-25T21:07:32.396158+00:00",
+  "reviews": {
+    "vllm-project--vllm--22403": {
+      "status": "excluded_after_review",
+      "reason": "The reported failure concerns GPT-OSS output-channel/message parsing with a supplied prompt. It identifies inconsistent response validation, not missing coroutine ownership or an async scheduling history. A parser or model-output test would need exact output material; no CoroPerf attribution benefit is established and no model or parser workload ran.",
+      "reason_zh": "报告涉及给定提示词下 GPT-OSS 输出通道及消息解析的一致性校验，并未建立协程归属或异步调度历史缺失。解析器或模型输出试验需要精确输出材料；尚无 CoroPerf 归属收益，没有执行模型或解析器工作负载。",
+      "sources": [
+        "https://github.com/vllm-project/vllm/issues/22403",
+        "https://github.com/vllm-project/vllm/issues/22403#issuecomment-3161819099"
+      ],
+      "reviewed_at": "2026-11-25T20:51:29.546197+00:00",
+      "title": "[Bug]: For GPT OSS 120B: Expected 2 output messages (reasoning and final), but got 7.",
+      "upstream_status": "closed",
+      "heat": 31.4501,
+      "heat_basis": "Existing automatic discovery snapshot; not recomputed from the partial comment review.",
+      "source_review_seconds": 120.041,
+      "coroperf_gap_assessment": "Response-format validation; no demonstrated missing routine origin.",
+      "reproduction_prerequisites": "Reported GPT-OSS model and model-output inputs; no self-contained CPU diagnostic program that would establish CoroPerf value.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "source_archive_sha256": "5a498e739a6723e8bc706b0cfccae668b1a63df5a55b696cc73f0e9faad5654f",
+      "comment_archive_scope": "First ten comments at most; incomplete for vLLM #22403.",
+      "comments_total": 102
+    },
+    "ray-project--ray--55541": {
+      "status": "already_catalogued",
+      "reason": "The maintainer marks this as a duplicate of Ray #55142. The local case-coverage ledger already records a full local debug-mode reproduction and direct evidence for #55142. The provided native source traceback also names the cross-thread loop.create_task call. Preserve that existing result; do not replay it through this duplicate ID.",
+      "reason_zh": "维护者将其归并为 Ray #55142。现有 case-coverage 已有 #55142 的完整本地 debug-mode 复现及直接证据；原生 source traceback 也指出跨线程 loop.create_task 调用。保留既有结果，不通过此重复编号重跑。",
+      "sources": [
+        "https://github.com/ray-project/ray/issues/55541",
+        "https://github.com/ray-project/ray/issues/55541#issuecomment-3184890326",
+        "https://github.com/ray-project/ray/issues/55142"
+      ],
+      "reviewed_at": "2026-11-25T20:51:29.546197+00:00",
+      "title": "[Serve] Ray Serve fails to assign requests to replicas when `asyncio` debug mode is enabled",
+      "upstream_status": "closed",
+      "heat": 10.8955,
+      "heat_basis": "Existing automatic discovery snapshot; not recomputed from the partial comment review.",
+      "source_review_seconds": 120.041,
+      "coroperf_gap_assessment": "Duplicate of an existing successful corpus case, with a supplied native creation traceback.",
+      "reproduction_prerequisites": "Already successful under canonical #55142; no further setup, execution or attribution should be started through #55541.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "source_archive_sha256": "fd0f6f6a8752ba5bd17c7e92d46e7d9646e505ce56102611f6e7754b4a871324",
+      "comment_archive_scope": "First ten comments at most; incomplete for vLLM #22403.",
+      "duplicate_of": "ray-project--ray--55142",
+      "existing_evidence": "perf-out/systems-repro/ai/advance/55142/original/2.48.0-debug-agent/analysis/graph.json",
+      "existing_origin_audit_verified": false
+    },
+    "sgl-project--sglang--20836": {
+      "status": "excluded_after_review",
+      "reason": "The report already provides the endpoint-to-wait chain and identifies the receive loop that was never started. A creation/sampling graph cannot reconstruct a receiver Task that does not exist; request/ZMQ state would be separate evidence. No new historical-caller gap is established, and no server or PD workload ran.",
+      "reason_zh": "报告已给出入口到等待点的调用链，并指出接收循环没有启动。创建/采样图不能恢复不存在的接收 Task；请求及 ZMQ 状态属于另需采集的证据。尚未建立新的历史调用者缺口，没有执行服务或 PD 工作负载。",
+      "sources": [
+        "https://github.com/sgl-project/sglang/issues/20836"
+      ],
+      "reviewed_at": "2026-11-25T20:51:29.546197+00:00",
+      "title": "[Bug] /get_server_info hangs in PD disaggregation mode due to handle_loop not started",
+      "upstream_status": "closed",
+      "heat": 9.6809,
+      "heat_basis": "Existing automatic discovery snapshot; not recomputed from the partial comment review.",
+      "source_review_seconds": 120.04,
+      "coroperf_gap_assessment": "The absent receiver and wait cause are explicitly described; more caller stitching has no demonstrated benefit.",
+      "reproduction_prerequisites": "Original PD deployment/model and actual message-state capture. A generic asyncio.Event wait would not reproduce the deployment.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "source_archive_sha256": "c41da2f687ae23a908f0c2f1706354e9ddf35b2e6851d178eee119fc48435349",
+      "comment_archive_scope": "First ten comments at most; incomplete for vLLM #22403."
+    },
+    "ai-dynamo--dynamo--17689": {
+      "status": "excluded_after_review",
+      "reason": "The performance report already isolates the raw-token prompt path, renderer thread-pool wait and execution cost, and compares worker-side rendering. It reports no measurable end-to-end request-duration change on that benchmark. Task-specific cost attribution could be future evidence, but the source does not establish a missing owner or caller that CoroPerf must recover. No benchmark or workload ran.",
+      "reason_zh": "性能报告已分离原始 token prompt 路径、renderer 线程池等待与执行成本，并比较 worker 侧渲染；该 benchmark 的端到端请求时长未见可测变化。任务级成本归属可作为未来证据，但来源尚未建立需要 CoroPerf 恢复的所有者或调用者缺口。没有运行 benchmark 或工作负载。",
+      "sources": [
+        "https://github.com/ai-dynamo/dynamo/issues/17689"
+      ],
+      "reviewed_at": "2026-11-25T20:51:29.546197+00:00",
+      "title": "perf(vllm): token requests take vLLM's renderer thread-pool round trip",
+      "upstream_status": "open",
+      "heat": 4.5278,
+      "heat_basis": "Existing automatic discovery snapshot; not recomputed from the partial comment review.",
+      "source_review_seconds": 120.04,
+      "coroperf_gap_assessment": "The current micro-attribution is already supplied; a new CoroPerf owner/latency gap is unproven.",
+      "reproduction_prerequisites": "Version-pinned Dynamo/vLLM renderer and actual returned-operation/thread handoff identities would be required; a generic to_thread benchmark is not equivalent.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "source_archive_sha256": "b1ce4002478c1675d36fa97a88c420d0e8b2abe1a7c34c9ed3663c39184a2df0",
+      "comment_archive_scope": "First ten comments at most; incomplete for vLLM #22403."
+    }
+  },
+  "metadata_only_holds": [
+    {
+      "id": "ai-dynamo--dynamo--18778",
+      "title": "[BUG]: Unauthenticated KVBM Consolidator can exposes LLM tokens and bypasses tenant isolation",
+      "url": "https://github.com/ai-dynamo/dynamo/issues/18778",
+      "repository": "ai-dynamo/dynamo",
+      "observed_at": "2026-11-25T20:01:43+00:00",
+      "risk_signal": "Unauthenticated token exposure / tenant isolation bypass wording",
+      "status": "skipped_review",
+      "risk_signal_source": "title_or_labels",
+      "reason": "Explicit security or memory-lifetime wording; metadata-only hold proposal, unassessed. No issue source setup or execution."
+    },
+    {
+      "id": "pytorch--pytorch--199518",
+      "title": "KleidiAI INT4 packing can use dangling pointers from temporary tensors",
+      "url": "https://github.com/pytorch/pytorch/issues/199518",
+      "repository": "pytorch/pytorch",
+      "observed_at": "2026-11-25T20:02:15+00:00",
+      "risk_signal": "dangling pointers",
+      "status": "skipped_review",
+      "risk_signal_source": "title_or_labels",
+      "reason": "Explicit security or memory-lifetime wording; metadata-only hold proposal, unassessed. No issue source setup or execution."
+    }
+  ],
+  "workloads_executed": 0,
+  "new_verified_cases": 0,
+  "offline_automation_checks_passed": 63
+}

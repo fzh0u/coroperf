@@ -62,3 +62,5 @@ Official database discovery uses PostgreSQL archive relevance/date windows and M
 Regular discovery also covers Reactor, Netty and PostgreSQL JDBC, using framework-specific terms for Mono/Flux, ChannelFuture and LazyCleaner. Preparation failures have their own review status; they are distinct from unavailable external environments and safety holds.
 
 The [Reactor disposal-worker note](evidence/reactor-4478-resource.html) and its [Chinese version](zh-cn/evidence/reactor-4478-resource.html) are supplemental resource provenance outside the selected case catalogue. Rebuild them from `data/reactor-4478-verification.json` with `python3 scripts/build_reactor_resource.py`. They document one execution, the explicit extra factory observer, native versus recovered stacks, and the untested repair direction.
+
+The pending C# runtime #117652 result pages were withdrawn at the user's request. The [skip record](data/dotnet-117652-user-skip.json) preserves their status; earlier local evidence remains historical and no further execution or attribution is planned for this issue.
