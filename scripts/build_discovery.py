@@ -84,17 +84,24 @@ def render(report, language):
         tracker = ''
         if row.get('official_tracker'):
             tracker = f'<br><a href="{e(row["official_tracker"])}">{tr("Official tracker", "官方跟踪器")}</a>'
-        coverage_rows.append(f'<tr><th scope="row"><a href="https://github.com/{e(row["repository"])}">{e(row["repository"])}</a>{tracker}</th>'
+        canonical = row.get('canonical_repository') or row['repository']
+        name = row['repository']
+        if canonical.lower() != name.lower():
+            name += ' → ' + canonical
+        coverage_rows.append(f'<tr><th scope="row"><a href="https://github.com/{e(canonical)}">{e(name)}</a>{tracker}</th>'
                              f'<td>{domain(row["domain"])}</td><td>{row["stars"] if row["stars"] is not None else "—"}</td>'
                              f'<td>{row["unique_candidates"]}</td><td>{outcome}</td></tr>')
     candidate_rows = []
     for row in report['issues']:
         reason = status(row['status'])
         ordinal = row.get('coverage_rank', 10**9)
+        reference = f'{row["repository"]} #{row["number"]}'
+        if row.get('canonical_repository'):
+            reference += ' → ' + row['canonical_repository']
         candidate_rows.append(
             f'<tr data-candidate data-domain="{e(row["domain"])}" data-status="{e(row["status"])}" '
             f'data-state="{e(row["state"])}" data-heat="{row["heat"]}" data-rank="{ordinal}">'
-            f'<th scope="row"><a href="{e(row["url"])}"><span>{e(row["repository"])} #{row["number"]}</span>{e(row["title"])}</a></th>'
+            f'<th scope="row"><a href="{e(row["url"])}"><span>{e(reference)}</span>{e(row["title"])}</a></th>'
             f'<td>{domain(row["domain"])}</td><td>{row["heat"]:.2f}<br>{row["comments"]} {tr("comments", "条评论")} · '
             f'{row["positive_reactions"]} {tr("reactions", "次关注反应")}</td>'
             f'<td>{tr(row["state"], "开放" if row["state"] == "open" else "已关闭")}</td><td>{reason}</td></tr>')
