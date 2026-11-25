@@ -5,6 +5,7 @@ from collections import Counter
 from html import escape as e
 import json
 from pathlib import Path
+from urllib.parse import urlsplit
 from build import document
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,6 +20,15 @@ STATUSES = {
     'external_environment_required': ('External environment required', '依赖外部环境，已跳过'),
     'verified_case': ('Verified diagnostic case', '已验证诊断案例'),
     'component_reproduced': ('Component reproduced · see diagnostic scope', '组件已复现 · 诊断范围见记录'),
+}
+HOLD_REASONS = {
+    'safety_review': ('Safety review pending', '安全影响待复核'),
+    'automatic_review_rejection': ('Automatic approval review rejected further work', '自动审查拒绝继续执行'),
+    'reported_runtime_failure': ('Reported runtime failure requires review', '报告中的运行时故障待复核'),
+    'reported_failure_review': ('Reported failure requires review', '报告中的故障待复核'),
+    'user_request': ('Skipped at user request', '按用户要求跳过'),
+    'platform_unavailable': ('Required platform unavailable', '缺少所需平台'),
+    'temporary_user_deferral': ('Preparation stopped within its time budget', '准备超出时间预算，暂缓'),
 }
 
 
@@ -43,6 +53,22 @@ def skipped_entries(report):
             entries[group] = {**row, 'origin': 'signal', 'urls': [row['url']]}
             urls.add(row['url'])
     return list(entries.values())
+
+
+def review_group(row):
+    reason = row.get('skip_reason')
+    if reason == 'automatic_review_rejection':
+        return 'rejected'
+    if reason in {'user_request', 'platform_unavailable', 'temporary_user_deferral'}:
+        return 'other'
+    return 'manual' if row['origin'] == 'registry' else 'signal'
+
+
+def security_github_entry(row):
+    url = urlsplit(row['url'])
+    parts = url.path.strip('/').split('/')
+    return (url.hostname == 'github.com' and len(parts) == 4 and
+            parts[2] == 'issues' and parts[3].isdigit() and review_group(row) != 'other')
 
 
 def render(report, language):
@@ -107,13 +133,21 @@ def render(report, language):
             f'<td>{tr(row["state"], "开放" if row["state"] == "open" else "已关闭")}</td><td>{reason}</td></tr>')
     deferred_rows = []
     skipped = skipped_entries(report)
-    for row in skipped:
+    security_rows = [row for row in skipped if security_github_entry(row)]
+    review_counts = Counter(review_group(row) for row in security_rows)
+    for row in sorted(skipped, key=lambda row: (review_group(row) != 'rejected', row['origin'] != 'registry')):
         label = row.get('title_zh', row['title']) if zh else row['title']
         origin = tr('Manual review hold', '人工审阅暂缓') if row['origin'] == 'registry' else tr('Automatic review signal', '自动审阅信号')
+        if review_group(row) == 'rejected':
+            origin = tr('Automatic approval review rejected further work', '自动审查拒绝继续执行')
         reason = tr('Reproduction deferred; see the recorded reason.', '已暂缓复现，具体原因见记录。')
         if row.get('prior_local_execution') is True:
             reason = tr('Earlier local attempt recorded; further reproduction remains on hold.',
                         '历史上曾有本地尝试；当前暂缓后续复现。')
+        elif row.get('prior_local_execution') is False:
+            reason += tr(' No local execution recorded.', ' 未执行本地复现。')
+        if row.get('skip_reason'):
+            reason += '<br>' + tr('Recorded hold reason: ', '暂缓原因：') + e(HOLD_REASONS.get(row['skip_reason'], (row['skip_reason'], row['skip_reason']))[zh])
         if row.get('risk_signal'):
             reason += tr(' Wording at detection: ', ' 检出时的匹配词：') + e(row['risk_signal']) + '.'
             if row.get('risk_signal_source') == 'body_error_signature':
@@ -122,8 +156,15 @@ def render(report, language):
             reason += '<br>' + tr('Last observed: ', '最近观测：') + e(row['last_seen'])
         if zh and row.get('review_note_zh'):
             reason += '<br>' + e(row['review_note_zh'])
+        reference = ''
+        if urlsplit(row['url']).hostname == 'github.com':
+            parts = urlsplit(row['url']).path.strip('/').split('/')
+            if len(parts) == 4:
+                reference = f'<span>{e("/".join(parts[:2]))} #{e(parts[3])}</span>'
         links = ' · '.join(f'<a href="{e(url)}">{tr("Related source", "相关来源")} {n}</a>' for n, url in enumerate(row['urls'][1:], 2))
-        deferred_rows.append(f'<tr data-skipped><th scope="row"><a href="{e(row["url"])}">{e(label)}</a>{"<br>" + links if links else ""}</th>'
+        deferred_rows.append(f'<tr data-skipped data-security-github="{str(security_github_entry(row)).lower()}" '
+                             f'data-github="{str(bool(reference)).lower()}" data-review-group="{review_group(row)}">'
+                             f'<th scope="row"><a href="{e(row["url"])}">{reference}{e(label)}</a>{"<br>" + links if links else ""}</th>'
                              f'<td>{origin}<br>{reason}</td></tr>')
     decisions = []
     for identifier, decision in report.get('review_decisions', {}).items():
@@ -206,7 +247,7 @@ def render(report, language):
       <p class="section-copy">{tr('Search hits need an applicability review. Verified diagnoses and measured results remain in the evidence atlas.', '搜索命中需要逐项审阅 coroPerf 适用性。已验证的诊断和实测结果保留在证据目录中。')}</p>
       <p class="section-copy">{e(summary)}</p>
       <p class="section-copy">{tr('Snapshot assembled at', '快照汇总时间')} <time>{e(report['finished_at'])}</time> · <a href="{'../' if zh else ''}data/discovery.json">{tr('Download report', '下载报告')}</a> · <a href="index.html#issues">{tr('Verified cases', '已验证案例')}</a></p>
-      <nav class="research-categories" aria-label="{tr('Progress sections', '进度栏目')}"><ul><li><a href="#coverage">{tr('Coverage', '覆盖')}</a></li><li><a href="#official-trackers">{tr('Official sources', '官方来源')}</a></li><li><a href="#candidates">{tr('GitHub review queue', 'GitHub 审阅队列')}</a></li><li><a href="#skipped">{tr('Skipped entries', '已跳过条目')}</a></li></ul></nav></header>
+      <nav class="research-categories" aria-label="{tr('Progress sections', '进度栏目')}"><ul><li><a href="#coverage">{tr('Coverage', '覆盖')}</a></li><li><a href="#official-trackers">{tr('Official sources', '官方来源')}</a></li><li><a href="#candidates">{tr('GitHub review queue', 'GitHub 审阅队列')}</a></li><li><a href="#security-review">{tr('GitHub safety review', '安全相关 GitHub issue')}</a></li><li><a href="#skipped">{tr('Skipped entries', '已跳过条目')}</a></li></ul></nav></header>
       {progress}
       <section class="block" id="coverage"><h2>{tr('Framework coverage', '框架覆盖')}</h2>
       <p class="section-copy">{tr('Each enabled repository gets a most-discussed window and a recently-updated window, up to 20 issues each. This bounded survey does not cover every issue or external tracker.', '每个启用 Issues 的仓库分别搜索讨论最多和最近更新的窗口，各取最多 20 条。本轮为有界搜索，未覆盖所有 issue 或外部跟踪器。')}</p>
@@ -221,7 +262,15 @@ def render(report, language):
       <div class="discovery-scroll"><table><thead><tr><th>{tr('Issue', '问题')}</th><th>{tr('Domain', '领域')}</th><th>{tr('Heat', '热度')}</th><th>{tr('GitHub state', 'GitHub 状态')}</th><th>{tr('Review status', '审阅状态')}</th></tr></thead><tbody id="discovery-rows">{''.join(candidate_rows)}</tbody></table></div>
       <div class="discovery-pager" hidden><button id="discovery-previous" type="button">{tr('Previous', '上一页')}</button><span id="discovery-page"></span><button id="discovery-next" type="button">{tr('Next', '下一页')}</button></div></section>
       <section class="block" id="skipped"><h2>{tr('Deferred reproductions', '暂缓复现与待确认条目')}</h2><p class="section-copy">{tr(f'{len(skipped)} displayed review entries or explicit bug groups. Reasons include user requests, environment limits, and reported failure or resource signals. These are reproduction-routing records, not confirmed defect or vulnerability findings. Holds persist across runs, including entries absent from current windows. Replies with the same explicit bug number share one row.', f'展示 {len(skipped)} 条审阅记录或明确 bug 编号组。原因包括用户要求、环境限制，以及报告中的故障或资源线索。这些是复现任务分流记录，不代表已确认缺陷或漏洞；人工暂缓与自动信号跨轮次保留，包括未出现在本轮窗口的条目。同一明确 bug 编号的回复合并展示。')}</p>
-      <div class="discovery-scroll"><table><thead><tr><th>{tr('Entry', '条目')}</th><th>{tr('Action', '处理')}</th></tr></thead><tbody>{''.join(deferred_rows)}</tbody></table></div></section>
+      <div id="security-review"><h3>{tr('GitHub issues held for safety review', '安全相关 GitHub issue')}</h3>
+      <p class="section-copy">{tr(f'{len(security_rows)} unique GitHub issues: {review_counts["manual"]} manual holds, {review_counts["rejected"]} automatic approval review holds and {review_counts["signal"]} automatic wording signals. Security impact remains unassessed. Ordinary user skips and environment or time-budget deferrals are available under All deferred entries.', f'{len(security_rows)} 个去重 GitHub issue：人工暂缓 {review_counts["manual"]} 个、自动审查拒绝 {review_counts["rejected"]} 个、自动词语信号 {review_counts["signal"]} 个。安全影响仍待评估。单纯按用户要求跳过、环境或时间预算暂缓的条目，可切换到“全部暂缓条目”查看。')}</p>
+      <div class="discovery-controls review-controls">
+      <div><label for="review-search">{tr('Search held issues', '搜索暂缓 issue')}</label><input id="review-search" type="search" placeholder="{tr('Repository, issue number, title or reason', '仓库、issue 编号、标题或原因')}"></div>
+      <div><label for="review-scope">{tr('Scope', '范围')}</label><select id="review-scope"><option value="security">{tr('GitHub safety review', '安全相关 GitHub issue')}</option><option value="github">{tr('All deferred GitHub issues', '全部暂缓 GitHub issue')}</option><option value="all">{tr('All deferred entries', '全部暂缓条目')}</option></select></div>
+      <div><label for="review-group">{tr('Hold source', '暂缓来源')}</label><select id="review-group"><option value="">{tr('All sources', '全部来源')}</option><option value="rejected">{tr('Automatic approval review', '自动审查拒绝')}</option><option value="manual">{tr('Manual review', '人工审阅')}</option><option value="signal">{tr('Automatic wording signal', '自动词语信号')}</option><option value="other">{tr('User / environment / time budget', '用户要求／环境／时间预算')}</option></select></div></div>
+      <p id="review-count" role="status" aria-live="polite">{tr('Enable JavaScript to filter this complete list.', '启用 JavaScript 后可筛选下方完整列表。')}</p>
+      <div class="discovery-scroll"><table><thead><tr><th>{tr('Entry', '条目')}</th><th>{tr('Hold reason and execution history', '暂缓原因与执行记录')}</th></tr></thead><tbody id="review-rows">{''.join(deferred_rows)}</tbody></table></div>
+      <div class="discovery-pager review-pager" hidden><button id="review-previous" type="button">{tr('Previous', '上一页')}</button><span id="review-page"></span><button id="review-next" type="button">{tr('Next', '下一页')}</button></div></div></section>
       <section class="block"><h2>{tr('Review decisions', '逐项审阅结论')}</h2><ul>{''.join(decisions)}</ul></section>
       {supplemental}
       <section class="block"><h2>{tr('Collection failures', '采集失败')}</h2>{'<ul>' + ''.join(failure_rows) + '</ul>' if failure_rows else '<p>' + tr('No request failures in this run.', '本轮没有请求失败。') + '</p>'}</section>

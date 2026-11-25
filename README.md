@@ -53,6 +53,8 @@ Instrument Serif is distributed under the [SIL Open Font License](assets/fonts/O
 
 [Search progress](discovery.html) and [搜索进度](zh-cn/discovery.html) show the separate, unverified discovery queue, framework coverage, official tracker windows, skipped review entries, and collection errors. Candidate counts do not change the verified evidence catalog. `scripts/build_discovery.py` renders both pages from `data/discovery.json`. In the research workspace, `research/github-issue-discovery/automation/README.md` describes the read-only scanner and two-hour report service.
 
+[GitHub safety review](discovery.html#security-review) and [安全相关 GitHub issue](zh-cn/discovery.html#security-review) collect the persistent manual holds, automatic approval review rejections, and wording signals. Search by repository, issue number, title, or recorded reason; filter by hold source. Each row links to the original issue and preserves known local execution history. Signals and review rejections do not establish a security vulnerability. User-requested skips and environment or time-budget deferrals remain available under **All deferred entries**.
+
 The classification CSV uses `upstream_status` for the issue state, covering GitHub and Apache Jira. Its issue URL identifies the tracker.
 
 Official database discovery uses PostgreSQL archive relevance/date windows and MySQL Bugs relevance/update windows. The discovery page counts mail messages separately from approximate subject groups, displays native MySQL categories and states, and keeps these metrics separate from GitHub heat. Source windows and their retrieval times are included in the report download.

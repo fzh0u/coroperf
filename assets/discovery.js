@@ -30,3 +30,39 @@
   document.querySelector('.discovery-pager').hidden = false;
   update();
 })();
+
+(() => {
+  const container = document.getElementById('review-rows');
+  if (!container) return;
+  const rows = Array.from(container.querySelectorAll('[data-skipped]'));
+  const zh = document.documentElement.lang === 'zh-CN';
+  const search = document.getElementById('review-search');
+  const scope = document.getElementById('review-scope');
+  const group = document.getElementById('review-group');
+  const count = document.getElementById('review-count');
+  const previous = document.getElementById('review-previous');
+  const next = document.getElementById('review-next');
+  const pageLabel = document.getElementById('review-page');
+  const texts = new Map(rows.map(row => [row, row.textContent.toLocaleLowerCase()]));
+  const size = 20;
+  let page = 0;
+  function update() {
+    const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
+    const filtered = rows.filter(row => terms.every(term => texts.get(row).includes(term)) &&
+      (!group.value || row.dataset.reviewGroup === group.value) &&
+      (scope.value === 'all' || (scope.value === 'github' ? row.dataset.github === 'true' : row.dataset.securityGithub === 'true')));
+    const pages = Math.max(1, Math.ceil(filtered.length / size));
+    page = Math.min(page, pages - 1);
+    rows.forEach(row => { row.hidden = true; });
+    filtered.slice(page * size, (page + 1) * size).forEach(row => { row.hidden = false; container.appendChild(row); });
+    count.textContent = zh ? `${filtered.length} 条匹配；完整暂缓记录 ${rows.length} 条` : `${filtered.length} matches; ${rows.length} total deferred entries`;
+    pageLabel.textContent = zh ? `第 ${page + 1} / ${pages} 页` : `Page ${page + 1} of ${pages}`;
+    previous.disabled = page === 0;
+    next.disabled = page + 1 === pages;
+  }
+  [search, scope, group].forEach(control => control.addEventListener('input', () => { page = 0; update(); }));
+  previous.addEventListener('click', () => { page--; update(); });
+  next.addEventListener('click', () => { page++; update(); });
+  document.querySelector('.review-pager').hidden = false;
+  update();
+})();
