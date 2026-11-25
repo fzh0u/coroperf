@@ -2621,5 +2621,24 @@
     ],
     "en": "Both cancelled bridge Futures conceal the same pending cleanup path. The recorded Task-to-Future object relationship connects each Task snapshot to the original cross-thread submitter.",
     "zh": "两个外层 Future 已取消，内层 Task 都停在同一段清理路径。通过记录下来的 Task 与 Future 对象关系，各自的清理快照可以接回真正的跨线程提交者。"
+  },
+  "apache--flink--flink-38180": {
+    "contribution_kind": "caller_recovery",
+    "language": "Java",
+    "kind": "debugging",
+    "fix": null,
+    "case_file": "research/github-issue-discovery/flink-38180/case.json",
+    "records": [
+      [
+        "0",
+        "2"
+      ],
+      [
+        "1",
+        "3"
+      ]
+    ],
+    "en": "Connect the actual Task receiver at the original failure to its recorded constructor, recovering two historical application entries missing from the physical exception and JFR thread-start stacks.",
+    "zh": "用原始异常栈中的真实 Task 接收对象接回构造记录，恢复物理异常栈和 JFR 线程启动栈缺少的两个历史应用入口。"
   }
 }

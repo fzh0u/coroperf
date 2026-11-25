@@ -43,7 +43,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(29)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(22)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(19)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(33)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(30)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(22)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(19)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(33)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -325,13 +325,6 @@
             </th>
             <td class="row-status"><a class="state-pill state-closed" href="https://github.com/pytorch/pytorch/issues/92294">已关闭</a><span class="fix-label">修复待核实</span></td>
           </tr>
-          <tr id="followup-apache--flink--flink-38180">
-            <th scope="row">
-              <a href="https://issues.apache.org/jira/browse/FLINK-38180"><span>FLINK-38180</span>Flink FLINK-38180，按用户要求跳过</a>
-              <small>因安全限制暂缓复现跟进</small>
-            </th>
-            <td class="row-status"><a class="state-pill state-closed" href="https://issues.apache.org/jira/browse/FLINK-38180">已关闭</a><span class="fix-label">修复待核实</span></td>
-          </tr>
           <tr id="followup-duckdb--duckdb--22436">
             <th scope="row">
               <a href="https://github.com/duckdb/duckdb/issues/22436"><span>duckdb/duckdb #22436</span>DuckDB Windows fast-fail 报告，已跳过复现</a>
@@ -374,13 +367,6 @@
             </th>
             <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/psycopg/psycopg/issues/1208">待核对</a><span class="fix-label">修复待核实</span></td>
           </tr>
-          <tr id="followup-apache--spark--spark-54279">
-            <th scope="row">
-              <a href="https://issues.apache.org/jira/browse/SPARK-54279"><span>SPARK-54279</span>Spark SPARK-54279，按用户要求跳过</a>
-              <small>因安全限制暂缓复现跟进</small>
-            </th>
-            <td class="row-status"><a class="state-pill state-unconfirmed" href="https://issues.apache.org/jira/browse/SPARK-54279">待核对</a><span class="fix-label">修复待核实</span></td>
-          </tr>
           <tr id="followup-apache--spark--spark-56720">
             <th scope="row">
               <a href="https://issues.apache.org/jira/browse/SPARK-56720"><span>SPARK-56720</span>Spark SPARK-56720，已跳过复现</a>
@@ -422,13 +408,20 @@
               <small>因安全限制暂缓复现跟进</small>
             </th>
             <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/tikv/tikv/issues/20204">待核对</a><span class="fix-label">修复待核实</span></td>
+          </tr>
+          <tr id="followup-apache--kafka--kafka-20860">
+            <th scope="row">
+              <a href="https://issues.apache.org/jira/browse/KAFKA-20860"><span>KAFKA-20860</span>Kafka KAFKA-20860，已跳过复现</a>
+              <small>因安全限制暂缓复现跟进</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-unconfirmed" href="https://issues.apache.org/jira/browse/KAFKA-20860">待核对</a><span class="fix-label">修复待核实</span></td>
           </tr></tbody>
         </table>
       </div>
     </section>
 
     <section class="block" id="caller_recovery" aria-labelledby="caller_recovery-title">
-      <div class="section-head"><h2 id="caller_recovery-title">补回调用来源</h2><span class="case-kind">29 个案例</span></div>
+      <div class="section-head"><h2 id="caller_recovery-title">补回调用来源</h2><span class="case-kind">30 个案例</span></div>
       <p class="section-copy">补回异常栈、任务快照或原生栈中缺失的应用入口或调用路径。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="caller_recovery-title">
@@ -578,6 +571,11 @@
         <th scope="row"><a href="evidence/chriskohlhoff--asio--1239.html#call-stack"><span>chriskohlhoff/asio #1239</span>找回 detached spawn 之前的调用者</a></th>
         <td><p>带符号的 GDB 显示调度器调用栈，Asio 的 awaiter 链止于 detached 边界。CoroPerf 从去符号的机器码、寄存器和栈字节确定定时器运行的是哪个协程，再沿两段创建栈接回原始入口。</p></td>
         <td class="row-status"><a class="state-pill state-open" href="https://github.com/chriskohlhoff/asio/issues/1239">开放</a><span class="fix-label">修复待核实</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/apache--flink--flink-38180.html#call-stack"><span>FLINK-38180</span>Flink 清理掩盖原始失败后，出错 Task 最初由谁创建？</a></th>
+        <td><p>用原始异常栈中的真实 Task 接收对象接回构造记录，恢复物理异常栈和 JFR 线程启动栈缺少的两个历史应用入口。</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://issues.apache.org/jira/browse/FLINK-38180">已关闭</a><span class="fix-label">修复待核实</span></td>
       </tr></tbody>
         </table>
       </div>

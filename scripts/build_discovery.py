@@ -8,15 +8,17 @@ from pathlib import Path
 from build import document
 
 ROOT = Path(__file__).resolve().parents[1]
-DOMAINS = {'ML systems': '机器学习系统', 'Database': '数据库', 'Distributed systems': '分布式系统'}
+DOMAINS = {'ML systems': '机器学习系统', 'Database': '数据库', 'Distributed systems': '分布式系统',
+           'Language runtimes': '语言运行时与异步库'}
 STATUSES = {
     'needs_review': ('Awaiting applicability review', '待审阅适用性'),
     'already_catalogued': ('Existing research entry', '已有研究记录'),
-    'skipped_review': ('Skipped · safety review', '已跳过 · 待安全审阅'),
+    'skipped_review': ('Reproduction deferred · review pending', '暂缓复现 · 待确认'),
     'excluded_after_review': ('Excluded after review', '审阅后排除'),
     'no_async_signal': ('No concrete async keyword', '未检出具体异步关键词'),
     'external_environment_required': ('External environment required', '依赖外部环境，已跳过'),
     'verified_case': ('Verified diagnostic case', '已验证诊断案例'),
+    'component_reproduced': ('Component reproduced · see diagnostic scope', '组件已复现 · 诊断范围见记录'),
 }
 
 
@@ -101,10 +103,10 @@ def render(report, language):
     for row in skipped:
         label = row.get('title_zh', row['title']) if zh else row['title']
         origin = tr('Manual review hold', '人工审阅暂缓') if row['origin'] == 'registry' else tr('Automatic review signal', '自动审阅信号')
-        reason = tr('Reproduction skipped; safety impact unassessed.', '已跳过复现；安全影响尚未评估。')
+        reason = tr('Reproduction deferred; see the recorded reason.', '已暂缓复现，具体原因见记录。')
         if row.get('prior_local_execution') is True:
-            reason = tr('Earlier local attempt recorded; further reproduction remains on hold. Safety impact unassessed.',
-                        '历史上曾有本地尝试；当前暂缓后续复现，安全影响尚未评估。')
+            reason = tr('Earlier local attempt recorded; further reproduction remains on hold.',
+                        '历史上曾有本地尝试；当前暂缓后续复现。')
         if row.get('risk_signal'):
             reason += tr(' Wording at detection: ', ' 检出时的匹配词：') + e(row['risk_signal']) + '.'
             if row.get('risk_signal_source') == 'body_error_signature':
@@ -204,14 +206,14 @@ def render(report, language):
       <div class="discovery-scroll"><table><thead><tr><th>{tr('Repository', '仓库')}</th><th>{tr('Domain', '领域')}</th><th>Stars</th><th>{tr('Hits', '命中')}</th><th>{tr('Coverage evidence', '覆盖证据')}</th></tr></thead><tbody>{''.join(coverage_rows)}</tbody></table></div></section>
       <section class="block" id="official-trackers"><h2>{tr('Official tracker searches', '官方跟踪器搜索')}</h2><p class="section-copy">{tr('Apache Jira uses votes, recent updates and a title-focused async window. PostgreSQL archive windows use relevance and date for async messages from the past year. MySQL Bugs uses relevance and updated dates for asynchronous reports. Each window collects up to 20 entries. These metrics stay separate from GitHub reactions; every entry needs applicability review.', 'Apache Jira 按投票、最近更新及标题聚焦异步关键词搜索；PostgreSQL 档案按相关性和日期检索近一年含 async 的邮件；MySQL Bugs 按相关性与更新日期检索 asynchronous 报告。每窗最多 20 条。各来源指标与 GitHub 关注反应分开；每条仍需审阅适用性。')}</p>{''.join(official_sections)}</section>
       <section class="block" id="candidates"><h2>{tr('Review queue', '审阅队列')}</h2>
-      <p class="section-copy">{tr('Heat uses comments, positive reactions and repository stars. Coverage order rotates domains and takes one issue per repository in each round. Search hits are never counted as CoroPerf successes.', '热度综合评论数、关注反应和仓库 stars。覆盖排序轮转三个领域，每轮每个仓库最多选一条。搜索命中不计为 coroPerf 成功案例。')}</p>
+      <p class="section-copy">{tr('Heat uses comments, positive reactions and repository stars. Coverage order rotates domains and takes one issue per repository in each round. Search hits are never counted as CoroPerf successes.', '热度综合评论数、关注反应和仓库 stars。覆盖排序轮转各领域，每轮每个仓库最多选一条。搜索命中不计为 coroPerf 成功案例。')}</p>
       <details><summary>{tr('Ranking method', '排序方法')}</summary><p><code>{e(report['heat_formula'])}</code></p></details>
       <p class="section-copy">{tr('Each repository keeps its discussion head and recent-update windows. When more results exist, one deeper discussion page rotates every two hours, within the first 1,000 searchable results. Resuming a run keeps its saved page plan. Live rankings can change, so this is not exhaustive coverage.', '每个仓库保留热度首页和最近更新窗口；有更多结果时，每两小时轮换一个更深的热度页，范围限于可搜索的前 1,000 条。恢复同一轮任务沿用已保存的页码计划。实时排名会变化，因此不代表穷尽覆盖。')}</p>
       <div class="discovery-controls"><div><label for="discovery-search">{tr('Search', '搜索')}</label><input id="discovery-search" type="search" placeholder="{tr('Repository, title or issue number', '仓库、标题或 issue 编号')}"></div>{''.join(selects)}</div>
       <p id="discovery-count" role="status" aria-live="polite">{len(report['issues'])} {tr('search hits', '条搜索命中')}</p>
       <div class="discovery-scroll"><table><thead><tr><th>{tr('Issue', '问题')}</th><th>{tr('Domain', '领域')}</th><th>{tr('Heat', '热度')}</th><th>{tr('GitHub state', 'GitHub 状态')}</th><th>{tr('Review status', '审阅状态')}</th></tr></thead><tbody id="discovery-rows">{''.join(candidate_rows)}</tbody></table></div>
       <div class="discovery-pager" hidden><button id="discovery-previous" type="button">{tr('Previous', '上一页')}</button><span id="discovery-page"></span><button id="discovery-next" type="button">{tr('Next', '下一页')}</button></div></section>
-      <section class="block" id="skipped"><h2>{tr('Skipped for review', '已跳过，待安全审阅')}</h2><p class="section-copy">{tr(f'{len(skipped)} displayed review entries or explicit bug groups. Manual holds and automatic wording signals persist across runs, including entries absent from current windows. Security impact is unassessed. A wording signal is not a vulnerability finding. Replies with the same explicit bug number share one row.', f'展示 {len(skipped)} 条审阅记录或明确 bug 编号组。人工暂缓记录和自动词语信号跨轮次保留，包括未出现在本轮窗口的条目。安全影响尚未评估，词语信号不代表已确认漏洞。同一明确 bug 编号的回复合并展示。')}</p>
+      <section class="block" id="skipped"><h2>{tr('Deferred reproductions', '暂缓复现与待确认条目')}</h2><p class="section-copy">{tr(f'{len(skipped)} displayed review entries or explicit bug groups. Reasons include user requests, environment limits, and reported failure or resource signals. These are reproduction-routing records, not confirmed defect or vulnerability findings. Holds persist across runs, including entries absent from current windows. Replies with the same explicit bug number share one row.', f'展示 {len(skipped)} 条审阅记录或明确 bug 编号组。原因包括用户要求、环境限制，以及报告中的故障或资源线索。这些是复现任务分流记录，不代表已确认缺陷或漏洞；人工暂缓与自动信号跨轮次保留，包括未出现在本轮窗口的条目。同一明确 bug 编号的回复合并展示。')}</p>
       <div class="discovery-scroll"><table><thead><tr><th>{tr('Entry', '条目')}</th><th>{tr('Action', '处理')}</th></tr></thead><tbody>{''.join(deferred_rows)}</tbody></table></div></section>
       <section class="block"><h2>{tr('Review decisions', '逐项审阅结论')}</h2><ul>{''.join(decisions)}</ul></section>
       {supplemental}

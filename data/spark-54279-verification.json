@@ -1,0 +1,402 @@
+{
+  "checked_at": "2026-11-25T12:32:49.719519+00:00",
+  "issue_url": "https://issues.apache.org/jira/browse/SPARK-54279",
+  "verification": {
+    "verified": true,
+    "reproduction_runs": 1,
+    "spark_version": "4.1.1",
+    "query_rows": 10,
+    "metrics_after_release": {
+      "minimum": 0,
+      "maximum": 9,
+      "total": 45
+    },
+    "metrics_unavailable_while_each_listener_waited": true,
+    "historical_registration_entries_verified": 2,
+    "same_physical_callback_stacks": true,
+    "resource_relations_are_creation_relations": false,
+    "observer_identity": "Java reference equality through IdentityHashMap; native identity hashes used only as an independent post-analysis oracle",
+    "coroperf_bin_sha256": "2762832bdaaf6302b6fbee873544e5f4750d8e76c24b0ac786be5c3425e19e5a",
+    "scope": "Released classic Observation component with a bounded local query and controlled listener extension; not a Spark Connect deployment or a fixed-version comparison.",
+    "facts": [
+      {
+        "sample": "2",
+        "listener_reference_token": "1",
+        "historical_registration_entry": "registerImport",
+        "native_callback_stack_contains_registration_entry": false,
+        "independent_native_hash_oracle_matches": true
+      },
+      {
+        "sample": "3",
+        "listener_reference_token": "2",
+        "historical_registration_entry": "registerRefresh",
+        "native_callback_stack_contains_registration_entry": false,
+        "independent_native_hash_oracle_matches": true
+      }
+    ]
+  },
+  "capture": {
+    "schema_version": 1,
+    "language": "java",
+    "frame_order": "leaf_to_root",
+    "segments": [
+      {
+        "id": "0",
+        "capture_reason": "register",
+        "process_id": 3661258,
+        "thread_id": 1,
+        "coroutine_id": null,
+        "frames": [
+          {
+            "function": "java.lang.Thread.getStackTrace",
+            "file": "Thread.java",
+            "line": 1619
+          },
+          {
+            "function": "NativeObservationReplay.observe",
+            "file": "NativeObservationReplay.java",
+            "line": 21
+          },
+          {
+            "function": "NativeObservationReplay.sharedRegister",
+            "file": "NativeObservationReplay.java",
+            "line": 55
+          },
+          {
+            "function": "NativeObservationReplay.registerImport",
+            "file": "NativeObservationReplay.java",
+            "line": 58
+          },
+          {
+            "function": "NativeObservationReplay.main",
+            "file": "NativeObservationReplay.java",
+            "line": 88
+          }
+        ],
+        "observation": {
+          "listener_reference_token": "1",
+          "native_identity_hash": "596512129"
+        }
+      },
+      {
+        "id": "1",
+        "capture_reason": "register",
+        "process_id": 3661258,
+        "thread_id": 1,
+        "coroutine_id": null,
+        "frames": [
+          {
+            "function": "java.lang.Thread.getStackTrace",
+            "file": "Thread.java",
+            "line": 1619
+          },
+          {
+            "function": "NativeObservationReplay.observe",
+            "file": "NativeObservationReplay.java",
+            "line": 21
+          },
+          {
+            "function": "NativeObservationReplay.sharedRegister",
+            "file": "NativeObservationReplay.java",
+            "line": 55
+          },
+          {
+            "function": "NativeObservationReplay.registerRefresh",
+            "file": "NativeObservationReplay.java",
+            "line": 61
+          },
+          {
+            "function": "NativeObservationReplay.main",
+            "file": "NativeObservationReplay.java",
+            "line": 88
+          }
+        ],
+        "observation": {
+          "listener_reference_token": "2",
+          "native_identity_hash": "824318946"
+        }
+      },
+      {
+        "id": "2",
+        "capture_reason": "sample",
+        "process_id": 3661258,
+        "thread_id": 43,
+        "coroutine_id": null,
+        "frames": [
+          {
+            "function": "java.lang.Thread.getStackTrace",
+            "file": "Thread.java",
+            "line": 1619
+          },
+          {
+            "function": "NativeObservationReplay.observe",
+            "file": "NativeObservationReplay.java",
+            "line": 21
+          },
+          {
+            "function": "NativeObservationReplay.callbackSample",
+            "file": "NativeObservationReplay.java",
+            "line": 52
+          },
+          {
+            "function": "NativeObservationReplay$SlowListener.onSuccess",
+            "file": "NativeObservationReplay.java",
+            "line": 35
+          },
+          {
+            "function": "org.apache.spark.sql.util.ExecutionListenerBus.doPostEvent",
+            "file": "QueryExecutionListener.scala",
+            "line": 173
+          },
+          {
+            "function": "org.apache.spark.sql.util.ExecutionListenerBus.doPostEvent",
+            "file": "QueryExecutionListener.scala",
+            "line": 143
+          },
+          {
+            "function": "org.apache.spark.util.ListenerBus.postToAll",
+            "file": "ListenerBus.scala",
+            "line": 118
+          },
+          {
+            "function": "org.apache.spark.util.ListenerBus.postToAll$",
+            "file": "ListenerBus.scala",
+            "line": 102
+          },
+          {
+            "function": "org.apache.spark.sql.util.ExecutionListenerBus.postToAll",
+            "file": "QueryExecutionListener.scala",
+            "line": 143
+          },
+          {
+            "function": "org.apache.spark.sql.util.ExecutionListenerBus.onOtherEvent",
+            "file": "QueryExecutionListener.scala",
+            "line": 155
+          },
+          {
+            "function": "org.apache.spark.scheduler.SparkListenerBus.doPostEvent",
+            "file": "SparkListenerBus.scala",
+            "line": 100
+          },
+          {
+            "function": "org.apache.spark.scheduler.SparkListenerBus.doPostEvent$",
+            "file": "SparkListenerBus.scala",
+            "line": 28
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue.doPostEvent",
+            "file": "AsyncEventQueue.scala",
+            "line": 38
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue.doPostEvent",
+            "file": "AsyncEventQueue.scala",
+            "line": 38
+          },
+          {
+            "function": "org.apache.spark.util.ListenerBus.postToAll",
+            "file": "ListenerBus.scala",
+            "line": 118
+          },
+          {
+            "function": "org.apache.spark.util.ListenerBus.postToAll$",
+            "file": "ListenerBus.scala",
+            "line": 102
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue.super$postToAll",
+            "file": "AsyncEventQueue.scala",
+            "line": 106
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue.$anonfun$dispatch$1",
+            "file": "AsyncEventQueue.scala",
+            "line": 106
+          },
+          {
+            "function": "scala.runtime.java8.JFunction0$mcJ$sp.apply",
+            "file": "JFunction0$mcJ$sp.scala",
+            "line": 17
+          },
+          {
+            "function": "scala.util.DynamicVariable.withValue",
+            "file": "DynamicVariable.scala",
+            "line": 59
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue.org$apache$spark$scheduler$AsyncEventQueue$$dispatch",
+            "file": "AsyncEventQueue.scala",
+            "line": 101
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue$$anon$2.$anonfun$run$1",
+            "file": "AsyncEventQueue.scala",
+            "line": 97
+          },
+          {
+            "function": "org.apache.spark.util.Utils$.tryOrStopSparkContext",
+            "file": "Utils.scala",
+            "line": 1293
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue$$anon$2.run",
+            "file": "AsyncEventQueue.scala",
+            "line": 97
+          }
+        ],
+        "observation": {
+          "listener_reference_token": "1",
+          "native_identity_hash": "596512129"
+        }
+      },
+      {
+        "id": "3",
+        "capture_reason": "sample",
+        "process_id": 3661258,
+        "thread_id": 43,
+        "coroutine_id": null,
+        "frames": [
+          {
+            "function": "java.lang.Thread.getStackTrace",
+            "file": "Thread.java",
+            "line": 1619
+          },
+          {
+            "function": "NativeObservationReplay.observe",
+            "file": "NativeObservationReplay.java",
+            "line": 21
+          },
+          {
+            "function": "NativeObservationReplay.callbackSample",
+            "file": "NativeObservationReplay.java",
+            "line": 52
+          },
+          {
+            "function": "NativeObservationReplay$SlowListener.onSuccess",
+            "file": "NativeObservationReplay.java",
+            "line": 35
+          },
+          {
+            "function": "org.apache.spark.sql.util.ExecutionListenerBus.doPostEvent",
+            "file": "QueryExecutionListener.scala",
+            "line": 173
+          },
+          {
+            "function": "org.apache.spark.sql.util.ExecutionListenerBus.doPostEvent",
+            "file": "QueryExecutionListener.scala",
+            "line": 143
+          },
+          {
+            "function": "org.apache.spark.util.ListenerBus.postToAll",
+            "file": "ListenerBus.scala",
+            "line": 118
+          },
+          {
+            "function": "org.apache.spark.util.ListenerBus.postToAll$",
+            "file": "ListenerBus.scala",
+            "line": 102
+          },
+          {
+            "function": "org.apache.spark.sql.util.ExecutionListenerBus.postToAll",
+            "file": "QueryExecutionListener.scala",
+            "line": 143
+          },
+          {
+            "function": "org.apache.spark.sql.util.ExecutionListenerBus.onOtherEvent",
+            "file": "QueryExecutionListener.scala",
+            "line": 155
+          },
+          {
+            "function": "org.apache.spark.scheduler.SparkListenerBus.doPostEvent",
+            "file": "SparkListenerBus.scala",
+            "line": 100
+          },
+          {
+            "function": "org.apache.spark.scheduler.SparkListenerBus.doPostEvent$",
+            "file": "SparkListenerBus.scala",
+            "line": 28
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue.doPostEvent",
+            "file": "AsyncEventQueue.scala",
+            "line": 38
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue.doPostEvent",
+            "file": "AsyncEventQueue.scala",
+            "line": 38
+          },
+          {
+            "function": "org.apache.spark.util.ListenerBus.postToAll",
+            "file": "ListenerBus.scala",
+            "line": 118
+          },
+          {
+            "function": "org.apache.spark.util.ListenerBus.postToAll$",
+            "file": "ListenerBus.scala",
+            "line": 102
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue.super$postToAll",
+            "file": "AsyncEventQueue.scala",
+            "line": 106
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue.$anonfun$dispatch$1",
+            "file": "AsyncEventQueue.scala",
+            "line": 106
+          },
+          {
+            "function": "scala.runtime.java8.JFunction0$mcJ$sp.apply",
+            "file": "JFunction0$mcJ$sp.scala",
+            "line": 17
+          },
+          {
+            "function": "scala.util.DynamicVariable.withValue",
+            "file": "DynamicVariable.scala",
+            "line": 59
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue.org$apache$spark$scheduler$AsyncEventQueue$$dispatch",
+            "file": "AsyncEventQueue.scala",
+            "line": 101
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue$$anon$2.$anonfun$run$1",
+            "file": "AsyncEventQueue.scala",
+            "line": 97
+          },
+          {
+            "function": "org.apache.spark.util.Utils$.tryOrStopSparkContext",
+            "file": "Utils.scala",
+            "line": 1293
+          },
+          {
+            "function": "org.apache.spark.scheduler.AsyncEventQueue$$anon$2.run",
+            "file": "AsyncEventQueue.scala",
+            "line": 97
+          }
+        ],
+        "observation": {
+          "listener_reference_token": "2",
+          "native_identity_hash": "824318946"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "0",
+        "to": "2",
+        "kind": "listener_registration_to_callback",
+        "evidence": "same Java reference identity in a single live JVM, recorded through IdentityHashMap; registration completed before callback"
+      },
+      {
+        "from": "1",
+        "to": "3",
+        "kind": "listener_registration_to_callback",
+        "evidence": "same Java reference identity in a single live JVM, recorded through IdentityHashMap; registration completed before callback"
+      }
+    ]
+  },
+  "conclusion": "The released classic Observation component delays metrics while controlled listener callbacks wait. Exact live listener reference identity recovers the historical registration entry. These edges describe resource registration and callbacks, not coroutine creation; this record is outside the selected creation-join catalogue."
+}

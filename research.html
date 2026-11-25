@@ -43,7 +43,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(29)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(30)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -325,13 +325,6 @@
             </th>
             <td class="row-status"><a class="state-pill state-closed" href="https://github.com/pytorch/pytorch/issues/92294">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
           </tr>
-          <tr id="followup-apache--flink--flink-38180">
-            <th scope="row">
-              <a href="https://issues.apache.org/jira/browse/FLINK-38180"><span>FLINK-38180</span>Flink FLINK-38180 skipped at user request</a>
-              <small>Reproduction follow-up paused under safety restrictions</small>
-            </th>
-            <td class="row-status"><a class="state-pill state-closed" href="https://issues.apache.org/jira/browse/FLINK-38180">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
-          </tr>
           <tr id="followup-duckdb--duckdb--22436">
             <th scope="row">
               <a href="https://github.com/duckdb/duckdb/issues/22436"><span>duckdb/duckdb #22436</span>DuckDB Windows fast-fail workload held</a>
@@ -374,13 +367,6 @@
             </th>
             <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/psycopg/psycopg/issues/1208">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
           </tr>
-          <tr id="followup-apache--spark--spark-54279">
-            <th scope="row">
-              <a href="https://issues.apache.org/jira/browse/SPARK-54279"><span>SPARK-54279</span>Spark SPARK-54279 skipped at user request</a>
-              <small>Reproduction follow-up paused under safety restrictions</small>
-            </th>
-            <td class="row-status"><a class="state-pill state-unconfirmed" href="https://issues.apache.org/jira/browse/SPARK-54279">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
-          </tr>
           <tr id="followup-apache--spark--spark-56720">
             <th scope="row">
               <a href="https://issues.apache.org/jira/browse/SPARK-56720"><span>SPARK-56720</span>Spark SPARK-56720 workload held</a>
@@ -422,13 +408,20 @@
               <small>Reproduction follow-up paused under safety restrictions</small>
             </th>
             <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/tikv/tikv/issues/20204">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
+          </tr>
+          <tr id="followup-apache--kafka--kafka-20860">
+            <th scope="row">
+              <a href="https://issues.apache.org/jira/browse/KAFKA-20860"><span>KAFKA-20860</span>Kafka KAFKA-20860 workload held</a>
+              <small>Reproduction follow-up paused under safety restrictions</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-unconfirmed" href="https://issues.apache.org/jira/browse/KAFKA-20860">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
           </tr></tbody>
         </table>
       </div>
     </section>
 
     <section class="block" id="caller_recovery" aria-labelledby="caller_recovery-title">
-      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">29 issues</span></div>
+      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">30 issues</span></div>
       <p class="section-copy">Recover an application entry or call path missing from a traceback, live snapshot, or native stack.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="caller_recovery-title">
@@ -578,6 +571,11 @@
         <th scope="row"><a href="evidence/chriskohlhoff--asio--1239.html#call-stack"><span>chriskohlhoff/asio #1239</span>Recovering the caller beyond a detached spawn</a></th>
         <td><p>Symbolized GDB shows the scheduler stack, and Asio's live awaiter chain stops at the detached boundary. From stripped machine code, register values and stack bytes, CoroPerf identifies the timer's active coroutine, then connects it through two recorded creation stacks to the original launcher.</p></td>
         <td class="row-status"><a class="state-pill state-open" href="https://github.com/chriskohlhoff/asio/issues/1239">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/apache--flink--flink-38180.html#call-stack"><span>FLINK-38180</span>Which historical Task creator belongs to the failure masked during Flink cleanup?</a></th>
+        <td><p>Connect the actual Task receiver at the original failure to its recorded constructor, recovering two historical application entries missing from the physical exception and JFR thread-start stacks.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://issues.apache.org/jira/browse/FLINK-38180">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
       </tr></tbody>
         </table>
       </div>

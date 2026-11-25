@@ -1,0 +1,211 @@
+{
+  "checked_at": "2026-11-25T12:32:49.719519+00:00",
+  "scope": "Coroutine/performance debugging and issue reproduction",
+  "selected_verified_cases": 127,
+  "new_selected_case_ids": [
+    "apache--flink--flink-38180"
+  ],
+  "mainstream_language_case_counts": {
+    "C++": 5,
+    "Go": 4,
+    "Java": 5,
+    "Rust": 14,
+    "Python": 69,
+    "C#": 4
+  },
+  "new_regular_search_repositories": [
+    "golang/go",
+    "dotnet/runtime",
+    "tokio-rs/tokio",
+    "chriskohlhoff/asio"
+  ],
+  "new_repositories_collection": {
+    "completed_at": "2026-11-25T12:34:20+00:00",
+    "new_repositories": 4,
+    "new_search_windows": 12,
+    "total_repositories": 24,
+    "total_unique_github_hits": 1044,
+    "remaining_collection_errors": 0,
+    "scope": "Read-only metadata expansion; earlier successful search archives and observation times are reused.",
+    "github_enabled_repositories_complete": 21,
+    "github_disabled_repositories_with_official_sources_complete": 3
+  },
+  "retry_results": [
+    {
+      "issue": "spark-54279",
+      "version": "4.1.1",
+      "compile_exit_code": 0,
+      "runtime_attempts": 1,
+      "returncode": 0,
+      "elapsed_seconds": 5.782,
+      "finished_at": "2026-11-25T12:03:02.249242+00:00"
+    },
+    {
+      "issue": "flink-38180",
+      "version": "2.1.0",
+      "compile_exit_code": 0,
+      "runtime_attempts": 1,
+      "returncode": 1,
+      "elapsed_seconds": 22.612,
+      "finished_at": "2026-11-25T12:03:19.079293+00:00"
+    },
+    {
+      "issue": "flink-38180",
+      "attempt": "authorized-retry-2",
+      "version": "2.1.0",
+      "returncode": 0,
+      "elapsed_seconds": 20.845,
+      "runtime_attempts": 1,
+      "scope": "Corrected failed fixture assertion; first successful reproduction; offline analysis subsequently reuses this capture."
+    }
+  ],
+  "spark": {
+    "verified": true,
+    "reproduction_runs": 1,
+    "spark_version": "4.1.1",
+    "query_rows": 10,
+    "metrics_after_release": {
+      "minimum": 0,
+      "maximum": 9,
+      "total": 45
+    },
+    "metrics_unavailable_while_each_listener_waited": true,
+    "historical_registration_entries_verified": 2,
+    "same_physical_callback_stacks": true,
+    "resource_relations_are_creation_relations": false,
+    "observer_identity": "Java reference equality through IdentityHashMap; native identity hashes used only as an independent post-analysis oracle",
+    "coroperf_bin_sha256": "2762832bdaaf6302b6fbee873544e5f4750d8e76c24b0ac786be5c3425e19e5a",
+    "scope": "Released classic Observation component with a bounded local query and controlled listener extension; not a Spark Connect deployment or a fixed-version comparison.",
+    "facts": [
+      {
+        "sample": "2",
+        "listener_reference_token": "1",
+        "historical_registration_entry": "registerImport",
+        "native_callback_stack_contains_registration_entry": false,
+        "independent_native_hash_oracle_matches": true
+      },
+      {
+        "sample": "3",
+        "listener_reference_token": "2",
+        "historical_registration_entry": "registerRefresh",
+        "native_callback_stack_contains_registration_entry": false,
+        "independent_native_hash_oracle_matches": true
+      }
+    ]
+  },
+  "flink": {
+    "verified": true,
+    "successful_reproduction_runs": 1,
+    "flink_version": "2.1.0",
+    "historical_task_creators_verified": 2,
+    "same_physical_failure_stacks": true,
+    "native_outcomes": [
+      {
+        "entry": "importBranch",
+        "state": "FAILED",
+        "failure_cause": "none",
+        "execution_id": "a130bd53623f07c4517e9972e58b770e_00000000000000000000000000000000_0_0",
+        "native_thread_id": 22
+      },
+      {
+        "entry": "refreshBranch",
+        "state": "FAILED",
+        "failure_cause": "none",
+        "execution_id": "9442380a9fece662c6875bbc4cc67bbf_00000000000000000000000000000000_0_0",
+        "native_thread_id": 23
+      }
+    ],
+    "native_jfr_original_exceptions": 2,
+    "native_jfr_task_thread_start_events": 2,
+    "native_jfr_recovers_historical_creator": false,
+    "facts": [
+      {
+        "task_object_id": "3690",
+        "historical_creator": "NativeTaskReplay.importBranch",
+        "oracle_matches": true
+      },
+      {
+        "task_object_id": "3691",
+        "historical_creator": "NativeTaskReplay.refreshBranch",
+        "oracle_matches": true
+      }
+    ],
+    "coroperf_bin_sha256": "2762832bdaaf6302b6fbee873544e5f4750d8e76c24b0ac786be5c3425e19e5a",
+    "log_sha256": "fc3b6c72feca586d498312c768a69aa6e2995db98e1448e714fecb24f0caa864",
+    "scope": "Real released Task-only component with a controlled cleanup-cancellation extension; no cluster or fixed-version comparison. Native JFR already records the original exception; CoroPerf adds historical Task creator attribution."
+  },
+  "kafka_existing_native_checks_reused": true,
+  "other_user_skips_preserved": [
+    "apache--datafusion--24883",
+    "psycopg--psycopg--1208",
+    "tikv--tikv--20204"
+  ],
+  "legacy_inventory": [
+    {
+      "id": "ray-project--ray--59140",
+      "title": "[Serve] Very slow first time load for multiplexed models",
+      "reproduction": "attempted",
+      "version": "Ray 2.52.1 / Python 3.12.4 and attachment Ray 2.54.0 / Python 3.13.13; grpcio 1.78.0, protobuf 6.33.5",
+      "limits_zh": "使用本机 Linux 隔离的网络、挂载和进程命名空间、4 个 Ray CPU 和本地磁盘。原 Docker Desktop 的共享挂载性能和私有 MLflow 模型仍未知；公开附件读取 ONNX 字节。Swagger 组的根路径返回 200，作者截图为 404，两边的文档与 OpenAPI 均返回 200。HTTP 计时覆盖第一条模型 POST，集群启动另行记录。",
+      "currently_held": false
+    },
+    {
+      "id": "vllm-project--vllm--3839",
+      "title": null,
+      "reproduction": "unavailable",
+      "version": "Reporter: vLLM 0.3.3, PyTorch 2.1.2+cu121, Python 3.11.8",
+      "limits_zh": "公开材料缺少事故输入及缺失 rank 的状态，主图来自上游日志。另以报告版本 0.3.3 在两张共享 A100 上进行一次健康推理：NCCL world_size=2，OPT-125M 正常完成 6 token。该对照仅验证正常双卡服务路径。",
+      "currently_held": false
+    },
+    {
+      "id": "chriskohlhoff--asio--1073",
+      "title": null,
+      "reproduction": "unavailable",
+      "version": null,
+      "limits_zh": "按任务范围未执行无效释放或释放后使用的程序。",
+      "currently_held": true
+    },
+    {
+      "id": "chriskohlhoff--asio--1332",
+      "title": null,
+      "reproduction": "unavailable",
+      "version": null,
+      "limits_zh": "按任务范围未执行无效释放或释放后使用的程序。",
+      "currently_held": true
+    },
+    {
+      "id": "rust-lang--wg-async--75",
+      "title": null,
+      "reproduction": "attempted",
+      "version": null,
+      "limits_zh": "上游是可观测性用户故事，没有原始事故程序。",
+      "currently_held": false
+    },
+    {
+      "id": "async-rs--async-attributes--23",
+      "title": "Backtraces are munged by #[async_attributes::test]",
+      "reproduction": "attempted",
+      "version": "async-attributes 1.1.2 / async-std 1.9.0 / rustc 1.54.0 a178d0322",
+      "limits_zh": "最初报告者撤回了宏独有的归因，未公开最初应用；最后一位参与者仅推测 block_on。两个 should_panic 测试通过属于预期。",
+      "currently_held": false
+    },
+    {
+      "id": "oven-sh--bun--21900",
+      "title": null,
+      "reproduction": "unavailable",
+      "version": null,
+      "limits_zh": "报告者仅给出构建命令和错误输出，原 Main.ts、程序、sourcemap、请求和依赖清单未公开。附件属于 #25182，Kubernetes 来自第三方评论。两项均已按源码/独立包执行；仍无法推定原超时的设置者、调用路径或发生率。",
+      "currently_held": false
+    },
+    {
+      "id": "kotlin--kotlinx.coroutines--2958",
+      "title": null,
+      "reproduction": "attempted",
+      "version": null,
+      "limits_zh": "原附件含 Swift/Xcode 工程及 iPhoneOS arm64 静态框架，没有可直接启动的 .app。本机 Linux x86_64 缺少 xcrun、simctl 和 Xcode，konanc 也未列出 iOS 目标。fresh_run 和图均对应此前四个 Linux 对照；本次只检查了 iOS 输入和工具链。",
+      "currently_held": false
+    }
+  ],
+  "legacy_inventory_scope": "Eight attempted/unavailable legacy ledger entries reviewed read-only. Missing incident programs/platforms and existing held workloads are recorded; this is not an exhaustive inventory of every failed command.",
+  "execution_rule": "Stop after the first successful reproduction per issue; offline analysis may reuse frozen evidence. Initial setup and first check are timeboxed to about three minutes. Independent preparation and analysis may run in parallel."
+}
