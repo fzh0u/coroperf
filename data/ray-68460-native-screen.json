@@ -1,0 +1,3499 @@
+{
+  "schema": "coroperf.native-component-screen-audit/v1",
+  "source_issue": "https://github.com/ray-project/ray/issues/68460",
+  "ray_version": "2.59.0",
+  "python_version": "3.12.16",
+  "independent_process_batches": 2,
+  "runtime_conditions": 24,
+  "task_outcomes": 48,
+  "expected_key_errors": 16,
+  "native_tracked_error_callers": 8,
+  "successful_control_outcomes": 32,
+  "new_verified_coroperf_cases": 0,
+  "source_modified": false,
+  "ray_cluster_started": false,
+  "input_sha256": {
+    "batch-1.json": "0f9c7780e5882378c15dd1fc80802190096834e57086e51540b80f7a3bacf3de",
+    "batch-2.json": "0f9c7780e5882378c15dd1fc80802190096834e57086e51540b80f7a3bacf3de"
+  },
+  "harness_sha256": {
+    "replay.py": "be3d9cdc45398325d7ed35be17e79248e0f3ab42a33ac1f42f4644f296c5a36b",
+    "verify.py": "2743e4fd42e6d1c345dbc3f7441189b8797d869832f1a13fd6f099b8c969c674"
+  },
+  "scope": "Unmodified released Ray MetricsPusher class only, with two application registration sites. The upstream report says this pairing is latent in current in-tree callers. No production Serve path or CoroPerf capture was executed.",
+  "conclusion": "Physical KeyError traces omit registration sites, but native asyncio debug creation traces and coroutine-origin tracking each recover the correct registration site in all tracked conditions. This screen establishes no extra caller attribution for CoroPerf.",
+  "batches": [
+    {
+      "schema": "coroperf.native-component-screen/v1",
+      "ray_version": "2.59.0",
+      "python_version": "3.12.16",
+      "module_sha256": "ea23640268bd0be7ef21e528f190eeb2d14fbf2f90d049516005b52ad08a293d",
+      "installed_record_hash_matches": true,
+      "source_modified": false,
+      "ray_cluster_started": false,
+      "conditions": 12,
+      "task_outcomes": 24,
+      "new_verified_coroperf_cases": 0,
+      "results": [
+        {
+          "mode": "async_stop",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "report": {
+              "task_name": "Task-2",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            },
+            "refresh": {
+              "task_name": "Task-3",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "mode": "graceful",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "report": {
+              "task_name": "Task-11",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "refresh": {
+              "task_name": "Task-12",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "sync_stop",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "report": {
+              "task_name": "Task-24",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "refresh": {
+              "task_name": "Task-25",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "async_stop",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-35",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            },
+            "report": {
+              "task_name": "Task-36",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "mode": "graceful",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-44",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "report": {
+              "task_name": "Task-45",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "sync_stop",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-57",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "report": {
+              "task_name": "Task-58",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "async_stop",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "report": {
+              "task_name": "Task-68",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            },
+            "refresh": {
+              "task_name": "Task-69",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "mode": "graceful",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "report": {
+              "task_name": "Task-77",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "refresh": {
+              "task_name": "Task-78",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "sync_stop",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "report": {
+              "task_name": "Task-90",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "refresh": {
+              "task_name": "Task-91",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "async_stop",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-101",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            },
+            "report": {
+              "task_name": "Task-102",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "mode": "graceful",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-110",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "report": {
+              "task_name": "Task-111",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "sync_stop",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-123",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "report": {
+              "task_name": "Task-124",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        }
+      ],
+      "scope": "Unmodified released Ray MetricsPusher class only, with two application registration sites. The upstream report says this pairing is latent in current in-tree callers. No production Serve path or CoroPerf capture was executed.",
+      "conclusion": "Physical KeyError traces omit registration sites, but native asyncio debug creation traces and coroutine-origin tracking each recover the correct registration site in all tracked conditions. This screen establishes no extra caller attribution for CoroPerf."
+    },
+    {
+      "schema": "coroperf.native-component-screen/v1",
+      "ray_version": "2.59.0",
+      "python_version": "3.12.16",
+      "module_sha256": "ea23640268bd0be7ef21e528f190eeb2d14fbf2f90d049516005b52ad08a293d",
+      "installed_record_hash_matches": true,
+      "source_modified": false,
+      "ray_cluster_started": false,
+      "conditions": 12,
+      "task_outcomes": 24,
+      "new_verified_coroperf_cases": 0,
+      "results": [
+        {
+          "mode": "async_stop",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "report": {
+              "task_name": "Task-2",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            },
+            "refresh": {
+              "task_name": "Task-3",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "mode": "graceful",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "report": {
+              "task_name": "Task-11",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "refresh": {
+              "task_name": "Task-12",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "sync_stop",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "report": {
+              "task_name": "Task-24",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "refresh": {
+              "task_name": "Task-25",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "async_stop",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-35",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            },
+            "report": {
+              "task_name": "Task-36",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "mode": "graceful",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-44",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "report": {
+              "task_name": "Task-45",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "sync_stop",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": false,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-57",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "report": {
+              "task_name": "Task-58",
+              "creation_frames": [],
+              "coroutine_origin": [],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "async_stop",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "report": {
+              "task_name": "Task-68",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            },
+            "refresh": {
+              "task_name": "Task-69",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "mode": "graceful",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "report": {
+              "task_name": "Task-77",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "refresh": {
+              "task_name": "Task-78",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "sync_stop",
+          "order": [
+            "report",
+            "refresh"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "report": {
+              "task_name": "Task-90",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "refresh": {
+              "task_name": "Task-91",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "async_stop",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-101",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            },
+            "report": {
+              "task_name": "Task-102",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": "KeyError",
+              "exception_args": [
+                "m"
+              ],
+              "exception_frames": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 94,
+                  "function": "metrics_task"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "mode": "graceful",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-110",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "report": {
+              "task_name": "Task-111",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        },
+        {
+          "mode": "sync_stop",
+          "order": [
+            "refresh",
+            "report"
+          ],
+          "native_creation_tracking": true,
+          "tasks": {
+            "refresh": {
+              "task_name": "Task-123",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 25,
+                  "function": "start_refresh"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            },
+            "report": {
+              "task_name": "Task-124",
+              "creation_frames": [
+                {
+                  "file": "replay.py",
+                  "line": 135,
+                  "function": "<module>"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "tasks.py",
+                  "line": 420,
+                  "function": "create_task"
+                }
+              ],
+              "coroutine_origin": [
+                {
+                  "file": "metrics_utils.py",
+                  "line": 123,
+                  "function": "register_or_update_task"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 21,
+                  "function": "start_report"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 49,
+                  "function": "trial"
+                },
+                {
+                  "file": "events.py",
+                  "line": 88,
+                  "function": "_run"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 1991,
+                  "function": "_run_once"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 645,
+                  "function": "run_forever"
+                },
+                {
+                  "file": "base_events.py",
+                  "line": 678,
+                  "function": "run_until_complete"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 118,
+                  "function": "run"
+                },
+                {
+                  "file": "runners.py",
+                  "line": 195,
+                  "function": "run"
+                },
+                {
+                  "file": "replay.py",
+                  "line": 119,
+                  "function": "run"
+                }
+              ],
+              "exception_type": null,
+              "exception_args": [],
+              "exception_frames": []
+            }
+          }
+        }
+      ],
+      "scope": "Unmodified released Ray MetricsPusher class only, with two application registration sites. The upstream report says this pairing is latent in current in-tree callers. No production Serve path or CoroPerf capture was executed.",
+      "conclusion": "Physical KeyError traces omit registration sites, but native asyncio debug creation traces and coroutine-origin tracking each recover the correct registration site in all tracked conditions. This screen establishes no extra caller attribution for CoroPerf."
+    }
+  ]
+}

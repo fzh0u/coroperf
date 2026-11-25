@@ -104,6 +104,8 @@ def render(report, language):
         reason = tr('Reproduction skipped; safety impact unassessed.', '已跳过复现；安全影响尚未评估。')
         if row.get('risk_signal'):
             reason += tr(' Wording at detection: ', ' 检出时的匹配词：') + e(row['risk_signal']) + '.'
+            if row.get('risk_signal_source') == 'body_error_signature':
+                reason += tr(' Reported error signature in the body.', ' 来源为正文中的错误签名。')
         if row.get('last_seen'):
             reason += '<br>' + tr('Last observed: ', '最近观测：') + e(row['last_seen'])
         if zh and row.get('review_note_zh'):
