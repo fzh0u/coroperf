@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which completed task requested the cancellation lost at pool checkout?">
+  <title>sqlalchemy/sqlalchemy #13749 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/sqlalchemy--sqlalchemy--13749.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="sqlalchemy--sqlalchemy--13749.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/sqlalchemy--sqlalchemy--13749.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">sqlalchemy/sqlalchemy #13749</p>
+        <h1>Which completed task requested the cancellation lost at pool checkout?</h1>
+        <div class="case-links"><a href="https://github.com/sqlalchemy/sqlalchemy/issues/13749">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Failure and task lifecycle</dd></div>
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Fix evidence</dt><dd><a href="https://github.com/sqlalchemy/sqlalchemy/commit/0f659c9b95a28fe3990fe744b20194b9f12e7f7b">Upstream change merged ↗</a></dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Native flags already show cancellation loss. Actual C Task.cancel receivers connect later targets to collected cancelling Tasks; each historical actor sample joins to its own creation entry. The component repair controls and application extension are separate.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 4 · task_snapshot</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request_cancel</code><span>replay.py:56</span></li><li><code>cancel_one</code><span>replay.py:51</span></li></ol></section>
+          <p class="small trace-note">Frames from record 4 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>4 → 2</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>Observed task stack</h4><span>Record 4 · task_snapshot</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request_cancel</code><span>replay.py:56</span></li><li><code>cancel_one</code><span>replay.py:51</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">Record 4</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>scenario</code><span>replay.py:101</span></li><li><code>&lt;listcomp&gt;</code><span>replay.py:101</span></li><li><code>start_shutdown_cancel</code><span>replay.py:64</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 5 · task_snapshot</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request_cancel</code><span>replay.py:56</span></li><li><code>cancel_one</code><span>replay.py:51</span></li></ol></section>
+          <p class="small trace-note">Frames from record 5 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>5 → 3</code></a></nav>
+          <section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>Observed task stack</h4><span>Record 5 · task_snapshot</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request_cancel</code><span>replay.py:56</span></li><li><code>cancel_one</code><span>replay.py:51</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">Record 5</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>scenario</code><span>replay.py:101</span></li><li><code>&lt;listcomp&gt;</code><span>replay.py:101</span></li><li><code>start_deadline_cancel</code><span>replay.py:60</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>240 bounded, database-free queue-component trials reproduce lost cancellation in SQLAlchemy 2.0.55 and 2.1.6 on CPython 3.11.18. Native cancelling() already exposes the defect. A separate application extension creates two cancelling Tasks through different entries, then collects them before observing the targets. Both targets have matching native stacks, creation traces, coroutine origins and allocation traces; these omit the historical cancelling entries.</dd></div><div><dt>What CoroPerf showed</dt><dd>Profile events observe the actual C Task.cancel receiver and a cancelling-counter increment, binding each accepted request to its running actor Task. A weak lifetime registry records actor collection. CoroPerf connects the historical cancel-call sample to that same actor&#x27;s creation, recovering start_deadline_cancel or start_shutdown_cancel. Two independent batches verify 48 historical issuers across both launch orders: 32 in affected releases and 16 in the fixed release. Cancellation provenance is a separate causal relation, never target creation ancestry.</dd></div><div><dt>Scope and limits</dt><dd>The component uses real released AsyncAdaptedQueue through greenlet_spawn, without a DBAPI or database. The historical-issuer extension adds an observation gate and is not the literal upstream program. SQLAlchemy 2.0.56 on Python 3.11 and Python 3.12.16 with both older releases pass the component repair controls; 2.1.7 and Python 3.10 or earlier were not tested. Stock and captured application outcomes agree. Removing cancel history or Task creation prevents attribution. All SQLAlchemy and greenlet Python/native files match official hashed PyPI wheels. The native flags already identify cancellation loss; CoroPerf adds historical issuer identity, not root-cause discovery or a new repair. No production overhead result is claimed.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

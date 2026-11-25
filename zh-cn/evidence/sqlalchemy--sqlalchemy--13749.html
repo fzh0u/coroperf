@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="连接池取出连接时丢失的取消，由哪个已结束入口发起？">
+  <title>sqlalchemy/sqlalchemy #13749 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/sqlalchemy--sqlalchemy--13749.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/sqlalchemy--sqlalchemy--13749.html" lang="en" hreflang="en">English</a><a href="sqlalchemy--sqlalchemy--13749.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">sqlalchemy/sqlalchemy #13749</p>
+        <h1>连接池取出连接时丢失的取消，由哪个已结束入口发起？</h1>
+        <div class="case-links"><a href="https://github.com/sqlalchemy/sqlalchemy/issues/13749">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>异常、取消与任务生命周期</dd></div>
+          <div><dt>问题类型</dt><dd>功能故障与正确性问题</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/sqlalchemy/sqlalchemy/commit/0f659c9b95a28fe3990fe744b20194b9f12e7f7b">上游修复已合并 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>原生标志已显示取消丢失。实际 C Task.cancel 接收对象把事后目标接回已回收的取消 Task；历史发起者采样只接回自身创建入口。组件修复对照与应用扩展分开。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 4 · task_snapshot</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request_cancel</code><span>replay.py:56</span></li><li><code>cancel_one</code><span>replay.py:51</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>4 → 2</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 4 · task_snapshot</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request_cancel</code><span>replay.py:56</span></li><li><code>cancel_one</code><span>replay.py:51</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>scenario</code><span>replay.py:101</span></li><li><code>&lt;listcomp&gt;</code><span>replay.py:101</span></li><li><code>start_shutdown_cancel</code><span>replay.py:64</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 5 · task_snapshot</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request_cancel</code><span>replay.py:56</span></li><li><code>cancel_one</code><span>replay.py:51</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>5 → 3</code></a></nav>
+          <section class="stack observed" id="join-2-record-5"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 5 · task_snapshot</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>request_cancel</code><span>replay.py:56</span></li><li><code>cancel_one</code><span>replay.py:51</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 3 → 5</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:178</span></li><li><code>main</code><span>replay.py:160</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1928</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>scenario</code><span>replay.py:101</span></li><li><code>&lt;listcomp&gt;</code><span>replay.py:101</span></li><li><code>start_deadline_cancel</code><span>replay.py:60</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>240 次有界、无需数据库的队列组件对照，在 CPython 3.11.18 的 SQLAlchemy 2.0.55、2.1.6 上复现取消丢失。原生 cancelling() 已能显示缺陷。另设应用扩展：两个取消 Task 从不同入口创建，在事后观察目标前均被回收。两个目标的原生栈、创建栈、协程起源和分配栈相同，均未保留历史取消入口。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>profile 事件记录实际 C Task.cancel 接收对象与取消计数递增，将每次已接受的请求绑定到当时运行的发起 Task；弱生命周期记录确认其已回收。coroPerf 把历史取消调用采样接回同一发起 Task 的创建，恢复 start_deadline_cancel 或 start_shutdown_cancel。两个独立批次交换两种启动顺序，共核对 48 个历史来源：受影响版本 32 个、修复版 16 个。取消来源单独保存为因果关系，不冒充目标 Task 的创建祖先。</dd></div><div><dt>适用范围与局限</dt><dd>组件对照通过 greenlet_spawn 调用真实发布版 AsyncAdaptedQueue，不使用 DBAPI 或数据库。历史来源扩展增加了观察 gate，与上游原程序分开。Python 3.11 的 SQLAlchemy 2.0.56，以及 Python 3.12.16 的两个旧版本均通过组件修复对照；未测试 2.1.7 或 Python 3.10 及更早版本。原生与采集模式的应用结果一致。删除取消历史或 Task 创建记录后均无法归属。SQLAlchemy、greenlet 的全部 Python 与原生文件均与通过哈希校验的官方 PyPI wheel 相同。原生标志已可识别取消丢失；coroPerf 补充历史发起者身份，不声称发现根因或提供新修复。未测生产开销。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

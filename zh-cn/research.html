@@ -43,7 +43,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(29)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(22)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(18)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(33)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(29)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(22)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(19)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(33)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -556,12 +556,17 @@
       </div>
     </section>
     <section class="block" id="failure_lifecycle" aria-labelledby="failure_lifecycle-title">
-      <div class="section-head"><h2 id="failure_lifecycle-title">异常、取消与任务生命周期</h2><span class="case-kind">18 个案例</span></div>
+      <div class="section-head"><h2 id="failure_lifecycle-title">异常、取消与任务生命周期</h2><span class="case-kind">19 个案例</span></div>
       <p class="section-copy">定位首次失败，或追溯改变任务状态的取消、退出或清理。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="failure_lifecycle-title">
           <thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 证据说明</th><th scope="col">上游状态<small>修复证据</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/sqlalchemy--sqlalchemy--13749.html#call-stack"><span>sqlalchemy/sqlalchemy #13749</span>取消丢失后，恢复已经结束的发起入口</a></th>
+        <td><p>240 次队列组件对照核对了报告的版本边界；另设应用扩展，在两个批次验证 48 个历史取消来源，其中受影响版本 32 个、修复版 16 个。原生标志已能识别取消丢失。下方拼接属于历史取消 Task；目标取消关系另行记录。</p><p><a href="../data/sqlalchemy-13749-verification.json">组件对照、来源身份与已发布修复的验证记录</a></p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/sqlalchemy/sqlalchemy/issues/13749">已关闭</a><a class="fix-label" href="https://github.com/sqlalchemy/sqlalchemy/commit/0f659c9b95a28fe3990fe744b20194b9f12e7f7b">修复已合并</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/langchain4j--langchain4j--7069.html#call-stack"><span>langchain4j/langchain4j #7069</span>映射器抛错后，哪些重试调用仍在等待？</a></th>
         <td><p>两条相同的映射回调栈持有不同的调用方 Future。按 JDI 对象身份接回各自的首次尝试。开放 PR #7070 把映射器抛出的同一个异常传回调用者，PR 的 24 项测试全部通过。</p></td>
