@@ -1,0 +1,349 @@
+{
+  "checked_at": "2026-11-25T10:59:23.813364+00:00",
+  "manual_decisions": 6,
+  "manual_dispositions": {
+    "skipped_review": 3,
+    "excluded_after_review": 1,
+    "needs_review": 2
+  },
+  "new_manual_holds": 3,
+  "issue_programs_executed": 0,
+  "new_verified_cases": 0,
+  "selected_cases_unchanged": 126,
+  "offline_tests_passed": 51,
+  "source_review_scope": "Read-only issue metadata and reported diagnostics, not executed reproductions.",
+  "security_scope": "Review holds are not confirmed security vulnerabilities.",
+  "review_decisions": {
+    "etcd-io--etcd--22264": {
+      "status": "skipped_review",
+      "reason": "The report describes a growing MVCC recovery scan holding the watcher-store lock while writes wait. Keep the backlog/resource-availability workload on hold. No historical-revision load, cluster, fault or supplied program was run.",
+      "reason_zh": "报告描述落后 watcher 的 MVCC 恢复扫描随积压增长，长时间持有锁并阻塞写入。按积压与可用性场景暂缓；未制造历史修订积压、启动集群、注入故障或执行附带程序。",
+      "sources": [
+        "https://github.com/etcd-io/etcd/issues/22264"
+      ],
+      "reviewed_at": "2026-11-25T10:59:23.813364+00:00"
+    },
+    "etcd-io--etcd--22184": {
+      "status": "skipped_review",
+      "reason": "The report gives a three-goroutine lock-order cycle that permanently wedges the apply loop. Keep the deadlock/snapshot-send scenario on hold. No lock-cycle workload, snapshot, cluster or supplied test was run.",
+      "reason_zh": "报告给出三个 goroutine 形成的锁序环，可能永久卡住 apply loop。按死锁与快照发送场景暂缓；未运行锁环工作负载、快照、集群或附带测试。",
+      "sources": [
+        "https://github.com/etcd-io/etcd/issues/22184"
+      ],
+      "reviewed_at": "2026-11-25T10:59:23.813364+00:00"
+    },
+    "etcd-io--etcd--22744": {
+      "status": "skipped_review",
+      "reason": "The report describes process termination when the raft stream decoder receives malformed protobuf. Keep malformed-input and process-termination execution on hold; impact unassessed. No stream input, packet, decoder test, server or supplied program was executed.",
+      "reason_zh": "报告描述 raft 流解码器遇到畸形 protobuf 时可能终止整个进程。按畸形输入与进程终止线索暂缓，影响未评估；未发送报文、运行解码器测试、启动服务或执行附带程序。",
+      "sources": [
+        "https://github.com/etcd-io/etcd/issues/22744"
+      ],
+      "reviewed_at": "2026-11-25T10:59:23.813364+00:00"
+    },
+    "etcd-io--etcd--22225": {
+      "status": "excluded_after_review",
+      "reason": "The benchmark starts its timer after receiving a WatchResponse, so its measurement endpoint is different from Put-to-Watch latency. Source review establishes a metric-definition problem, not a missing historical caller or an independently verified CoroPerf fact. No benchmark or cluster was run.",
+      "reason_zh": "该 benchmark 在收到 WatchResponse 后才开始计时，与 Put-to-Watch 延迟的测量端点不同。源码审阅确认的是指标定义问题，尚未建立历史调用者缺口或独立验证的 coroPerf 新增事实；未运行 benchmark 或集群。",
+      "sources": [
+        "https://github.com/etcd-io/etcd/issues/22225"
+      ],
+      "reviewed_at": "2026-11-25T10:59:23.813364+00:00"
+    },
+    "tikv--tikv--6973": {
+      "status": "needs_review",
+      "reason": "The report concerns thread-local PerfContext statistics across split tasks. The linked explicit !Send change was later reverted; closure alone does not establish a correct released implementation. Retain for native counter/slow-log comparison, with no runtime, fix or CoroPerf attribution result yet.",
+      "reason_zh": "报告涉及任务分段、跨线程时的线程本地 PerfContext 统计。关联的显式 !Send 改动后来被回退，不能仅凭关闭状态判定发行版正确。保留原生计数器/慢日志对照候选；尚无运行、修复或 coroPerf 归属结果。",
+      "sources": [
+        "https://github.com/tikv/tikv/issues/6973",
+        "https://github.com/tikv/rust-rocksdb/pull/442",
+        "https://github.com/tikv/rust-rocksdb/pull/444"
+      ],
+      "reviewed_at": "2026-11-25T10:59:23.813364+00:00"
+    },
+    "tikv--tikv--20204": {
+      "status": "needs_review",
+      "reason": "The report supplies a finite empty-range cooperative-yield comparison and links a fix. Retain for a real TiKV request/native profiling comparison; a standalone reimplementation would not verify the framework behavior. No endpoint test, binary build, TiKV process or CoroPerf result is claimed.",
+      "reason_zh": "报告给出有限空范围请求的协作让出对照，并关联修复。保留实际 TiKV 请求与原生 profiling 对照候选；独立重写算法不能验证框架行为。尚未执行 endpoint 测试、构建二进制、启动 TiKV 或取得 coroPerf 结果。",
+      "sources": [
+        "https://github.com/tikv/tikv/issues/20204",
+        "https://github.com/tikv/tikv/pull/20209"
+      ],
+      "reviewed_at": "2026-11-25T10:59:23.813364+00:00"
+    }
+  },
+  "cloud_reporting": {
+    "checked_at": "2026-11-25T10:57:38.747502+00:00",
+    "automation_id": "Automation_7b8a11b954248191a349d239e500f50a",
+    "saved_and_enabled": true,
+    "site_version_unchanged": 137,
+    "execution_receipt_exposed_by_get_site": false,
+    "matching_local_automation_threads": 0,
+    "local_threads_considered": 7,
+    "cloud_task_actual_execution_or_user_delivery_verified": false,
+    "local_1800_report_publication_verified": true,
+    "local_1800_commit": "1e74624b14e546d3b6dda3e6b3e124a3888ffcc3",
+    "scope": "Enabled configuration and a successful local web report are not proof of a cloud task run or user notification receipt. No duplicate schedule created."
+  },
+  "new_automatic_hold_records": [
+    {
+      "id": "etcd-io--etcd--11949",
+      "title": "Etcd start failed after power off and restart",
+      "url": "https://github.com/etcd-io/etcd/issues/11949",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic: runtime error:",
+      "signal_title": "Etcd start failed after power off and restart",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T10:06:18+00:00",
+      "last_seen": "2026-11-25T10:06:18+00:00"
+    },
+    {
+      "id": "magicstack--asyncpg--573",
+      "title": "Fetching from pgpool-II hangs indefinitely",
+      "url": "https://github.com/MagicStack/asyncpg/issues/573",
+      "repository": "MagicStack/asyncpg",
+      "status": "skipped_review",
+      "risk_signal": "hangs indefinitely",
+      "signal_title": "Fetching from pgpool-II hangs indefinitely",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:04:43+00:00",
+      "last_seen": "2026-11-25T10:04:43+00:00"
+    },
+    {
+      "id": "magicstack--asyncpg--68",
+      "title": "Awaiting multiple `execute` within a transaction seems to block forever",
+      "url": "https://github.com/MagicStack/asyncpg/issues/68",
+      "repository": "MagicStack/asyncpg",
+      "status": "skipped_review",
+      "risk_signal": "block forever",
+      "signal_title": "Awaiting multiple `execute` within a transaction seems to block forever",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:04:43+00:00",
+      "last_seen": "2026-11-25T10:04:43+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--176",
+      "title": "Index out of range in machines.go",
+      "url": "https://github.com/etcd-io/etcd/issues/176",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic: runtime error:",
+      "signal_title": "Index out of range in machines.go",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T10:06:41+00:00",
+      "last_seen": "2026-11-25T10:06:41+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--177",
+      "title": "Assignment to entry in nil map in store/watcher.go",
+      "url": "https://github.com/etcd-io/etcd/issues/177",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "runtime error: assignment to entry in nil map",
+      "signal_title": "Assignment to entry in nil map in store/watcher.go",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T10:06:41+00:00",
+      "last_seen": "2026-11-25T10:06:41+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--3475",
+      "title": "Etcd fails to upgrade from 0.4.6 to 2.13 ",
+      "url": "https://github.com/etcd-io/etcd/issues/3475",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic: runtime error:",
+      "signal_title": "Etcd fails to upgrade from 0.4.6 to 2.13 ",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T10:06:41+00:00",
+      "last_seen": "2026-11-25T10:06:41+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--6395",
+      "title": "simpleBalancer.Up: close of closed channel",
+      "url": "https://github.com/etcd-io/etcd/issues/6395",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic: close of closed channel",
+      "signal_title": "simpleBalancer.Up: close of closed channel",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T10:06:41+00:00",
+      "last_seen": "2026-11-25T10:06:41+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--676",
+      "title": "Etcd discovery in empty cluster fails when launched with systemd",
+      "url": "https://github.com/etcd-io/etcd/issues/676",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic: runtime error:",
+      "signal_title": "Etcd discovery in empty cluster fails when launched with systemd",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T10:06:41+00:00",
+      "last_seen": "2026-11-25T10:06:41+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--6989",
+      "title": "TestV3MaintenanceHashInflight: unexpected fault address",
+      "url": "https://github.com/etcd-io/etcd/issues/6989",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "unexpected fault address 0x7f24d796014f",
+      "signal_title": "TestV3MaintenanceHashInflight: unexpected fault address",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T10:06:41+00:00",
+      "last_seen": "2026-11-25T10:06:41+00:00"
+    },
+    {
+      "id": "ray-project--ray--32472",
+      "title": "[Serve|Metrics] Metric instantiation blocks forever (only in Ci/Cd deployments)",
+      "url": "https://github.com/ray-project/ray/issues/32472",
+      "repository": "ray-project/ray",
+      "status": "skipped_review",
+      "risk_signal": "blocks forever",
+      "signal_title": "[Serve|Metrics] Metric instantiation blocks forever (only in Ci/Cd deployments)",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:01:09+00:00",
+      "last_seen": "2026-11-25T10:01:09+00:00"
+    },
+    {
+      "id": "tikv--tikv--18303",
+      "title": "Log Backup Leak GCS Credential",
+      "url": "https://github.com/tikv/tikv/issues/18303",
+      "repository": "tikv/tikv",
+      "status": "skipped_review",
+      "risk_signal": "Leak GCS Credential",
+      "signal_title": "Log Backup Leak GCS Credential",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:06:57+00:00",
+      "last_seen": "2026-11-25T10:06:57+00:00"
+    },
+    {
+      "id": "duckdb--duckdb--28212",
+      "title": "2.0.0: a Parquet COPY that runs out of memory sometimes hangs forever instead of failing",
+      "url": "https://github.com/duckdb/duckdb/issues/28212",
+      "repository": "duckdb/duckdb",
+      "status": "skipped_review",
+      "risk_signal": "hangs forever",
+      "signal_title": "2.0.0: a Parquet COPY that runs out of memory sometimes hangs forever instead of failing",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:04:08+00:00",
+      "last_seen": "2026-11-25T10:04:08+00:00"
+    },
+    {
+      "id": "tikv--tikv--20132",
+      "title": "bug: log backup endpoint stalls forever when a flush-event subscriber stops reading",
+      "url": "https://github.com/tikv/tikv/issues/20132",
+      "repository": "tikv/tikv",
+      "status": "skipped_review",
+      "risk_signal": "stalls forever",
+      "signal_title": "bug: log backup endpoint stalls forever when a flush-event subscriber stops reading",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:06:49+00:00",
+      "last_seen": "2026-11-25T10:06:49+00:00"
+    },
+    {
+      "id": "tikv--tikv--20134",
+      "title": "bug: in-memory engine eviction controllers stall forever on dropped completion callbacks",
+      "url": "https://github.com/tikv/tikv/issues/20134",
+      "repository": "tikv/tikv",
+      "status": "skipped_review",
+      "risk_signal": "stall forever",
+      "signal_title": "bug: in-memory engine eviction controllers stall forever on dropped completion callbacks",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:06:49+00:00",
+      "last_seen": "2026-11-25T10:06:49+00:00"
+    },
+    {
+      "id": "tikv--tikv--20135",
+      "title": "bug: snapshot recovery hangs forever when a region can never become leader",
+      "url": "https://github.com/tikv/tikv/issues/20135",
+      "repository": "tikv/tikv",
+      "status": "skipped_review",
+      "risk_signal": "hangs forever",
+      "signal_title": "bug: snapshot recovery hangs forever when a region can never become leader",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:06:49+00:00",
+      "last_seen": "2026-11-25T10:06:49+00:00"
+    },
+    {
+      "id": "tikv--tikv--20137",
+      "title": "raftstore: snapshot generator can stall forever with yatp master (lost wakeup in yatp#96)",
+      "url": "https://github.com/tikv/tikv/issues/20137",
+      "repository": "tikv/tikv",
+      "status": "skipped_review",
+      "risk_signal": "stall forever",
+      "signal_title": "raftstore: snapshot generator can stall forever with yatp master (lost wakeup in yatp#96)",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:06:49+00:00",
+      "last_seen": "2026-11-25T10:06:49+00:00"
+    },
+    {
+      "id": "apache--kafka--kafka-21595",
+      "title": "AsyncKafkaConsumer.close() hangs indefinitely in leaveGroupOnClose when the background thread dies (e.g. OutOfMemoryError) without completing cleanup()",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-21595",
+      "repository": "apache/kafka",
+      "status": "skipped_review",
+      "risk_signal": "hangs indefinitely",
+      "signal_title": "AsyncKafkaConsumer.close() hangs indefinitely in leaveGroupOnClose when the background thread dies (e.g. OutOfMemoryError) without completing cleanup()",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:08:13+00:00",
+      "last_seen": "2026-11-25T10:08:13+00:00"
+    },
+    {
+      "id": "apache--kafka--kafka-17734",
+      "title": "KafkaConsumer.close(0) can block indefinitely in ConsumerNetworkClient.poll",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-17734",
+      "repository": "apache/kafka",
+      "status": "skipped_review",
+      "risk_signal": "block indefinitely",
+      "signal_title": "KafkaConsumer.close(0) can block indefinitely in ConsumerNetworkClient.poll",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T10:08:05+00:00",
+      "last_seen": "2026-11-25T10:08:05+00:00"
+    }
+  ],
+  "new_automatic_holds_count": 18,
+  "verification": {
+    "selected_cases_unchanged": 126,
+    "new_verified_cases": 0,
+    "manual_reviews": 81,
+    "new_manual_decisions": 6,
+    "manual_holds": 58,
+    "new_manual_holds": 3,
+    "automatic_holds": 275,
+    "new_automatic_holds": 18,
+    "displayed_holds": 321,
+    "prior_local_execution_rows": 6,
+    "same_scheduled_github_issue_ids": 797,
+    "unchanged_raw_github_archives": 68,
+    "reclassification_http_requests": 0,
+    "collection_errors": 0,
+    "four_user_skips_preserved": true,
+    "selected_cases_overlap_with_holds": false,
+    "issue_programs_executed": 0,
+    "offline_tests_passed": 51,
+    "validated_source_sha256": {
+      "official_db.py": "6b7072594be5e119633b50579a9f53d7302c9dc27a85a717aefdc0d78f0796dc",
+      "periodic.py": "4ca9f7f948a4fc3d19d997be5db9b360552734dea1864432501d8fab8ed52178",
+      "scan.py": "dc93473aac7abcfe5d0323ed9e5ad6c858c7211fe8ebd73e4ecfc5b870400a6d",
+      "test_discovery_renderer.py": "6ea9e4024dc6c75062d061be288dfbb954f255e507b9b9c6070b0b6e0fd38e63",
+      "test_github_rates.py": "72a0da86bd93e36698f44bed7ebb24e9a4c55495907bcfc4128bf322ab4b8ca5",
+      "test_official_db.py": "c1819f599197714becf28b2e63ff827e095ef74a81e8b0f0ee10be97fd08e01e",
+      "test_periodic.py": "f788318d040681713faf6c359df6fbd66932fee21243b6951af96dee4ebd2cc7",
+      "test_scan.py": "981e77c8ff287f62640c5727728952a3f0ae34a01290944f1b04fe0b6548d616"
+    },
+    "new_hold_repositories": {
+      "etcd-io/etcd": 7,
+      "MagicStack/asyncpg": 2,
+      "ray-project/ray": 1,
+      "tikv/tikv": 5,
+      "duckdb/duckdb": 1,
+      "apache/kafka": 2
+    },
+    "new_hold_sources": {
+      "body_error_signature": 7,
+      "title_or_labels": 11
+    }
+  }
+}
