@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="通知生成器仍占用的连接锁，最初由哪个读取入口取得？">
+  <title>psycopg/psycopg #340 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/psycopg--psycopg--340.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/psycopg--psycopg--340.html" lang="en" hreflang="en">English</a><a href="psycopg--psycopg--340.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">psycopg/psycopg #340</p>
+        <h1>通知生成器仍占用的连接锁，最初由哪个读取入口取得？</h1>
+        <div class="case-links"><a href="https://github.com/psycopg/psycopg/issues/340">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>调度与资源争用定位</dd></div>
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>修复证据</dt><dd><a href="https://github.com/psycopg/psycopg/issues/340">应用侧替代方案已在本地验证 ↗</a></dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>在读取 Task 运行时记录实际取锁。通过同一未释放的连接锁及生成器挂起帧，把后续查询等待接回已结束的读取 Task 与其创建入口；资源等待关系不冒充 Task 创建关系。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 2</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 2 · task_snapshot</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:144</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1991</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>read_one</code><span>replay.py:22</span></li><li><code>notifies</code><span>connection_async.py:427</span></li><li><code>__aenter__</code><span>locks.py:14</span></li><li><code>acquire</code><span>locks.py:101</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 2 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 2 · task_snapshot</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:144</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1991</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>read_one</code><span>replay.py:22</span></li><li><code>notifies</code><span>connection_async.py:427</span></li><li><code>__aenter__</code><span>locks.py:14</span></li><li><code>acquire</code><span>locks.py:101</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:144</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1991</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>replay.py:76</span></li><li><code>start_report</code><span>replay.py:28</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>create_task</code><span>base_events.py:463</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 3 · task_snapshot</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:144</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1991</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>read_one</code><span>replay.py:22</span></li><li><code>notifies</code><span>connection_async.py:427</span></li><li><code>__aenter__</code><span>locks.py:14</span></li><li><code>acquire</code><span>locks.py:101</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>3 → 1</code></a></nav>
+          <section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 3 · task_snapshot</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:144</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1991</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>read_one</code><span>replay.py:22</span></li><li><code>notifies</code><span>connection_async.py:427</span></li><li><code>__aenter__</code><span>locks.py:14</span></li><li><code>acquire</code><span>locks.py:101</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-1">记录 1</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 1 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-1"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 1</span><span class="record-instance">实例首次见于记录 1</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>replay.py:144</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1991</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>replay.py:76</span></li><li><code>start_refresh</code><span>replay.py:32</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>create_task</code><span>base_events.py:463</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>有界的共享连接对照确认：通知迭代持有驱动连接锁时，查询会等待。另设历史调用者扩展：每个生成器产出同一条通知后被移交，原读取 Task 随后被回收。后续两条查询拥有相同的原生 await 栈，PostgreSQL 后端均为空闲。生成器帧与分配栈、当前 Task 的创建栈及协程起源，都缺少已经结束的读取入口。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>在成功取锁时记录实际运行的 Task；返回生成器的真实挂起帧指向同一个连接锁。后续查询等待该锁时，中间没有释放事件。沿锁的获取历史接回 Task 创建，即使取锁 Task 已被回收，仍可恢复 start_report 或 start_refresh。两个独立批次覆盖两个驱动版本及两种读取、查询顺序，共验证 32 个历史调用者。资源等待关系与创建关系分别保存。</dd></div><div><dt>适用范围与局限</dt><dd>实验使用纯 Python 实现的 Psycopg 3.2.3、3.3.9，CPython 3.12.16，以及本地私有数据库上的 PostgreSQL/libpq 14.13。四个有界对照检查报告中的共享连接与独立连接机制，未执行 2022 年的原始程序；历史读取入口扩展另行标明。显式关闭已暂停的生成器后，锁释放且查询返回 42；32 个提前关闭生成器的对照都无需等待。这是应用清理措施，不声称修复了驱动。删除锁历史或 Task 创建记录后均无法归属。展示的拼接连接历史取锁采样，不把已结束的 Task 说成实时持锁者，也不把取锁者说成查询 Task 的创建者。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

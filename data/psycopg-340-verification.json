@@ -1,0 +1,143 @@
+{
+  "verified": true,
+  "packages": [
+    {
+      "version": "3.2.3",
+      "recorded_python_files_verified": 78
+    },
+    {
+      "version": "3.3.9",
+      "recorded_python_files_verified": 83
+    }
+  ],
+  "batches": [
+    {
+      "batch": "batch-1",
+      "runs": 32,
+      "historical_callers": 16,
+      "closed_generator_controls": 16,
+      "native_stack_pairs": 8
+    },
+    {
+      "batch": "batch-2",
+      "runs": 32,
+      "historical_callers": 16,
+      "closed_generator_controls": 16,
+      "native_stack_pairs": 8
+    }
+  ],
+  "canonical_runs": 64,
+  "historical_callers_verified": 32,
+  "closed_generator_controls": 32,
+  "bounded_mechanism_controls": [
+    {
+      "psycopg": "3.2.3",
+      "server": 140013,
+      "placement": "shared",
+      "query_pending_before_notice": true,
+      "query_result_after_notice": 42,
+      "notifications": [
+        "wake"
+      ],
+      "listener_lock_after": false
+    },
+    {
+      "psycopg": "3.2.3",
+      "server": 140013,
+      "placement": "separate",
+      "query_pending_before_notice": false,
+      "query_result_after_notice": 42,
+      "notifications": [
+        "wake"
+      ],
+      "listener_lock_after": false
+    },
+    {
+      "psycopg": "3.3.9",
+      "server": 140013,
+      "placement": "shared",
+      "query_pending_before_notice": true,
+      "query_result_after_notice": 42,
+      "notifications": [
+        "wake"
+      ],
+      "listener_lock_after": false
+    },
+    {
+      "psycopg": "3.3.9",
+      "server": 140013,
+      "placement": "separate",
+      "query_pending_before_notice": false,
+      "query_result_after_notice": 42,
+      "notifications": [
+        "wake"
+      ],
+      "listener_lock_after": false
+    }
+  ],
+  "converter_reads_oracle": false,
+  "resource_edges_are_creation_edges": false,
+  "audit_source_sha256": "ee6c65d7431e6fe3907e72a018967f4da47cb0be7e1ef11c8a99f5302c112dcd",
+  "core_sha256": {
+    "bin/coroPerf": "2762832bdaaf6302b6fbee873544e5f4750d8e76c24b0ac786be5c3425e19e5a",
+    "scripts/corostitch.py": "ab7a78b87c192a6e3049a572d612f30cc4d36a4f6bbc3afbf28ee94b299bef84",
+    "core/evidence.mjs": "f54a8562717d380415fab8d0c379e59aa87b9d7f553aaf6304f47f7d38b50e00"
+  },
+  "selected_trace": {
+    "resource_waits": [
+      {
+        "wait_index": 10,
+        "acquire_index": 3,
+        "publication_index": 5,
+        "acquirer_create_index": 1,
+        "waiter_create_index": 8,
+        "lock_token": 5,
+        "generator_token": 7,
+        "acquirer_collected_before_wait": true,
+        "creation": "1",
+        "acquire": "3",
+        "publication": "5",
+        "wait": "10"
+      },
+      {
+        "wait_index": 11,
+        "acquire_index": 2,
+        "publication_index": 4,
+        "acquirer_create_index": 0,
+        "waiter_create_index": 9,
+        "lock_token": 4,
+        "generator_token": 6,
+        "acquirer_collected_before_wait": true,
+        "creation": "0",
+        "acquire": "2",
+        "publication": "4",
+        "wait": "11"
+      }
+    ],
+    "resolved_waiters": 2,
+    "without_lock_history": 0,
+    "without_task_creation": 0
+  },
+  "scope": "Bounded shared-connection mechanism controls plus a separate generator-handoff historical-caller extension; pure Python driver only.",
+  "upstream_issue": "https://github.com/psycopg/psycopg/issues/340",
+  "cleanup": "Explicit aclose() application control; both released drivers retain the lock before close.",
+  "selected_historical_callers": [
+    {
+      "caller": "start_refresh",
+      "lock": "133256273468864",
+      "generator": "133256274981120",
+      "creation": "1",
+      "acquire": "3",
+      "wait": "10"
+    },
+    {
+      "caller": "start_report",
+      "lock": "133256277131136",
+      "generator": "133256274982080",
+      "creation": "0",
+      "acquire": "2",
+      "wait": "11"
+    }
+  ],
+  "trials_with_task_address_reuse": 0
+}

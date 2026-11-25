@@ -43,7 +43,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(29)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(22)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(18)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(32)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(29)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(22)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(18)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(33)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -198,6 +198,20 @@
               <small>因安全限制暂缓复现跟进</small>
             </th>
             <td class="row-status"><a class="state-pill state-unconfirmed" href="https://www.postgresql.org/message-id/ahzqaOwc2DprQRrV@paquier.xyz">无正式状态</a><span class="fix-label">修复待核实</span></td>
+          </tr>
+          <tr id="followup-apache--flink--flink-41435">
+            <th scope="row">
+              <a href="https://issues.apache.org/jira/browse/FLINK-41435"><span>FLINK-41435</span>Flink 线程池继承临时 Subject，已跳过复现</a>
+              <small>因安全限制暂缓复现跟进</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-open" href="https://issues.apache.org/jira/browse/FLINK-41435">开放</a><span class="fix-label">修复待核实</span></td>
+          </tr>
+          <tr id="followup-apache--datafusion--24883">
+            <th scope="row">
+              <a href="https://github.com/apache/datafusion/issues/24883"><span>apache/datafusion #24883</span>DataFusion 重分区 spill pool 永久等待，已跳过复现</a>
+              <small>因安全限制暂缓复现跟进</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-closed" href="https://github.com/apache/datafusion/issues/24883">已关闭</a><span class="fix-label">修复待核实</span></td>
           </tr></tbody>
         </table>
       </div>
@@ -579,12 +593,17 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">调度与资源争用定位</h2><span class="case-kind">32 个案例</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">调度与资源争用定位</h2><span class="case-kind">33 个案例</span></div>
       <p class="section-copy">将延迟任务接到造成等待的执行顺序、轮询区间或被占用的资源。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
           <thead><tr><th scope="col">案例</th><th scope="col">CoroPerf 证据说明</th><th scope="col">上游状态<small>修复证据</small></th></tr></thead>
           <tbody>
+      <tr>
+        <th scope="row"><a href="evidence/psycopg--psycopg--340.html#call-stack"><span>psycopg/psycopg #340</span>读取 Task 已结束，通知生成器仍保留连接锁</a></th>
+        <td><p>两个发布版的纯 Python 驱动都在读取 Task 被回收后继续保留生成器的连接锁。沿同一未释放的锁接回历史取锁和 Task 创建，两个批次核对了 32 个调用者。下方拼接展示历史取锁采样；当前查询的资源等待关系另行记录，不冒充创建边。</p><p><a href="../data/psycopg-340-verification.json">资源关系、原生对照与应用清理的验证记录</a></p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/psycopg/psycopg/issues/340">已关闭</a><a class="fix-label" href="https://github.com/psycopg/psycopg/issues/340">替代方案已验证</a></td>
+      </tr>
       <tr>
         <th scope="row"><a href="evidence/huggingface--text-embeddings-inference--65.html#call-stack"><span>huggingface/text-embeddings-inference #65</span>哪条短向量请求与长输入同批填充？</a></th>
         <td><p>用 Tokio Task ID 把相同的恢复栈接回搜索和索引入口，再核对实际批次。固定窗口补丁把填充后的位置数从 5120 降至 2816，CPU 处理完积压的耗时中位数从 1234 降至 720 毫秒。第一条索引响应更晚完成。</p></td>

@@ -1,4 +1,26 @@
 {
+  "psycopg--psycopg--340": {
+    "contribution_kind": "scheduling_contention",
+    "language": "Python",
+    "kind": "debugging",
+    "fix": {
+      "state": "workaround",
+      "url": "https://github.com/psycopg/psycopg/issues/340"
+    },
+    "case_file": "research/github-issue-discovery/psycopg-340/case.json",
+    "records": [
+      [
+        "0",
+        "2"
+      ],
+      [
+        "1",
+        "3"
+      ]
+    ],
+    "en": "Record each historical acquisition under the running reader Task. The same unreleased connection lock and suspended generator frame connect later query waits to the completed reader and its creation. Resource waits remain distinct from Task creation.",
+    "zh": "在读取 Task 运行时记录实际取锁。通过同一未释放的连接锁及生成器挂起帧，把后续查询等待接回已结束的读取 Task 与其创建入口；资源等待关系不冒充 Task 创建关系。"
+  },
   "apache--spark--spark-47833": {
     "contribution_kind": "caller_recovery",
     "language": "Scala",
