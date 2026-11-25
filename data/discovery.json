@@ -43094,6 +43094,41 @@
       "locally_executed": true,
       "successful_reproduction_runs": 1,
       "successful_reproduction_replay_authorized": false
+    },
+    "jackc--pgx--746": {
+      "status": "component_reproduced",
+      "reason": "One pinned historical ConnectConfig failure returns nil/error while one backgroundHealthCheck goroutine remains during the bounded 300ms window. Native GoID joins restore the returned constructor caller through CoroPerf. Native trace already provides the creation data; no replay, indefinite lifetime or runtime fix is claimed.",
+      "reason_zh": "一次固定历史版本 ConnectConfig 失败返回空池和错误后，仍有一个 backgroundHealthCheck goroutine 在有界 300ms 窗口内存活。CoroPerf 用真实 GoID 接回已返回的初始化调用者。原生 trace 本身已有创建数据；不重跑，不声称无限期存活或 runtime 修复。",
+      "sources": [
+        "https://github.com/jackc/pgx/issues/746",
+        "https://fzh0u.github.io/coroperf/data/pgx-746-verification.json"
+      ],
+      "locally_executed": true,
+      "successful_reproduction_runs": 1,
+      "successful_reproduction_replay_authorized": false,
+      "reviewed_at": "2026-11-25T19:05:42.967711+00:00"
+    },
+    "dotnet--runtime--137619": {
+      "status": "excluded_after_review",
+      "reason": "Existing frozen local NativeAOT evidence shows StackTrace(ex).GetFrames preserves the omitted forwarder IP, resolved by the matching debug file. This is native symbolization rather than an additional historical-coroutine creator join. The installed .NET 12 SDK is present; no environment-unavailable claim or new execution is made.",
+      "reason_zh": "已有冻结的 NativeAOT 证据显示 StackTrace(ex).GetFrames 保留了被省略 forwarder 的 IP，匹配 debug 文件可解析。属于原生符号化，没有新增历史协程创建归属。已确认存在 .NET 12 SDK，不声称环境缺失，也未新增执行。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/137619"
+      ],
+      "locally_executed": false,
+      "existing_frozen_evidence": "research/systems-repro/dotnet-aot-frames/README.md",
+      "successful_reproduction_replay_authorized": false,
+      "reviewed_at": "2026-11-25T19:05:42.967711+00:00"
+    },
+    "dotnet--runtime--137946": {
+      "status": "external_environment_required",
+      "reason": "The report uses .NET 8/macOS and google.com, without an owned-target recipe or evidence separating debugger first-chance events from an unhandled exception. Linux loopback is not substituted for the reported behavior. Ordinary ObjectDisposedException alone is not treated as unsafe.",
+      "reason_zh": "报告依赖 .NET 8/macOS 和 google.com，没有自有目标触发程序，也未区分 debugger first-chance 事件与未处理异常。不以 Linux loopback 替代所报行为；普通 ObjectDisposedException 本身不作 unsafe 结论。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/137946"
+      ],
+      "locally_executed": false,
+      "reviewed_at": "2026-11-25T19:05:42.967711+00:00"
     }
   },
   "supplemental_records": [
@@ -43393,6 +43428,15 @@
       "summary_zh": "仅来源审阅及复现前检查，没有准备源码、构建、执行或采集；本轮先换项，后续批次再评估。",
       "path": "data/mysql-626-deferral.json",
       "checked_at": "2026-11-25T18:52:54.185105+00:00"
+    },
+    {
+      "id": "pgx-746-publication-20261126",
+      "title": "pgx constructor failure: one run and native-trace caller recovery",
+      "title_zh": "pgx 初始化失败：一次运行与原生 trace 调用者归属",
+      "summary": "One historical pgx constructor failure ran once in 94 seconds including preparation/build: a nil/error return left one health-check goroutine through a bounded 300ms window. CoroPerf matches its native creation record and later snapshot by actual GoID, recovering the returned constructor caller. Native trace already holds this history. .NET #137619 reuses existing native raw-frame evidence without another run; #137946 lacks the reported local platform. Three focused windows add 34 candidates, separately from regular coverage. Selected cases remain at 127.",
+      "summary_zh": "一次历史 pgx 初始化失败检查，含准备及构建约 94 秒：返回空池及错误后，一个健康检查 goroutine 在有界 300ms 窗口内仍存活。CoroPerf 以真实 GoID 接合原生创建记录和后续快照，恢复已返回的初始化调用者；原生 trace 本身已有该历史。.NET #137619 沿用原生 raw-frame 历史证据，不重跑；#137946 缺少所报本地平台。三个定向窗口补收集 34 条候选，与常规覆盖分开记账。已选目录仍为 127 条。",
+      "path": "data/pgx-746-verification.json",
+      "checked_at": "2026-11-25T19:06:10.841732+00:00"
     }
   ],
   "deferred_registry": [
@@ -50303,6 +50347,78 @@
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T18:02:27+00:00",
       "last_seen": "2026-11-25T18:02:27+00:00"
+    },
+    {
+      "id": "tokio-rs--tokio--6051",
+      "title": "Panics when using `tokio_taskdump`",
+      "url": "https://github.com/tokio-rs/tokio/issues/6051",
+      "repository": "tokio-rs/tokio",
+      "status": "skipped_review",
+      "risk_signal": "thread 'tokio-runtime-worker' panicked at",
+      "signal_title": "Panics when using `tokio_taskdump`",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T18:58:29+00:00",
+      "last_seen": "2026-11-25T18:58:29+00:00"
+    },
+    {
+      "id": "tokio-rs--tokio--6185",
+      "title": "`assertion failed: next.is_notified()` during task dump",
+      "url": "https://github.com/tokio-rs/tokio/issues/6185",
+      "repository": "tokio-rs/tokio",
+      "status": "skipped_review",
+      "risk_signal": "thread 'tokio-runtime-worker' panicked at",
+      "signal_title": "`assertion failed: next.is_notified()` during task dump",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T18:58:29+00:00",
+      "last_seen": "2026-11-25T18:58:29+00:00"
+    },
+    {
+      "id": "tokio-rs--tokio--6343",
+      "title": "`assertion failed: next.is_notified()` during task dump with tokio v1.35.0",
+      "url": "https://github.com/tokio-rs/tokio/issues/6343",
+      "repository": "tokio-rs/tokio",
+      "status": "skipped_review",
+      "risk_signal": "thread 'tokio-runtime-worker' panicked at",
+      "signal_title": "`assertion failed: next.is_notified()` during task dump with tokio v1.35.0",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T18:58:29+00:00",
+      "last_seen": "2026-11-25T18:58:29+00:00"
+    },
+    {
+      "id": "tokio-rs--tokio--8391",
+      "title": "`Handle::dump()` panics with \"RefCell already borrowed\" when a traced task wakes a task (current_thread runtime)",
+      "url": "https://github.com/tokio-rs/tokio/issues/8391",
+      "repository": "tokio-rs/tokio",
+      "status": "skipped_review",
+      "risk_signal": "thread '...' panicked at",
+      "signal_title": "`Handle::dump()` panics with \"RefCell already borrowed\" when a traced task wakes a task (current_thread runtime)",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T18:58:29+00:00",
+      "last_seen": "2026-11-25T18:58:29+00:00"
+    },
+    {
+      "id": "tokio-rs--tokio--8567",
+      "title": "Taskdump duplicates a notification while block_in_place returns",
+      "url": "https://github.com/tokio-rs/tokio/issues/8567",
+      "repository": "tokio-rs/tokio",
+      "status": "skipped_review",
+      "risk_signal": "thread 'tokio-rt-worker' (3909546) panicked at",
+      "signal_title": "Taskdump duplicates a notification while block_in_place returns",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-25T18:58:29+00:00",
+      "last_seen": "2026-11-25T18:58:29+00:00"
+    },
+    {
+      "id": "dotnet--runtime--130133",
+      "title": "[ci-scan] Wasm.Build.Tests ManagedToNativeGenerator task host node crash",
+      "url": "https://github.com/dotnet/runtime/issues/130133",
+      "repository": "dotnet/runtime",
+      "status": "skipped_review",
+      "risk_signal": "crash",
+      "signal_title": "[ci-scan] Wasm.Build.Tests ManagedToNativeGenerator task host node crash",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-25T18:58:36+00:00",
+      "last_seen": "2026-11-25T18:58:36+00:00"
     }
   ],
   "delta": {
@@ -50312,17 +50428,18 @@
   },
   "progress_summary": {
     "source": "report_update",
-    "assembled_at": "2026-11-25T18:52:54.185105+00:00",
-    "comparison_reported_at": "2026-11-25T18:25:36.390763+00:00",
+    "assembled_at": "2026-11-25T19:06:10.841732+00:00",
+    "comparison_reported_at": "2026-11-25T18:52:54.185105+00:00",
     "verified_catalogue_entries": 127,
     "new_verified_ids": [],
-    "review_decisions": 153,
+    "review_decisions": 156,
     "new_review_decision_ids": [
-      "go-sql-driver--mysql--626",
-      "jackc--pgx--1641"
+      "dotnet--runtime--137619",
+      "dotnet--runtime--137946",
+      "jackc--pgx--746"
     ],
     "manual_holds": 72,
-    "automatic_signal_holds": 521,
+    "automatic_signal_holds": 527,
     "scope": "Manual review update over the completed source scan; source observation times retained. Search hits and native-only reproductions are not selected CoroPerf cases."
   }
 }

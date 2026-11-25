@@ -1,0 +1,152 @@
+{
+  "checked_at": "2026-11-25T19:01:22.333293+00:00",
+  "id": "jackc--pgx--746",
+  "issue_url": "https://github.com/jackc/pgx/issues/746",
+  "kind": "constructor_failure_native_creator_stack_recovery",
+  "selected_creation_join_catalogue": false,
+  "successful_component_runs": 1,
+  "successful_workload_replays": 0,
+  "coroperf_attribution_verified": true,
+  "preparation_build_and_run_seconds": 94.0839946269989,
+  "runtime": "go1.23.0 Linux/x86_64",
+  "pgx": "v4.6.1-0.20200513124518-64789acf4616",
+  "source_revision": "64789acf46163f2d026c911ceb025b9f108f713e",
+  "compiled_pool_source_matches_upstream": true,
+  "native_result": {
+    "background_goroutines_after_error": 1,
+    "background_goroutines_after_window": 1,
+    "component_reproduced": true,
+    "pool_returned_nil": true,
+    "runtime": "go1.23.0",
+    "scope": "One constructor-failure path observed for a bounded 300ms interval; no live database or patched branch."
+  },
+  "connection_error_kind": "owned nonexistent Unix socket",
+  "native_goroutine_id": "165",
+  "native_creation_event_has_full_stack": true,
+  "native_dump_has_historical_constructor_caller": false,
+  "coroperf_causal_stack_has_historical_constructor_caller": true,
+  "same_goroutine_survives_bounded_window": true,
+  "bounded_snapshot_interval_ns": 300898944,
+  "full_parent_ancestry_verified": false,
+  "production_collector_or_overhead_verified": false,
+  "capture": {
+    "schema_version": 1,
+    "language": "go",
+    "frame_order": "leaf_to_root",
+    "segments": [
+      {
+        "id": "0",
+        "capture_reason": "create",
+        "process_id": null,
+        "thread_id": 3765884,
+        "coroutine_id": "165",
+        "timestamp_ns": 1841782109936448,
+        "frames": [
+          {
+            "function": "github.com/jackc/pgx/v4/pgxpool.ConnectConfig",
+            "file": "pool.go",
+            "line": 186,
+            "pc": "0x693a57"
+          },
+          {
+            "function": "main.openUnavailablePool",
+            "file": "main.go",
+            "line": 22,
+            "pc": "0x69498f"
+          },
+          {
+            "function": "main.run",
+            "file": "main.go",
+            "line": 40,
+            "pc": "0x694c46"
+          },
+          {
+            "function": "main.main",
+            "file": "main.go",
+            "line": 58,
+            "pc": "0x695232"
+          }
+        ],
+        "observation": {
+          "source": "native-Go-execution-trace",
+          "parent_go_id": "1"
+        }
+      },
+      {
+        "id": "1",
+        "capture_reason": "sample",
+        "process_id": null,
+        "thread_id": null,
+        "coroutine_id": "165",
+        "timestamp_ns": 1841782120472448,
+        "frames": [
+          {
+            "function": "github.com/jackc/pgx/v4/pgxpool.(*Pool).backgroundHealthCheck",
+            "file": "pool.go",
+            "line": 303
+          }
+        ],
+        "observation": {
+          "source": "native-pprof-goroutine-snapshot"
+        }
+      }
+    ],
+    "edges": []
+  },
+  "current_folded": "github.com/jackc/pgx/v4/pgxpool.(*Pool).backgroundHealthCheck 1",
+  "causal_folded": "main.main;main.run;main.openUnavailablePool;github.com/jackc/pgx/v4/pgxpool.ConnectConfig;[creation -> observation];github.com/jackc/pgx/v4/pgxpool.(*Pool).backgroundHealthCheck 1",
+  "scope": "One exact historical constructor-error path and a bounded 300ms observation. The pool is nil but its health-check goroutine remains live. Native trace already contains creation data; CoroPerf joins that history to the later snapshot by actual GoID. No indefinite lifetime, patched release, full production incident, missing native trace data, or runtime repair is claimed.",
+  "evidence_sha256": {
+    "runtime.trace": "ea6a8258804c454cdd541ef0ee37ce00a5e86a55376b74f8ae6ee7ac80160729",
+    "after-error.txt": "b3327777241c89f6792cc177398c1e0524ac4764b6642b2fdb9139223b79f076",
+    "after-window.txt": "f7fa5b8cb35b7a43a9c20a922565c765c491242b263782f5728c1663f72be934",
+    "execution.json": "8273de8ac4ac92d5203232fe17818e34872a0e3f74616a16bd9794feb50147ca",
+    "native": "e0e3d4958cce7d24cf6664c324024929deaffc6e297c4e85681e1640e6a0b92e",
+    "capture.json": "812d165b7b53a3712a60d917a9d138e1206b443f89c4328241544a1643d36060"
+  },
+  "coroperf_bin_sha256": "2762832bdaaf6302b6fbee873544e5f4750d8e76c24b0ac786be5c3425e19e5a",
+  "other_source_reviews": {
+    "jackc--pgx--746": {
+      "status": "component_reproduced",
+      "reason": "One pinned historical ConnectConfig failure returns nil/error while one backgroundHealthCheck goroutine remains during the bounded 300ms window. Native GoID joins restore the returned constructor caller through CoroPerf. Native trace already provides the creation data; no replay, indefinite lifetime or runtime fix is claimed.",
+      "reason_zh": "一次固定历史版本 ConnectConfig 失败返回空池和错误后，仍有一个 backgroundHealthCheck goroutine 在有界 300ms 窗口内存活。CoroPerf 用真实 GoID 接回已返回的初始化调用者。原生 trace 本身已有创建数据；不重跑，不声称无限期存活或 runtime 修复。",
+      "sources": [
+        "https://github.com/jackc/pgx/issues/746",
+        "https://fzh0u.github.io/coroperf/data/pgx-746-verification.json"
+      ],
+      "locally_executed": true,
+      "successful_reproduction_runs": 1,
+      "successful_reproduction_replay_authorized": false,
+      "reviewed_at": "2026-11-25T19:05:42.967711+00:00"
+    },
+    "dotnet--runtime--137619": {
+      "status": "excluded_after_review",
+      "reason": "Existing frozen local NativeAOT evidence shows StackTrace(ex).GetFrames preserves the omitted forwarder IP, resolved by the matching debug file. This is native symbolization rather than an additional historical-coroutine creator join. The installed .NET 12 SDK is present; no environment-unavailable claim or new execution is made.",
+      "reason_zh": "已有冻结的 NativeAOT 证据显示 StackTrace(ex).GetFrames 保留了被省略 forwarder 的 IP，匹配 debug 文件可解析。属于原生符号化，没有新增历史协程创建归属。已确认存在 .NET 12 SDK，不声称环境缺失，也未新增执行。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/137619"
+      ],
+      "locally_executed": false,
+      "existing_frozen_evidence": "research/systems-repro/dotnet-aot-frames/README.md",
+      "successful_reproduction_replay_authorized": false,
+      "reviewed_at": "2026-11-25T19:05:42.967711+00:00"
+    },
+    "dotnet--runtime--137946": {
+      "status": "external_environment_required",
+      "reason": "The report uses .NET 8/macOS and google.com, without an owned-target recipe or evidence separating debugger first-chance events from an unhandled exception. Linux loopback is not substituted for the reported behavior. Ordinary ObjectDisposedException alone is not treated as unsafe.",
+      "reason_zh": "报告依赖 .NET 8/macOS 和 google.com，没有自有目标触发程序，也未区分 debugger first-chance 事件与未处理异常。不以 Linux loopback 替代所报行为；普通 ObjectDisposedException 本身不作 unsafe 结论。",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/137946"
+      ],
+      "locally_executed": false,
+      "reviewed_at": "2026-11-25T19:05:42.967711+00:00"
+    }
+  },
+  "focused_source_collection": {
+    "windows": 3,
+    "returned_distinct_issues": 34,
+    "new_signal_holds": 6,
+    "scope": "Focused metadata, separate from regular coverage; no issue programs executed by these searches."
+  },
+  "existing_native_dotnet_baseline_sha256": "c4021767728040ec6f39440269c02ca40dca05db3968de8f987cebbec6938b55"
+}
