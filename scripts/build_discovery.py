@@ -124,6 +124,23 @@ def render(report, language):
         url = ('../' if zh else '') + record['path']
         records.append(f'<li><a href="{e(url)}">{e(title)}</a> · <time>{e(record["checked_at"])}</time><p>{e(summary)}</p></li>')
     supplemental = (f'<section class="block"><h2>{tr("Additional review records", "补充审阅记录")}</h2><ul>{"".join(records)}</ul></section>' if records else '')
+    progress = ''
+    if facts := report.get('progress_summary'):
+        added = facts['new_verified_ids']
+        reviewed = facts['new_review_decision_ids']
+        unknown = tr('baseline unavailable', '缺少可比较基线')
+        added_label = str(len(added)) if added is not None else unknown
+        review_label = str(len(reviewed)) if reviewed is not None else unknown
+        progress = (f'<section class="block"><h2>{tr("Periodic progress", "本次定时报告成果")}</h2>'
+                    f'<p>{tr("Verified catalogue entries", "已验证证据目录")} {facts["verified_catalogue_entries"]} · '
+                    f'{tr("New entries since the comparison report", "相对基线新增证据")} {e(added_label)} · '
+                    f'{tr("Review decisions", "逐项审阅结论")} {facts["review_decisions"]} · '
+                    f'{tr("New review decisions", "新增审阅结论")} {e(review_label)}</p>'
+                    f'<p>{tr("Manual holds", "人工暂缓")} {facts["manual_holds"]} · '
+                    f'{tr("Persistent automatic signals", "持久自动信号")} {facts["automatic_signal_holds"]}</p>'
+                    f'<p class="section-copy">{tr("Assembled", "汇总时间")} {e(facts["assembled_at"])} · '
+                    f'{tr("Comparison report", "比较报告")} {e(facts.get("comparison_reported_at") or unknown)}. '
+                    f'{tr("Deltas use the previous successful Git publication. Search hits do not count as verified cases.", "增量以最近一次 Git 发布成功的报告为基线。搜索命中不计为验证案例。")}</p></section>')
     official_sections = []
     for result in report.get('official_tracker_results', []):
         mail = result.get('entry_kind') == 'messages'
@@ -177,6 +194,7 @@ def render(report, language):
       <p class="section-copy">{e(summary)}</p>
       <p class="section-copy">{tr('Snapshot assembled at', '快照汇总时间')} <time>{e(report['finished_at'])}</time> · <a href="{'../' if zh else ''}data/discovery.json">{tr('Download report', '下载报告')}</a> · <a href="index.html#issues">{tr('Verified cases', '已验证案例')}</a></p>
       <nav class="research-categories" aria-label="{tr('Progress sections', '进度栏目')}"><ul><li><a href="#coverage">{tr('Coverage', '覆盖')}</a></li><li><a href="#official-trackers">{tr('Official sources', '官方来源')}</a></li><li><a href="#candidates">{tr('GitHub review queue', 'GitHub 审阅队列')}</a></li><li><a href="#skipped">{tr('Skipped entries', '已跳过条目')}</a></li></ul></nav></header>
+      {progress}
       <section class="block" id="coverage"><h2>{tr('Framework coverage', '框架覆盖')}</h2>
       <p class="section-copy">{tr('Each enabled repository gets a most-discussed window and a recently-updated window, up to 20 issues each. This bounded survey does not cover every issue or external tracker.', '每个启用 Issues 的仓库分别搜索讨论最多和最近更新的窗口，各取最多 20 条。本轮为有界搜索，未覆盖所有 issue 或外部跟踪器。')}</p>
       <div class="discovery-scroll"><table><thead><tr><th>{tr('Repository', '仓库')}</th><th>{tr('Domain', '领域')}</th><th>Stars</th><th>{tr('Hits', '命中')}</th><th>{tr('Coverage evidence', '覆盖证据')}</th></tr></thead><tbody>{''.join(coverage_rows)}</tbody></table></div></section>
