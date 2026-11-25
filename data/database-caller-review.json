@@ -1,0 +1,181 @@
+{
+  "schema": "coroperf.database-caller-review/v1",
+  "reviewed_at": "2026-11-25T09:10:34.868759+00:00",
+  "selected_catalogue_entries": 126,
+  "new_verified_coroperf_cases": 0,
+  "manual_review_counts": {
+    "skipped_review": 4,
+    "excluded_after_review": 1
+  },
+  "manual_reviews": [
+    {
+      "id": "duckdb--duckdb--22436",
+      "status": "skipped_review",
+      "reason": "The report records STATUS_STACK_BUFFER_OVERRUN / __fastfail during a long-running Windows multithreaded database workload, including a heap-corruption event. Keep the workload on hold; impact unassessed. No database file, Python workload, binary rebuild or supplied diagnostic program was executed.",
+      "reason_zh": "报告记录 Windows 多线程数据库工作负载中的 STATUS_STACK_BUFFER_OVERRUN / __fastfail，并含堆损坏事件。按原生终止线索暂缓，影响未评估；未打开其数据库、运行 Python 工作负载、重建二进制或执行诊断程序。",
+      "sources": [
+        "https://github.com/duckdb/duckdb/issues/22436"
+      ],
+      "reviewed_at": "2026-11-25T09:01:07.371387+00:00"
+    },
+    {
+      "id": "tikv--tikv--2910",
+      "status": "skipped_review",
+      "reason": "The report supplies an illegal-instruction process termination and a grpcio/futures backtrace. Keep native execution on hold pending assessment. No TiKV/grpcio process, old binary, cluster or supplied program was executed.",
+      "reason_zh": "报告包含非法指令导致进程终止及 grpcio/futures 回溯。按原生终止线索暂缓，等待评估；未运行 TiKV/grpcio、旧二进制、集群或附带程序。",
+      "sources": [
+        "https://github.com/tikv/tikv/issues/2910"
+      ],
+      "reviewed_at": "2026-11-25T09:01:07.371387+00:00"
+    },
+    {
+      "id": "tikv--tikv--10965",
+      "status": "skipped_review",
+      "reason": "The report describes repeated check_leader RPC batches accumulating behind join_all when a TiKV is stuck, potentially causing OOM. Keep the unbounded fault/resource scenario on hold; impact unassessed. No fault injection, RPC load, TiKV/TiFlash service or supplied workload was executed.",
+      "reason_zh": "报告描述 TiKV 卡住时，每秒 check_leader RPC 批次在 join_all 后堆积，并可能导致 OOM。按无界故障与资源线索暂缓，影响未评估；未注入故障、发送 RPC 负载、运行 TiKV/TiFlash 或附带工作负载。",
+      "sources": [
+        "https://github.com/tikv/tikv/issues/10965"
+      ],
+      "reviewed_at": "2026-11-25T09:01:07.371387+00:00"
+    },
+    {
+      "id": "sidorares--node-mysql2--577",
+      "status": "excluded_after_review",
+      "reason": "The original Bluebird long stack already includes Db.GetSqlConnection and Db.verify above PromisePool.getConnection, so this report does not establish a missing application caller in the supplied diagnostic. This does not declare the listener leak fixed. No pool, server, Bluebird disposal or leak workload was executed.",
+      "reason_zh": "原始 Bluebird 长栈已经在 PromisePool.getConnection 之上包含 Db.GetSqlConnection 与 Db.verify；附带诊断尚未建立应用调用者缺失。这不等同于判定监听器泄漏已修复；未运行连接池、服务器、Bluebird disposer 或泄漏工作负载。",
+      "sources": [
+        "https://github.com/sidorares/node-mysql2/issues/577"
+      ],
+      "reviewed_at": "2026-11-25T09:01:07.371387+00:00"
+    },
+    {
+      "id": "apache--datafusion--24883",
+      "status": "skipped_review",
+      "reason": "Skipped at the user’s explicit request after source review and an external fixture build. The issue workload was never run. The completed build and downloaded source are preparation only, not a reproduction, caller-attribution result or verified CoroPerf case. Do not continue this issue unless the user explicitly asks to resume.",
+      "reason_zh": "在源码检查及独立试验程序构建后，按用户明确要求跳过。未运行 issue 工作负载；构建成功和源码下载仅属于准备，不是成功复现、调用者归属结果或已验证 coroPerf 案例。除非用户明确要求恢复，不再继续该 issue。",
+      "sources": [
+        "https://github.com/apache/datafusion/issues/24883"
+      ],
+      "reviewed_at": "2026-11-25T09:10:34.868759+00:00",
+      "skip_reason": "user_request"
+    }
+  ],
+  "new_manual_holds": 3,
+  "existing_manual_hold_updated_by_user_request": {
+    "issue_id": "apache--datafusion--24883",
+    "status": "skipped_by_user",
+    "recorded_at": "2026-11-25T09:10:34.868759+00:00",
+    "user_instruction": "skip这个issue，记录下来",
+    "previously_deferred": true,
+    "previous_deferred_at": "2026-11-25T02:18:46.685734+00:00",
+    "source_revision": "ad5820c84ed00d31125842e62a5124303a39c8d2",
+    "external_fixture_build_exit_code": 0,
+    "issue_workload_executed": false,
+    "coroperf_capture_or_analysis_executed": false,
+    "no_issue_build_or_workload_processes_running": true,
+    "new_verified_coroperf_cases": 0,
+    "resume_requires_explicit_user_request": true
+  },
+  "prior_user_skip_preserved": "apache--flink--flink-38180",
+  "new_automatic_title_signals": [
+    {
+      "id": "duckdb--duckdb--22436",
+      "repository": "duckdb/duckdb",
+      "domain": "Database",
+      "number": 22436,
+      "title": "Reproducible __fastfail (0xC0000409) at _duckdb.cp314-win_amd64.pyd+0x18850d5 on Windows multi-thread Python workload — bug spans at least 1.4.3 through 1.5.2",
+      "url": "https://github.com/duckdb/duckdb/issues/22436",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-05-04T21:45:47Z",
+      "created_at": "2026-05-02T01:52:26Z",
+      "comments": 6,
+      "positive_reactions": 0,
+      "repository_stars": 43320,
+      "labels": [
+        "reproduced"
+      ],
+      "async_signal": true,
+      "observed_at": "2026-11-25T08:03:41+00:00",
+      "heat": 13.1218,
+      "status": "skipped_review",
+      "reason": "Reported failure wording or runtime error signature; review required before reproduction.",
+      "query_kinds": [
+        "discussion-depth"
+      ],
+      "coverage_rank": 224,
+      "risk_signal": "__fastfail"
+    },
+    {
+      "id": "tikv--tikv--2910",
+      "repository": "tikv/tikv",
+      "domain": "Distributed systems",
+      "number": 2910,
+      "title": "Program terminated with signal 4, Illegal instruction.",
+      "url": "https://github.com/tikv/tikv/issues/2910",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2019-03-26T18:03:27Z",
+      "created_at": "2018-04-03T07:22:25Z",
+      "comments": 5,
+      "positive_reactions": 0,
+      "repository_stars": 16969,
+      "labels": [],
+      "async_signal": true,
+      "observed_at": "2026-11-25T08:07:04+00:00",
+      "heat": 12.0366,
+      "status": "skipped_review",
+      "reason": "Reported failure wording or runtime error signature; review required before reproduction.",
+      "query_kinds": [
+        "discussion-depth"
+      ],
+      "coverage_rank": 212,
+      "risk_signal": "Illegal instruction"
+    }
+  ],
+  "offline_tests_passed": 48,
+  "issue_workloads_executed": 0,
+  "native_mysql2_evidence": {
+    "issue_url": "https://github.com/sidorares/node-mysql2/issues/577",
+    "original_long_stack_contains_application_functions": [
+      "Db.GetSqlConnection",
+      "Db.verify"
+    ],
+    "listener_leak_declared_fixed": false,
+    "local_pool_or_server_executed": false
+  },
+  "mysql2_related_source_only": {
+    "pull_requests": [
+      "https://github.com/sidorares/node-mysql2/pull/4265",
+      "https://github.com/sidorares/node-mysql2/pull/4267"
+    ],
+    "runtime_repair_verified": false,
+    "scope": "Related promise-stack source changes were read, not executed. They are separate from the #577 review and add no verified case."
+  },
+  "datafusion_user_skip": {
+    "source_revision": "ad5820c84ed00d31125842e62a5124303a39c8d2",
+    "source_archive_sha256": "5536169866353fab0307deba3793277e692fd41742a836080f43ee3ed9774d1e",
+    "external_fixture_compiled": true,
+    "external_fixture_build_exit_code": 0,
+    "workload_executed": false,
+    "coroperf_capture_or_analysis_executed": false,
+    "already_deferred_before_exploratory_preparation": true,
+    "scope": "The deferred-registry check was missed before preparation. No issue workload ran. The user explicitly requested skipping, and further setup or execution is stopped."
+  },
+  "new_native_failure_wording": [
+    "SIGILL",
+    "illegal instruction",
+    "__fastfail",
+    "STATUS_STACK_BUFFER_OVERRUN",
+    "STATUS_HEAP_CORRUPTION"
+  ],
+  "security_scope": "Failure/resource signals trigger persistent reproduction holds; they are not security vulnerability determinations. DataFusion is skipped at the user’s request.",
+  "source_archive_sha256": {
+    "apache-datafusion-24883.json": "35e58e335889b2cf8552ede02e38cb6e2ae4d4a1004f50629471916dbfa79384",
+    "duckdb-duckdb-22436.json": "7bcaea96b133187f2e90b4a8eb020df4cea73b4125124fbb22b0ef72dd9e20b8",
+    "tikv-tikv-10965.json": "54038bf360da545d04712e529fbe02eed9fde44c120c7e170ed7b02a953e0d84",
+    "sidorares-node-mysql2-577.json": "723365210d511adcbe88d8af2f5473c2a551de80ef61a27163566bb9e599a959",
+    "tikv-tikv-2910.json": "5512b9f44f422c320da3d9922a05756cf790aa5cada2627010bbf88afd0dc8b4"
+  },
+  "counting_scope": "Five source review decisions, including an explicit user skip of an already-held DataFusion report. No new successful reproduction, caller-attribution result or verified CoroPerf case."
+}
