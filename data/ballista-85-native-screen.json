@@ -1,0 +1,124 @@
+{
+  "schema": "coroperf.ballista-native-query-id-screen/v1",
+  "checked_at": "2026-11-25T06:49:41.401968+00:00",
+  "issue_url": "https://github.com/apache/datafusion-ballista/issues/85",
+  "version": "55.0.0",
+  "source_commit": "d5379965528955a4afc5f41bac0c8c409de68a7d",
+  "source_archive_sha256": "3f7e246950e2f119a2e1112e13e664c47557064b2e8b359d0cfdb7e606eeda5c",
+  "framework_sources_match_archive": true,
+  "verified_source_files": 283,
+  "dependencies": {
+    "datafusion": "55.1.0",
+    "tokio": "1.53.1",
+    "arrow": "59.3.0"
+  },
+  "process_runs": 4,
+  "native_query_id_mappings": 8,
+  "trials": [
+    {
+      "batch": 1,
+      "order": "forward",
+      "queries": [
+        {
+          "entry": "start_refresh",
+          "native_job_id": "038GHDXH46001",
+          "result_rows": 2,
+          "native_job_state_log_lines": 1,
+          "native_job_completion_log_lines": 1,
+          "native_task_received_log_lines": 3,
+          "native_task_finished_log_lines": 3
+        },
+        {
+          "entry": "start_report",
+          "native_job_id": "038GHDXH46000",
+          "result_rows": 2,
+          "native_job_state_log_lines": 1,
+          "native_job_completion_log_lines": 1,
+          "native_task_received_log_lines": 4,
+          "native_task_finished_log_lines": 4
+        }
+      ]
+    },
+    {
+      "batch": 1,
+      "order": "reverse",
+      "queries": [
+        {
+          "entry": "start_refresh",
+          "native_job_id": "038GHDXH46000",
+          "result_rows": 2,
+          "native_job_state_log_lines": 1,
+          "native_job_completion_log_lines": 1,
+          "native_task_received_log_lines": 3,
+          "native_task_finished_log_lines": 3
+        },
+        {
+          "entry": "start_report",
+          "native_job_id": "038GHDXH46001",
+          "result_rows": 2,
+          "native_job_state_log_lines": 1,
+          "native_job_completion_log_lines": 1,
+          "native_task_received_log_lines": 4,
+          "native_task_finished_log_lines": 4
+        }
+      ]
+    },
+    {
+      "batch": 2,
+      "order": "forward",
+      "queries": [
+        {
+          "entry": "start_report",
+          "native_job_id": "038GHDXHQM000",
+          "result_rows": 2,
+          "native_job_state_log_lines": 1,
+          "native_job_completion_log_lines": 1,
+          "native_task_received_log_lines": 3,
+          "native_task_finished_log_lines": 3
+        },
+        {
+          "entry": "start_refresh",
+          "native_job_id": "038GHDXHQP000",
+          "result_rows": 2,
+          "native_job_state_log_lines": 1,
+          "native_job_completion_log_lines": 1,
+          "native_task_received_log_lines": 4,
+          "native_task_finished_log_lines": 4
+        }
+      ]
+    },
+    {
+      "batch": 2,
+      "order": "reverse",
+      "queries": [
+        {
+          "entry": "start_report",
+          "native_job_id": "038GHDXHQR000",
+          "result_rows": 2,
+          "native_job_state_log_lines": 1,
+          "native_job_completion_log_lines": 1,
+          "native_task_received_log_lines": 3,
+          "native_task_finished_log_lines": 3
+        },
+        {
+          "entry": "start_refresh",
+          "native_job_id": "038GHDXHQP000",
+          "result_rows": 2,
+          "native_job_state_log_lines": 1,
+          "native_job_completion_log_lines": 1,
+          "native_task_received_log_lines": 4,
+          "native_task_finished_log_lines": 4
+        }
+      ]
+    }
+  ],
+  "fixture_sha256": "6f253ad7ca8a25d9a5e9bb549508abd929a6377e4a3191f41e5426e06576dd6b",
+  "binary_sha256": "f76c0d13d1cd708e6c3310bfb0c218eceb721ecde875aad979a9486da101c137",
+  "new_coroperf_cases": 0,
+  "native_api": "DistributedQueryExec.job_id()",
+  "native_log_context": "Job ID and TID job/stage/attempt/task context",
+  "result": "Both identical concurrent queries expose distinct native Job IDs, and each ID appears in accepted/completed Job and received/finished TID logs in both launch orders and two process batches. The fixture labels each returned native ID at its application call site. Native logs are not claimed to include those fixture function names.",
+  "limits": "Private standalone scheduler/executor with two vcores and eight tiny successful SQL executions; no CoroPerf instrumentation or framework patch. The result does not establish per-event trace context for every log, reproduce the 2022 version, close the still-open feature request or measure production performance.",
+  "build_notes": "The initial build lacked protoc; protoc 30.2 was supplied. Two fixture-only API names were then corrected for DataFusion 55.1.0. Both failed build logs are retained outside canonical runtime results.",
+  "scope": "Ballista 55.0.0 standalone scheduler/executor, two vcores and two identical concurrent SQL queries per process. Native DistributedQueryExec.job_id() values match native Job/TID logs in both orders and batches. This does not prove every log event has query context or close the 2022 feature request. No CoroPerf capture or production timing claim."
+}
