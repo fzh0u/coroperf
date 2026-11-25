@@ -1,0 +1,185 @@
+{
+  "id": "grpc--grpc--43462",
+  "verification": {
+    "issue": "https://github.com/grpc/grpc/issues/43462",
+    "successful_component_runs": 1,
+    "selected_creation_join_catalogue": false,
+    "grpcio": "1.84.0",
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "native_result": {
+      "call_collected": false,
+      "call_still_in_flight": true,
+      "same_live_object": true
+    },
+    "stream_count": 1,
+    "owned_loopback_only": true,
+    "exit_code": 0,
+    "first_check_seconds": 149.124099,
+    "runtime_seconds": 0.7443858860060573,
+    "package_RECORD_checks": {
+      "grpc/aio/_call.py": true,
+      "grpc/aio/_channel.py": true,
+      "grpc/_cython/cygrpc.cpython-310-x86_64-linux-gnu.so": true
+    },
+    "diagnostic_scope": "Explicit weak API-resource observer recovers the returned read_one_chunk_then_drop_the_call origin. The later physical observation is main, not the Call execution or a running coroutine.",
+    "limitations": [
+      "CPython 3.10 adaptation; report lists 3.12-3.14.",
+      "One bounded observation, not an unbounded-retention or HTTP/2 exhaustion test.",
+      "No fixed version, alternate version or repeated successful workload ran.",
+      "No C-core reference graph or automatic root-cause detector was verified.",
+      "Capture ends before normal channel/server cleanup; process exit 0 is recorded separately."
+    ],
+    "repair_guidance_untested": "The report suggests weak callback tracking. The recovered initiating call site can also identify where an application must explicitly cancel an abandoned call. Neither repair was executed.",
+    "artifact_sha256": {
+      "snapshot.json": "f265140ee6ac6aa7cf451ecb00cd0c7394977725ebd66d4189e68ce905c51512",
+      "run.log": "cd2611a030be860a11f2408f5b91cddebc2fee3a962fc2ac2ba360d6767e2f71",
+      "first-check.json": "94fef7fd5faf899830fd60fe8c72f42ca05aeb9d45b633bba2f23802398ce922",
+      "first_check.py": "12fdbe8acc93732da555b805c29e35817f7e9321a53fbb61a5f8941494399d39",
+      "upstream-reproducer.py": "f477ee7ddca55516e82a53e87ded027d1806347327f5ee9136a6f9d6f5f0359e"
+    },
+    "checked_at": "2026-11-25T22:15:31.798268+00:00",
+    "coroperf_api_origin_verified": true,
+    "caller_in_current_stack": false,
+    "caller_in_causal_stack": true,
+    "extra_weak_API_observer_required": true,
+    "native_workload_replays_after_success": 0
+  },
+  "capture": {
+    "schema_version": 1,
+    "language": "python",
+    "runtime": "grpcio-1.84.0",
+    "frame_order": "leaf_to_root",
+    "producer": {
+      "name": "selected-weak-Call-origin-and-state-observer",
+      "frame_order": "leaf_to_root"
+    },
+    "clock": {
+      "domain": "single-process-monotonic-ns",
+      "unit": "ns"
+    },
+    "source_metadata": {
+      "scope": "API Call resource origin and post-GC state, not running coroutine execution.",
+      "extra_producer_required": true,
+      "strong_reference_added": false,
+      "done_callback_added": false,
+      "runtime_allocation_observed": false
+    },
+    "segments": [
+      {
+        "id": "1",
+        "coroutine_id": "single-capture:grpc-call:0x7e3001511480",
+        "capture_reason": "create",
+        "timestamp_ns": "1853177390861189",
+        "frames": [
+          {
+            "function": "read_one_chunk_then_drop_the_call",
+            "file": "./perf-out/github-issue-discovery/automatic/grpc-43462-first-check-20261126/first_check.py",
+            "line": 44
+          },
+          {
+            "function": "main",
+            "file": "./perf-out/github-issue-discovery/automatic/grpc-43462-first-check-20261126/first_check.py",
+            "line": 49
+          },
+          {
+            "function": "_run",
+            "file": "/usr/lib/python3.10/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "/usr/lib/python3.10/asyncio/base_events.py",
+            "line": 1909
+          },
+          {
+            "function": "run_forever",
+            "file": "/usr/lib/python3.10/asyncio/base_events.py",
+            "line": 603
+          },
+          {
+            "function": "run_until_complete",
+            "file": "/usr/lib/python3.10/asyncio/base_events.py",
+            "line": 636
+          },
+          {
+            "function": "run",
+            "file": "/usr/lib/python3.10/asyncio/runners.py",
+            "line": 44
+          },
+          {
+            "function": "<module>",
+            "file": "./perf-out/github-issue-discovery/automatic/grpc-43462-first-check-20261126/first_check.py",
+            "line": 67
+          }
+        ],
+        "resource_type": "grpc.aio-Call",
+        "creation_evidence": "API return bound to weak reference and actual object identity"
+      },
+      {
+        "id": "2",
+        "coroutine_id": "single-capture:grpc-call:0x7e3001511480",
+        "capture_reason": "sample",
+        "timestamp_ns": "1853178054501675",
+        "frames": [
+          {
+            "function": "main",
+            "file": "./perf-out/github-issue-discovery/automatic/grpc-43462-first-check-20261126/first_check.py",
+            "line": 61
+          },
+          {
+            "function": "_run",
+            "file": "/usr/lib/python3.10/asyncio/events.py",
+            "line": 80
+          },
+          {
+            "function": "_run_once",
+            "file": "/usr/lib/python3.10/asyncio/base_events.py",
+            "line": 1909
+          },
+          {
+            "function": "run_forever",
+            "file": "/usr/lib/python3.10/asyncio/base_events.py",
+            "line": 603
+          },
+          {
+            "function": "run_until_complete",
+            "file": "/usr/lib/python3.10/asyncio/base_events.py",
+            "line": 636
+          },
+          {
+            "function": "run",
+            "file": "/usr/lib/python3.10/asyncio/runners.py",
+            "line": 44
+          },
+          {
+            "function": "<module>",
+            "file": "./perf-out/github-issue-discovery/automatic/grpc-43462-first-check-20261126/first_check.py",
+            "line": 67
+          }
+        ],
+        "resource_type": "grpc.aio-Call",
+        "sample_kind": "post-GC-Call-state-observer",
+        "semantic": {
+          "call_collected": false,
+          "call_still_in_flight": true,
+          "same_live_object": true,
+          "is_Call_execution_stack": false
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from_segment_id": "1",
+        "to_segment_id": "2",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "single-capture:grpc-call:0x7e3001511480",
+        "identity_evidence": "Same live weak-reference target; actual object ID matches before and after GC."
+      }
+    ],
+    "active_coroutines": null,
+    "capture_loss": null
+  },
+  "current_folded": "<module>;run;run_until_complete;run_forever;_run_once;_run;main 1\n",
+  "causal_folded": "<module>;run;run_until_complete;run_forever;_run_once;_run;main;read_one_chunk_then_drop_the_call;[creation -> observation];<module>;run;run_until_complete;run_forever;_run_once;_run;main 1\n",
+  "report": "evidence/grpc-43462-resource-report.html"
+}

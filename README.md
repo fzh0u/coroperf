@@ -64,3 +64,5 @@ Regular discovery also covers Reactor, Netty and PostgreSQL JDBC, using framewor
 The [Reactor disposal-worker note](evidence/reactor-4478-resource.html) and its [Chinese version](zh-cn/evidence/reactor-4478-resource.html) are supplemental resource provenance outside the selected case catalogue. Rebuild them from `data/reactor-4478-verification.json` with `python3 scripts/build_reactor_resource.py`. They document one execution, the explicit extra factory observer, native versus recovered stacks, and the untested repair direction.
 
 The pending C# runtime #117652 result pages were withdrawn at the user's request. The [skip record](data/dotnet-117652-user-skip.json) preserves their status; earlier local evidence remains historical and no further execution or attribution is planned for this issue.
+
+The supplemental [gRPC Call resource graph](evidence/grpc-43462-resource-report.html) records one bounded loopback execution and an explicit weak API observer. It recovers an abandoned Call's application origin; it does not establish coroutine execution, a C-core ownership graph or unbounded resource exhaustion. The selected case catalogue is unchanged.
