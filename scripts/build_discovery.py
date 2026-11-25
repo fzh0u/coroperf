@@ -106,6 +106,8 @@ def render(report, language):
             reason += tr(' Wording at detection: ', ' 检出时的匹配词：') + e(row['risk_signal']) + '.'
         if row.get('last_seen'):
             reason += '<br>' + tr('Last observed: ', '最近观测：') + e(row['last_seen'])
+        if zh and row.get('review_note_zh'):
+            reason += '<br>' + e(row['review_note_zh'])
         links = ' · '.join(f'<a href="{e(url)}">{tr("Related source", "相关来源")} {n}</a>' for n, url in enumerate(row['urls'][1:], 2))
         deferred_rows.append(f'<tr data-skipped><th scope="row"><a href="{e(row["url"])}">{e(label)}</a>{"<br>" + links if links else ""}</th>'
                              f'<td>{origin}<br>{reason}</td></tr>')
@@ -113,6 +115,13 @@ def render(report, language):
     for identifier, decision in report.get('review_decisions', {}).items():
         sources = ' · '.join(f'<a href="{e(url)}">{tr("Source", "来源")} {n}</a>' for n, url in enumerate(decision['sources'], 1))
         decisions.append(f'<li><strong>{e(identifier)}</strong>: {e(decision.get("reason_zh", decision["reason"]) if zh else decision["reason"])} {sources}</li>')
+    records = []
+    for record in report.get('supplemental_records', []):
+        title = record['title_zh'] if zh else record['title']
+        summary = record['summary_zh'] if zh else record['summary']
+        url = ('../' if zh else '') + record['path']
+        records.append(f'<li><a href="{e(url)}">{e(title)}</a> · <time>{e(record["checked_at"])}</time><p>{e(summary)}</p></li>')
+    supplemental = (f'<section class="block"><h2>{tr("Additional review records", "补充审阅记录")}</h2><ul>{"".join(records)}</ul></section>' if records else '')
     official_sections = []
     for result in report.get('official_tracker_results', []):
         mail = result.get('entry_kind') == 'messages'
@@ -181,6 +190,7 @@ def render(report, language):
       <section class="block" id="skipped"><h2>{tr('Skipped for review', '已跳过，待安全审阅')}</h2><p class="section-copy">{tr(f'{len(skipped)} displayed review entries or explicit bug groups. Manual holds and automatic wording signals persist across runs, including entries absent from current windows. Security impact is unassessed. A wording signal is not a vulnerability finding. Replies with the same explicit bug number share one row.', f'展示 {len(skipped)} 条审阅记录或明确 bug 编号组。人工暂缓记录和自动词语信号跨轮次保留，包括未出现在本轮窗口的条目。安全影响尚未评估，词语信号不代表已确认漏洞。同一明确 bug 编号的回复合并展示。')}</p>
       <div class="discovery-scroll"><table><thead><tr><th>{tr('Entry', '条目')}</th><th>{tr('Action', '处理')}</th></tr></thead><tbody>{''.join(deferred_rows)}</tbody></table></div></section>
       <section class="block"><h2>{tr('Review decisions', '逐项审阅结论')}</h2><ul>{''.join(decisions)}</ul></section>
+      {supplemental}
       <section class="block"><h2>{tr('Collection failures', '采集失败')}</h2>{'<ul>' + ''.join(failure_rows) + '</ul>' if failure_rows else '<p>' + tr('No request failures in this run.', '本轮没有请求失败。') + '</p>'}</section>
       </article>'''
     page = document('discovery.html', tr('Search progress', '搜索进度'), summary, body, language)

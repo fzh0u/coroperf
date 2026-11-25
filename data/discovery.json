@@ -1,7 +1,7 @@
 {
   "schema": "coroperf.discovery-run/v1",
-  "started_at": "2026-11-25T02:58:56+00:00",
-  "finished_at": "2026-11-25T02:58:57+00:00",
+  "started_at": "2026-11-25T03:26:22+00:00",
+  "finished_at": "2026-11-25T03:26:23+00:00",
   "run_directory": "perf-out/github-issue-discovery/automatic/runs/20261125T020028Z",
   "selection": "Discussion head, recent updates and a rotating discussion-depth page when available; not an exhaustive or representative survey.",
   "search_plan": {
@@ -25984,8 +25984,8 @@
           "updated_at": "2017-05-24T21:40:14.000+0000",
           "observed_at": "2026-11-25T02:08:45+00:00",
           "async_signal": true,
-          "status": "needs_review",
-          "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+          "status": "excluded_after_review",
+          "reason": "The report identifies the future.get exception path that skips onCompletion in RecordBatch.done. It does not establish an additional missing caller or task identity; no local replay or repair was tested.",
           "query_kinds": [
             "async-title"
           ]
@@ -28948,211 +28948,391 @@
         "https://fzh0u.github.io/coroperf/data/psycopg-340-verification.json"
       ],
       "reviewed_at": "2026-11-25T02:58:18.710915+00:00"
+    },
+    "apache--kafka--kafka-6556": {
+      "status": "excluded_after_review",
+      "reason": "A window-expiry callback and final-result emission feature request; the report establishes no missing historical caller or task identity. No Kafka workload was executed.",
+      "reason_zh": "请求窗口到期回调与最终结果输出功能；报告未建立历史调用者或任务身份缺失问题。未执行 Kafka 工作负载。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-6556"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    "apache--kafka--kafka-250": {
+      "status": "excluded_after_review",
+      "reason": "A consumer-iterator instrumentation callback feature request. It does not describe a missing caller attribution that CoroPerf has demonstrated it can recover. Read-only review.",
+      "reason_zh": "请求为消费者迭代器增加观测回调；未描述已证明可由 coroPerf 恢复的调用归属缺口。仅做只读审阅。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-250"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    "apache--kafka--kafka-4292": {
+      "status": "excluded_after_review",
+      "reason": "KIP-86 adds configurable SASL callback handlers. This is an authentication extension point, not evidence of missing asynchronous caller attribution. No authentication code or tests executed.",
+      "reason_zh": "KIP-86 增加可配置的 SASL 回调处理器，属于认证扩展接口；该报告未提供异步调用归属缺失证据。未执行认证代码或测试。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-4292"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    "apache--kafka--kafka-2060": {
+      "status": "excluded_after_review",
+      "reason": "The report identifies the future.get exception path that skips onCompletion in RecordBatch.done. It does not establish an additional missing caller or task identity; no local replay or repair was tested.",
+      "reason_zh": "报告已指出 RecordBatch.done 中 future.get 抛错后跳过 onCompletion 的分支；未建立额外缺失的调用者或任务身份。未测试本地复现或修复。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-2060"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    "apache--kafka--kafka-1591": {
+      "status": "excluded_after_review",
+      "reason": "A request to reduce unnecessary error/warning stack traces. It does not establish lost asynchronous ancestry. No local logging workload executed.",
+      "reason_zh": "请求减少错误和警告日志中多余的栈；未建立异步调用来源丢失问题。未执行本地日志工作负载。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-1591"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    "apache--kafka--kafka-2200": {
+      "status": "excluded_after_review",
+      "reason": "The one-sentence report concerns callback ordering when send invokes onCompletion directly. It provides no concrete missing caller or task-attribution evidence. No ordering experiment executed.",
+      "reason_zh": "正文仅说明 send 直接调用 onCompletion 可能破坏回调顺序；未提供调用者缺失或任务归属的具体证据。未执行顺序实验。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-2200"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    "apache--kafka--kafka-13810": {
+      "status": "excluded_after_review",
+      "reason": "A documentation request to specify flush completion relative to callback completion. It does not establish a missing originating caller; no runtime experiment executed.",
+      "reason_zh": "请求文档明确 flush 完成与回调完成的先后保证；未建立发起调用者缺失问题。未执行运行时实验。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-13810"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    "apache--kafka--kafka-15380": {
+      "status": "excluded_after_review",
+      "reason": "The report already identifies missing tryCompleteActions after the callback request and describes its repair. No missing historical caller or task-attribution fact has been established here. Upstream performance statements were not measured locally.",
+      "reason_zh": "报告已指出回调请求后缺少 tryCompleteActions 并描述修复；此处未建立历史调用者或任务归属缺失事实。未在本地测量上游所述性能变化。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-15380"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    "apache--kafka--kafka-14968": {
+      "status": "excluded_after_review",
+      "reason": "A request for push notification or REST callbacks for low-frequency consumer topics. This is a communication feature request with no demonstrated missing coroutine caller. No service endpoints or broker workload executed.",
+      "reason_zh": "请求为低频消费者主题提供推送通知或 REST 回调；属于通信功能需求，未证明存在协程调用者缺失。未执行服务端点或 broker 工作负载。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-14968"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    "apache--kafka--kafka-4854": {
+      "status": "excluded_after_review",
+      "reason": "The report requests record metadata in error callbacks and includes the existing null-metadata branch. It does not establish a missing historical caller or task identity; no local replay executed.",
+      "reason_zh": "请求在错误回调中提供记录元数据，正文已给出返回空元数据的分支；未建立历史调用者或任务身份缺失问题。未执行本地复现。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-4854"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    "apache--kafka--kafka-13967": {
+      "status": "excluded_after_review",
+      "reason": "A documentation request for callback completion guarantees on commitTransaction. It provides no missing caller-attribution evidence. No transaction workload executed.",
+      "reason_zh": "请求文档说明 commitTransaction 返回时的回调完成保证；未提供调用归属缺失证据。未执行事务工作负载。",
+      "sources": [
+        "https://issues.apache.org/jira/browse/KAFKA-13967"
+      ],
+      "reviewed_at": "2026-11-25T03:24:34.468247+00:00"
     }
   },
+  "supplemental_records": [
+    {
+      "id": "kafka-callback-screen-20261125",
+      "title": "Kafka callback candidate review",
+      "title_zh": "Kafka 回调候选审阅",
+      "summary": "A separate bounded official-Jira query reviewed 15 of 26 matches: 11 exclusions and 4 persistent reproduction holds. No Kafka workload was executed; no new verified case is claimed. These hits are separate from the scheduled search-window counts.",
+      "summary_zh": "单独的有界官方 Jira 查询共匹配 26 条，本次只读审阅 15 条：11 条排除适用性，4 条持久暂缓复现。未执行 Kafka 工作负载，新增验证案例为 0；这些命中与定时搜索窗口分开记账。",
+      "path": "data/kafka-callback-review.json",
+      "checked_at": "2026-11-25T03:24:34.468247+00:00"
+    },
+    {
+      "id": "publisher-check-20261125",
+      "title": "Periodic publication recovery check",
+      "title_zh": "定时发布恢复检查",
+      "summary": "In a real user-service check, the first clone timed out and the second publication attempt verified unchanged Git contents. The search report was reused and delivery receipts stayed unchanged. Thirty offline checks also passed. The next scheduled run still needs its own result.",
+      "summary_zh": "真实用户服务检查中，首次 clone 超时，第二次发布尝试成功核对远端内容。复用搜索报告，原汇报回执保持不变；另有 30 项离线检查通过。下一次定时运行仍需单独核对结果。",
+      "path": "data/publisher-reliability-check.json",
+      "checked_at": "2026-11-25T03:22:52.019955+00:00"
+    }
+  ],
   "deferred_registry": [
     {
       "id": "ray-project--ray--47734",
       "url": "https://github.com/ray-project/ray/issues/47734",
       "title": "Event loop mismatch in Ray Data async batches",
       "title_zh": "Ray Data 异步批处理的事件循环不匹配",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "异步批处理等待的 Future 与执行它的事件循环不同。 未评估。"
     },
     {
       "id": "ollama--ollama--14578",
       "url": "https://github.com/ollama/ollama/issues/14578",
       "title": "Request queueing across loaded Ollama models",
       "title_zh": "Ollama 已加载模型之间的请求排队",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "报告称发往不同已加载模型的请求出现排队延迟。 未评估。"
     },
     {
       "id": "ray-project--ray--63544",
       "url": "https://github.com/ray-project/ray/issues/63544",
       "title": "Arrow schema parsing overhead in Ray Data",
       "title_zh": "Ray Data 的 Arrow schema 解析开销",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游跟踪 Ray Data StreamingExecutor 调度循环的开销，其中包括 Arrow schema 解析。 未评估。"
     },
     {
       "id": "microsoft--onnxruntime--29633",
       "url": "https://github.com/microsoft/onnxruntime/issues/29633",
       "title": "Native failure during C# asynchronous inference",
       "title_zh": "C# 异步推理时出现原生异常",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游报告 C# 异步推理期间出现原生异常。 未评估。"
     },
     {
       "id": "deepjavalibrary--djl-serving--3071",
       "url": "https://github.com/deepjavalibrary/djl-serving/issues/3071",
       "title": "Latency in concurrent DJL Serving streams",
       "title_zh": "DJL Serving 并发流式响应延迟",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游报告并发流式响应的中位延迟偏高。 未评估。"
     },
     {
       "id": "vllm-project--vllm--61604",
       "url": "https://github.com/vllm-project/vllm/issues/61604",
       "title": "Repeated prefix-cache scans for waiting vLLM requests",
       "title_zh": "vLLM 等待请求重复扫描前缀缓存",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游报告等待请求在每次调度重试时重复扫描已命中的前缀缓存。 未评估。"
     },
     {
       "id": "nvidia--tensorrt-llm--22740",
       "url": "https://github.com/NVIDIA/TensorRT-LLM/issues/22740",
       "title": "Token usage in multi-prompt TensorRT-LLM streams",
       "title_zh": "TensorRT-LLM 多提示流式补全的令牌用量统计",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游报告称，多提示流式补全按提示分别返回令牌用量。 未评估。"
     },
     {
       "id": "langchain4j--langchain4j--4918",
       "url": "https://github.com/langchain4j/langchain4j/issues/4918",
       "title": "Burst delivery in LangChain4j streaming responses",
       "title_zh": "LangChain4j 流式响应集中到达",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游报告称，使用 SpringRestClient 时，部分响应回调出现间隔并集中到达。 未评估。"
     },
     {
       "id": "llvm--llvm-project--135377",
       "url": "https://github.com/llvm/llvm-project/issues/135377",
       "title": "Missed optimization for Clang no-op coroutines",
       "title_zh": "Clang 对 C++ 空操作协程的优化遗漏",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游将该报告归为协程优化遗漏。 未评估。"
     },
     {
       "id": "sgl-project--sglang--30770",
       "url": "https://github.com/sgl-project/sglang/issues/30770",
       "title": "Health-check latency during SGLang preprocessing",
       "title_zh": "SGLang 预处理期间的健康检查延迟",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游报告请求预处理期间健康检查响应延迟。 未评估。"
     },
     {
       "id": "langchain4j--langchain4j--7125",
       "url": "https://github.com/langchain4j/langchain4j/issues/7125",
       "title": "LangChain4j retry completion on the shared timer",
       "title_zh": "LangChain4j 共享定时线程上的重试完成通知",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游跟踪异步重试提交失败后的完成通知与共享定时线程调度。 未评估。"
     },
     {
       "id": "transact-rs--sqlx--4449",
       "url": "https://github.com/transact-rs/sqlx/issues/4449",
       "title": "SQLx pool slot release during connection close",
       "title_zh": "SQLx 关闭连接时的池槽位回收",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游报告连接关闭期间池槽位回收延迟。 未评估。"
     },
     {
       "id": "apache--spark--spark-59844",
       "url": "https://issues.apache.org/jira/browse/SPARK-59844",
       "title": "Async checkpoint failure reporting in Spark Structured Streaming",
       "title_zh": "Spark Structured Streaming 的异步 checkpoint 失败报告",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游跟踪后台 checkpoint 失败与查询端报告的异常之间的关联。 未评估。"
     },
     {
       "id": "apache--datafusion-ballista--2520",
       "url": "https://github.com/apache/datafusion-ballista/issues/2520",
       "title": "Sort-shuffle write overhead in Ballista (C1)",
       "title_zh": "Ballista 排序 shuffle 写入开销（C1）",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游性能跟踪项 C1 记录了排序 shuffle 写入的运行时开销。 未评估。"
     },
     {
       "id": "dotnet--sqlclient--3356",
       "url": "https://github.com/dotnet/SqlClient/issues/3356",
       "title": "Async connection pool performance in SqlClient",
       "title_zh": "SqlClient 的异步连接池性能",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "上游跟踪异步连接池的吞吐与排队开销。 未评估。"
     },
     {
       "id": "sgl-project--sglang--52575",
       "url": "https://github.com/sgl-project/sglang/issues/52575",
       "title": "sgl-project--sglang--52575",
       "title_zh": "服务侧 KV 索引锁竞争",
-      "security_impact": "Unassessed"
+      "security_impact": "Unassessed",
+      "review_note_zh": "查询持锁期间延迟索引更新"
     },
     {
       "id": "sgl-project--sglang--45310",
       "url": "https://github.com/sgl-project/sglang/issues/45310",
       "title": "sgl-project--sglang--45310",
       "title_zh": "分词后端和多模态服务的可用性",
-      "security_impact": "Unassessed"
+      "security_impact": "Unassessed",
+      "review_note_zh": "服务停止响应"
     },
     {
       "id": "vllm-project--vllm--58192",
       "url": "https://github.com/vllm-project/vllm/issues/58192",
       "title": "vllm-project--vllm--58192",
       "title_zh": "服务请求的准入和预处理",
-      "security_impact": "Unassessed"
+      "security_impact": "Unassessed",
+      "review_note_zh": "准入限制和请求处理延迟"
     },
     {
       "id": "chriskohlhoff--asio--1332",
       "url": "https://github.com/chriskohlhoff/asio/issues/1332",
       "title": "chriskohlhoff--asio--1332",
       "title_zh": "协程取消处理器的对象生命周期",
-      "security_impact": "Unassessed"
+      "security_impact": "Unassessed",
+      "review_note_zh": "释放后使用"
     },
     {
       "id": "chriskohlhoff--asio--1073",
       "url": "https://github.com/chriskohlhoff/asio/issues/1073",
       "title": "chriskohlhoff--asio--1073",
       "title_zh": "协程生成器与编译器的对象生命周期处理",
-      "security_impact": "Unassessed"
+      "security_impact": "Unassessed",
+      "review_note_zh": "无效释放"
     },
     {
       "id": "dart-vm-archive-r40090-incidental-exit",
       "url": "https://github.com/dart-lang/sdk/issues/20871",
       "title": "dart-vm-archive-r40090-incidental-exit",
       "title_zh": "历史 Linux 开发版的意外进程退出",
-      "security_impact": "未知，未进一步分析。"
+      "security_impact": "未知，未进一步分析。",
+      "review_note_zh": "在诊断栈对照中顺带观察到 SIGSEGV，未产生 Dart 异常栈。 未知，未进一步分析。"
     },
     {
       "id": "apache--flink--flink-41612",
       "url": "https://issues.apache.org/jira/browse/FLINK-41612",
       "title": "Async lookup retry completion workers and connector concurrency",
       "title_zh": "Flink 异步 lookup 重试的完成线程与连接器并发",
-      "security_impact": "未评估；该标记不代表已确认漏洞。"
+      "security_impact": "未评估；该标记不代表已确认漏洞。",
+      "review_note_zh": "上游报告重试等待占用完成工作线程，并可能与同一连接器实例的其他调用并发。 未评估；该标记不代表已确认漏洞。"
     },
     {
       "id": "mysql--bugs--110789",
       "url": "https://bugs.mysql.com/bug.php?id=110789",
       "title": "Unhandled background exception in MySQL Connector/NET OpenAsync",
       "title_zh": "MySQL Connector/NET OpenAsync 的后台未处理异常",
-      "security_impact": "未评估；该标记不代表已确认安全漏洞。"
+      "security_impact": "未评估；该标记不代表已确认安全漏洞。",
+      "review_note_zh": "上游报告异步连接结束时，异常从后台回调传播并导致应用退出。 未评估；该标记不代表已确认安全漏洞。"
     },
     {
       "id": "mysql--bugs--115703",
       "url": "https://bugs.mysql.com/bug.php?id=115703",
       "title": "Asynchronous state storage in the MySQL C API",
       "title_zh": "MySQL C API 异步接口的共享状态",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "报告标题称异步接口使用不安全的静态局部变量保存状态。 未评估。"
     },
     {
       "id": "mysql--bugs--105748",
       "url": "https://bugs.mysql.com/bug.php?id=105748",
       "title": "MySQL Group Replication consistency failure",
       "title_zh": "MySQL Group Replication 的一致性设置异常",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "报告标题称一致性设置与 Group Replication 进程异常有关。 未评估。"
     },
     {
       "id": "postgres--bugs--19511",
       "url": "https://www.postgresql.org/message-id/19511-f9f251767b658232@postgresql.org",
       "title": "PostgreSQL dblink notification null dereference",
       "title_zh": "PostgreSQL dblink 通知的空指针错误",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "官方邮件主题报告原生空指针或断言退出。命中窗口含同一报告的多封回复，按显式 BUG 编号归并，不将回复计为独立问题。 未评估。"
     },
     {
       "id": "postgres--bugs--19494",
       "url": "https://www.postgresql.org/message-id/ahzqaOwc2DprQRrV@paquier.xyz",
       "title": "PostgreSQL psql pipeline assertion",
       "title_zh": "PostgreSQL psql 流水线的断言退出",
-      "security_impact": "未评估。"
+      "security_impact": "未评估。",
+      "review_note_zh": "官方邮件主题报告原生空指针或断言退出。命中窗口含同一报告的多封回复，按显式 BUG 编号归并，不将回复计为独立问题。 未评估。"
     },
     {
       "id": "apache--flink--flink-41435",
       "url": "https://issues.apache.org/jira/browse/FLINK-41435",
       "title": "Flink transient Subject inherited by pooled workers",
       "title_zh": "Flink 线程池继承临时 Subject，已跳过复现",
-      "security_impact": "未评估。涉及安全上下文，跳过复现并保留待审阅。"
+      "security_impact": "未评估。涉及安全上下文，跳过复现并保留待审阅。",
+      "review_note_zh": "官方公开报告涉及认证上下文、线程池工作线程与长期 Hadoop 客户端的令牌生命周期。仅做只读审阅。 未评估。涉及安全上下文，跳过复现并保留待审阅。"
     },
     {
       "id": "apache--datafusion--24883",
       "url": "https://github.com/apache/datafusion/issues/24883",
       "title": "DataFusion repartition spill-pool permanent wait",
       "title_zh": "DataFusion 重分区 spill pool 永久等待，已跳过复现",
-      "security_impact": "未评估。涉及服务可用性风险，记录并跳过本地复现。"
+      "security_impact": "未评估。涉及服务可用性风险，记录并跳过本地复现。",
+      "review_note_zh": "上游公开报告描述多分区查询的 spill reader 与 producer 永久互等，普通线程栈不含挂起任务。仅做元数据审阅。 未评估。涉及服务可用性风险，记录并跳过本地复现。"
+    },
+    {
+      "id": "apache--kafka--kafka-10335",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-10335",
+      "title": "Kafka producer callback blocks its sender thread",
+      "title_zh": "Kafka producer 回调阻塞发送线程，已跳过复现",
+      "security_impact": "未评估。涉及长时间阻塞与服务可用性线索，暂缓复现。未执行无限循环或连接报告者使用的外部服务。",
+      "review_note_zh": "上游描述同一 producer 的回调再次 send 到新主题，等待只能由该 I/O 线程更新的元数据，导致持续超时与批次积压。 未评估。涉及长时间阻塞与服务可用性线索，暂缓复现。未执行无限循环或连接报告者使用的外部服务。"
+    },
+    {
+      "id": "apache--kafka--kafka-20913",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-20913",
+      "title": "Kafka Raft commit callback reads a recycled batch buffer",
+      "title_zh": "Kafka Raft 回调读取已复用缓冲区，已跳过复现",
+      "security_impact": "未评估。涉及缓冲区生命周期和结果正确性线索，暂缓复现；未执行补丁或测试，安全影响尚未评估。",
+      "review_note_zh": "上游描述异步提交回调在批次缓冲区归还并复用后读取时间戳，可能向监听器传递错误的 appendTimestamp。 未评估。涉及缓冲区生命周期和结果正确性线索，暂缓复现；未执行补丁或测试，安全影响尚未评估。"
+    },
+    {
+      "id": "apache--kafka--kafka-12841",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-12841",
+      "title": "Kafka producer error callback metadata null exception",
+      "title_zh": "Kafka producer 错误回调的空指针异常，已跳过复现",
+      "security_impact": "未评估。这是 Java 异常线索，安全影响未评估；按失败线索暂缓复现，未执行异常触发或补丁测试。",
+      "review_note_zh": "上游描述 ApiException 分支的 metadata 或 TopicPartition 为空导致 Java 空指针异常。 未评估。这是 Java 异常线索，安全影响未评估；按失败线索暂缓复现，未执行异常触发或补丁测试。"
+    },
+    {
+      "id": "apache--kafka--kafka-17918",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-17918",
+      "title": "Kafka producer callbacks retained under slow broker",
+      "title_zh": "Kafka 慢 broker 下回调内存增长，已跳过复现",
+      "security_impact": "未评估。涉及资源耗尽线索，暂缓复现；未启动积压负载，也未核验内存增长或根因。",
+      "review_note_zh": "上游报告 Kafka 3.5.0 在慢 broker 下积留大量 callback 引用并出现内存溢出，附有堆分析截图。 未评估。涉及资源耗尽线索，暂缓复现；未启动积压负载，也未核验内存增长或根因。"
     }
   ],
   "signal_holds": [
@@ -30012,7 +30192,7 @@
   ],
   "delta": {
     "new_search_candidates": 0,
-    "previous_observed_at": "2026-11-25T02:28:03+00:00",
+    "previous_observed_at": "2026-11-25T02:58:57+00:00",
     "comparable_window": true
   }
 }

@@ -1,0 +1,283 @@
+{
+  "schema": "coroperf.read-only-candidate-screen/v1",
+  "reviewed_at": "2026-11-25T03:24:34.468247+00:00",
+  "source_observed_at": "2026-11-25T03:22:28.197834+00:00",
+  "query_url": "https://issues.apache.org/jira/rest/api/2/search?jql=project+%3D+KAFKA+AND+%28summary+~+%22stack%22+OR+summary+~+%22callback%22%29+AND+text+~+%22producer%22+ORDER+BY+votes+DESC%2C+updated+DESC&maxResults=15&fields=summary%2Cstatus%2Cvotes%2Cdescription%2Cupdated%2Cresolution%2CfixVersions%2Cissuetype%2Clabels",
+  "source_sha256": "483398022f84eb87942fedf9d39ab018111b298b80b91f028286d1dca51cc212",
+  "query_total": 26,
+  "returned": 15,
+  "excluded_after_review": 11,
+  "skipped_review": 4,
+  "new_verified_cases": 0,
+  "execution_policy": "Read-only review. No issue program, callback, broker workload, patch or test was executed.",
+  "scope": "A separate bounded Kafka callback/stack query; these 15 hits are not added to the scheduled GitHub or Jira-window counts. Exclusions apply to the available report evidence, not to all possible CoroPerf uses.",
+  "cases": [
+    {
+      "id": "apache--kafka--kafka-6556",
+      "key": "KAFKA-6556",
+      "title": "allow to attach callbacks in kafka streams, to be triggered when a window is expired ",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-6556",
+      "votes": 3,
+      "upstream": {
+        "state": "Open",
+        "resolution": null,
+        "fix_versions": [],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2019-08-14T05:59:56.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "请求窗口到期回调与最终结果输出功能；报告未建立历史调用者或任务身份缺失问题。未执行 Kafka 工作负载。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-250",
+      "key": "KAFKA-250",
+      "title": "Provide consumer iterator callback handler",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-250",
+      "votes": 2,
+      "upstream": {
+        "state": "Resolved",
+        "resolution": "Auto Closed",
+        "fix_versions": [],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2017-10-29T09:17:01.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "请求为消费者迭代器增加观测回调；未描述已证明可由 coroPerf 恢复的调用归属缺口。仅做只读审阅。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-10335",
+      "key": "KAFKA-10335",
+      "title": "Blocking of producer IO thread when calling send() from callback",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-10335",
+      "votes": 1,
+      "upstream": {
+        "state": "Open",
+        "resolution": null,
+        "fix_versions": [],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2026-10-05T17:36:16.000+0000"
+      },
+      "status": "skipped_review",
+      "reason_zh": "涉及长时间阻塞与服务可用性线索，暂缓复现。未执行无限循环或连接报告者使用的外部服务。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-4292",
+      "key": "KAFKA-4292",
+      "title": "KIP-86: Configurable SASL callback handlers",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-4292",
+      "votes": 1,
+      "upstream": {
+        "state": "Resolved",
+        "resolution": "Fixed",
+        "fix_versions": [
+          "2.0.0"
+        ],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2018-04-25T09:42:06.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "KIP-86 增加可配置的 SASL 回调处理器，属于认证扩展接口；该报告未提供异步调用归属缺失证据。未执行认证代码或测试。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-2060",
+      "key": "KAFKA-2060",
+      "title": "Async onCompletion callback may not be called",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-2060",
+      "votes": 1,
+      "upstream": {
+        "state": "Resolved",
+        "resolution": "Fixed",
+        "fix_versions": [
+          "0.9.0.2"
+        ],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2017-05-24T21:40:14.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "报告已指出 RecordBatch.done 中 future.get 抛错后跳过 onCompletion 的分支；未建立额外缺失的调用者或任务身份。未测试本地复现或修复。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-20913",
+      "key": "KAFKA-20913",
+      "title": "KafkaRaftClient#appendBatch reads a recycled batch buffer in its async commit callback, producing an incorrect appendTimestamp for committed batches",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-20913",
+      "votes": 0,
+      "upstream": {
+        "state": "Patch Available",
+        "resolution": null,
+        "fix_versions": [],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2026-10-15T13:06:56.000+0000"
+      },
+      "status": "skipped_review",
+      "reason_zh": "涉及缓冲区生命周期和结果正确性线索，暂缓复现；未执行补丁或测试，安全影响尚未评估。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-1591",
+      "key": "KAFKA-1591",
+      "title": "Clean-up Unnecessary stack trace in error/warn logs",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-1591",
+      "votes": 0,
+      "upstream": {
+        "state": "Resolved",
+        "resolution": "Abandoned",
+        "fix_versions": [],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2026-05-15T22:41:50.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "请求减少错误和警告日志中多余的栈；未建立异步调用来源丢失问题。未执行本地日志工作负载。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-2200",
+      "key": "KAFKA-2200",
+      "title": "kafkaProducer.send() should not call callback.onCompletion()",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-2200",
+      "votes": 0,
+      "upstream": {
+        "state": "Open",
+        "resolution": null,
+        "fix_versions": [],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2025-09-17T11:13:56.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "正文仅说明 send 直接调用 onCompletion 可能破坏回调顺序；未提供调用者缺失或任务归属的具体证据。未执行顺序实验。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-13810",
+      "key": "KAFKA-13810",
+      "title": "Document behavior of KafkaProducer.flush() w.r.t callbacks",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-13810",
+      "votes": 0,
+      "upstream": {
+        "state": "Resolved",
+        "resolution": "Fixed",
+        "fix_versions": [
+          "4.1.0"
+        ],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2025-01-23T16:21:03.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "请求文档明确 flush 完成与回调完成的先后保证；未建立发起调用者缺失问题。未执行运行时实验。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-12841",
+      "key": "KAFKA-12841",
+      "title": "NPE from the provided metadata in client callback in case of ApiException",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-12841",
+      "votes": 0,
+      "upstream": {
+        "state": "Resolved",
+        "resolution": "Fixed",
+        "fix_versions": [
+          "3.2.0"
+        ],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2025-01-02T03:36:20.000+0000"
+      },
+      "status": "skipped_review",
+      "reason_zh": "这是 Java 异常线索，安全影响未评估；按失败线索暂缓复现，未执行异常触发或补丁测试。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-17918",
+      "key": "KAFKA-17918",
+      "title": "The Kafka producer's RecordAccumulator object stores more callback methods than messages.",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-17918",
+      "votes": 0,
+      "upstream": {
+        "state": "Open",
+        "resolution": null,
+        "fix_versions": [],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2024-11-01T07:03:07.000+0000"
+      },
+      "status": "skipped_review",
+      "reason_zh": "涉及资源耗尽线索，暂缓复现；未启动积压负载，也未核验内存增长或根因。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-15380",
+      "key": "KAFKA-15380",
+      "title": "Try complete actions after callback",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-15380",
+      "votes": 0,
+      "upstream": {
+        "state": "Resolved",
+        "resolution": "Fixed",
+        "fix_versions": [
+          "3.6.0"
+        ],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2023-09-20T04:18:42.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "报告已指出回调请求后缺少 tryCompleteActions 并描述修复；此处未建立历史调用者或任务归属缺失事实。未在本地测量上游所述性能变化。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-14968",
+      "key": "KAFKA-14968",
+      "title": "Consumer Notification Callback",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-14968",
+      "votes": 0,
+      "upstream": {
+        "state": "Open",
+        "resolution": null,
+        "fix_versions": [],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2023-05-06T04:31:13.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "请求为低频消费者主题提供推送通知或 REST 回调；属于通信功能需求，未证明存在协程调用者缺失。未执行服务端点或 broker 工作负载。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-4854",
+      "key": "KAFKA-4854",
+      "title": "Producer RecordBatch executes callbacks with `null` provided for metadata if an exception is encountered",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-4854",
+      "votes": 0,
+      "upstream": {
+        "state": "Resolved",
+        "resolution": "Not A Bug",
+        "fix_versions": [],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2023-03-28T07:45:51.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "请求在错误回调中提供记录元数据，正文已给出返回空元数据的分支；未建立历史调用者或任务身份缺失问题。未执行本地复现。",
+      "locally_executed": false
+    },
+    {
+      "id": "apache--kafka--kafka-13967",
+      "key": "KAFKA-13967",
+      "title": "Guarantees for producer callbacks on transaction commit should be documented",
+      "url": "https://issues.apache.org/jira/browse/KAFKA-13967",
+      "votes": 0,
+      "upstream": {
+        "state": "Resolved",
+        "resolution": "Fixed",
+        "fix_versions": [
+          "3.3.0"
+        ],
+        "observed_at": "2026-11-25T03:22:28.197834+00:00",
+        "updated_at": "2022-06-13T11:05:23.000+0000"
+      },
+      "status": "excluded_after_review",
+      "reason_zh": "请求文档说明 commitTransaction 返回时的回调完成保证；未提供调用归属缺失证据。未执行事务工作负载。",
+      "locally_executed": false
+    }
+  ]
+}
