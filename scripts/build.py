@@ -662,6 +662,8 @@ if __name__ == "__main__":
         case["tracker_status"] = state if entry.get("url") == case["url"] and state in TRACKER_STATES else "unconfirmed"
         if case["tracker_status"] == "closed" and entry.get("display_status") == "resolved":
             case["tracker_display"] = "resolved"
+        if case["tracker_status"] == "unconfirmed" and entry.get("display_status") == "no_formal_state":
+            case["tracker_display"] = "no_formal_state"
         fix_url = (case["fix"] or {}).get("url")
         pull = tracker.get("pull_requests", {}).get(fix_url)
         if pull in {"open", "closed", "merged", "unconfirmed"}:

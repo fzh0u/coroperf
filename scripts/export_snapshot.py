@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 
 from copy_text import CASE_LANGUAGES, CONTRIBUTION_KINDS, FIX_STATES, ISSUE_KINDS, SOURCE_TOKEN_STAGES
-from refresh_issue_status import apache_jira_key, mysql_bug_number
+from refresh_issue_status import apache_jira_key, mysql_bug_number, postgres_message
 
 
 HERE = Path(__file__).resolve().parents[1]
@@ -318,6 +318,10 @@ def main():
             reference = f'MySQL Bug #{number}'
             if fix_url:
                 raise ValueError(f'{row["id"]}: MySQL follow-up repair needs a separate reviewed source')
+        elif postgres_message(url):
+            reference = website.get('reference', 'PostgreSQL mail')
+            if fix_url:
+                raise ValueError(f'{row["id"]}: PostgreSQL mail repair needs a separate reviewed source')
         else:
             raise ValueError(f'{row["id"]}: invalid public follow-up issue URL')
         followups.append({

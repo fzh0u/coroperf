@@ -40,6 +40,7 @@ LABELS = {
     "tracker_closed": ("Closed", "已关闭"),
     "tracker_resolved": ("Resolved", "已解决"),
     "tracker_unconfirmed": ("Unconfirmed", "待核对"),
+    "tracker_no_formal_state": ("No formal tracker state", "无正式状态"),
     "any_tracker_status": ("All upstream statuses", "全部上游状态"),
     "tracker_summary": ("{opened} open · {closed} closed or resolved upstream", "上游 {opened} 个开放 · {closed} 个关闭或已解决"),
     "tracker_unconfirmed_count": ("{count} unconfirmed", "{count} 个待核对"),

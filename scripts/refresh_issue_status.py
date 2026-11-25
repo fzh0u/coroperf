@@ -104,6 +104,13 @@ def mysql_bug_number(url):
     return None
 
 
+def postgres_message(url):
+    route = urlsplit(url)
+    return (route.scheme == 'https' and route.hostname == 'www.postgresql.org'
+            and route.path.startswith('/message-id/') and len(route.path.removeprefix('/message-id/')) > 0
+            and not route.query and not route.fragment)
+
+
 class PageText(HTMLParser):
     def __init__(self):
         super().__init__(); self.parts = []
@@ -157,6 +164,9 @@ def fetch_apache_jira(url, key):
 
 def fetch(case):
     url = case["url"]
+    if postgres_message(url):
+        return {'url': url, 'status': 'unconfirmed', 'display_status': 'no_formal_state',
+                'status_note': 'Mailing-list messages have no formal open/closed tracker state.'}
     if number := mysql_bug_number(url):
         return fetch_mysql(url, number)
     if key := apache_jira_key(url):
