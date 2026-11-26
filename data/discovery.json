@@ -17,10 +17,10 @@
     "excluded_after_review": 53,
     "needs_review": 819,
     "skipped_review": 182,
-    "external_environment_required": 14,
+    "external_environment_required": 13,
     "already_catalogued": 11,
     "component_reproduced": 4,
-    "verified_case": 8
+    "verified_case": 9
   },
   "coverage": [
     {
@@ -42655,8 +42655,8 @@
       "async_signal": true,
       "observed_at": "2026-11-26T12:05:50+00:00",
       "heat": 3.9204,
-      "status": "external_environment_required",
-      "reason": "Private PostgreSQL17.1 and CPython3.14.3/pinned psycopg99356800 source started. Observer incorrectly assumed a .name attribute on pure-Python libpq int transaction_status; it failed before call_soon(cancel) or transaction entry. Connections/table/private server cleaned up. Use TransactionStatus(int).name and actual BaseTransaction.status/outer_transaction/stack_index fields, not nonexistent _entered/_exited fields. At163.13 seconds the20-second pre-launch reserve guard stopped a second attempt. No second cluster/process or cancellation workload launched. Old run.log is historical, not output of the guard.",
+      "status": "verified_case",
+      "reason": "One real transaction-entry cancellation at affected client checkout99356800 leaves the reused Connection at transaction depth1/INTRANS. A later transaction context exits normally, but the same Connection sees1 inserted row and an independent Connection sees0. Explicit rollback raises ProgrammingError. The successful process exits0 and connections/table/private PostgreSQL are cleaned up. Later-batch startup through success takes28.79s; one preceding observer failure in that batch occurred before cancellation. Generic CoroPerf Task creation plus a file-scoped cancellation exception observation restores launch_interrupted_entry. An API-boundary observation after the later transaction exits restores launch_reuse_check. Both helpers are absent from current observation stacks and present in the causal stacks. An explicit Connection/Task observer independently binds the cancelled-entry Task, later reuse Task and rollback failure to the same actual Connection, showing depth1/INTRANS across phases. The two selected joins are3→5 and29→31. A later cleanup Task reuses the reuse Task address, but its distinct runtime generation prevents joining their records. This tests exact checkout99356800e90aa0e7b604f652d714ef0f33422b47 using cached CPython3.14.3/PostgreSQL17.1/pure-Python libpq, whereas the report used3.14.8/18.4. The checkout reads version3.3.9 from installed distribution metadata; this is not a released3.3.9 behavior claim. Connection and context-manager wrapper identities require the explicit API observer; generic Task ancestry does not infer shared resources or hidden AsyncTransaction identity. Submission helpers are introduced for this standalone harness. The source already describes stack cleanup; the added diagnostic facts are historical callers and observed cross-phase resource state. Two earlier observer failures are retained, one in b14 and one in b15; neither reached cancellation. No successful scenario replay, nested-savepoint test, alternate server/implementation/version or fix run.",
       "query_kinds": [
         "recent"
       ]
@@ -52013,16 +52013,15 @@
       "reviewed_at": "2026-11-26T13:33:14.334497+00:00"
     },
     "psycopg--psycopg--1451": {
-      "status": "external_environment_required",
-      "reviewed_at": "2026-11-26T13:37:22.226657+00:00",
-      "reason": "Private PostgreSQL17.1 and CPython3.14.3/pinned psycopg99356800 source started. Observer incorrectly assumed a .name attribute on pure-Python libpq int transaction_status; it failed before call_soon(cancel) or transaction entry. Connections/table/private server cleaned up. Use TransactionStatus(int).name and actual BaseTransaction.status/outer_transaction/stack_index fields, not nonexistent _entered/_exited fields. At163.13 seconds the20-second pre-launch reserve guard stopped a second attempt. No second cluster/process or cancellation workload launched. Old run.log is historical, not output of the guard.",
-      "reason_zh": "第一次进程在观察器读取 pure-Python libpq 的整数事务状态时失败，尚未执行取消或事务入口，连接、表及私有数据库均清理。观察字段已修正；163.13秒的启动预留检查阻止第二次运行。保留10条失败前捕获，不计为 issue 复现。",
+      "status": "verified_case",
+      "reviewed_at": "2026-11-26T13:44:10.768392+00:00",
+      "reason": "One real transaction-entry cancellation at affected client checkout99356800 leaves the reused Connection at transaction depth1/INTRANS. A later transaction context exits normally, but the same Connection sees1 inserted row and an independent Connection sees0. Explicit rollback raises ProgrammingError. The successful process exits0 and connections/table/private PostgreSQL are cleaned up. Later-batch startup through success takes28.79s; one preceding observer failure in that batch occurred before cancellation. Generic CoroPerf Task creation plus a file-scoped cancellation exception observation restores launch_interrupted_entry. An API-boundary observation after the later transaction exits restores launch_reuse_check. Both helpers are absent from current observation stacks and present in the causal stacks. An explicit Connection/Task observer independently binds the cancelled-entry Task, later reuse Task and rollback failure to the same actual Connection, showing depth1/INTRANS across phases. The two selected joins are3→5 and29→31. A later cleanup Task reuses the reuse Task address, but its distinct runtime generation prevents joining their records. This tests exact checkout99356800e90aa0e7b604f652d714ef0f33422b47 using cached CPython3.14.3/PostgreSQL17.1/pure-Python libpq, whereas the report used3.14.8/18.4. The checkout reads version3.3.9 from installed distribution metadata; this is not a released3.3.9 behavior claim. Connection and context-manager wrapper identities require the explicit API observer; generic Task ancestry does not infer shared resources or hidden AsyncTransaction identity. Submission helpers are introduced for this standalone harness. The source already describes stack cleanup; the added diagnostic facts are historical callers and observed cross-phase resource state. Two earlier observer failures are retained, one in b14 and one in b15; neither reached cancellation. No successful scenario replay, nested-savepoint test, alternate server/implementation/version or fix run.",
+      "reason_zh": "受影响 client 提交99356800 的一次真实事务入口取消，使连接保留事务深度1/INTRANS。后续事务上下文正常退出，但同一 Connection 看见1行 INSERT，独立 Connection 看见0行；显式 rollback 抛出 ProgrammingError。成功进程退出0，连接、表和私有 PostgreSQL 均清理。后续批次从开始到成功28.79秒；同批更早的一次观察器失败发生在取消之前。通用 CoroPerf Task 创建与文件范围取消异常观察恢复 launch_interrupted_entry，后续事务退出后的 API 边界观察恢复 launch_reuse_check。两个辅助入口均不在当前观察栈中，而在 causal 栈中恢复。额外的 Connection/Task 观察把取消入口任务、后续复用任务与 rollback 失败独立接到同一真实 Connection，跨阶段记录到深度1/INTRANS。目录选取3→5、29→31两条创建关联。稍后的清理 Task 复用了复用任务的对象地址，但运行时 generation 不同，没有把两者记录混在一起。准确 client 源码99356800e90aa0e7b604f652d714ef0f33422b47 使用缓存 CPython3.14.3、PostgreSQL17.1 和 pure-Python libpq，原报告为3.14.8/18.4。checkout 从已安装发行元数据读取3.3.9，不代表验证了发行版3.3.9。Connection 与上下文管理器 wrapper 身份依赖额外 API 观察，不能从 Task 父子关系推断共享资源，也没有捕获隐藏的 AsyncTransaction 对象身份。提交辅助函数为此独立 harness 增加。报告已说明事务栈清理根因，新增证据是历史 caller 与跨阶段资源状态。保留 b14、b15 各一次取消前的观察器失败；成功场景仅一次，未测嵌套 savepoint、多服务器/实现/版本、修复或重放。",
       "sources": [
         "https://github.com/psycopg/psycopg/issues/1451"
       ],
-      "successful_component_runs": 0,
-      "coroperf_validated": false,
-      "evidence": "data/psycopg-1451-preparation-b14.json"
+      "successful_component_runs": 1,
+      "evidence": "data/psycopg-1451-verification.json"
     }
   },
   "supplemental_records": [
@@ -52736,6 +52735,15 @@
       "summary": "One process fails in an observer before transaction entry; cleanup completes and ten CoroPerf records are preserved. Actual status fields are now corrected. The163.13s guard prevents a second process. Exact client source99356800 is prepared; no native issue reproduction or new selected case.",
       "summary_zh": "一次进程在事务入口前的观察器中失败，完成清理并保留10条 CoroPerf 记录。真实状态字段已修正，163.13秒的预留检查阻止第二次进程。已准备准确 client 源码99356800；没有原生 issue 复现或新增已选案例。",
       "path": "data/psycopg-1451-preparation-b14.json"
+    },
+    {
+      "id": "psycopg-1451-verified-b15",
+      "checked_at": "2026-11-26T13:44:10.768392+00:00",
+      "title": "Cancelled transaction entry: verified historical Task and Connection relation",
+      "title_zh": "取消的事务入口：历史 Task 与 Connection 关联已验证",
+      "summary": "One affected-checkout scenario leaves depth1/INTRANS and later counts1 versus0 across real Connections. CoroPerf restores entry/reuse callers; an explicit resource observer supplies Connection identity. Runtime generations distinguish a later reused Task address. Exit0,28.79s later batch, no replay. Cached Python/server versions differ from the report;3.3.9 is distribution metadata only.",
+      "summary_zh": "一次受影响 checkout 场景保留深度1/INTRANS，真实连接读取计数1与0。CoroPerf 恢复入口/复用 caller，额外资源观察提供 Connection 身份；generation 区分稍后复用 Task 地址的清理任务。退出0、后续批次28.79秒，无重放；Python/服务器版本与报告不同，3.3.9仅为发行元数据。",
+      "path": "evidence/psycopg-1451-report.html"
     }
   ],
   "deferred_registry": [
@@ -65456,13 +65464,15 @@
     "previous_observed_at": "2026-11-26T10:09:17+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T13:37:22+00:00",
+  "ledger_refreshed_at": "2026-11-26T13:44:12+00:00",
   "progress_summary": {
     "source": "report_update",
-    "assembled_at": "2026-11-26T13:37:22+00:00",
+    "assembled_at": "2026-11-26T13:44:12+00:00",
     "comparison_reported_at": "2026-11-26T13:18:02.813724+00:00",
-    "verified_catalogue_entries": 134,
-    "new_verified_ids": [],
+    "verified_catalogue_entries": 135,
+    "new_verified_ids": [
+      "psycopg--psycopg--1451"
+    ],
     "review_decisions": 254,
     "new_review_decision_ids": [
       "psycopg--psycopg--1451",

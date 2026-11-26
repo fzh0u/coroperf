@@ -1,0 +1,1383 @@
+{
+  "checked_at": "2026-11-26T13:44:10.768392+00:00",
+  "case": {
+    "id": "psycopg--psycopg--1451",
+    "repo": "psycopg/psycopg",
+    "issue": 1451,
+    "url": "https://github.com/psycopg/psycopg/issues/1451",
+    "upstream_reference": "https://github.com/psycopg/psycopg/issues/1451",
+    "title": "Which cancelled entry task left the Connection reused by an uncommitted transaction?",
+    "title_zh": "后续事务未提交，Connection 之前由哪个取消的入口任务使用？",
+    "verified_on": "2026-11-26",
+    "reproduction": "Component reproduced",
+    "diagnosis": "Direct",
+    "graph": "perf-out/github-issue-discovery/automatic/psycopg-1451-later-batch-20261126-b15/analysis/graph.json",
+    "findings": {
+      "observation": "One real transaction-entry cancellation at affected client checkout99356800 leaves the reused Connection at transaction depth1/INTRANS. A later transaction context exits normally, but the same Connection sees1 inserted row and an independent Connection sees0. Explicit rollback raises ProgrammingError. The successful process exits0 and connections/table/private PostgreSQL are cleaned up. Later-batch startup through success takes28.79s; one preceding observer failure in that batch occurred before cancellation.",
+      "interpretation": "Generic CoroPerf Task creation plus a file-scoped cancellation exception observation restores launch_interrupted_entry. An API-boundary observation after the later transaction exits restores launch_reuse_check. Both helpers are absent from current observation stacks and present in the causal stacks. An explicit Connection/Task observer independently binds the cancelled-entry Task, later reuse Task and rollback failure to the same actual Connection, showing depth1/INTRANS across phases. The two selected joins are3→5 and29→31. A later cleanup Task reuses the reuse Task address, but its distinct runtime generation prevents joining their records.",
+      "limits": "This tests exact checkout99356800e90aa0e7b604f652d714ef0f33422b47 using cached CPython3.14.3/PostgreSQL17.1/pure-Python libpq, whereas the report used3.14.8/18.4. The checkout reads version3.3.9 from installed distribution metadata; this is not a released3.3.9 behavior claim. Connection and context-manager wrapper identities require the explicit API observer; generic Task ancestry does not infer shared resources or hidden AsyncTransaction identity. Submission helpers are introduced for this standalone harness. The source already describes stack cleanup; the added diagnostic facts are historical callers and observed cross-phase resource state. Two earlier observer failures are retained, one in b14 and one in b15; neither reached cancellation. No successful scenario replay, nested-savepoint test, alternate server/implementation/version or fix run."
+    },
+    "symptom_zh": "受影响 client 提交99356800 的一次真实事务入口取消，使连接保留事务深度1/INTRANS。后续事务上下文正常退出，但同一 Connection 看见1行 INSERT，独立 Connection 看见0行；显式 rollback 抛出 ProgrammingError。成功进程退出0，连接、表和私有 PostgreSQL 均清理。后续批次从开始到成功28.79秒；同批更早的一次观察器失败发生在取消之前。",
+    "reasoning_zh": "通用 CoroPerf Task 创建与文件范围取消异常观察恢复 launch_interrupted_entry，后续事务退出后的 API 边界观察恢复 launch_reuse_check。两个辅助入口均不在当前观察栈中，而在 causal 栈中恢复。额外的 Connection/Task 观察把取消入口任务、后续复用任务与 rollback 失败独立接到同一真实 Connection，跨阶段记录到深度1/INTRANS。目录选取3→5、29→31两条创建关联。稍后的清理 Task 复用了复用任务的对象地址，但运行时 generation 不同，没有把两者记录混在一起。",
+    "limits_zh": "准确 client 源码99356800e90aa0e7b604f652d714ef0f33422b47 使用缓存 CPython3.14.3、PostgreSQL17.1 和 pure-Python libpq，原报告为3.14.8/18.4。checkout 从已安装发行元数据读取3.3.9，不代表验证了发行版3.3.9。Connection 与上下文管理器 wrapper 身份依赖额外 API 观察，不能从 Task 父子关系推断共享资源，也没有捕获隐藏的 AsyncTransaction 对象身份。提交辅助函数为此独立 harness 增加。报告已说明事务栈清理根因，新增证据是历史 caller 与跨阶段资源状态。保留 b14、b15 各一次取消前的观察器失败；成功场景仅一次，未测嵌套 savepoint、多服务器/实现/版本、修复或重放。"
+  },
+  "verification": {
+    "checked_at": "2026-11-26T13:42:49.149260+00:00",
+    "id": "psycopg--psycopg--1451",
+    "successful_issue_workloads": 1,
+    "workload_replays_after_success": 0,
+    "b15_process_launches": 2,
+    "b15_pre_entry_observer_failures": 1,
+    "prior_b14_pre_entry_observer_failures": 1,
+    "b15_elapsed_seconds_to_success": 28.79,
+    "process_exit_code": 0,
+    "private_postgres_shutdown_logged": true,
+    "client_revision": "99356800e90aa0e7b604f652d714ef0f33422b47",
+    "distribution_metadata_version": "3.3.9",
+    "version_note": "Checkout version.py reads importlib.metadata from the cached installed distribution. This is an exact checkout test, not a released3.3.9 behavior claim.",
+    "python": "3.14.3 (main, Mar 24 2026, 22:50:36) [Clang 22.1.1 ]",
+    "server_version": 170001,
+    "pq_implementation": "python",
+    "same_connection_count": 1,
+    "independent_observer_count": 0,
+    "coroperf_caller_recovery_verified": true,
+    "creation_observation_pairs": [
+      [
+        "3",
+        "5"
+      ],
+      [
+        "29",
+        "31"
+      ]
+    ],
+    "cancelled_entry_task": "python-asyncio-task-0x7502635f1130-g2",
+    "reuse_task": "python-asyncio-task-0x7502639da2c0-g3",
+    "same_connection_observed_across_entry_reuse_failure": "0x750262f45a90",
+    "sequence_segments": [
+      "5",
+      "8",
+      "9",
+      "31",
+      "37"
+    ],
+    "address_reused_by_later_cleanup_task": true,
+    "later_cleanup_task_identities": [
+      "python-asyncio-task-0x7502639da2c0-g4"
+    ],
+    "task_generations_kept_separate": true,
+    "limitations": [
+      "Exact affected client checkout; cached Python3.14.3/PostgreSQL17.1/pure-Python libpq differ from reported3.14.8/18.4.",
+      "API observers supply Connection and context-manager wrapper identity/depth. Generic Task ancestry does not infer connection sharing or hidden transaction-object identity.",
+      "The factory helpers are introduced for this harness. No original application entry is claimed.",
+      "The source already explains transaction-stack cleanup. Added facts are historical Task callers and explicitly observed shared-connection state across phases.",
+      "Exception records may be propagation observations; distinct exception object identities were not captured.",
+      "One successful scenario only; no nested-savepoint, server/version/implementation matrix, fix or replay."
+    ]
+  },
+  "analysis": {
+    "instances": 5,
+    "observations": 34,
+    "attributed_observations": 34,
+    "creator_links": 2,
+    "recorded_parent_links": 2,
+    "open_at_trace_end": 0,
+    "completed_storage_observed": 0,
+    "observation_kinds": [
+      "task_snapshot",
+      "semantic_boundary",
+      "scoped_exception"
+    ],
+    "diagnostics": 0,
+    "capture_loss": null,
+    "analysis_ms": 14.749644999999997,
+    "input": "perf-out/github-issue-discovery/automatic/psycopg-1451-later-batch-20261126-b15/graph.json",
+    "query_matches": 5,
+    "schema": "corostitch.evidence/v1"
+  },
+  "native_observation": {
+    "python": "3.14.3 (main, Mar 24 2026, 22:50:36) [Clang 22.1.1 ]",
+    "psycopg_source": "/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/__init__.py",
+    "psycopg_version": "3.3.9",
+    "pq_implementation": "python",
+    "server_version": 170001,
+    "body_entered": false,
+    "connection_object_id_hex": "0x750262f45a90",
+    "observer_connection_object_id_hex": "0x750262fa8f50",
+    "interrupted_task_object_id_hex": "0x7502635f1130",
+    "entry_cancelled": true,
+    "reuse_task_object_id_hex": "0x7502639da2c0",
+    "same_connection_count": 1,
+    "independent_observer_count": 0,
+    "task_object_id_hex": "0x7502639da2c0",
+    "rollback_exception_type": "ProgrammingError",
+    "rollback_exception_message": "Explicit rollback() forbidden within a Transaction context. (Either raise Rollback() or allow an exception to propagate out of the context.)",
+    "rollback_native_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py\", line 81, in main\n    await conn.rollback()\n  File \"/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py\", line 343, in rollback\n    await self.wait(self._rollback_gen())\n  File \"/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py\", line 532, in wait\n    return await waiting.wait_async(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n        gen, self.pgconn.socket, interval=interval, timeout=timeout\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/waiting.py\", line 183, in wait_async\n    s = next(gen)\n  File \"/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/_connection_base.py\", line 600, in _rollback_gen\n    raise e.ProgrammingError(\n    ...<3 lines>...\n    )\npsycopg.ProgrammingError: Explicit rollback() forbidden within a Transaction context. (Either raise Rollback() or allow an exception to propagate out of the context.)\n",
+    "events": [
+      {
+        "label": "entry_requested",
+        "connection_object_id_hex": "0x750262f45a90",
+        "task_object_id_hex": "0x7502635f1130",
+        "transaction_depth": 0,
+        "server_transaction_status": "IDLE",
+        "context_manager_object_id_hex": "0x750262f46120",
+        "context_manager_type": "_AsyncGeneratorContextManager"
+      },
+      {
+        "label": "entry_cancelled",
+        "connection_object_id_hex": "0x750262f45a90",
+        "task_object_id_hex": "0x7502635f1130",
+        "transaction_depth": 1,
+        "server_transaction_status": "INTRANS",
+        "context_manager_object_id_hex": "0x750262f46120",
+        "context_manager_type": "_AsyncGeneratorContextManager"
+      },
+      {
+        "label": "reuse_started",
+        "connection_object_id_hex": "0x750262f45a90",
+        "task_object_id_hex": "0x7502639da2c0",
+        "transaction_depth": 1,
+        "server_transaction_status": "INTRANS"
+      },
+      {
+        "label": "retry_context_exited",
+        "connection_object_id_hex": "0x750262f45a90",
+        "task_object_id_hex": "0x7502639da2c0",
+        "transaction_depth": 1,
+        "server_transaction_status": "INTRANS"
+      },
+      {
+        "label": "independent_observer_read",
+        "connection_object_id_hex": "0x750262fa8f50",
+        "task_object_id_hex": "0x7502639da2c0",
+        "transaction_depth": 0,
+        "server_transaction_status": "IDLE",
+        "count": 0
+      },
+      {
+        "label": "rollback_failed",
+        "connection_object_id_hex": "0x750262f45a90",
+        "task_object_id_hex": "0x7502635f09b0",
+        "transaction_depth": 1,
+        "server_transaction_status": "INTRANS",
+        "exception_type": "ProgrammingError"
+      }
+    ]
+  },
+  "execution": {
+    "workload_attempts": 1,
+    "exit_code": 0,
+    "private_postgres_stopped": true,
+    "elapsed_seconds": 28.79
+  },
+  "source_integrity": {
+    "transaction.py": {
+      "sha256": "f89cce45506110593f930bc6d5111bced43b122b70266b6b4eb279bba014c8b4",
+      "matches_pinned_upstream_bytes": true,
+      "url": "https://raw.githubusercontent.com/psycopg/psycopg/99356800e90aa0e7b604f652d714ef0f33422b47/psycopg/psycopg/transaction.py"
+    },
+    "connection_async.py": {
+      "sha256": "bd0ac75cb2404140265f31a630192fcbf5d4f5cc6f05290fc096fe78cd18a37b",
+      "matches_pinned_upstream_bytes": true,
+      "url": "https://raw.githubusercontent.com/psycopg/psycopg/99356800e90aa0e7b604f652d714ef0f33422b47/psycopg/psycopg/connection_async.py"
+    },
+    "_connection_base.py": {
+      "sha256": "14115b0bdcb81125b3c340340b4e8e674bb1ae03f4b320c94c2b93d30462f36e",
+      "matches_pinned_upstream_bytes": true,
+      "url": "https://raw.githubusercontent.com/psycopg/psycopg/99356800e90aa0e7b604f652d714ef0f33422b47/psycopg/psycopg/_connection_base.py"
+    },
+    "version.py": {
+      "sha256": "24b5a8a6b22c0b91d5725ca19fb2f355f56936d65853e5282d0c0018c1019587",
+      "matches_pinned_upstream_bytes": true,
+      "url": "https://raw.githubusercontent.com/psycopg/psycopg/99356800e90aa0e7b604f652d714ef0f33422b47/psycopg/psycopg/version.py"
+    },
+    "waiting.py": {
+      "sha256": "fba2719003f3871bf9587e8ad68b2cef2ecdc77e93323b0853507e081f385cbd",
+      "matches_pinned_upstream_bytes": true,
+      "url": "https://raw.githubusercontent.com/psycopg/psycopg/99356800e90aa0e7b604f652d714ef0f33422b47/psycopg/psycopg/waiting.py"
+    }
+  },
+  "capture": {
+    "schema_version": 1,
+    "language": "python",
+    "runtime": "asyncio-sitecustomize",
+    "frame_order": "root_to_leaf",
+    "producer": {
+      "name": "asyncio-frame-inspection",
+      "identity_kind": "runtime-token-generation",
+      "continuation_storage": "stackless-state",
+      "frame_order": "root_to_leaf",
+      "clock": "monotonic-ns",
+      "observation_kind": "task_snapshot"
+    },
+    "segments": [
+      {
+        "id": 0,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "create",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982780656048,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:109:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py"
+        ],
+        "function_name": "wait_for",
+        "coroutine_object_id": "128653127812928",
+        "parent_coroutine_id": null
+      },
+      {
+        "id": 1,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982786529766,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:60:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "connect:125:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py",
+          "wait_conn_async:304:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/waiting.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 2,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982792049926,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:69:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "execute:330:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py",
+          "execute:113:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/cursor_async.py",
+          "wait:532:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py",
+          "wait_async:222:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/waiting.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 3,
+        "coroutine_id": "python-asyncio-task-0x7502635f1130-g2",
+        "capture_reason": "create",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982792853190,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:70:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "launch_interrupted_entry:40:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "create_task:395:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "function_name": "launch_interrupted_entry.<locals>.interrupted_entry",
+        "coroutine_object_id": "128653110676800",
+        "parent_coroutine_id": "python-asyncio-task-0x7502635f09b0-g1"
+      },
+      {
+        "id": 4,
+        "coroutine_id": "python-asyncio-task-0x7502635f1130-g2",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982792938671,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "interrupted_entry:32:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "observe:26:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py"
+        ],
+        "label": "entry_requested",
+        "sample_kind": "semantic_boundary",
+        "semantic": {
+          "label": "entry_requested",
+          "connection_object_id_hex": "0x750262f45a90",
+          "task_object_id_hex": "0x7502635f1130",
+          "transaction_depth": 0,
+          "server_transaction_status": "IDLE",
+          "context_manager_object_id_hex": "0x750262f46120",
+          "context_manager_type": "_AsyncGeneratorContextManager"
+        }
+      },
+      {
+        "id": 5,
+        "coroutine_id": "python-asyncio-task-0x7502635f1130-g2",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982793178936,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "interrupted_entry:35:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "__aenter__:214:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/contextlib.py",
+          "transaction:401:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py",
+          "__aenter__:294:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/transaction.py",
+          "wait:532:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py"
+        ],
+        "label": "exception:CancelledError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "CancelledError"
+      },
+      {
+        "id": 6,
+        "coroutine_id": "python-asyncio-task-0x7502635f1130-g2",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982795644782,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "interrupted_entry:35:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "__aenter__:214:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/contextlib.py",
+          "transaction:401:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py",
+          "__aenter__:294:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/transaction.py"
+        ],
+        "label": "exception:CancelledError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "CancelledError"
+      },
+      {
+        "id": 7,
+        "coroutine_id": "python-asyncio-task-0x7502635f1130-g2",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982795661765,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "interrupted_entry:35:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "__aenter__:214:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/contextlib.py",
+          "transaction:401:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py"
+        ],
+        "label": "exception:CancelledError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "CancelledError"
+      },
+      {
+        "id": 8,
+        "coroutine_id": "python-asyncio-task-0x7502635f1130-g2",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982795697099,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "interrupted_entry:38:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "observe:26:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py"
+        ],
+        "label": "entry_cancelled",
+        "sample_kind": "semantic_boundary",
+        "semantic": {
+          "label": "entry_cancelled",
+          "connection_object_id_hex": "0x750262f45a90",
+          "task_object_id_hex": "0x7502635f1130",
+          "transaction_depth": 1,
+          "server_transaction_status": "INTRANS",
+          "context_manager_object_id_hex": "0x750262f46120",
+          "context_manager_type": "_AsyncGeneratorContextManager"
+        }
+      },
+      {
+        "id": 9,
+        "coroutine_id": "python-asyncio-task-0x7502635f1130-g2",
+        "capture_reason": "exit",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982795737177,
+        "frames": [],
+        "exit_reason": "cancel"
+      },
+      {
+        "id": 10,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982797891400,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 11,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982803081423,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 12,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982808244767,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 13,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982814189773,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 14,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982819329020,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 15,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982824493983,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 16,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982829647924,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 17,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982835801102,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 18,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982840974530,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 19,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982846193946,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 20,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982851362142,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 21,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982857413697,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 22,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982862585481,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 23,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982867747758,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 24,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982872896903,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 25,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982878966959,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 26,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982884199313,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 27,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982889388149,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 28,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982894574808,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:76:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "sleep:702:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 29,
+        "coroutine_id": "python-asyncio-task-0x7502639da2c0-g3",
+        "capture_reason": "create",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982897225473,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:77:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "launch_reuse_check:56:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "create_task:395:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "function_name": "launch_reuse_check.<locals>.reuse_connection",
+        "coroutine_object_id": "128653117088736",
+        "parent_coroutine_id": "python-asyncio-task-0x7502635f09b0-g1"
+      },
+      {
+        "id": 30,
+        "coroutine_id": "python-asyncio-task-0x7502639da2c0-g3",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982897312554,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "reuse_connection:45:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "observe:26:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py"
+        ],
+        "label": "reuse_started",
+        "sample_kind": "semantic_boundary",
+        "semantic": {
+          "label": "reuse_started",
+          "connection_object_id_hex": "0x750262f45a90",
+          "task_object_id_hex": "0x7502639da2c0",
+          "transaction_depth": 1,
+          "server_transaction_status": "INTRANS"
+        }
+      },
+      {
+        "id": 31,
+        "coroutine_id": "python-asyncio-task-0x7502639da2c0-g3",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982898688530,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "reuse_connection:48:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "observe:26:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py"
+        ],
+        "label": "retry_context_exited",
+        "sample_kind": "semantic_boundary",
+        "semantic": {
+          "label": "retry_context_exited",
+          "connection_object_id_hex": "0x750262f45a90",
+          "task_object_id_hex": "0x7502639da2c0",
+          "transaction_depth": 1,
+          "server_transaction_status": "INTRANS"
+        }
+      },
+      {
+        "id": 32,
+        "coroutine_id": "python-asyncio-task-0x7502639da2c0-g3",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982900424794,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "reuse_connection:53:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "observe:26:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py"
+        ],
+        "label": "independent_observer_read",
+        "sample_kind": "semantic_boundary",
+        "semantic": {
+          "label": "independent_observer_read",
+          "connection_object_id_hex": "0x750262fa8f50",
+          "task_object_id_hex": "0x7502639da2c0",
+          "transaction_depth": 0,
+          "server_transaction_status": "IDLE",
+          "count": 0
+        }
+      },
+      {
+        "id": 33,
+        "coroutine_id": "python-asyncio-task-0x7502639da2c0-g3",
+        "capture_reason": "exit",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982900449495,
+        "frames": [],
+        "exit_reason": "return"
+      },
+      {
+        "id": 34,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982900497706,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:81:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "rollback:343:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py",
+          "wait:532:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py",
+          "wait_async:183:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/waiting.py",
+          "_rollback_gen:600:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/_connection_base.py"
+        ],
+        "label": "exception:ProgrammingError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "ProgrammingError"
+      },
+      {
+        "id": 35,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982900510192,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:81:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "rollback:343:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py",
+          "wait:532:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py"
+        ],
+        "label": "exception:ProgrammingError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "ProgrammingError"
+      },
+      {
+        "id": 36,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982900520734,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:81:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "rollback:343:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py"
+        ],
+        "label": "exception:ProgrammingError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "ProgrammingError"
+      },
+      {
+        "id": 37,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982901775572,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:86:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "observe:26:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py"
+        ],
+        "label": "rollback_failed",
+        "sample_kind": "semantic_boundary",
+        "semantic": {
+          "label": "rollback_failed",
+          "connection_object_id_hex": "0x750262f45a90",
+          "task_object_id_hex": "0x7502635f09b0",
+          "transaction_depth": 1,
+          "server_transaction_status": "INTRANS",
+          "exception_type": "ProgrammingError"
+        }
+      },
+      {
+        "id": 38,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "sample",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982902132710,
+        "frames": [
+          "wait_for:488:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py",
+          "main:92:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "execute:330:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py",
+          "execute:113:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/cursor_async.py",
+          "wait:532:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/connection_async.py",
+          "wait_async:222:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-first-check-20261126-b14/source/psycopg-99356800/psycopg/psycopg/waiting.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 39,
+        "coroutine_id": "python-asyncio-task-0x7502635f09b0-g1",
+        "capture_reason": "exit",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982902951457,
+        "frames": [],
+        "exit_reason": "return"
+      },
+      {
+        "id": 40,
+        "coroutine_id": "python-asyncio-task-0x7502639da2c0-g4",
+        "capture_reason": "create",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982903127057,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:203:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "__exit__:63:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "close:72:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:698:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "ensure_future:732:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "function_name": "BaseEventLoop.shutdown_asyncgens",
+        "coroutine_object_id": "128653108446112",
+        "parent_coroutine_id": null
+      },
+      {
+        "id": 41,
+        "coroutine_id": "python-asyncio-task-0x7502639da2c0-g4",
+        "capture_reason": "exit",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982903171298,
+        "frames": [],
+        "exit_reason": "return"
+      },
+      {
+        "id": 42,
+        "coroutine_id": "python-asyncio-task-0x75026392b4d0-g5",
+        "capture_reason": "create",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982903266418,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py",
+          "run:203:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "__exit__:63:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "close:73:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:698:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "ensure_future:732:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "function_name": "BaseEventLoop.shutdown_default_executor",
+        "coroutine_object_id": "128653111102176",
+        "parent_coroutine_id": null
+      },
+      {
+        "id": 43,
+        "coroutine_id": "python-asyncio-task-0x75026392b4d0-g5",
+        "capture_reason": "exit",
+        "thread_id": 3911142,
+        "timestamp_ns": 1908982903304198,
+        "frames": [],
+        "exit_reason": "return"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 2,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 0,
+        "kind": "coroutine_created_by"
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 5,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 6,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 7,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 8,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "kind": "same_task_exit"
+      },
+      {
+        "from": 0,
+        "to": 10,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 2,
+        "to": 10,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 11,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 12,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 13,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 14,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 15,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 16,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 17,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 18,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 19,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 20,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 21,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 22,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 21,
+        "to": 22,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 23,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 22,
+        "to": 23,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 24,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 23,
+        "to": 24,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 25,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 24,
+        "to": 25,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 26,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 25,
+        "to": 26,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 27,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 26,
+        "to": 27,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 28,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 27,
+        "to": 28,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 29,
+        "to": 0,
+        "kind": "coroutine_created_by"
+      },
+      {
+        "from": 29,
+        "to": 30,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 29,
+        "to": 30,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 29,
+        "to": 31,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 30,
+        "to": 31,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 29,
+        "to": 32,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 31,
+        "to": 32,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 32,
+        "to": 33,
+        "kind": "same_task_exit"
+      },
+      {
+        "from": 0,
+        "to": 34,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 28,
+        "to": 34,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 35,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 34,
+        "to": 35,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 36,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 35,
+        "to": 36,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 37,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 36,
+        "to": 37,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 0,
+        "to": 38,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 37,
+        "to": 38,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 38,
+        "to": 39,
+        "kind": "same_task_exit"
+      },
+      {
+        "from": 40,
+        "to": 41,
+        "kind": "same_task_exit"
+      },
+      {
+        "from": 42,
+        "to": 43,
+        "kind": "same_task_exit"
+      }
+    ],
+    "active_coroutines": 0,
+    "agent": {
+      "python": "3.14.3",
+      "process_id": 3911142,
+      "parent_process_id": 3911120,
+      "output_owner_process_id": 3911142,
+      "sample_interval_seconds": 0.005,
+      "stack_limit": 32,
+      "transparent_launch": true,
+      "remote_attach": false,
+      "seeded_tasks": 0,
+      "interpreter_id": 0,
+      "interpreter_count": 1,
+      "main_interpreter": true,
+      "coverage_unit": "one-interpreter"
+    }
+  },
+  "raw_manifest": {
+    "perf-out/github-issue-discovery/automatic/psycopg-1451-later-batch-20261126-b15/graph.json": "e3932330719203dd2e9e68a2197e36134836194e4c1b24e6f78802a9cce0c17f",
+    "perf-out/github-issue-discovery/automatic/psycopg-1451-later-batch-20261126-b15/native-observation.json": "b030dd93ceef288173f0b2cd967da991febaced8d8fbd1601195244c3a0d7f85",
+    "perf-out/github-issue-discovery/automatic/psycopg-1451-later-batch-20261126-b15/run.log": "1f448669e81588b37f767e4eca566605290d036cbbf85a3f5b60d20508395df2",
+    "perf-out/github-issue-discovery/automatic/psycopg-1451-later-batch-20261126-b15/execution.json": "7c63c9f3a3cac58f3564834eb4ac3b0c2bece7ebd1d69046743aba069aa9cc66",
+    "research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/check_once.py": "b2397bd7f3665a8503c5b69f98847ca79a15f76a4f6abe4006e5b4a74a67547a",
+    "research/github-issue-discovery/psycopg-1451-later-batch-20261126-b15/run_once.py": "0c506bdf9103a2b08561c36bd876934e6ae40912237a92561cf9b6fe53423bac",
+    "agents/python/corostitch_agent.py": "91dda6510c613d27a13be1d71d8ce7595de7a648a5e4ba970a9ca098d2b96a9b"
+  }
+}

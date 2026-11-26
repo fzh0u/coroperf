@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="后续事务未提交，Connection 之前由哪个取消的入口任务使用？">
+  <title>psycopg/psycopg #1451 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/psycopg--psycopg--1451.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/psycopg--psycopg--1451.html" lang="en" hreflang="en">English</a><a href="psycopg--psycopg--1451.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">psycopg/psycopg #1451</p>
+        <h1>后续事务未提交，Connection 之前由哪个取消的入口任务使用？</h1>
+        <div class="case-links"><a href="https://github.com/psycopg/psycopg/issues/1451">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>补回调用来源</dd></div>
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>恢复真实 Task 创建 caller，并结合额外观察的 Connection 身份，关联取消入口、复用和 rollback 失败。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 5</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5 · scoped_exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:97</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:127</span></li><li><code>run_until_complete</code><span>base_events.py:706</span></li><li><code>run_forever</code><span>base_events.py:677</span></li><li><code>_run_once</code><span>base_events.py:2046</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>interrupted_entry</code><span>check_once.py:35</span></li><li><code>__aenter__</code><span>contextlib.py:214</span></li><li><code>transaction</code><span>connection_async.py:401</span></li><li><code>__aenter__</code><span>transaction.py:294</span></li><li><code>wait</code><span>connection_async.py:532</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>5 → 3</code></a><a href="#join-1-point-1">拼接点 1 <code>3 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5 · scoped_exception</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:97</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:127</span></li><li><code>run_until_complete</code><span>base_events.py:706</span></li><li><code>run_forever</code><span>base_events.py:677</span></li><li><code>_run_once</code><span>base_events.py:2046</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>interrupted_entry</code><span>check_once.py:35</span></li><li><code>__aenter__</code><span>contextlib.py:214</span></li><li><code>transaction</code><span>connection_async.py:401</span></li><li><code>__aenter__</code><span>transaction.py:294</span></li><li><code>wait</code><span>connection_async.py:532</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-1-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 3 → 5</code></p>
+        </aside><section class="stack " id="join-1-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:97</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:127</span></li><li><code>run_until_complete</code><span>base_events.py:706</span></li><li><code>run_forever</code><span>base_events.py:677</span></li><li><code>_run_once</code><span>base_events.py:2046</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>wait_for</code><span>tasks.py:488</span></li><li><code>main</code><span>check_once.py:70</span></li><li><code>launch_interrupted_entry</code><span>check_once.py:40</span></li><li><code>create_task</code><span>tasks.py:395</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-3">记录 3</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 3 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:97</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:109</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 31</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 31 · semantic_boundary</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:97</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:127</span></li><li><code>run_until_complete</code><span>base_events.py:706</span></li><li><code>run_forever</code><span>base_events.py:677</span></li><li><code>_run_once</code><span>base_events.py:2046</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>reuse_connection</code><span>check_once.py:48</span></li><li><code>observe</code><span>check_once.py:26</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 31 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-2">拼接点 2 <code>31 → 29</code></a><a href="#join-2-point-1">拼接点 1 <code>29 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-31"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 31 · semantic_boundary</span><span class="record-instance">实例首次见于记录 29</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:97</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:127</span></li><li><code>run_until_complete</code><span>base_events.py:706</span></li><li><code>run_forever</code><span>base_events.py:677</span></li><li><code>_run_once</code><span>base_events.py:2046</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>reuse_connection</code><span>check_once.py:48</span></li><li><code>observe</code><span>check_once.py:26</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-29">记录 29</a><span aria-hidden="true">→</span><a href="#join-2-record-31">记录 31</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 29 → 31</code></p>
+        </aside><section class="stack " id="join-2-record-29"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 29</span><span class="record-instance">实例首次见于记录 29</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:97</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:127</span></li><li><code>run_until_complete</code><span>base_events.py:706</span></li><li><code>run_forever</code><span>base_events.py:677</span></li><li><code>_run_once</code><span>base_events.py:2046</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>wait_for</code><span>tasks.py:488</span></li><li><code>main</code><span>check_once.py:77</span></li><li><code>launch_reuse_check</code><span>check_once.py:56</span></li><li><code>create_task</code><span>tasks.py:395</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-29">记录 29</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 29 → 0</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:97</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:109</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>受影响 client 提交99356800 的一次真实事务入口取消，使连接保留事务深度1/INTRANS。后续事务上下文正常退出，但同一 Connection 看见1行 INSERT，独立 Connection 看见0行；显式 rollback 抛出 ProgrammingError。成功进程退出0，连接、表和私有 PostgreSQL 均清理。后续批次从开始到成功28.79秒；同批更早的一次观察器失败发生在取消之前。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>通用 CoroPerf Task 创建与文件范围取消异常观察恢复 launch_interrupted_entry，后续事务退出后的 API 边界观察恢复 launch_reuse_check。两个辅助入口均不在当前观察栈中，而在 causal 栈中恢复。额外的 Connection/Task 观察把取消入口任务、后续复用任务与 rollback 失败独立接到同一真实 Connection，跨阶段记录到深度1/INTRANS。目录选取3→5、29→31两条创建关联。稍后的清理 Task 复用了复用任务的对象地址，但运行时 generation 不同，没有把两者记录混在一起。</dd></div><div><dt>适用范围与局限</dt><dd>准确 client 源码99356800e90aa0e7b604f652d714ef0f33422b47 使用缓存 CPython3.14.3、PostgreSQL17.1 和 pure-Python libpq，原报告为3.14.8/18.4。checkout 从已安装发行元数据读取3.3.9，不代表验证了发行版3.3.9。Connection 与上下文管理器 wrapper 身份依赖额外 API 观察，不能从 Task 父子关系推断共享资源，也没有捕获隐藏的 AsyncTransaction 对象身份。提交辅助函数为此独立 harness 增加。报告已说明事务栈清理根因，新增证据是历史 caller 与跨阶段资源状态。保留 b14、b15 各一次取消前的观察器失败；成功场景仅一次，未测嵌套 savepoint、多服务器/实现/版本、修复或重放。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>
