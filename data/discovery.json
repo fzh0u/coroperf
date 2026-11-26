@@ -30114,7 +30114,7 @@
       "observed_at": "2026-11-26T12:01:10+00:00",
       "heat": 9.7448,
       "status": "external_environment_required",
-      "reason": "Exact2.52.0 wheel installation completed at170.5s. Matching fresh import, real Serve deployment fixture, response-to-Task identity capture and owned cluster cleanup are not ready within this pass. No cluster, request or coroutine substitute ran. The overlapping import probe resolved fallback2.59.0 and is not a matching import confirmation.",
+      "reason": "Ray rejected the overly long Unix-domain socket path before cluster startup completed: AF_UNIX107-byte limit. No Serve deployment/request ran. ray.shutdown cleanup returned and no target process remained. Prepared run_once.py uses /tmp/r59347-* for Ray sockets, keeps capture files at the original evidence path, validates socket length and tracks owned descendant PID/start-time for timeout cleanup. This corrected launcher has not been executed in b19.",
       "query_kinds": [
         "discussion-depth"
       ]
@@ -52033,15 +52033,15 @@
     },
     "ray-project--ray--59347": {
       "status": "external_environment_required",
-      "reviewed_at": "2026-11-26T14:16:22.164727+00:00",
-      "reason": "Exact2.52.0 wheel installation completed at170.5s. Matching fresh import, real Serve deployment fixture, response-to-Task identity capture and owned cluster cleanup are not ready within this pass. No cluster, request or coroutine substitute ran. The overlapping import probe resolved fallback2.59.0 and is not a matching import confirmation.",
-      "reason_zh": "170.5秒安装准确 Ray2.52.0 wheel；首检内尚未准备匹配导入、真实 Serve 部署、Response/Task 身份捕获与私有集群清理。安装尚未完成时的重叠导入探针读到了 fallback2.59.0，不能当作2.52.0确认。未调用 ray.init、未部署或请求，未运行替代 asyncio 模型。",
+      "reviewed_at": "2026-11-26T14:24:36.757464+00:00",
+      "reason": "Ray rejected the overly long Unix-domain socket path before cluster startup completed: AF_UNIX107-byte limit. No Serve deployment/request ran. ray.shutdown cleanup returned and no target process remained. Prepared run_once.py uses /tmp/r59347-* for Ray sockets, keeps capture files at the original evidence path, validates socket length and tracks owned descendant PID/start-time for timeout cleanup. This corrected launcher has not been executed in b19.",
+      "reason_zh": "已确认准确导入Ray2.52.0。唯一一次初始化因Unix socket路径超过107字节被拒绝，尚未完成集群启动、未部署或请求；清理返回、无目标残留。短/tmp启动器已准备但未在b19执行；本轮停止。",
       "sources": [
         "https://github.com/ray-project/ray/issues/59347"
       ],
       "successful_component_runs": 0,
       "coroperf_validated": false,
-      "evidence": "data/ray-59347-preparation-b18.json"
+      "evidence": "data/ray-59347-startup-b19.json"
     }
   },
   "supplemental_records": [
@@ -52791,6 +52791,15 @@
       "summary": "Original2.52.0 four-deployment script saved. Exact wheel installation completes at170.5s. A probe overlapped installation and imported fallback2.59.0; matching fresh import remains unverified. No Ray cluster, Serve request or CoroPerf capture. Preserve2s/7s/3s topology for a later real check.",
       "summary_zh": "已保存原始2.52.0的四部署脚本，170.5秒完成准确 wheel 安装。探针与安装重叠并导入 fallback2.59.0，尚未验证新环境导入。没有 Ray 集群、Serve 请求或 CoroPerf 捕获；保留2秒/7秒/3秒拓扑待后续真实检查。",
       "path": "data/ray-59347-preparation-b18.json"
+    },
+    {
+      "id": "ray-59347-startup-b19",
+      "checked_at": "2026-11-26T14:24:36.757464+00:00",
+      "title": "Ray2.52 import verified; socket-path startup rejected before Serve",
+      "title_zh": "Ray2.52导入已验证，Serve前的socket路径检查失败",
+      "summary": "Fresh import resolves the isolated2.52.0 package. One initialization rejects an AF_UNIX socket path longer than107 bytes; no deployment/request runs. Cleanup returns, no target remains. A short/tmp launcher is prepared for a later batch, not executed here.",
+      "summary_zh": "新进程准确导入隔离环境2.52.0。一次初始化因Unix socket路径超过107字节被拒绝，未部署或请求；清理返回、无目标残留。已准备短/tmp启动器供后续使用，本轮未执行。",
+      "path": "data/ray-59347-startup-b19.json"
     }
   ],
   "deferred_registry": [
@@ -53796,7 +53805,7 @@
       "risk_signal": "panic",
       "signal_title": "panic: assertion failed: Page expected to be: 5",
       "first_seen": "2026-11-25T02:04:10+00:00",
-      "last_seen": "2026-11-26T12:09:17+00:00",
+      "last_seen": "2026-11-26T14:10:21+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -53808,7 +53817,7 @@
       "risk_signal": "panic",
       "signal_title": "3.3.7 panic: send on closed channel",
       "first_seen": "2026-11-25T02:04:10+00:00",
-      "last_seen": "2026-11-26T12:09:17+00:00",
+      "last_seen": "2026-11-26T14:10:21+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -53820,7 +53829,7 @@
       "risk_signal": "crashes",
       "signal_title": "[Bug] GLM-5.3-Flash on SM120: fa4 attention backend crashes at CUDA-graph capture (hybrid extend reshape) — triton is the only working backend",
       "first_seen": "2026-11-25T02:01:08+00:00",
-      "last_seen": "2026-11-26T12:02:02+00:00",
+      "last_seen": "2026-11-26T14:02:39+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -53844,7 +53853,7 @@
       "risk_signal": "Segmentation fault",
       "signal_title": "Segmentation fault on 0.31.0 when inside a Temporal activity",
       "first_seen": "2026-11-25T02:03:12+00:00",
-      "last_seen": "2026-11-26T12:06:10+00:00",
+      "last_seen": "2026-11-26T14:07:02+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -53856,7 +53865,7 @@
       "risk_signal": "security",
       "signal_title": "Regression on placeholders",
       "first_seen": "2026-11-25T02:03:38+00:00",
-      "last_seen": "2026-11-26T12:06:53+00:00",
+      "last_seen": "2026-11-26T14:07:37+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -53880,7 +53889,7 @@
       "risk_signal": "assertion",
       "signal_title": "TiKV assertion panic related to CDC",
       "first_seen": "2026-11-25T02:04:25+00:00",
-      "last_seen": "2026-11-26T12:09:34+00:00",
+      "last_seen": "2026-11-26T14:10:55+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -53892,7 +53901,7 @@
       "risk_signal": "Segmentation fault",
       "signal_title": "Segmentation fault in nixl when running disaggregated serving with kv routing on different nodes.",
       "first_seen": "2026-11-25T02:01:24+00:00",
-      "last_seen": "2026-11-26T12:02:52+00:00",
+      "last_seen": "2026-11-26T14:03:08+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -53904,7 +53913,7 @@
       "risk_signal": "Segfault",
       "signal_title": "Segfault in the psycopg python only variant.",
       "first_seen": "2026-11-25T02:02:53+00:00",
-      "last_seen": "2026-11-26T12:05:40+00:00",
+      "last_seen": "2026-11-26T14:06:35+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -53928,7 +53937,7 @@
       "risk_signal": "panic",
       "signal_title": "UCP: Print panic info into tikv_stderr.log",
       "first_seen": "2026-11-25T02:04:25+00:00",
-      "last_seen": "2026-11-26T12:09:34+00:00",
+      "last_seen": "2026-11-26T14:10:55+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54012,7 +54021,7 @@
       "risk_signal": "panic",
       "signal_title": "membership: panic on startup with GODEBUG=fips140=only due to SHA-1 in cluster/member ID derivation",
       "first_seen": "2026-11-25T02:04:22+00:00",
-      "last_seen": "2026-11-26T12:09:19+00:00",
+      "last_seen": "2026-11-26T14:10:31+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54168,7 +54177,7 @@
       "risk_signal": "unsafe",
       "signal_title": "wait_for usage is unsafe on CPython 3.11",
       "first_seen": "2026-11-25T02:02:59+00:00",
-      "last_seen": "2026-11-26T12:05:53+00:00",
+      "last_seen": "2026-11-26T14:06:44+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54252,7 +54261,7 @@
       "risk_signal": "panic",
       "signal_title": "tikv panic: \"assertion failed: row.write.is_none()\" in resolved_ts group_row_changes",
       "first_seen": "2026-11-25T02:04:31+00:00",
-      "last_seen": "2026-11-26T12:09:41+00:00",
+      "last_seen": "2026-11-26T14:11:08+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54312,7 +54321,7 @@
       "risk_signal": "panic",
       "signal_title": "mvcc: syncWatchersLoop can panic with \"non-positive interval for Ticker.Reset\" where the monotonic clock is coarse (windows/amd64)",
       "first_seen": "2026-11-25T02:04:22+00:00",
-      "last_seen": "2026-11-26T12:09:19+00:00",
+      "last_seen": "2026-11-26T14:10:31+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54324,7 +54333,7 @@
       "risk_signal": "segmentation fault",
       "signal_title": "segmentation fault when select TEXT[]",
       "first_seen": "2026-11-25T02:02:59+00:00",
-      "last_seen": "2026-11-26T12:05:50+00:00",
+      "last_seen": "2026-11-26T14:06:44+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54348,7 +54357,7 @@
       "risk_signal": "crashes",
       "signal_title": "[Bug] NGRAM speculative decoding on a PD decode worker crashes at startup since v0.5.14: `build_disagg_draft_input` has no NGRAM branch (works on v0.5.13)",
       "first_seen": "2026-11-25T02:01:15+00:00",
-      "last_seen": "2026-11-26T12:02:21+00:00",
+      "last_seen": "2026-11-26T14:02:56+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54360,7 +54369,7 @@
       "risk_signal": "panic",
       "signal_title": "raftstore: stale async destroy completion can panic a same-ID split replacement",
       "first_seen": "2026-11-25T02:04:31+00:00",
-      "last_seen": "2026-11-26T12:09:41+00:00",
+      "last_seen": "2026-11-26T14:11:14+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54372,7 +54381,7 @@
       "risk_signal": "assert",
       "signal_title": "Make the request structure tests of the Spark Connect Rust client send and assert their requests",
       "first_seen": "2026-11-25T02:05:15+00:00",
-      "last_seen": "2026-11-26T12:13:55+00:00",
+      "last_seen": "2026-11-26T14:15:51+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54384,7 +54393,7 @@
       "risk_signal": "StackOverflowError",
       "signal_title": "SerializedThrowable will be java.lang.StackOverflowError when AsyncLookupFunction throw an exception",
       "first_seen": "2026-11-25T02:08:46+00:00",
-      "last_seen": "2026-11-26T12:18:38+00:00",
+      "last_seen": "2026-11-26T14:19:04+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54396,7 +54405,7 @@
       "risk_signal": "Security",
       "signal_title": "Security for Kafka",
       "first_seen": "2026-11-25T02:04:34+00:00",
-      "last_seen": "2026-11-26T12:13:10+00:00",
+      "last_seen": "2026-11-26T14:16:28+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54408,7 +54417,7 @@
       "risk_signal": "security",
       "signal_title": "JVM runs into OOM if (Java) client uses a SSL port without setting the security protocol",
       "first_seen": "2026-11-25T02:04:34+00:00",
-      "last_seen": "2026-11-26T12:13:10+00:00",
+      "last_seen": "2026-11-26T14:16:28+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54420,7 +54429,7 @@
       "risk_signal": "corrupted",
       "signal_title": "Segmented store without segments has no committed offset: task is wiped as corrupted under EOS on every re-initialization",
       "first_seen": "2026-11-25T02:04:37+00:00",
-      "last_seen": "2026-11-26T12:13:12+00:00",
+      "last_seen": "2026-11-26T14:16:34+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54432,7 +54441,7 @@
       "risk_signal": "unsafe",
       "signal_title": "Asynchronous interface uses unsafe static local variables to (re-)store state",
       "first_seen": "2026-11-25T02:05:19+00:00",
-      "last_seen": "2026-11-26T12:18:43+00:00",
+      "last_seen": "2026-11-26T14:19:06+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54444,7 +54453,7 @@
       "risk_signal": "crashing",
       "signal_title": "Why is group_replication_consistency = AFTER crashing a Group Replication cluste",
       "first_seen": "2026-11-25T02:05:19+00:00",
-      "last_seen": "2026-11-26T12:18:43+00:00",
+      "last_seen": "2026-11-26T14:19:06+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54456,7 +54465,7 @@
       "risk_signal": "crash",
       "signal_title": "aio: Async fsyncs for crash recovery and checkpointer",
       "first_seen": "2026-11-25T02:05:18+00:00",
-      "last_seen": "2026-11-26T12:18:40+00:00",
+      "last_seen": "2026-11-26T14:19:06+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54468,7 +54477,7 @@
       "risk_signal": "crash",
       "signal_title": "Re: aio: Async fsyncs for crash recovery and checkpointer",
       "first_seen": "2026-11-25T02:05:18+00:00",
-      "last_seen": "2026-11-26T12:18:40+00:00",
+      "last_seen": "2026-11-26T14:19:06+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54480,7 +54489,7 @@
       "risk_signal": "crash",
       "signal_title": "Re: aio: Async fsyncs for crash recovery and checkpointer",
       "first_seen": "2026-11-25T02:05:18+00:00",
-      "last_seen": "2026-11-26T12:18:40+00:00",
+      "last_seen": "2026-11-26T14:19:06+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54492,7 +54501,7 @@
       "risk_signal": "crash",
       "signal_title": "Re: aio: Async fsyncs for crash recovery and checkpointer",
       "first_seen": "2026-11-25T02:05:18+00:00",
-      "last_seen": "2026-11-26T12:18:40+00:00",
+      "last_seen": "2026-11-26T14:19:06+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54505,7 +54514,7 @@
       "risk_signal": "Assert",
       "signal_title": "Re: BUG #19494: Error on transaction commit inside pipeline triggers psql's Assert",
       "first_seen": "2026-11-25T02:05:22+00:00",
-      "last_seen": "2026-11-26T12:18:46+00:00",
+      "last_seen": "2026-11-26T14:19:21+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54518,7 +54527,7 @@
       "risk_signal": "NULL dereference",
       "signal_title": "Re: BUG #19511: contrib/dblink: NULL dereference in dblink_get_notify() when called without a prior connection",
       "first_seen": "2026-11-25T02:05:22+00:00",
-      "last_seen": "2026-11-26T12:18:46+00:00",
+      "last_seen": "2026-11-26T14:19:21+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54531,7 +54540,7 @@
       "risk_signal": "NULL dereference",
       "signal_title": "Re: BUG #19511: contrib/dblink: NULL dereference in dblink_get_notify() when called without a prior connection",
       "first_seen": "2026-11-25T02:05:22+00:00",
-      "last_seen": "2026-11-26T12:18:46+00:00",
+      "last_seen": "2026-11-26T14:19:21+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54544,7 +54553,7 @@
       "risk_signal": "NULL dereference",
       "signal_title": "Re: BUG #19511: contrib/dblink: NULL dereference in dblink_get_notify() when called without a prior connection",
       "first_seen": "2026-11-25T02:05:22+00:00",
-      "last_seen": "2026-11-26T12:18:46+00:00",
+      "last_seen": "2026-11-26T14:19:21+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54557,7 +54566,7 @@
       "risk_signal": "NULL dereference",
       "signal_title": "BUG #19511: contrib/dblink: NULL dereference in dblink_get_notify() when called without a prior connection",
       "first_seen": "2026-11-25T02:05:22+00:00",
-      "last_seen": "2026-11-26T12:18:46+00:00",
+      "last_seen": "2026-11-26T14:19:21+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54570,7 +54579,7 @@
       "risk_signal": "Assert",
       "signal_title": "Re: BUG #19494: Error on transaction commit inside pipeline triggers psql's Assert",
       "first_seen": "2026-11-25T02:05:22+00:00",
-      "last_seen": "2026-11-26T12:18:46+00:00",
+      "last_seen": "2026-11-26T14:19:21+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54582,7 +54591,7 @@
       "risk_signal": "illegal memory access",
       "signal_title": "[Bug]: Docker vLLM 0.9.1 CUDA error: an illegal memory access, sampled_token_ids.tolist()",
       "first_seen": "2026-11-25T02:01:00+00:00",
-      "last_seen": "2026-11-26T12:01:24+00:00",
+      "last_seen": "2026-11-26T14:01:46+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54678,7 +54687,7 @@
       "risk_signal": "catastrophic regex backtracking",
       "signal_title": "SGLang: /parse_function_call triggers catastrophic regex backtracking in tool call detectors, blocking the event loop from a single request",
       "first_seen": "2026-11-25T02:01:15+00:00",
-      "last_seen": "2026-11-26T12:02:21+00:00",
+      "last_seen": "2026-11-26T14:02:56+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54702,7 +54711,7 @@
       "risk_signal": "out of bounds",
       "signal_title": "Fix panics at 'index out of bounds: the len is 0 but the index is 0': ballista/scheduler/src/planner.rs",
       "first_seen": "2026-11-25T02:08:30+00:00",
-      "last_seen": "2026-11-26T06:07:59+00:00",
+      "last_seen": "2026-11-26T14:10:14+00:00",
       "risk_signal_source": "title_or_labels"
     },
     {
@@ -54715,7 +54724,7 @@
       "signal_title": "[data][llm] LLM Batch Inference Resiliency Thread",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T02:00:36+00:00",
-      "last_seen": "2026-11-26T12:00:57+00:00"
+      "last_seen": "2026-11-26T14:01:19+00:00"
     },
     {
       "id": "sgl-project--sglang--14677",
@@ -54727,7 +54736,7 @@
       "signal_title": "[Bug] Cannot serve kimi k2 thinking nvfp4 checkpoint quantized with tensorrt modelopt",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T02:01:08+00:00",
-      "last_seen": "2026-11-26T12:02:02+00:00"
+      "last_seen": "2026-11-26T14:02:39+00:00"
     },
     {
       "id": "tikv--tikv--3748",
@@ -54739,7 +54748,7 @@
       "signal_title": "CMake 3.5 doesn't work with grpcio",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T02:04:25+00:00",
-      "last_seen": "2026-11-26T12:09:34+00:00"
+      "last_seen": "2026-11-26T14:10:55+00:00"
     },
     {
       "id": "vllm-project--vllm--52540",
@@ -54763,7 +54772,7 @@
       "signal_title": "[BUG]: Cannot drop a runtime in a context where blocking is not allowed.",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T02:01:24+00:00",
-      "last_seen": "2026-11-26T12:02:52+00:00"
+      "last_seen": "2026-11-26T14:03:08+00:00"
     },
     {
       "id": "tikv--tikv--17684",
@@ -54787,7 +54796,7 @@
       "signal_title": "thread 'tokio-runtime-worker' panicked at /usr/src/backends/src/lib.rs:176:14",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T02:01:40+00:00",
-      "last_seen": "2026-11-26T12:03:15+00:00"
+      "last_seen": "2026-11-26T14:04:10+00:00"
     },
     {
       "id": "apache--datafusion--27065",
@@ -54799,7 +54808,7 @@
       "signal_title": "REGRESSION: Parquet scan returns unvalidated Utf8 for nested BINARY fields read as strings (regression from #25193)",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T02:02:36+00:00",
-      "last_seen": "2026-11-26T12:05:11+00:00"
+      "last_seen": "2026-11-26T14:06:00+00:00"
     },
     {
       "id": "sgl-project--sglang--36550",
@@ -54823,7 +54832,7 @@
       "signal_title": "Iterating a Result in 2.1 leaves it in a reference cycle, so its cursor is freed by the cyclic GC",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T02:03:26+00:00",
-      "last_seen": "2026-11-26T12:06:36+00:00"
+      "last_seen": "2026-11-26T14:07:25+00:00"
     },
     {
       "id": "sgl-project--sglang--45847",
@@ -54835,7 +54844,7 @@
       "signal_title": "[Failure Tracker] PR Test (AMD)",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T02:01:15+00:00",
-      "last_seen": "2026-11-26T12:02:21+00:00"
+      "last_seen": "2026-11-26T14:02:56+00:00"
     },
     {
       "id": "apache--datafusion--2873",
@@ -54883,7 +54892,7 @@
       "signal_title": "`Record.get()` with invalid positional argument count segfaults",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T02:03:12+00:00",
-      "last_seen": "2026-11-26T12:06:10+00:00"
+      "last_seen": "2026-11-26T14:07:02+00:00"
     },
     {
       "id": "vllm-project--vllm--22331",
@@ -54895,7 +54904,7 @@
       "signal_title": "[Bug]: vllm/vllm-openai:gptoss AssertionError: Sinks are only supported in FlashAttention 3 (4090 48gb)",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T02:01:00+00:00",
-      "last_seen": "2026-11-26T12:01:24+00:00"
+      "last_seen": "2026-11-26T14:01:46+00:00"
     },
     {
       "id": "etcd-io--etcd--22633",
@@ -54907,7 +54916,7 @@
       "signal_title": "v3.7.2 panics on startup (\"unmarshal should never fail\") replaying v2 member-attribute WAL entries written by v3.5 after 3.5 → 3.6 → 3.7 upgrade",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T02:08:36+00:00",
-      "last_seen": "2026-11-26T12:09:19+00:00"
+      "last_seen": "2026-11-26T14:10:31+00:00"
     },
     {
       "id": "etcd-io--etcd--22750",
@@ -54919,7 +54928,7 @@
       "signal_title": "etcdutl: snapshot restore hangs forever with no output when a bbolt commit panics",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T02:04:22+00:00",
-      "last_seen": "2026-11-26T12:09:19+00:00"
+      "last_seen": "2026-11-26T14:10:31+00:00"
     },
     {
       "id": "tikv--tikv--19523",
@@ -54931,7 +54940,7 @@
       "signal_title": "ng-monitoring v8.5.5 panics after TiKV upgrade when resource metering emits RegionRecord",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T02:04:31+00:00",
-      "last_seen": "2026-11-26T12:09:41+00:00"
+      "last_seen": "2026-11-26T14:11:08+00:00"
     },
     {
       "id": "etcd-io--etcd--22749",
@@ -54943,7 +54952,7 @@
       "signal_title": "mvcc: restore panics when key bucket revisions are out of order",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T02:04:22+00:00",
-      "last_seen": "2026-11-26T12:09:19+00:00"
+      "last_seen": "2026-11-26T14:10:31+00:00"
     },
     {
       "id": "psycopg--psycopg--1475",
@@ -54955,7 +54964,7 @@
       "signal_title": "pool.wait() raises AssertionError after a previous wait() was cancelled",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T02:02:59+00:00",
-      "last_seen": "2026-11-26T12:05:50+00:00"
+      "last_seen": "2026-11-26T14:06:44+00:00"
     },
     {
       "id": "apache--datafusion--27728",
@@ -54967,7 +54976,7 @@
       "signal_title": "`SortMergeJoinExec` panics instead of returning an error when its output coalescer rejects a batch",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T02:02:36+00:00",
-      "last_seen": "2026-11-26T12:05:11+00:00"
+      "last_seen": "2026-11-26T14:06:00+00:00"
     },
     {
       "id": "etcd-io--etcd--22848",
@@ -54979,7 +54988,7 @@
       "signal_title": "etcdctl: txn panics on an unknown compare operator and hangs on requests like \"get --help\"",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T02:04:22+00:00",
-      "last_seen": "2026-11-26T12:09:19+00:00"
+      "last_seen": "2026-11-26T14:10:31+00:00"
     },
     {
       "id": "etcd-io--etcd--22936",
@@ -54991,7 +55000,7 @@
       "signal_title": "Maintenance Alarm with an unknown action panics the serving member",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T02:04:22+00:00",
-      "last_seen": "2026-11-26T12:09:19+00:00"
+      "last_seen": "2026-11-26T14:10:31+00:00"
     },
     {
       "id": "vllm-project--vllm--5376",
@@ -55495,7 +55504,7 @@
       "signal_title": "bug: KV cache block events never published when using NATS event plane (cross-runtime deadlock)",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T04:22:54+00:00",
-      "last_seen": "2026-11-25T04:22:54+00:00"
+      "last_seen": "2026-11-26T14:04:03+00:00"
     },
     {
       "id": "vllm-project--vllm--3916",
@@ -55591,7 +55600,7 @@
       "signal_title": "[Bug] [XPU] TP2xPP2 stalls / DEVICE_LOST on Intel CRI when a PP irecv is posted behind queued TP all-reduce",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T04:22:28+00:00",
-      "last_seen": "2026-11-26T12:02:21+00:00"
+      "last_seen": "2026-11-26T14:02:56+00:00"
     },
     {
       "id": "tikv--tikv--20119",
@@ -55603,7 +55612,7 @@
       "signal_title": "storage: unsound Send/Sync impl for StorageConfigManger permits a data race from safe code",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T04:04:52+00:00",
-      "last_seen": "2026-11-26T12:09:41+00:00"
+      "last_seen": "2026-11-26T14:11:08+00:00"
     },
     {
       "id": "vllm-project--vllm--25568",
@@ -55651,7 +55660,7 @@
       "signal_title": "Ray Serve Replica Initialization Timeout: STDOUT \"Failed to load\", RequestCancelledError, Likely Due to Slow/Crashing RLModule.from_checkpoint()",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T05:20:30+00:00",
-      "last_seen": "2026-11-25T05:20:30+00:00"
+      "last_seen": "2026-11-26T14:01:28+00:00"
     },
     {
       "id": "ray-project--ray--19712",
@@ -55963,7 +55972,7 @@
       "signal_title": "Use-after-free of join-pushed table filters during read-ahead drain in TableScanGlobalSourceState teardown",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T06:04:27+00:00",
-      "last_seen": "2026-11-26T06:03:58+00:00"
+      "last_seen": "2026-11-26T14:06:28+00:00"
     },
     {
       "id": "apache--datafusion--24274",
@@ -56875,7 +56884,7 @@
       "signal_title": "Etcd start failed after power off and restart",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T10:06:18+00:00",
-      "last_seen": "2026-11-26T12:09:17+00:00"
+      "last_seen": "2026-11-26T14:10:21+00:00"
     },
     {
       "id": "magicstack--asyncpg--573",
@@ -56887,7 +56896,7 @@
       "signal_title": "Fetching from pgpool-II hangs indefinitely",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T10:04:43+00:00",
-      "last_seen": "2026-11-26T12:06:00+00:00"
+      "last_seen": "2026-11-26T14:06:53+00:00"
     },
     {
       "id": "magicstack--asyncpg--68",
@@ -56899,7 +56908,7 @@
       "signal_title": "Awaiting multiple `execute` within a transaction seems to block forever",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T10:04:43+00:00",
-      "last_seen": "2026-11-26T12:06:00+00:00"
+      "last_seen": "2026-11-26T14:06:53+00:00"
     },
     {
       "id": "etcd-io--etcd--176",
@@ -57007,7 +57016,7 @@
       "signal_title": "2.0.0: a Parquet COPY that runs out of memory sometimes hangs forever instead of failing",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T10:04:08+00:00",
-      "last_seen": "2026-11-26T12:05:31+00:00"
+      "last_seen": "2026-11-26T14:06:25+00:00"
     },
     {
       "id": "tikv--tikv--20132",
@@ -57019,7 +57028,7 @@
       "signal_title": "bug: log backup endpoint stalls forever when a flush-event subscriber stops reading",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T10:06:49+00:00",
-      "last_seen": "2026-11-26T12:09:46+00:00"
+      "last_seen": "2026-11-26T14:11:08+00:00"
     },
     {
       "id": "tikv--tikv--20134",
@@ -57031,7 +57040,7 @@
       "signal_title": "bug: in-memory engine eviction controllers stall forever on dropped completion callbacks",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T10:06:49+00:00",
-      "last_seen": "2026-11-26T12:09:41+00:00"
+      "last_seen": "2026-11-26T14:11:08+00:00"
     },
     {
       "id": "tikv--tikv--20135",
@@ -57043,7 +57052,7 @@
       "signal_title": "bug: snapshot recovery hangs forever when a region can never become leader",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T10:06:49+00:00",
-      "last_seen": "2026-11-26T12:09:41+00:00"
+      "last_seen": "2026-11-26T14:11:14+00:00"
     },
     {
       "id": "tikv--tikv--20137",
@@ -57055,7 +57064,7 @@
       "signal_title": "raftstore: snapshot generator can stall forever with yatp master (lost wakeup in yatp#96)",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T10:06:49+00:00",
-      "last_seen": "2026-11-26T12:09:41+00:00"
+      "last_seen": "2026-11-26T14:11:14+00:00"
     },
     {
       "id": "apache--kafka--kafka-21595",
@@ -57067,7 +57076,7 @@
       "signal_title": "AsyncKafkaConsumer.close() hangs indefinitely in leaveGroupOnClose when the background thread dies (e.g. OutOfMemoryError) without completing cleanup()",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T10:08:13+00:00",
-      "last_seen": "2026-11-26T12:13:21+00:00"
+      "last_seen": "2026-11-26T14:16:52+00:00"
     },
     {
       "id": "apache--kafka--kafka-17734",
@@ -57079,7 +57088,7 @@
       "signal_title": "KafkaConsumer.close(0) can block indefinitely in ConsumerNetworkClient.poll",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T10:08:05+00:00",
-      "last_seen": "2026-11-26T12:13:12+00:00"
+      "last_seen": "2026-11-26T14:16:34+00:00"
     },
     {
       "id": "pytorch--pytorch--80017",
@@ -57451,7 +57460,7 @@
       "signal_title": "runtime: corruption in tests",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:33:02+00:00",
-      "last_seen": "2026-11-26T12:10:32+00:00"
+      "last_seen": "2026-11-26T14:12:02+00:00"
     },
     {
       "id": "dotnet--runtime--18280",
@@ -57463,7 +57472,7 @@
       "signal_title": "Inheritance security rules violated by type: 'System.Net.Http.WebRequestHandler'. Derived types must either match the security accessibility of the base type or be less accessible.",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:33:22+00:00",
-      "last_seen": "2026-11-26T12:11:01+00:00"
+      "last_seen": "2026-11-26T14:12:30+00:00"
     },
     {
       "id": "dotnet--runtime--23157",
@@ -57475,7 +57484,7 @@
       "signal_title": "Proposed SslStream additions for ALPN ",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:33:22+00:00",
-      "last_seen": "2026-11-26T12:11:01+00:00"
+      "last_seen": "2026-11-26T14:12:30+00:00"
     },
     {
       "id": "golang--go--66450",
@@ -57571,7 +57580,7 @@
       "signal_title": "Many people report scheduler panics recently",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:33:41+00:00",
-      "last_seen": "2026-11-26T12:11:17+00:00"
+      "last_seen": "2026-11-26T14:12:53+00:00"
     },
     {
       "id": "golang--go--81238",
@@ -57583,7 +57592,7 @@
       "signal_title": "runtime: windows/amd64 exception recovery can write below a goroutine stack and corrupt the Go heap",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:33:08+00:00",
-      "last_seen": "2026-11-26T12:10:43+00:00"
+      "last_seen": "2026-11-26T14:12:14+00:00"
     },
     {
       "id": "dotnet--runtime--41604",
@@ -57631,7 +57640,7 @@
       "signal_title": "Segfault when exception thrown from within stackful coroutine",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T12:34:06+00:00",
-      "last_seen": "2026-11-26T12:11:36+00:00"
+      "last_seen": "2026-11-26T14:13:11+00:00"
     },
     {
       "id": "chriskohlhoff--asio--642",
@@ -57643,7 +57652,7 @@
       "signal_title": "SIGSEGV on scheduler::compensating_work_started()",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:34:06+00:00",
-      "last_seen": "2026-11-26T12:11:36+00:00"
+      "last_seen": "2026-11-26T14:13:11+00:00"
     },
     {
       "id": "golang--go--76859",
@@ -57679,7 +57688,7 @@
       "signal_title": "Test failure: System.Security.Cryptography.Tests",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:33:28+00:00",
-      "last_seen": "2026-11-26T12:11:06+00:00"
+      "last_seen": "2026-11-26T14:12:40+00:00"
     },
     {
       "id": "tokio-rs--tokio--4140",
@@ -57715,7 +57724,7 @@
       "signal_title": "OpenBSD: concurrent UDP sends can wait forever",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:33:47+00:00",
-      "last_seen": "2026-11-26T12:11:26+00:00"
+      "last_seen": "2026-11-26T14:12:55+00:00"
     },
     {
       "id": "tokio-rs--tokio--8620",
@@ -57727,7 +57736,7 @@
       "signal_title": "AsyncFd stalls after WouldBlock with Mio’s poll selector",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T12:33:47+00:00",
-      "last_seen": "2026-11-26T12:11:26+00:00"
+      "last_seen": "2026-11-26T14:12:55+00:00"
     },
     {
       "id": "dotnet--runtime--133006",
@@ -57739,7 +57748,7 @@
       "signal_title": "[ci-scan] Test failure: profiler runtimeasyncapis crashes (Abort trap: 6, exit 133) on interpreter osx-arm64",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:33:28+00:00",
-      "last_seen": "2026-11-26T12:11:06+00:00"
+      "last_seen": "2026-11-26T14:12:40+00:00"
     },
     {
       "id": "golang--go--82978",
@@ -57763,7 +57772,7 @@
       "signal_title": "Memory Access Violation in ranged_parallel_group_launch After Completion Handler Invocation.",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:34:13+00:00",
-      "last_seen": "2026-11-26T12:11:53+00:00"
+      "last_seen": "2026-11-26T14:13:25+00:00"
     },
     {
       "id": "tokio-rs--tokio--8733",
@@ -57775,7 +57784,7 @@
       "signal_title": "current_thread runtime is left unusable after a waker panics during a driver turn",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T12:33:47+00:00",
-      "last_seen": "2026-11-26T12:11:26+00:00"
+      "last_seen": "2026-11-26T14:12:55+00:00"
     },
     {
       "id": "dotnet--runtime--135782",
@@ -57787,7 +57796,7 @@
       "signal_title": "[Test Failure] Http1ResponseStreamZeroByteReadTest.ZeroByteRead_BlocksUntilDataIsAvailable fails with Assert.False() on Android, Linux and macOS",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:33:28+00:00",
-      "last_seen": "2026-11-26T12:11:06+00:00"
+      "last_seen": "2026-11-26T14:12:40+00:00"
     },
     {
       "id": "chriskohlhoff--asio--1752",
@@ -57799,7 +57808,7 @@
       "signal_title": "Bug report: async_receive on moved zero-buffered channel cause segmentation fault",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:34:13+00:00",
-      "last_seen": "2026-11-26T12:11:53+00:00"
+      "last_seen": "2026-11-26T14:13:25+00:00"
     },
     {
       "id": "chriskohlhoff--asio--1778",
@@ -57811,7 +57820,7 @@
       "signal_title": "`ASIO_INVOKE_INLINE` crashes clang 15/16 and Apple clang 15",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:34:13+00:00",
-      "last_seen": "2026-11-26T12:11:53+00:00"
+      "last_seen": "2026-11-26T14:13:25+00:00"
     },
     {
       "id": "golang--go--83357",
@@ -57823,7 +57832,7 @@
       "signal_title": "runtime: write barrier preempted on 386 when the runtime is built without inlining (-gcflags=all=-N -l): readUintptr and (*mspan).base are not nosplit",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T12:33:08+00:00",
-      "last_seen": "2026-11-26T12:10:43+00:00"
+      "last_seen": "2026-11-26T14:12:14+00:00"
     },
     {
       "id": "golang--go--83372",
@@ -57835,7 +57844,7 @@
       "signal_title": "cmd/compile: generic method and retry closure crash after stack growth",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T12:33:08+00:00",
-      "last_seen": "2026-11-26T12:10:43+00:00"
+      "last_seen": "2026-11-26T14:12:14+00:00"
     },
     {
       "id": "chriskohlhoff--asio--1430",
@@ -57847,7 +57856,7 @@
       "signal_title": "Data race reported by TSAN when using async_read_some_at",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:34:13+00:00",
-      "last_seen": "2026-11-26T12:11:53+00:00"
+      "last_seen": "2026-11-26T14:13:25+00:00"
     },
     {
       "id": "tokio-rs--tokio--8695",
@@ -57859,7 +57868,7 @@
       "signal_title": "time: `Interval` drops an elapsed timer without synchronizing with the time driver",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T12:33:47+00:00",
-      "last_seen": "2026-11-26T12:11:26+00:00"
+      "last_seen": "2026-11-26T14:12:55+00:00"
     },
     {
       "id": "tokio-rs--tokio--8697",
@@ -57871,7 +57880,7 @@
       "signal_title": "time: auto-advance panics with \"time is not frozen\" on concurrent `resume()`",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T12:33:47+00:00",
-      "last_seen": "2026-11-26T12:11:26+00:00"
+      "last_seen": "2026-11-26T14:12:55+00:00"
     },
     {
       "id": "chriskohlhoff--asio--1582",
@@ -57883,7 +57892,7 @@
       "signal_title": "C++20 coroutine heap-use-after-free is reported when I use make_parallel_group in co_composed function",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:34:13+00:00",
-      "last_seen": "2026-11-26T12:11:53+00:00"
+      "last_seen": "2026-11-26T14:13:25+00:00"
     },
     {
       "id": "chriskohlhoff--asio--1506",
@@ -57907,7 +57916,7 @@
       "signal_title": "Data race detected by ThreadSanitizer when io_context::stop is called from another thread",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:34:13+00:00",
-      "last_seen": "2026-11-26T12:11:53+00:00"
+      "last_seen": "2026-11-26T14:13:25+00:00"
     },
     {
       "id": "chriskohlhoff--asio--1785",
@@ -57919,7 +57928,7 @@
       "signal_title": "`cancellation_signal::emit()` after the I/O object is destroyed is a use-after-free",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T12:34:13+00:00",
-      "last_seen": "2026-11-26T12:11:53+00:00"
+      "last_seen": "2026-11-26T14:13:25+00:00"
     },
     {
       "id": "golang--go--21985",
@@ -58063,7 +58072,7 @@
       "signal_title": "cmd/compile: Intermittent compiler internal error when compiling Go program on Linux 6.18.0-rc6",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T14:08:21+00:00",
-      "last_seen": "2026-11-26T12:10:43+00:00"
+      "last_seen": "2026-11-26T14:12:14+00:00"
     },
     {
       "id": "tokio-rs--tokio--3620",
@@ -58915,7 +58924,7 @@
       "signal_title": "go/types, types2: cycle to ... panics for a variety of types",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T16:09:00+00:00",
-      "last_seen": "2026-11-26T12:10:43+00:00"
+      "last_seen": "2026-11-26T14:12:14+00:00"
     },
     {
       "id": "pytorch--pytorch--205686",
@@ -59059,7 +59068,7 @@
       "signal_title": "panic: interface conversion: interface is nil, not balancer.SubConn goroutine 326 [running]",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T17:25:54+00:00",
-      "last_seen": "2026-11-26T12:09:57+00:00"
+      "last_seen": "2026-11-26T14:11:17+00:00"
     },
     {
       "id": "grpc--grpc-go--954",
@@ -59071,7 +59080,7 @@
       "signal_title": "backoff/timeout does not take into account actual GRPC connection established, causes denial of service.",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T17:25:54+00:00",
-      "last_seen": "2026-11-26T12:09:57+00:00"
+      "last_seen": "2026-11-26T14:11:17+00:00"
     },
     {
       "id": "npgsql--npgsql--907",
@@ -59083,7 +59092,7 @@
       "signal_title": "Getting SIGSEGV on Open() with mono 4.2.1",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T17:25:09+00:00",
-      "last_seen": "2026-11-26T12:07:24+00:00"
+      "last_seen": "2026-11-26T14:08:39+00:00"
     },
     {
       "id": "grpc--grpc-go--8110",
@@ -59095,7 +59104,7 @@
       "signal_title": "panic: assignment to entry in nil map in channelz.(*SubChannel).addChild",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T17:25:54+00:00",
-      "last_seen": "2026-11-26T12:09:57+00:00"
+      "last_seen": "2026-11-26T14:11:17+00:00"
     },
     {
       "id": "grpc--grpc-go--2885",
@@ -59119,7 +59128,7 @@
       "signal_title": "Updating to v10.0.1 causes OpenConnectionAsync to hang forever",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T17:25:15+00:00",
-      "last_seen": "2026-11-26T12:07:39+00:00"
+      "last_seen": "2026-11-26T14:08:51+00:00"
     },
     {
       "id": "grpc--grpc-go--4603",
@@ -59155,7 +59164,7 @@
       "signal_title": "Segmentation fault, panic & memory spikes since v1.80.0",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T17:26:01+00:00",
-      "last_seen": "2026-11-26T12:10:03+00:00"
+      "last_seen": "2026-11-26T14:11:25+00:00"
     },
     {
       "id": "npgsql--npgsql--6391",
@@ -59167,7 +59176,7 @@
       "signal_title": "Corrupt auto-prepared statements after rollback.",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T17:25:15+00:00",
-      "last_seen": "2026-11-26T12:07:33+00:00"
+      "last_seen": "2026-11-26T14:08:51+00:00"
     },
     {
       "id": "grpc--grpc-go--8346",
@@ -59179,7 +59188,7 @@
       "signal_title": "flaky test: security/advancedtls",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T17:26:01+00:00",
-      "last_seen": "2026-11-26T12:10:03+00:00"
+      "last_seen": "2026-11-26T14:11:25+00:00"
     },
     {
       "id": "grpc--grpc-go--9559",
@@ -59191,7 +59200,7 @@
       "signal_title": "transport: NewStream blocks forever on a client transport that is draining while a long-lived stream stays open",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T17:26:01+00:00",
-      "last_seen": "2026-11-26T12:10:05+00:00"
+      "last_seen": "2026-11-26T14:11:25+00:00"
     },
     {
       "id": "grpc--grpc-go--9400",
@@ -59203,7 +59212,7 @@
       "signal_title": "extproc : Race in Test/FlowControl_PiggybackedWindowUpdates",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T17:26:01+00:00",
-      "last_seen": "2026-11-26T12:10:03+00:00"
+      "last_seen": "2026-11-26T14:11:25+00:00"
     },
     {
       "id": "grpc--grpc-go--9539",
@@ -59215,7 +59224,7 @@
       "signal_title": "transport: race between control buffer initialization and access in `GetSocket()`",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T17:26:01+00:00",
-      "last_seen": "2026-11-26T12:10:03+00:00"
+      "last_seen": "2026-11-26T14:11:25+00:00"
     },
     {
       "id": "npgsql--npgsql--6701",
@@ -59227,7 +59236,7 @@
       "signal_title": "Disposing a ReplicationConnection while MoveNextAsync is pending: the call never completes, and Debug builds crash",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T17:25:15+00:00",
-      "last_seen": "2026-11-26T12:07:33+00:00"
+      "last_seen": "2026-11-26T14:08:51+00:00"
     },
     {
       "id": "golang--go--71675",
@@ -59707,7 +59716,7 @@
       "signal_title": "cmd/compile: GOSSAFUNC turns a check failure before the first pass into a nil pointer dereference",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T18:09:03+00:00",
-      "last_seen": "2026-11-26T12:10:43+00:00"
+      "last_seen": "2026-11-26T14:12:14+00:00"
     },
     {
       "id": "pytorch--pytorch--204589",
@@ -60007,7 +60016,7 @@
       "signal_title": "Test failure: baseservices/exceptions/stackoverflow/stackoverflowtester/stackoverflowtester.cmd",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T18:09:13+00:00",
-      "last_seen": "2026-11-26T12:11:01+00:00"
+      "last_seen": "2026-11-26T14:12:30+00:00"
     },
     {
       "id": "tikv--tikv--18003",
@@ -60715,7 +60724,7 @@
       "signal_title": "UB in multi-thread scheduler detected by Miri",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T20:08:14+00:00",
-      "last_seen": "2026-11-26T12:11:17+00:00"
+      "last_seen": "2026-11-26T14:12:53+00:00"
     },
     {
       "id": "psycopg--psycopg--734",
@@ -60799,7 +60808,7 @@
       "signal_title": "DirectProcessor using ParallelFlux crashes with error \"Queue is full?!\"",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T20:38:33+00:00",
-      "last_seen": "2026-11-26T12:12:05+00:00"
+      "last_seen": "2026-11-26T14:13:37+00:00"
     },
     {
       "id": "netty--netty--7995",
@@ -60823,7 +60832,7 @@
       "signal_title": "io_uring: native heap corruption when an IoEventLoop exits on shutdown since 4.2.21 (#18035)",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-25T20:38:20+00:00",
-      "last_seen": "2026-11-26T12:10:18+00:00"
+      "last_seen": "2026-11-26T14:11:52+00:00"
     },
     {
       "id": "pgjdbc--pgjdbc--1635",
@@ -60859,7 +60868,7 @@
       "signal_title": "executeBatch(...) hangs indefinitely with no exception",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T20:38:07+00:00",
-      "last_seen": "2026-11-26T12:08:27+00:00"
+      "last_seen": "2026-11-26T14:09:28+00:00"
     },
     {
       "id": "ai-dynamo--dynamo--18778",
@@ -60871,7 +60880,7 @@
       "signal_title": "[BUG]: Unauthenticated KVBM Consolidator can exposes LLM tokens and bypasses tenant isolation",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-25T20:01:43+00:00",
-      "last_seen": "2026-11-26T12:03:01+00:00"
+      "last_seen": "2026-11-26T14:03:45+00:00"
     },
     {
       "id": "pytorch--pytorch--199518",
@@ -64027,7 +64036,7 @@
       "signal_title": "Run vLLM + DeepSeekR1 + Mooncakestore failed in single node 8 gpu, show `local access violation work queue error for context mlx5_0`",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-26T08:04:57+00:00",
-      "last_seen": "2026-11-26T12:04:27+00:00"
+      "last_seen": "2026-11-26T14:05:08+00:00"
     },
     {
       "id": "pytorch--pytorch--130181",
@@ -64147,7 +64156,7 @@
       "signal_title": "Multi-protocol (rdma+hip) segments are flaky on AMD/ROCm: cross-node picks HIP IPC for remote targets (err17), and single-node dmabuf export corrupts HSA state (warmup SIGSEGV)",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-26T08:05:03+00:00",
-      "last_seen": "2026-11-26T12:04:29+00:00"
+      "last_seen": "2026-11-26T14:05:32+00:00"
     },
     {
       "id": "apache--datafusion--14633",
@@ -64687,7 +64696,7 @@
       "signal_title": "[Bug]: --enable_metadata_cleanup_on_timeout removes nothing with the embedded HTTP metadata server; a crashed client cannot re-register",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-26T08:05:03+00:00",
-      "last_seen": "2026-11-26T12:04:29+00:00"
+      "last_seen": "2026-11-26T14:05:19+00:00"
     },
     {
       "id": "vllm-project--vllm--8881",
@@ -64771,7 +64780,7 @@
       "signal_title": "[TE][UB]: Auto-chunk registrations larger than max_seg_size and split cross-segment transfers",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-26T10:04:27+00:00",
-      "last_seen": "2026-11-26T12:04:29+00:00"
+      "last_seen": "2026-11-26T14:05:19+00:00"
     },
     {
       "id": "vllm-project--vllm--49584",
@@ -64783,7 +64792,7 @@
       "signal_title": "[Bug]:  vllm0.25版本支持qwen3-vl fp8算子DeepGemmFp8BlockScaledMMKernel 走原始的deepgemm的后端",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-26T10:01:25+00:00",
-      "last_seen": "2026-11-26T12:01:29+00:00"
+      "last_seen": "2026-11-26T14:01:54+00:00"
     },
     {
       "id": "ray-project--ray--42870",
@@ -64987,7 +64996,7 @@
       "signal_title": "cmd/go: OOB panic in cmd/go/internal/list.runList",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-26T12:10:43+00:00",
-      "last_seen": "2026-11-26T12:10:43+00:00"
+      "last_seen": "2026-11-26T14:12:14+00:00"
     },
     {
       "id": "vllm-project--vllm--49004",
@@ -64999,7 +65008,7 @@
       "signal_title": "[Bug]: DBRX MoE weight loading crashes with KeyError after FusedMoE/MoERunner inversion refactor (#41184) — dbrx.py missed by follow-up fix #45054",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-26T12:01:29+00:00",
-      "last_seen": "2026-11-26T12:01:29+00:00"
+      "last_seen": "2026-11-26T14:01:54+00:00"
     },
     {
       "id": "netty--netty--10246",
@@ -65467,7 +65476,7 @@
       "signal_title": "etcd-dump-logs panics with nil pointer dereference on WALs with normal entries in release-3.7",
       "risk_signal_source": "body_error_signature",
       "first_seen": "2026-11-26T12:09:19+00:00",
-      "last_seen": "2026-11-26T12:09:19+00:00"
+      "last_seen": "2026-11-26T14:10:31+00:00"
     },
     {
       "id": "tikv--tikv--19968",
@@ -65479,7 +65488,7 @@
       "signal_title": "backup-stream: use-after-free in StreamTaskHandler::get_last_flush_time (AtomicPtr race)",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-26T12:09:46+00:00",
-      "last_seen": "2026-11-26T12:09:46+00:00"
+      "last_seen": "2026-11-26T14:11:14+00:00"
     },
     {
       "id": "tikv--tikv--20095",
@@ -65503,7 +65512,487 @@
       "signal_title": "[RFC]: [TransferEngine] Add ubmem transport over UB.MEM shared-memory devices (Kunpeng UB)",
       "risk_signal_source": "title_or_labels",
       "first_seen": "2026-11-26T12:04:29+00:00",
-      "last_seen": "2026-11-26T12:04:29+00:00"
+      "last_seen": "2026-11-26T14:05:19+00:00"
+    },
+    {
+      "id": "golang--go--37206",
+      "title": "testing: when using a custom TestMain, m.Run does not return if one of the tests it runs panics",
+      "url": "https://github.com/golang/go/issues/37206",
+      "repository": "golang/go",
+      "status": "skipped_review",
+      "risk_signal": "panics",
+      "signal_title": "testing: when using a custom TestMain, m.Run does not return if one of the tests it runs panics",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:12:21+00:00",
+      "last_seen": "2026-11-26T14:12:21+00:00"
+    },
+    {
+      "id": "golang--go--12879",
+      "title": "runtime: fatal error: free list corrupted in godoc after hours of idle",
+      "url": "https://github.com/golang/go/issues/12879",
+      "repository": "golang/go",
+      "status": "skipped_review",
+      "risk_signal": "corrupted",
+      "signal_title": "runtime: fatal error: free list corrupted in godoc after hours of idle",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:12:21+00:00",
+      "last_seen": "2026-11-26T14:12:21+00:00"
+    },
+    {
+      "id": "golang--go--16726",
+      "title": "cmd/compile: panic while compiling empty package in a loop",
+      "url": "https://github.com/golang/go/issues/16726",
+      "repository": "golang/go",
+      "status": "skipped_review",
+      "risk_signal": "runtime error: index out of range",
+      "signal_title": "cmd/compile: panic while compiling empty package in a loop",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:12:21+00:00",
+      "last_seen": "2026-11-26T14:12:21+00:00"
+    },
+    {
+      "id": "golang--go--17165",
+      "title": "runtime: crash on Windows-created thread calling Go code during CPU profiling",
+      "url": "https://github.com/golang/go/issues/17165",
+      "repository": "golang/go",
+      "status": "skipped_review",
+      "risk_signal": "crash",
+      "signal_title": "runtime: crash on Windows-created thread calling Go code during CPU profiling",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:12:21+00:00",
+      "last_seen": "2026-11-26T14:12:21+00:00"
+    },
+    {
+      "id": "golang--go--7065",
+      "title": "Segmentation fault at pkg/runtime/proc.c:2273",
+      "url": "https://github.com/golang/go/issues/7065",
+      "repository": "golang/go",
+      "status": "skipped_review",
+      "risk_signal": "Segmentation fault",
+      "signal_title": "Segmentation fault at pkg/runtime/proc.c:2273",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:12:21+00:00",
+      "last_seen": "2026-11-26T14:12:21+00:00"
+    },
+    {
+      "id": "golang--go--27756",
+      "title": "runtime/race: race detector misses race condition in case of fmt.Println",
+      "url": "https://github.com/golang/go/issues/27756",
+      "repository": "golang/go",
+      "status": "skipped_review",
+      "risk_signal": "WARNING: DATA RACE",
+      "signal_title": "runtime/race: race detector misses race condition in case of fmt.Println",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:12:21+00:00",
+      "last_seen": "2026-11-26T14:12:21+00:00"
+    },
+    {
+      "id": "dotnet--runtime--51274",
+      "title": "Missing initialization of JNI in net6 android app",
+      "url": "https://github.com/dotnet/runtime/issues/51274",
+      "repository": "dotnet/runtime",
+      "status": "skipped_review",
+      "risk_signal": "Security",
+      "signal_title": "Missing initialization of JNI in net6 android app",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:12:45+00:00",
+      "last_seen": "2026-11-26T14:12:45+00:00"
+    },
+    {
+      "id": "dotnet--runtime--59471",
+      "title": "[WASM][AOT] Assertion at /__w/1/s/src/mono/mono/metadata/class.c:2006, condition `<disabled>' not met",
+      "url": "https://github.com/dotnet/runtime/issues/59471",
+      "repository": "dotnet/runtime",
+      "status": "skipped_review",
+      "risk_signal": "Assertion",
+      "signal_title": "[WASM][AOT] Assertion at /__w/1/s/src/mono/mono/metadata/class.c:2006, condition `<disabled>' not met",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:12:45+00:00",
+      "last_seen": "2026-11-26T14:12:45+00:00"
+    },
+    {
+      "id": "npgsql--npgsql--3083",
+      "title": "Integrated Security",
+      "url": "https://github.com/npgsql/npgsql/issues/3083",
+      "repository": "npgsql/npgsql",
+      "status": "skipped_review",
+      "risk_signal": "Security",
+      "signal_title": "Integrated Security",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:08:56+00:00",
+      "last_seen": "2026-11-26T14:08:56+00:00"
+    },
+    {
+      "id": "apache--datafusion--22188",
+      "title": "panic: capacity overflow in generate_series / range with large i64 arguments",
+      "url": "https://github.com/apache/datafusion/issues/22188",
+      "repository": "apache/datafusion",
+      "status": "skipped_review",
+      "risk_signal": "thread 'main' panicked at",
+      "signal_title": "panic: capacity overflow in generate_series / range with large i64 arguments",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:06:09+00:00",
+      "last_seen": "2026-11-26T14:06:09+00:00"
+    },
+    {
+      "id": "apache--datafusion--12598",
+      "title": "Panic when inserting array literal with NULL element into a table where the matching column has a non-nullable element",
+      "url": "https://github.com/apache/datafusion/issues/12598",
+      "repository": "apache/datafusion",
+      "status": "skipped_review",
+      "risk_signal": "Panic",
+      "signal_title": "Panic when inserting array literal with NULL element into a table where the matching column has a non-nullable element",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:06:09+00:00",
+      "last_seen": "2026-11-26T14:06:09+00:00"
+    },
+    {
+      "id": "apache--datafusion--1785",
+      "title": "Panic reading avro file at datafusion-6.0.0/src/avro_to_arrow/arrow_array_reader.rs:771:37",
+      "url": "https://github.com/apache/datafusion/issues/1785",
+      "repository": "apache/datafusion",
+      "status": "skipped_review",
+      "risk_signal": "thread 'main' panicked at",
+      "signal_title": "Panic reading avro file at datafusion-6.0.0/src/avro_to_arrow/arrow_array_reader.rs:771:37",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:06:09+00:00",
+      "last_seen": "2026-11-26T14:06:09+00:00"
+    },
+    {
+      "id": "apache--datafusion--5034",
+      "title": "Error during physical planning when joining to subquery with count distinct aggregate",
+      "url": "https://github.com/apache/datafusion/issues/5034",
+      "repository": "apache/datafusion",
+      "status": "skipped_review",
+      "risk_signal": "thread 'test_join_plan_bug2::count_distinct_error' panicked at",
+      "signal_title": "Error during physical planning when joining to subquery with count distinct aggregate",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:06:09+00:00",
+      "last_seen": "2026-11-26T14:06:09+00:00"
+    },
+    {
+      "id": "apache--datafusion--9042",
+      "title": "How to call a asynchronous function in a synchronous function?",
+      "url": "https://github.com/apache/datafusion/issues/9042",
+      "repository": "apache/datafusion",
+      "status": "skipped_review",
+      "risk_signal": "thread '<unnamed>' panicked at",
+      "signal_title": "How to call a asynchronous function in a synchronous function?",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:06:09+00:00",
+      "last_seen": "2026-11-26T14:06:09+00:00"
+    },
+    {
+      "id": "kvcache-ai--mooncake--4625",
+      "title": "[Bug] Classic RDMA client (real_client.cpp): crash and silent write failures on peer-membership change",
+      "url": "https://github.com/kvcache-ai/Mooncake/issues/4625",
+      "repository": "kvcache-ai/Mooncake",
+      "status": "skipped_review",
+      "risk_signal": "crash",
+      "signal_title": "[Bug] Classic RDMA client (real_client.cpp): crash and silent write failures on peer-membership change",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:05:32+00:00",
+      "last_seen": "2026-11-26T14:05:32+00:00"
+    },
+    {
+      "id": "ray-project--ray--42868",
+      "title": "[Core] SIGSEGV when running Ray",
+      "url": "https://github.com/ray-project/ray/issues/42868",
+      "repository": "ray-project/ray",
+      "status": "skipped_review",
+      "risk_signal": "Fatal Python error:",
+      "signal_title": "[Core] SIGSEGV when running Ray",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:01:28+00:00",
+      "last_seen": "2026-11-26T14:01:28+00:00"
+    },
+    {
+      "id": "ray-project--ray--58964",
+      "title": "[Core] startup crash",
+      "url": "https://github.com/ray-project/ray/issues/58964",
+      "repository": "ray-project/ray",
+      "status": "skipped_review",
+      "risk_signal": "crash",
+      "signal_title": "[Core] startup crash",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:01:28+00:00",
+      "last_seen": "2026-11-26T14:01:28+00:00"
+    },
+    {
+      "id": "tokio-rs--tokio--6947",
+      "title": "Exception trying to call to a web method",
+      "url": "https://github.com/tokio-rs/tokio/issues/6947",
+      "repository": "tokio-rs/tokio",
+      "status": "skipped_review",
+      "risk_signal": "thread 'main' panicked at",
+      "signal_title": "Exception trying to call to a web method",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:13:04+00:00",
+      "last_seen": "2026-11-26T14:13:04+00:00"
+    },
+    {
+      "id": "tokio-rs--tokio--7419",
+      "title": "`time::advance` Fails to Trigger `time::sleep` in `tokio::spawn` with `start_paused = true` in `current_thread` Runtime",
+      "url": "https://github.com/tokio-rs/tokio/issues/7419",
+      "repository": "tokio-rs/tokio",
+      "status": "skipped_review",
+      "risk_signal": "thread 'demo::test_virtual_time_advances' panicked at",
+      "signal_title": "`time::advance` Fails to Trigger `time::sleep` in `tokio::spawn` with `start_paused = true` in `current_thread` Runtime",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:13:04+00:00",
+      "last_seen": "2026-11-26T14:13:04+00:00"
+    },
+    {
+      "id": "grpc--grpc-go--5956",
+      "title": "[5/10k] Data race in Test/WithBackoffMaxDelay",
+      "url": "https://github.com/grpc/grpc-go/issues/5956",
+      "repository": "grpc/grpc-go",
+      "status": "skipped_review",
+      "risk_signal": "WARNING: DATA RACE",
+      "signal_title": "[5/10k] Data race in Test/WithBackoffMaxDelay",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:11:39+00:00",
+      "last_seen": "2026-11-26T14:11:39+00:00"
+    },
+    {
+      "id": "grpc--grpc-go--8111",
+      "title": "panic: runtime error: invalid memory address or nil pointer dereference",
+      "url": "https://github.com/grpc/grpc-go/issues/8111",
+      "repository": "grpc/grpc-go",
+      "status": "skipped_review",
+      "risk_signal": "panic: runtime error:",
+      "signal_title": "panic: runtime error: invalid memory address or nil pointer dereference",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:11:39+00:00",
+      "last_seen": "2026-11-26T14:11:39+00:00"
+    },
+    {
+      "id": "grpc--grpc-go--8659",
+      "title": "The results of the -race operation on the transport_test.go file",
+      "url": "https://github.com/grpc/grpc-go/issues/8659",
+      "repository": "grpc/grpc-go",
+      "status": "skipped_review",
+      "risk_signal": "WARNING: DATA RACE",
+      "signal_title": "The results of the -race operation on the transport_test.go file",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:11:39+00:00",
+      "last_seen": "2026-11-26T14:11:39+00:00"
+    },
+    {
+      "id": "grpc--grpc-go--9001",
+      "title": "binarylog: testutil file causes SIGSEGV during init() on certain kernels",
+      "url": "https://github.com/grpc/grpc-go/issues/9001",
+      "repository": "grpc/grpc-go",
+      "status": "skipped_review",
+      "risk_signal": "unexpected fault address 0x422c0e0",
+      "signal_title": "binarylog: testutil file causes SIGSEGV during init() on certain kernels",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:11:39+00:00",
+      "last_seen": "2026-11-26T14:11:39+00:00"
+    },
+    {
+      "id": "lmcache--lmcache--6257",
+      "title": "[Bug][MP] KV cache corruption after vLLM restart while the MP server remains running",
+      "url": "https://github.com/LMCache/LMCache/issues/6257",
+      "repository": "LMCache/LMCache",
+      "status": "skipped_review",
+      "risk_signal": "corruption",
+      "signal_title": "[Bug][MP] KV cache corruption after vLLM restart while the MP server remains running",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:04:58+00:00",
+      "last_seen": "2026-11-26T14:04:58+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--2437",
+      "title": "panic on removing unknown peer",
+      "url": "https://github.com/etcd-io/etcd/issues/2437",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic",
+      "signal_title": "panic on removing unknown peer",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--2918",
+      "title": "raft panic when sending MsgApp",
+      "url": "https://github.com/etcd-io/etcd/issues/2918",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic",
+      "signal_title": "raft panic when sending MsgApp",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--3106",
+      "title": "etcd2 panic - \"rafthttp: unexpected removal of unknown peer\"",
+      "url": "https://github.com/etcd-io/etcd/issues/3106",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic",
+      "signal_title": "etcd2 panic - \"rafthttp: unexpected removal of unknown peer\"",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--3920",
+      "title": "etcdv3: panic & cannot test existence of a key in a txn",
+      "url": "https://github.com/etcd-io/etcd/issues/3920",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "runtime error: index out of range",
+      "signal_title": "etcdv3: panic & cannot test existence of a key in a txn",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--4337",
+      "title": "integration:  TestV3RangeRequest panic: assertion failed: tx closed",
+      "url": "https://github.com/etcd-io/etcd/issues/4337",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic",
+      "signal_title": "integration:  TestV3RangeRequest panic: assertion failed: tx closed",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--4463",
+      "title": "etcd-tester: panics",
+      "url": "https://github.com/etcd-io/etcd/issues/4463",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic: runtime error:",
+      "signal_title": "etcd-tester: panics",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--5142",
+      "title": "etcdserver: TestTriggerSnap panics",
+      "url": "https://github.com/etcd-io/etcd/issues/5142",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic: runtime error:",
+      "signal_title": "etcdserver: TestTriggerSnap panics",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--6537",
+      "title": "Lease: Retrieving lease info using lease client LeaseTimeToLive() causes etcd node panic and die",
+      "url": "https://github.com/etcd-io/etcd/issues/6537",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic",
+      "signal_title": "Lease: Retrieving lease info using lease client LeaseTimeToLive() causes etcd node panic and die",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--6586",
+      "title": "TestWatchOverlapDropConnContextCancel finds DATA RACE",
+      "url": "https://github.com/etcd-io/etcd/issues/6586",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "WARNING: DATA RACE",
+      "signal_title": "TestWatchOverlapDropConnContextCancel finds DATA RACE",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--6744",
+      "title": "raft: panic term should not be set when sending MsgReadIndex",
+      "url": "https://github.com/etcd-io/etcd/issues/6744",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic",
+      "signal_title": "raft: panic term should not be set when sending MsgReadIndex",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "etcd-io--etcd--7091",
+      "title": "etcd-runner: election causes panic",
+      "url": "https://github.com/etcd-io/etcd/issues/7091",
+      "repository": "etcd-io/etcd",
+      "status": "skipped_review",
+      "risk_signal": "panic",
+      "signal_title": "etcd-runner: election causes panic",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:10:49+00:00",
+      "last_seen": "2026-11-26T14:10:49+00:00"
+    },
+    {
+      "id": "sgl-project--sglang--29227",
+      "title": "[Bug] ROCm multimodal CUDA IPC transport crashes with hipErrorInvalidDevicePointer",
+      "url": "https://github.com/sgl-project/sglang/issues/29227",
+      "repository": "sgl-project/sglang",
+      "status": "skipped_review",
+      "risk_signal": "crashes",
+      "signal_title": "[Bug] ROCm multimodal CUDA IPC transport crashes with hipErrorInvalidDevicePointer",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:03:05+00:00",
+      "last_seen": "2026-11-26T14:03:05+00:00"
+    },
+    {
+      "id": "sgl-project--sglang--30055",
+      "title": "[Bug] illegal CUDA Memory access with Qwen3.5 + HiCache",
+      "url": "https://github.com/sgl-project/sglang/issues/30055",
+      "repository": "sgl-project/sglang",
+      "status": "skipped_review",
+      "risk_signal": "CUDA error: an illegal memory access",
+      "signal_title": "[Bug] illegal CUDA Memory access with Qwen3.5 + HiCache",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:03:05+00:00",
+      "last_seen": "2026-11-26T14:03:05+00:00"
+    },
+    {
+      "id": "sgl-project--sglang--31350",
+      "title": "[Bug] [AMD] Qwen3.5 + dp-attention: fused_qk_gemma_rmsnorm_with_gate Triton kernel aborts with HIP \"invalid configuration argument\" (zero-sized grid on empty/idle-rank batch)",
+      "url": "https://github.com/sgl-project/sglang/issues/31350",
+      "repository": "sgl-project/sglang",
+      "status": "skipped_review",
+      "risk_signal": "Fatal Python error:",
+      "signal_title": "[Bug] [AMD] Qwen3.5 + dp-attention: fused_qk_gemma_rmsnorm_with_gate Triton kernel aborts with HIP \"invalid configuration argument\" (zero-sized grid on empty/idle-rank batch)",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:03:05+00:00",
+      "last_seen": "2026-11-26T14:03:05+00:00"
+    },
+    {
+      "id": "sgl-project--sglang--45835",
+      "title": "[Failure Tracker] PR Test (AMD)",
+      "url": "https://github.com/sgl-project/sglang/issues/45835",
+      "repository": "sgl-project/sglang",
+      "status": "skipped_review",
+      "risk_signal": "Fatal Python error:",
+      "signal_title": "[Failure Tracker] PR Test (AMD)",
+      "risk_signal_source": "body_error_signature",
+      "first_seen": "2026-11-26T14:03:05+00:00",
+      "last_seen": "2026-11-26T14:03:05+00:00"
+    },
+    {
+      "id": "lmcache--lmcache--5022",
+      "title": "[BUG][TURBOQUANT] FP9 key store kernel fails on A100 (SM80) with bfloat16 models — Triton assertion error in `convert_custom_float8`",
+      "url": "https://github.com/LMCache/LMCache/issues/5022",
+      "repository": "LMCache/LMCache",
+      "status": "skipped_review",
+      "risk_signal": "assertion",
+      "signal_title": "[BUG][TURBOQUANT] FP9 key store kernel fails on A100 (SM80) with bfloat16 models — Triton assertion error in `convert_custom_float8`",
+      "risk_signal_source": "title_or_labels",
+      "first_seen": "2026-11-26T14:04:58+00:00",
+      "last_seen": "2026-11-26T14:04:58+00:00"
     }
   ],
   "delta": {
@@ -65511,22 +66000,17 @@
     "previous_observed_at": "2026-11-26T10:09:17+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T14:17:50+00:00",
+  "ledger_refreshed_at": "2026-11-26T14:25:30+00:00",
   "progress_summary": {
     "source": "manual_case_publication",
-    "assembled_at": "2026-11-26T14:17:50.511742+00:00",
-    "comparison_reported_at": "2026-11-26T13:48:35.781589+00:00",
+    "assembled_at": "2026-11-26T14:25:30.429601+00:00",
+    "comparison_reported_at": "2026-11-26T14:19:22+00:00",
     "verified_catalogue_entries": 136,
-    "new_verified_ids": [
-      "magicstack--asyncpg--1386"
-    ],
+    "new_verified_ids": [],
     "review_decisions": 256,
-    "new_review_decision_ids": [
-      "magicstack--asyncpg--1386",
-      "ray-project--ray--59347"
-    ],
+    "new_review_decision_ids": [],
     "manual_holds": 89,
-    "automatic_signal_holds": 977,
-    "scope": "Case/review totals refreshed from authoritative artifacts in an independent snapshot; the live scheduled scan and shared latest.json are unchanged."
+    "automatic_signal_holds": 1017,
+    "scope": "Totals refreshed independently from current artifacts. Deltas compare with the last recorded successful publication receipt. Shared scheduled-scan files remain unchanged."
   }
 }

@@ -1,0 +1,30 @@
+{
+  "id": "ray-project--ray--59347",
+  "checked_at": "2026-11-26T14:24:36.757464+00:00",
+  "status": "startup_deferred",
+  "matching_import_verified": true,
+  "import_probe": "2.52.0 /data1/fzhou/coro/.tools/ray-59347-b18/lib/python3.12/site-packages/ray/__init__.py /data1/fzhou/coro/.tools/ray-59347-b18/lib/python3.12/site-packages/ray/serve/__init__.py\n",
+  "driver_launches": 1,
+  "ray_init_attempts": 1,
+  "serve_deployments": 0,
+  "serve_requests": 0,
+  "native_reproductions": 0,
+  "coroperf_caller_recovery_verified": false,
+  "execution": {
+    "driver_launches": 1,
+    "timeout_seconds": 59.305007457733154,
+    "owned_ray_temp": "/data1/fzhou/coro/perf-out/github-issue-discovery/automatic/ray-59347-later-batch-20261126-b19/owned-ray-session",
+    "driver_pid": 3916907,
+    "exit_code": 1,
+    "elapsed_seconds": 112.36174011230469,
+    "final_phase": {
+      "phase": "cleanup_returned",
+      "driver_pid": 3916907
+    }
+  },
+  "native_log": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/ray-59347-later-batch-20261126-b19/check_once.py\", line 89, in <module>\n    ray.init(address='local', num_cpus=6, include_dashboard=False,\n  File \"/data1/fzhou/coro/.tools/ray-59347-b18/lib/python3.12/site-packages/ray/_private/client_mode_hook.py\", line 104, in wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/ray-59347-b18/lib/python3.12/site-packages/ray/_private/worker.py\", line 1918, in init\n    _global_node = ray._private.node.Node(\n                   ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/ray-59347-b18/lib/python3.12/site-packages/ray/_private/node.py\", line 275, in __init__\n    self._plasma_store_socket_name = self._prepare_socket_file(\n                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/ray-59347-b18/lib/python3.12/site-packages/ray/_private/node.py\", line 947, in _prepare_socket_file\n    validate_socket_filepath(result.split(\"://\", 1)[-1])\n  File \"/data1/fzhou/coro/.tools/ray-59347-b18/lib/python3.12/site-packages/ray/_private/utils.py\", line 1607, in validate_socket_filepath\n    raise OSError(\nOSError: validate_socket_filename failed: AF_UNIX path length cannot exceed 107 bytes: /data1/fzhou/coro/perf-out/github-issue-discovery/automatic/ray-59347-later-batch-20261126-b19/owned-ray-session/session_2026-11-26_22-21-54_116909_3916907/sockets/plasma_store\n",
+  "blocker": "Ray rejected the overly long Unix-domain socket path before cluster startup completed: AF_UNIX107-byte limit. No Serve deployment/request ran. ray.shutdown cleanup returned and no target process remained.",
+  "launcher_fix": "Prepared run_once.py uses /tmp/r59347-* for Ray sockets, keeps capture files at the original evidence path, validates socket length and tracks owned descendant PID/start-time for timeout cleanup. This corrected launcher has not been executed in b19.",
+  "scope": "Original four-deployment code and2s/7s/3s delays retained. Driver invocation uses a Python DeploymentHandle rather than HTTP ingress; actual Serve deployment remains required, not a coroutine stand-in.",
+  "followup": "Stop this pass. A later batch may use a new start/output directory with this prepared short-path launcher. Do not overwrite the b19 failure or treat it as a reported-behavior run."
+}
