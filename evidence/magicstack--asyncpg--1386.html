@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which pending query preceded BEGIN failure and the stale transaction?">
+  <title>MagicStack/asyncpg #1386 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/magicstack--asyncpg--1386.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="magicstack--asyncpg--1386.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/magicstack--asyncpg--1386.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">MagicStack/asyncpg #1386</p>
+        <h1>Which pending query preceded BEGIN failure and the stale transaction?</h1>
+        <div class="case-links"><a href="https://github.com/MagicStack/asyncpg/issues/1386">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Caller recovery</dd></div>
+          <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
+          <div><dt>Upstream status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Recover the pending query Task submitter by actual runtime identity; explicit API observations supply its relation to the failed transaction connection.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 40</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 40 · task_snapshot</span></div><ol class="frames"><li><code>execute</code><span>connection.py:377</span></li></ol></section>
+          <p class="small trace-note">Frames from record 40 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>40 → 2</code></a></nav>
+          <section class="stack observed" id="join-1-record-40"><div class="stack-head"><h4>Observed task stack</h4><span>Record 40 · task_snapshot</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>execute</code><span>connection.py:377</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-40">Record 40</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 2 → 40</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:68</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:127</span></li><li><code>run_until_complete</code><span>base_events.py:706</span></li><li><code>run_forever</code><span>base_events.py:677</span></li><li><code>_run_once</code><span>base_events.py:2046</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>main</code><span>check_once.py:27</span></li><li><code>launch_busy_query</code><span>check_once.py:15</span></li><li><code>create_task</code><span>tasks.py:395</span></li></ol></section>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>One asyncpg0.32.0/CPython3.14.3/private PostgreSQL17.1 run follows the original busy-query example: SELECT pg_sleep(0.5) occupies the Connection, so concurrent BEGIN raises InterfaceError. After the query finishes, the Connection is open and idle but _top_xact still points to that FAILED Transaction. The later transaction sends SAVEPOINT and raises native NoActiveSQLTransactionError, SQLSTATE25P01. Process exit0 and connection/server cleanup succeed. Selection/source/setup/run take115.05s.</dd></div><div><dt>What CoroPerf showed</dt><dd>The actual API-returned busy Task object0x73927aac5a90 independently matches the native pending Task snapshot and generic CoroPerf identity. The selected live sample precedes BEGIN failure; the same Task returns before the later SAVEPOINT error. CoroPerf joins creation2 to pending sample40 and recovers launch_busy_query, absent from the native Task stack and both error tracebacks. Additional API observations bind this Task, Connection0x73927aa75150 and failed Transaction0x73927a86e110 across the two failures. The source already describes stale _top_xact; the added diagnostic fact is the exact busy operation and its historical submission context.</dd></div><div><dt>Scope and limits</dt><dd>This is the original concurrent-query/pre-send BEGIN component, not Aurora/RDS Proxy, SQLAlchemy, a pool or the cancelled-BEGIN variant. Original Task topology is retained: launch_busy_query only names the existing create_task expression, and the later transaction remains inline in main. Resource identity requires the explicit API observer; generic Task ancestry does not infer shared Connection/Transaction ownership. The native pending stack contains execute, and Python continuation inspection stops at the opaque Cython protocol awaiter. One successful scenario; no reset/fix, pool, proxy, cancellation variant, alternate version or additional batch.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

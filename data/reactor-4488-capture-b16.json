@@ -1,0 +1,21 @@
+{
+  "id": "reactor--reactor-core--4488",
+  "checked_at": "2026-11-26T13:58:58.542642+00:00",
+  "status": "capture_deferred",
+  "native_reproduction_verified": false,
+  "coroperf_caller_recovery_verified": false,
+  "collector_launches": 1,
+  "target_launch_attempts": 1,
+  "execution": {
+    "target_workloads": 1,
+    "timing_scope": "Implementation/build/run only; prior untimed design is excluded.",
+    "error": "TimeoutExpired(['/data1/fzhou/coro/.tools/systems-repro/consensus/jvm-followup/jdk-25.0.1/bin/java', '--add-modules', 'jdk.jdi', '-cp', '/data1/fzhou/coro/perf-out/github-issue-discovery/automatic/reactor-4488-later-batch-20261126-b16', 'Capture', '/data1/fzhou/coro/perf-out/github-issue-discovery/automatic/reactor-4488-later-batch-20261126-b16:/data1/fzhou/coro/research/github-issue-discovery/reactor-4488-first-check-20261126-b14/reactor-core-3.8.7.jar:/data1/fzhou/coro/.tools/reactor-4478/reactive-streams-1.0.4.jar', '/data1/fzhou/coro/perf-out/github-issue-discovery/automatic/reactor-4488-later-batch-20261126-b16'], 25)",
+    "measured_window_seconds": 109.93
+  },
+  "saved_stdout_bytes": 0,
+  "saved_stderr_bytes": 0,
+  "remaining_target_or_collector_processes": false,
+  "blocker": "JDI collector did not complete within25s. No target RESULT or event stream was saved. Partial TimeoutExpired stdout/stderr was not persisted by the wrapper. The post-timeout process list has no remaining HolReplay/Capture target; no restart was performed.",
+  "timing_limit": "109.93s measures implementation/build/run after a late marker. Prior candidate-specific design was untimed, so no full first-check-under180s claim.",
+  "followup": "Stop this pass; preserve Java sources/classes. Future collection must persist collector streams during execution and handle VM cleanup even on collector exceptions; do not assume native success or replay just for capture."
+}

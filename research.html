@@ -43,7 +43,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(38)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(39)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -638,7 +638,7 @@
     </section>
 
     <section class="block" id="caller_recovery" aria-labelledby="caller_recovery-title">
-      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">38 issues</span></div>
+      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">39 issues</span></div>
       <p class="section-copy">Recover an application entry or call path missing from a traceback, live snapshot, or native stack.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="caller_recovery-title">
@@ -833,6 +833,11 @@
         <th scope="row"><a href="evidence/psycopg--psycopg--1451.html#call-stack"><span>psycopg/psycopg #1451</span>Which cancelled entry task left the Connection reused by an uncommitted transaction?</a></th>
         <td><p>Recover actual Task creation callers and combine explicitly observed Connection identity across cancelled entry, reuse and rollback failure.</p></td>
         <td class="row-status"><a class="state-pill state-closed" href="https://github.com/psycopg/psycopg/issues/1451">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/magicstack--asyncpg--1386.html#call-stack"><span>MagicStack/asyncpg #1386</span>Which pending query preceded BEGIN failure and the stale transaction?</a></th>
+        <td><p>Recover the pending query Task submitter by actual runtime identity; explicit API observations supply its relation to the failed transaction connection.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/MagicStack/asyncpg/issues/1386">Open</a><span class="fix-label">Fix unconfirmed</span></td>
       </tr></tbody>
         </table>
       </div>

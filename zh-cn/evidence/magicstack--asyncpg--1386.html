@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="BEGIN 失败并留下 stale transaction 前，是哪个查询占用了连接？">
+  <title>MagicStack/asyncpg #1386 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/magicstack--asyncpg--1386.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/magicstack--asyncpg--1386.html" lang="en" hreflang="en">English</a><a href="magicstack--asyncpg--1386.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">MagicStack/asyncpg #1386</p>
+        <h1>BEGIN 失败并留下 stale transaction 前，是哪个查询占用了连接？</h1>
+        <div class="case-links"><a href="https://github.com/MagicStack/asyncpg/issues/1386">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>补回调用来源</dd></div>
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>按真实运行时身份恢复忙查询 Task 的提交入口；额外 API 观察提供它与失败事务连接的关系。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 40</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 40 · task_snapshot</span></div><ol class="frames"><li><code>execute</code><span>connection.py:377</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 40 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>40 → 2</code></a></nav>
+          <section class="stack observed" id="join-1-record-40"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 40 · task_snapshot</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>execute</code><span>connection.py:377</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-40">记录 40</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 40</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:68</span></li><li><code>run</code><span>runners.py:204</span></li><li><code>run</code><span>runners.py:127</span></li><li><code>run_until_complete</code><span>base_events.py:706</span></li><li><code>run_forever</code><span>base_events.py:677</span></li><li><code>_run_once</code><span>base_events.py:2046</span></li><li><code>_run</code><span>events.py:94</span></li><li><code>main</code><span>check_once.py:27</span></li><li><code>launch_busy_query</code><span>check_once.py:15</span></li><li><code>create_task</code><span>tasks.py:395</span></li></ol></section>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>asyncpg0.32.0、CPython3.14.3、私有 PostgreSQL17.1 一次运行原始忙查询示例：SELECT pg_sleep(0.5) 占用连接，使并发 BEGIN 抛出 InterfaceError。查询结束后连接仍打开且服务端无事务，但 _top_xact 仍指向该 FAILED Transaction；后续事务发送 SAVEPOINT，得到原生 NoActiveSQLTransactionError、SQLSTATE25P01。进程退出0，连接和数据库清理完成。含选择、源码、准备和运行115.05秒。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>API 实际返回的忙 Task 对象0x73927aac5a90 与独立的原生等待快照、Coroperf 身份一致。选取的活动采样早于 BEGIN 失败，同一任务在后续 SAVEPOINT 错误前正常返回。CoroPerf 把创建2接到等待采样40，恢复原生 Task 栈和两个错误回溯都缺失的 launch_busy_query。额外 API 观察把该任务、Connection0x73927aa75150 和失败 Transaction0x73927a86e110 关联到两次失败。报告已说明 stale _top_xact，新增诊断事实是实际占用连接的操作及其历史提交上下文。</dd></div><div><dt>适用范围与局限</dt><dd>这是原始并发查询造成的发送前 BEGIN 失败组件，不是 Aurora/RDS Proxy、SQLAlchemy、pool 或取消 BEGIN 的变体。保持原始 Task 结构：launch_busy_query 只给既有 create_task 表达式命名，后续事务仍在 main 内直接执行。资源身份依赖额外 API 观察，不能从通用 Task 祖先关系推断共享 Connection/Transaction 所有权。原生等待栈仅有 execute，Python continuation 检查止于不透明的 Cython protocol awaiter。成功场景一次，没有 reset/修复、pool、proxy、取消变体、其他版本或额外批次。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

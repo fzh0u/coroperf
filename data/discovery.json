@@ -15,12 +15,12 @@
   "counts": {
     "no_async_signal": 446,
     "excluded_after_review": 53,
-    "needs_review": 819,
+    "needs_review": 818,
     "skipped_review": 182,
     "external_environment_required": 13,
     "already_catalogued": 11,
     "component_reproduced": 4,
-    "verified_case": 9
+    "verified_case": 10
   },
   "coverage": [
     {
@@ -27385,7 +27385,7 @@
       "observed_at": "2026-11-26T12:12:09+00:00",
       "heat": 10.7202,
       "status": "external_environment_required",
-      "reason": "The pinned downstream test installs its workaround scheduler and asserts fixed behavior; it is not an unmodified default-scheduler reproducer to execute directly. Matching Reactor3.8.7 binaries/sources are saved. Actual Java21+ task class is the MR-JAR BoundedElasticThreadPerTaskScheduler$SchedulerTask, with holder/carrier/task fields and holder tasksQueue/activeTask. The plain source jar contains the base stub, not this implementation. Faithful recursive Flux chains and native queued/running Task identity capture are not prepared within this first-check pass. Do not substitute direct schedule calls or exception-only interruption evidence for the reported cross-subscriber queue stall.",
+      "reason": "JDI collector did not complete within25s. No target RESULT or event stream was saved. Partial TimeoutExpired stdout/stderr was not persisted by the wrapper. The post-timeout process list has no remaining HolReplay/Capture target; no restart was performed. 109.93s measures implementation/build/run after a late marker. Prior candidate-specific design was untimed, so no full first-check-under180s claim.",
       "query_kinds": [
         "recent"
       ]
@@ -31281,12 +31281,11 @@
       "async_signal": true,
       "observed_at": "2026-11-26T12:06:10+00:00",
       "heat": 9.4711,
-      "status": "needs_review",
-      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "status": "verified_case",
+      "reason": "One asyncpg0.32.0/CPython3.14.3/private PostgreSQL17.1 run follows the original busy-query example: SELECT pg_sleep(0.5) occupies the Connection, so concurrent BEGIN raises InterfaceError. After the query finishes, the Connection is open and idle but _top_xact still points to that FAILED Transaction. The later transaction sends SAVEPOINT and raises native NoActiveSQLTransactionError, SQLSTATE25P01. Process exit0 and connection/server cleanup succeed. Selection/source/setup/run take115.05s. The actual API-returned busy Task object0x73927aac5a90 independently matches the native pending Task snapshot and generic CoroPerf identity. The selected live sample precedes BEGIN failure; the same Task returns before the later SAVEPOINT error. CoroPerf joins creation2 to pending sample40 and recovers launch_busy_query, absent from the native Task stack and both error tracebacks. Additional API observations bind this Task, Connection0x73927aa75150 and failed Transaction0x73927a86e110 across the two failures. The source already describes stale _top_xact; the added diagnostic fact is the exact busy operation and its historical submission context. This is the original concurrent-query/pre-send BEGIN component, not Aurora/RDS Proxy, SQLAlchemy, a pool or the cancelled-BEGIN variant. Original Task topology is retained: launch_busy_query only names the existing create_task expression, and the later transaction remains inline in main. Resource identity requires the explicit API observer; generic Task ancestry does not infer shared Connection/Transaction ownership. The native pending stack contains execute, and Python continuation inspection stops at the opaque Cython protocol awaiter. One successful scenario; no reset/fix, pool, proxy, cancellation variant, alternate version or additional batch.",
       "query_kinds": [
         "recent"
-      ],
-      "coverage_rank": 728
+      ]
     },
     {
       "id": "psycopg--psycopg--1453",
@@ -32170,7 +32169,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 732
+      "coverage_rank": 728
     },
     {
       "id": "sqlalchemy--sqlalchemy--13622",
@@ -32572,7 +32571,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 743
+      "coverage_rank": 732
     },
     {
       "id": "magicstack--asyncpg--1400",
@@ -32597,7 +32596,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 754
+      "coverage_rank": 743
     },
     {
       "id": "lmcache--lmcache--4738",
@@ -32940,7 +32939,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 759
+      "coverage_rank": 754
     },
     {
       "id": "sidorares--node-mysql2--3749",
@@ -36600,7 +36599,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 763
+      "coverage_rank": 759
     },
     {
       "id": "apache--datafusion--14632",
@@ -36798,7 +36797,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 768
+      "coverage_rank": 763
     },
     {
       "id": "magicstack--asyncpg--1335",
@@ -36823,7 +36822,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 776
+      "coverage_rank": 768
     },
     {
       "id": "magicstack--asyncpg--1402",
@@ -36848,7 +36847,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 784
+      "coverage_rank": 776
     },
     {
       "id": "kvcache-ai--mooncake--5803",
@@ -38202,7 +38201,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 790
+      "coverage_rank": 784
     },
     {
       "id": "psycopg--psycopg--1428",
@@ -38682,7 +38681,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 794
+      "coverage_rank": 790
     },
     {
       "id": "magicstack--asyncpg--1327",
@@ -38707,7 +38706,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 798
+      "coverage_rank": 794
     },
     {
       "id": "pytorch--pytorch--206728",
@@ -41521,7 +41520,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 802
+      "coverage_rank": 798
     },
     {
       "id": "magicstack--asyncpg--1307",
@@ -41596,7 +41595,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 806
+      "coverage_rank": 802
     },
     {
       "id": "magicstack--asyncpg--1390",
@@ -41621,7 +41620,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 810
+      "coverage_rank": 806
     },
     {
       "id": "kvcache-ai--mooncake--5768",
@@ -42124,7 +42123,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 811
+      "coverage_rank": 810
     },
     {
       "id": "reactor--reactor-core--4397",
@@ -42149,7 +42148,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 812
+      "coverage_rank": 811
     },
     {
       "id": "reactor--reactor-core--4398",
@@ -42174,7 +42173,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 813
+      "coverage_rank": 812
     },
     {
       "id": "reactor--reactor-core--4399",
@@ -42199,7 +42198,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 814
+      "coverage_rank": 813
     },
     {
       "id": "reactor--reactor-core--4406",
@@ -42224,7 +42223,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 815
+      "coverage_rank": 814
     },
     {
       "id": "reactor--reactor-core--4415",
@@ -42251,7 +42250,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 816
+      "coverage_rank": 815
     },
     {
       "id": "reactor--reactor-core--4442",
@@ -42276,7 +42275,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 817
+      "coverage_rank": 816
     },
     {
       "id": "reactor--reactor-core--4459",
@@ -42301,7 +42300,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 818
+      "coverage_rank": 817
     },
     {
       "id": "reactor--reactor-core--4467",
@@ -42326,7 +42325,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 819
+      "coverage_rank": 818
     },
     {
       "id": "reactor--reactor-core--4478",
@@ -49108,11 +49107,11 @@
     "stackexchange--stackexchange.redis--3348",
     "sidorares--node-mysql2--2536",
     "kvcache-ai--mooncake--3737",
-    "magicstack--asyncpg--1386",
+    "sqlalchemy--sqlalchemy--12803",
     "netty--netty--8517",
     "reactor--reactor-core--3509",
     "lmcache--lmcache--5782",
-    "sqlalchemy--sqlalchemy--12803",
+    "magicstack--asyncpg--1397",
     "ray-project--ray--68300",
     "mysql-net--mysqlconnector--1367",
     "ai-dynamo--dynamo--19524",
@@ -49123,7 +49122,7 @@
     "netty--netty--8514",
     "reactor--reactor-core--3530",
     "lmcache--lmcache--5844",
-    "magicstack--asyncpg--1397",
+    "magicstack--asyncpg--1400",
     "ray-project--ray--68593",
     "mysql-net--mysqlconnector--1676",
     "ai-dynamo--dynamo--8251",
@@ -49134,21 +49133,21 @@
     "netty--netty--8506",
     "reactor--reactor-core--3552",
     "lmcache--lmcache--6458",
-    "magicstack--asyncpg--1400",
+    "magicstack--asyncpg--1357",
     "mysql-net--mysqlconnector--565",
     "sidorares--node-mysql2--3704",
     "stackexchange--stackexchange.redis--3283",
     "kvcache-ai--mooncake--5626",
-    "magicstack--asyncpg--1357",
+    "sqlalchemy--sqlalchemy--13694",
     "netty--netty--8507",
     "reactor--reactor-core--3578",
     "lmcache--lmcache--6744",
-    "sqlalchemy--sqlalchemy--13694",
+    "magicstack--asyncpg--1300",
     "sidorares--node-mysql2--4562",
     "mysql-net--mysqlconnector--1652",
     "stackexchange--stackexchange.redis--3362",
     "kvcache-ai--mooncake--3551",
-    "magicstack--asyncpg--1300",
+    "magicstack--asyncpg--1335",
     "netty--netty--8513",
     "reactor--reactor-core--3580",
     "lmcache--lmcache--6745",
@@ -49156,7 +49155,7 @@
     "stackexchange--stackexchange.redis--3367",
     "sidorares--node-mysql2--4497",
     "kvcache-ai--mooncake--3377",
-    "magicstack--asyncpg--1335",
+    "magicstack--asyncpg--1402",
     "netty--netty--8512",
     "reactor--reactor-core--3587",
     "lmcache--lmcache--6747",
@@ -49164,33 +49163,32 @@
     "sidorares--node-mysql2--4521",
     "mysql-net--mysqlconnector--1623",
     "kvcache-ai--mooncake--3692",
-    "magicstack--asyncpg--1402",
+    "magicstack--asyncpg--1299",
     "netty--netty--18558",
     "reactor--reactor-core--3653",
     "lmcache--lmcache--6751",
     "sidorares--node-mysql2--4651",
     "kvcache-ai--mooncake--3733",
-    "magicstack--asyncpg--1299",
+    "magicstack--asyncpg--1326",
     "reactor--reactor-core--3663",
     "lmcache--lmcache--6958",
     "kvcache-ai--mooncake--5450",
-    "magicstack--asyncpg--1326",
+    "magicstack--asyncpg--1327",
     "reactor--reactor-core--3701",
     "lmcache--lmcache--5781",
     "kvcache-ai--mooncake--5848",
-    "magicstack--asyncpg--1327",
+    "magicstack--asyncpg--1286",
     "reactor--reactor-core--3830",
     "lmcache--lmcache--6890",
     "kvcache-ai--mooncake--5858",
-    "magicstack--asyncpg--1286",
+    "magicstack--asyncpg--1354",
     "reactor--reactor-core--4441",
     "lmcache--lmcache--6932",
     "kvcache-ai--mooncake--5867",
-    "magicstack--asyncpg--1354",
+    "magicstack--asyncpg--1390",
     "reactor--reactor-core--4483",
     "lmcache--lmcache--6934",
     "kvcache-ai--mooncake--5768",
-    "magicstack--asyncpg--1390",
     "reactor--reactor-core--4285",
     "reactor--reactor-core--4397",
     "reactor--reactor-core--4398",
@@ -52000,8 +51998,8 @@
       "elapsed_seconds": 179.2,
       "target_workloads": 0,
       "coroperf_captures": 0,
-      "reason": "The pinned downstream test installs its workaround scheduler and asserts fixed behavior; it is not an unmodified default-scheduler reproducer to execute directly. Matching Reactor3.8.7 binaries/sources are saved. Actual Java21+ task class is the MR-JAR BoundedElasticThreadPerTaskScheduler$SchedulerTask, with holder/carrier/task fields and holder tasksQueue/activeTask. The plain source jar contains the base stub, not this implementation. Faithful recursive Flux chains and native queued/running Task identity capture are not prepared within this first-check pass. Do not substitute direct schedule calls or exception-only interruption evidence for the reported cross-subscriber queue stall.",
-      "reason_zh": "固定的下游测试会安装绕行调度器并断言修复行为，不能直接当作原始默认调度器复现。已保存 Reactor3.8.7 二进制/源码；Java21+ 实际任务类位于 MR-JAR，包含 holder/carrier/task 和队列/activeTask 字段，普通 source jar 只有基础 stub。原始递归 Flux 链及排队/运行 Task 身份捕获尚未在首检时限内就绪；不能用直接 schedule 或仅有中断异常的例子替代跨订阅者排队故障。",
+      "reason": "JDI collector did not complete within25s. No target RESULT or event stream was saved. Partial TimeoutExpired stdout/stderr was not persisted by the wrapper. The post-timeout process list has no remaining HolReplay/Capture target; no restart was performed. 109.93s measures implementation/build/run after a late marker. Prior candidate-specific design was untimed, so no full first-check-under180s claim.",
+      "reason_zh": "JDI采集器25秒超时，未保存目标RESULT或事件流；包装器也未保存TimeoutExpired的部分输出。确认无残留目标/采集进程，未重启，不能声称原生复现或归因。109.93秒只计后续实现窗口，前期设计未计时。",
       "sources": [
         "https://github.com/reactor/reactor-core/issues/4488",
         "https://github.com/qinhaiqinshui/everyagent/blob/81a5c896/every-agent-worker/src/test/java/dev/everyagent/worker/BoundedElasticStarvationTest.java"
@@ -52010,7 +52008,8 @@
         "reactor-core-3.8.7.jar": "9a5f1bfc5ad0416a410ff63beaa279cc30c2da3ae9b111a678c83c99298a1551",
         "reactor-core-3.8.7-sources.jar": "7547e61d9ebe6ffa34df02dc8f97d663edd69f91b58d295d7f008e1dddb30657"
       },
-      "reviewed_at": "2026-11-26T13:33:14.334497+00:00"
+      "reviewed_at": "2026-11-26T13:58:58.542642+00:00",
+      "evidence": "data/reactor-4488-capture-b16.json"
     },
     "psycopg--psycopg--1451": {
       "status": "verified_case",
@@ -52022,6 +52021,17 @@
       ],
       "successful_component_runs": 1,
       "evidence": "data/psycopg-1451-verification.json"
+    },
+    "magicstack--asyncpg--1386": {
+      "status": "verified_case",
+      "reviewed_at": "2026-11-26T14:03:45.379655+00:00",
+      "successful_component_runs": 1,
+      "reason": "One asyncpg0.32.0/CPython3.14.3/private PostgreSQL17.1 run follows the original busy-query example: SELECT pg_sleep(0.5) occupies the Connection, so concurrent BEGIN raises InterfaceError. After the query finishes, the Connection is open and idle but _top_xact still points to that FAILED Transaction. The later transaction sends SAVEPOINT and raises native NoActiveSQLTransactionError, SQLSTATE25P01. Process exit0 and connection/server cleanup succeed. Selection/source/setup/run take115.05s. The actual API-returned busy Task object0x73927aac5a90 independently matches the native pending Task snapshot and generic CoroPerf identity. The selected live sample precedes BEGIN failure; the same Task returns before the later SAVEPOINT error. CoroPerf joins creation2 to pending sample40 and recovers launch_busy_query, absent from the native Task stack and both error tracebacks. Additional API observations bind this Task, Connection0x73927aa75150 and failed Transaction0x73927a86e110 across the two failures. The source already describes stale _top_xact; the added diagnostic fact is the exact busy operation and its historical submission context. This is the original concurrent-query/pre-send BEGIN component, not Aurora/RDS Proxy, SQLAlchemy, a pool or the cancelled-BEGIN variant. Original Task topology is retained: launch_busy_query only names the existing create_task expression, and the later transaction remains inline in main. Resource identity requires the explicit API observer; generic Task ancestry does not infer shared Connection/Transaction ownership. The native pending stack contains execute, and Python continuation inspection stops at the opaque Cython protocol awaiter. One successful scenario; no reset/fix, pool, proxy, cancellation variant, alternate version or additional batch.",
+      "reason_zh": "asyncpg0.32.0、CPython3.14.3、私有 PostgreSQL17.1 一次运行原始忙查询示例：SELECT pg_sleep(0.5) 占用连接，使并发 BEGIN 抛出 InterfaceError。查询结束后连接仍打开且服务端无事务，但 _top_xact 仍指向该 FAILED Transaction；后续事务发送 SAVEPOINT，得到原生 NoActiveSQLTransactionError、SQLSTATE25P01。进程退出0，连接和数据库清理完成。含选择、源码、准备和运行115.05秒。API 实际返回的忙 Task 对象0x73927aac5a90 与独立的原生等待快照、Coroperf 身份一致。选取的活动采样早于 BEGIN 失败，同一任务在后续 SAVEPOINT 错误前正常返回。CoroPerf 把创建2接到等待采样40，恢复原生 Task 栈和两个错误回溯都缺失的 launch_busy_query。额外 API 观察把该任务、Connection0x73927aa75150 和失败 Transaction0x73927a86e110 关联到两次失败。报告已说明 stale _top_xact，新增诊断事实是实际占用连接的操作及其历史提交上下文。这是原始并发查询造成的发送前 BEGIN 失败组件，不是 Aurora/RDS Proxy、SQLAlchemy、pool 或取消 BEGIN 的变体。保持原始 Task 结构：launch_busy_query 只给既有 create_task 表达式命名，后续事务仍在 main 内直接执行。资源身份依赖额外 API 观察，不能从通用 Task 祖先关系推断共享 Connection/Transaction 所有权。原生等待栈仅有 execute，Python continuation 检查止于不透明的 Cython protocol awaiter。成功场景一次，没有 reset/修复、pool、proxy、取消变体、其他版本或额外批次。",
+      "sources": [
+        "https://github.com/MagicStack/asyncpg/issues/1386"
+      ],
+      "evidence": "data/asyncpg-1386-verification.json"
     }
   },
   "supplemental_records": [
@@ -52744,6 +52754,24 @@
       "summary": "One affected-checkout scenario leaves depth1/INTRANS and later counts1 versus0 across real Connections. CoroPerf restores entry/reuse callers; an explicit resource observer supplies Connection identity. Runtime generations distinguish a later reused Task address. Exit0,28.79s later batch, no replay. Cached Python/server versions differ from the report;3.3.9 is distribution metadata only. Controlled adaptation: reuse is in a separate Task; the report performs it inline.",
       "summary_zh": "一次受影响 checkout 场景保留深度1/INTRANS，真实连接读取计数1与0。CoroPerf 恢复入口/复用 caller，额外资源观察提供 Connection 身份；generation 区分稍后复用 Task 地址的清理任务。退出0、后续批次28.79秒，无重放；Python/服务器版本与报告不同，3.3.9仅为发行元数据。 受控改动：后续复用在独立 Task 中，原报告为 main 内直接执行。",
       "path": "evidence/psycopg-1451-report.html"
+    },
+    {
+      "id": "asyncpg-1386-verified-b17",
+      "checked_at": "2026-11-26T14:03:45.379655+00:00",
+      "title": "asyncpg failed BEGIN: busy query caller verified",
+      "title_zh": "asyncpg BEGIN 失败：忙查询 caller 已验证",
+      "summary": "One original0.32.0/Python3.14/PostgreSQL17 scenario leaves the same FAILED top Transaction and later SQLSTATE25P01. Actual busy query Task identity and current snapshot match; CoroPerf restores its submission helper. Explicit API observations add resource links. Exit0,115.05s, original Task topology, no replay/reset/fix/proxy variant.",
+      "summary_zh": "一次原始0.32.0/Python3.14/PostgreSQL17场景留下同一 FAILED top Transaction，并引发后续25P01。实际忙查询 Task 身份与当前快照一致，CoroPerf 恢复提交辅助入口；额外 API 观察补充资源关联。退出0、115.05秒、原 Task 结构，无重放/reset/修复/proxy变体。",
+      "path": "evidence/asyncpg-1386-report.html"
+    },
+    {
+      "id": "reactor-4488-capture-b16",
+      "checked_at": "2026-11-26T14:03:45.379655+00:00",
+      "title": "Reactor virtual-thread collector timed out; no native result verified",
+      "title_zh": "Reactor 虚拟线程采集超时，未验证原生结果",
+      "summary": "Sources compile, but the JDI collector exceeds25s. No RESULT/event stream or partial timeout output was preserved. No remaining target/collector process; no restart. The109.93s implementation window excludes untimed design and is not a full first-check duration.",
+      "summary_zh": "源码编译成功，但 JDI 采集器25秒超时，未保存RESULT/事件流或部分超时输出。无残留目标/采集进程，未重启；109.93秒实现窗口不含未计时设计，不能当作完整首检耗时。",
+      "path": "data/reactor-4488-capture-b16.json"
     }
   ],
   "deferred_registry": [
@@ -65464,7 +65492,7 @@
     "previous_observed_at": "2026-11-26T10:09:17+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T13:46:19+00:00",
+  "ledger_refreshed_at": "2026-11-26T14:03:46+00:00",
   "progress_summary": {
     "source": "report_update",
     "assembled_at": "2026-11-26T13:46:19+00:00",

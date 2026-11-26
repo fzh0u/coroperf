@@ -1,0 +1,2231 @@
+{
+  "checked_at": "2026-11-26T14:03:45.379655+00:00",
+  "case": {
+    "id": "magicstack--asyncpg--1386",
+    "repo": "MagicStack/asyncpg",
+    "issue": 1386,
+    "url": "https://github.com/MagicStack/asyncpg/issues/1386",
+    "upstream_reference": "https://github.com/MagicStack/asyncpg/issues/1386",
+    "title": "Which pending query preceded BEGIN failure and the stale transaction?",
+    "title_zh": "BEGIN 失败并留下 stale transaction 前，是哪个查询占用了连接？",
+    "verified_on": "2026-11-26",
+    "reproduction": "Component reproduced",
+    "diagnosis": "Direct",
+    "graph": "perf-out/github-issue-discovery/automatic/asyncpg-1386-first-check-20261126-b17/analysis/graph.json",
+    "findings": {
+      "observation": "One asyncpg0.32.0/CPython3.14.3/private PostgreSQL17.1 run follows the original busy-query example: SELECT pg_sleep(0.5) occupies the Connection, so concurrent BEGIN raises InterfaceError. After the query finishes, the Connection is open and idle but _top_xact still points to that FAILED Transaction. The later transaction sends SAVEPOINT and raises native NoActiveSQLTransactionError, SQLSTATE25P01. Process exit0 and connection/server cleanup succeed. Selection/source/setup/run take115.05s.",
+      "interpretation": "The actual API-returned busy Task object0x73927aac5a90 independently matches the native pending Task snapshot and generic CoroPerf identity. The selected live sample precedes BEGIN failure; the same Task returns before the later SAVEPOINT error. CoroPerf joins creation2 to pending sample40 and recovers launch_busy_query, absent from the native Task stack and both error tracebacks. Additional API observations bind this Task, Connection0x73927aa75150 and failed Transaction0x73927a86e110 across the two failures. The source already describes stale _top_xact; the added diagnostic fact is the exact busy operation and its historical submission context.",
+      "limits": "This is the original concurrent-query/pre-send BEGIN component, not Aurora/RDS Proxy, SQLAlchemy, a pool or the cancelled-BEGIN variant. Original Task topology is retained: launch_busy_query only names the existing create_task expression, and the later transaction remains inline in main. Resource identity requires the explicit API observer; generic Task ancestry does not infer shared Connection/Transaction ownership. The native pending stack contains execute, and Python continuation inspection stops at the opaque Cython protocol awaiter. One successful scenario; no reset/fix, pool, proxy, cancellation variant, alternate version or additional batch."
+    },
+    "symptom_zh": "asyncpg0.32.0、CPython3.14.3、私有 PostgreSQL17.1 一次运行原始忙查询示例：SELECT pg_sleep(0.5) 占用连接，使并发 BEGIN 抛出 InterfaceError。查询结束后连接仍打开且服务端无事务，但 _top_xact 仍指向该 FAILED Transaction；后续事务发送 SAVEPOINT，得到原生 NoActiveSQLTransactionError、SQLSTATE25P01。进程退出0，连接和数据库清理完成。含选择、源码、准备和运行115.05秒。",
+    "reasoning_zh": "API 实际返回的忙 Task 对象0x73927aac5a90 与独立的原生等待快照、Coroperf 身份一致。选取的活动采样早于 BEGIN 失败，同一任务在后续 SAVEPOINT 错误前正常返回。CoroPerf 把创建2接到等待采样40，恢复原生 Task 栈和两个错误回溯都缺失的 launch_busy_query。额外 API 观察把该任务、Connection0x73927aa75150 和失败 Transaction0x73927a86e110 关联到两次失败。报告已说明 stale _top_xact，新增诊断事实是实际占用连接的操作及其历史提交上下文。",
+    "limits_zh": "这是原始并发查询造成的发送前 BEGIN 失败组件，不是 Aurora/RDS Proxy、SQLAlchemy、pool 或取消 BEGIN 的变体。保持原始 Task 结构：launch_busy_query 只给既有 create_task 表达式命名，后续事务仍在 main 内直接执行。资源身份依赖额外 API 观察，不能从通用 Task 祖先关系推断共享 Connection/Transaction 所有权。原生等待栈仅有 execute，Python continuation 检查止于不透明的 Cython protocol awaiter。成功场景一次，没有 reset/修复、pool、proxy、取消变体、其他版本或额外批次。"
+  },
+  "verification": {
+    "checked_at": "2026-11-26T14:02:15.415100+00:00",
+    "id": "magicstack--asyncpg--1386",
+    "successful_issue_workloads": 1,
+    "workload_replays_after_success": 0,
+    "first_check_seconds": 115.05,
+    "process_exit_code": 0,
+    "private_postgres_shutdown_logged": true,
+    "asyncpg_version": "0.32.0",
+    "python": "3.14.3 (main, Mar 24 2026, 22:50:36) [Clang 22.1.1 ]",
+    "server_version": [
+      17,
+      0,
+      1,
+      "final",
+      0
+    ],
+    "busy_task_identity": "python-asyncio-task-0x73927aac5a90-g2",
+    "native_busy_task_object_id": "0x73927aac5a90",
+    "native_pending_stack_functions": [
+      "execute"
+    ],
+    "recovered_submission_helper": "launch_busy_query",
+    "creation_observation_pairs": [
+      [
+        "2",
+        "40"
+      ]
+    ],
+    "selected_pending_sample_precedes_begin_error": true,
+    "busy_task_finishes_before_later_savepoint_failure": true,
+    "connection_object_id": "0x73927aa75150",
+    "failed_transaction_object_id": "0x73927a86e110",
+    "same_failed_top_transaction_at_both_error_phases": true,
+    "native_later_sqlstate": "25P01",
+    "native_connection_still_open_and_idle": true,
+    "coroperf_caller_recovery_verified": true,
+    "resource_provenance_requires_extra_API_observer": true,
+    "limitations": [
+      "This is the original concurrent-query/pre-send BEGIN component, not Aurora/RDS Proxy, SQLAlchemy, a pool or the cancelled-BEGIN comment variant.",
+      "The original Task topology is retained. launch_busy_query only names the existing create_task submission expression; the later transaction remains inline in main.",
+      "Generic Task capture recovers submission context. Explicit API observations supply shared Connection and failed Transaction identity; generic ancestry does not infer resource ownership.",
+      "The report already identifies the stale _top_xact cause. Added facts are the exact pending query Task, its historical submitter and its relation to the connection at failure.",
+      "The native pending Task snapshot contains only execute; the collector follows Python continuations up to the opaque Cython protocol awaiter, not native protocol internals.",
+      "One successful workload; no reset/fix, pool, proxy, cancelled-BEGIN, alternate version or extra query batch."
+    ]
+  },
+  "analysis": {
+    "instances": 1,
+    "observations": 91,
+    "attributed_observations": 91,
+    "creator_links": 1,
+    "recorded_parent_links": 1,
+    "open_at_trace_end": 0,
+    "completed_storage_observed": 0,
+    "observation_kinds": [
+      "task_snapshot"
+    ],
+    "diagnostics": 0,
+    "capture_loss": null,
+    "analysis_ms": 8.312605999999999,
+    "input": "perf-out/github-issue-discovery/automatic/asyncpg-1386-first-check-20261126-b17/busy-capture.json",
+    "query_matches": 1,
+    "schema": "corostitch.evidence/v1"
+  },
+  "native_observation": {
+    "asyncpg_version": "0.32.0",
+    "python": "3.14.3 (main, Mar 24 2026, 22:50:36) [Clang 22.1.1 ]",
+    "server_version": [
+      17,
+      0,
+      1,
+      "final",
+      0
+    ],
+    "connection_object_id_hex": "0x73927aa75150",
+    "busy_task_object_id_hex": "0x73927aac5a90",
+    "busy_task_pending_at_first_failure": true,
+    "busy_native_stack": [
+      {
+        "function": "execute",
+        "file": "/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py",
+        "line": 377
+      }
+    ],
+    "first_transaction_object_id_hex": "0x73927a86e110",
+    "begin_error": {
+      "type": "InterfaceError",
+      "message": "cannot perform operation: another operation is in progress",
+      "traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1386-first-check-20261126-b17/check_once.py\", line 36, in main\n    await first.start()\n  File \"/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/transaction.py\", line 146, in start\n    await self._connection.execute(query)\n  File \"/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py\", line 377, in execute\n    result = await self._protocol.query(query, timeout)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 330, in query\n  File \"asyncpg/protocol/protocol.pyx\", line 737, in asyncpg.protocol.protocol.BaseProtocol._check_state\n    raise apg_exc.InterfaceError(\nasyncpg.exceptions._base.InterfaceError: cannot perform operation: another operation is in progress\n"
+    },
+    "connection_closed": false,
+    "in_transaction": false,
+    "top_transaction_is_first": true,
+    "first_transaction_state": "FAILED",
+    "later_error": {
+      "type": "NoActiveSQLTransactionError",
+      "sqlstate": "25P01",
+      "message": "SAVEPOINT can only be used in transaction blocks",
+      "traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1386-first-check-20261126-b17/check_once.py\", line 50, in main\n    async with conn.transaction():\n               ~~~~~~~~~~~~~~~~^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/transaction.py\", line 68, in __aenter__\n    await self.start()\n  File \"/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/transaction.py\", line 146, in start\n    await self._connection.execute(query)\n  File \"/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py\", line 377, in execute\n    result = await self._protocol.query(query, timeout)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 341, in query\n    return await waiter\nasyncpg.exceptions.NoActiveSQLTransactionError: SAVEPOINT can only be used in transaction blocks\n"
+    }
+  },
+  "source_integrity": {
+    "asyncpg/connection.py": {
+      "sha256": "155747e55e0fdfc69ee749f231f77825ac25eb71b57f086a5704ac9c0508b0d6",
+      "matches_installed_wheel_RECORD": true
+    },
+    "asyncpg/transaction.py": {
+      "sha256": "b8026893a4a1c7bf8a76de65e0d5fe189b4bc552523d74ce254af219d6c8546f",
+      "matches_installed_wheel_RECORD": true
+    },
+    "asyncpg/protocol/protocol.cpython-314-x86_64-linux-gnu.so": {
+      "sha256": "75e23582614d7c08a61e0239cd57ece9ad9ea0c688950461423529f380b6b58b",
+      "matches_installed_wheel_RECORD": true
+    }
+  },
+  "execution": {
+    "workload_attempts": 1,
+    "exit_code": 0,
+    "private_postgres_stopped": true,
+    "elapsed_seconds": 115.05
+  },
+  "capture": {
+    "schema_version": 1,
+    "language": "python",
+    "runtime": "asyncio-sitecustomize",
+    "frame_order": "root_to_leaf",
+    "producer": {
+      "name": "asyncio-frame-inspection",
+      "identity_kind": "runtime-token-generation",
+      "continuation_storage": "stackless-state",
+      "frame_order": "root_to_leaf",
+      "clock": "monotonic-ns",
+      "observation_kind": "task_snapshot"
+    },
+    "segments": [
+      {
+        "id": 2,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "create",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234485171312,
+        "frames": [
+          "<module>:68:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1386-first-check-20261126-b17/check_once.py",
+          "run:204:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run:127:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py",
+          "run_until_complete:706:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "run_forever:677:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run_once:2046:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py",
+          "_run:94:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/events.py",
+          "main:27:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1386-first-check-20261126-b17/check_once.py",
+          "launch_busy_query:15:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1386-first-check-20261126-b17/check_once.py",
+          "create_task:395:/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py"
+        ],
+        "function_name": "Connection.execute",
+        "coroutine_object_id": "127072960632224",
+        "parent_coroutine_id": "python-asyncio-task-0x73927aac5130-g1"
+      },
+      {
+        "id": 4,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234489463401,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 6,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234494672181,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 8,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234499810296,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 10,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234504981704,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 12,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234511085616,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 14,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234516235631,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 16,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234521391103,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 18,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234526567859,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 20,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234532679843,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 22,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234537820094,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 24,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234542985112,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 26,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234548178240,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 28,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234554288606,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 30,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234559427837,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 32,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234564597692,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 34,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234569768574,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 36,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234575944489,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 38,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234581099466,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 40,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234586311724,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 45,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234591649140,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 47,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234597751740,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 49,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234602948128,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 51,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234608055416,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 53,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234613234375,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 55,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234619397277,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 57,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234624546740,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 59,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234629727502,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 61,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234634888958,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 63,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234641126014,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 65,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234646272164,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 67,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234651441516,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 69,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234656605154,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 71,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234663042428,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 73,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234668173635,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 75,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234673321928,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 77,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234678498579,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 79,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234685166237,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 81,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234690287074,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 83,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234695422140,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 85,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234700599259,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 87,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234707211337,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 89,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234712350726,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 91,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234717516197,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 93,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234722678152,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 95,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234729517625,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 97,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234734698136,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 99,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234739841994,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 101,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234745025678,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 103,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234751745721,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 105,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234756927225,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 107,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234762098736,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 109,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234767263735,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 111,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234773920723,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 113,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234779092247,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 115,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234784257366,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 117,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234789436234,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 119,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234795709432,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 121,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234800851571,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 123,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234806026305,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 125,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234811190977,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 127,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234818113188,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 129,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234823252279,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 131,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234828419852,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 133,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234833569392,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 135,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234840953192,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 137,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234846090550,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 139,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234851256190,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 141,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234856414443,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 143,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234863183456,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 145,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234868323690,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 147,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234873499151,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 149,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234878651494,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 151,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234885188253,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 153,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234890334601,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 155,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234895509816,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 157,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234900671723,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 159,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234907321469,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 161,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234912497635,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 163,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234917674005,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 165,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234922836975,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 167,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234929640649,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 169,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234934790055,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 171,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234939925030,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 173,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234945087012,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 175,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234952875969,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 177,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234958029332,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 179,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234963207426,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 181,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234968367160,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 183,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234975024550,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 185,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234980171985,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 187,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "sample",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234985296787,
+        "frames": [
+          "execute:377:/data1/fzhou/coro/.tools/asyncpg-1386-b17/lib/python3.14/site-packages/asyncpg/connection.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 189,
+        "coroutine_id": "python-asyncio-task-0x73927aac5a90-g2",
+        "capture_reason": "exit",
+        "thread_id": 3914023,
+        "timestamp_ns": 1910234986564660,
+        "frames": [],
+        "exit_reason": "return"
+      }
+    ],
+    "edges": [
+      {
+        "from": 2,
+        "to": 4,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 2,
+        "to": 4,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 6,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 4,
+        "to": 6,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 8,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 6,
+        "to": 8,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 10,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 8,
+        "to": 10,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 12,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 10,
+        "to": 12,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 14,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 12,
+        "to": 14,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 16,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 14,
+        "to": 16,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 18,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 16,
+        "to": 18,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 20,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 18,
+        "to": 20,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 22,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 20,
+        "to": 22,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 24,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 22,
+        "to": 24,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 26,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 24,
+        "to": 26,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 28,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 26,
+        "to": 28,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 30,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 28,
+        "to": 30,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 32,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 30,
+        "to": 32,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 34,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 32,
+        "to": 34,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 36,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 34,
+        "to": 36,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 38,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 36,
+        "to": 38,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 40,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 38,
+        "to": 40,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 45,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 40,
+        "to": 45,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 47,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 45,
+        "to": 47,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 49,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 47,
+        "to": 49,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 51,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 49,
+        "to": 51,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 53,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 51,
+        "to": 53,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 55,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 53,
+        "to": 55,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 57,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 55,
+        "to": 57,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 59,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 57,
+        "to": 59,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 61,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 59,
+        "to": 61,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 63,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 61,
+        "to": 63,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 65,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 63,
+        "to": 65,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 67,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 65,
+        "to": 67,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 69,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 67,
+        "to": 69,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 71,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 69,
+        "to": 71,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 73,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 71,
+        "to": 73,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 75,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 73,
+        "to": 75,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 77,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 75,
+        "to": 77,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 79,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 77,
+        "to": 79,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 81,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 79,
+        "to": 81,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 83,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 81,
+        "to": 83,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 85,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 83,
+        "to": 85,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 87,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 85,
+        "to": 87,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 89,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 87,
+        "to": 89,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 91,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 89,
+        "to": 91,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 93,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 91,
+        "to": 93,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 95,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 93,
+        "to": 95,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 97,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 95,
+        "to": 97,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 99,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 97,
+        "to": 99,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 101,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 99,
+        "to": 101,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 103,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 101,
+        "to": 103,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 105,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 103,
+        "to": 105,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 107,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 105,
+        "to": 107,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 109,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 107,
+        "to": 109,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 111,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 109,
+        "to": 111,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 113,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 111,
+        "to": 113,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 115,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 113,
+        "to": 115,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 117,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 115,
+        "to": 117,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 119,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 117,
+        "to": 119,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 121,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 119,
+        "to": 121,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 123,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 121,
+        "to": 123,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 125,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 123,
+        "to": 125,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 127,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 125,
+        "to": 127,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 129,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 127,
+        "to": 129,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 131,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 129,
+        "to": 131,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 133,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 131,
+        "to": 133,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 135,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 133,
+        "to": 135,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 137,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 135,
+        "to": 137,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 139,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 137,
+        "to": 139,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 141,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 139,
+        "to": 141,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 143,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 141,
+        "to": 143,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 145,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 143,
+        "to": 145,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 147,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 145,
+        "to": 147,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 149,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 147,
+        "to": 149,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 151,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 149,
+        "to": 151,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 153,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 151,
+        "to": 153,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 155,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 153,
+        "to": 155,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 157,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 155,
+        "to": 157,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 159,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 157,
+        "to": 159,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 161,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 159,
+        "to": 161,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 163,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 161,
+        "to": 163,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 165,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 163,
+        "to": 165,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 167,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 165,
+        "to": 167,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 169,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 167,
+        "to": 169,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 171,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 169,
+        "to": 171,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 173,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 171,
+        "to": 173,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 175,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 173,
+        "to": 175,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 177,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 175,
+        "to": 177,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 179,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 177,
+        "to": 179,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 181,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 179,
+        "to": 181,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 183,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 181,
+        "to": 183,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 185,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 183,
+        "to": 185,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 2,
+        "to": 187,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 185,
+        "to": 187,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 187,
+        "to": 189,
+        "kind": "same_task_exit"
+      }
+    ],
+    "active_coroutines": 0,
+    "agent": {
+      "python": "3.14.3",
+      "process_id": 3914023,
+      "parent_process_id": 3914000,
+      "output_owner_process_id": 3914023,
+      "sample_interval_seconds": 0.005,
+      "stack_limit": 32,
+      "transparent_launch": true,
+      "remote_attach": false,
+      "seeded_tasks": 0,
+      "interpreter_id": 0,
+      "interpreter_count": 1,
+      "main_interpreter": true,
+      "coverage_unit": "one-interpreter"
+    },
+    "source_metadata": {
+      "selection": "Actual API-returned busy query Task identity matches independent get_stack snapshot. Exact runtime generation selected; full original graph retained.",
+      "resource_limit": "Task/Connection/failed Transaction links are explicit additional API observations, not inferred from generic Task ancestry."
+    }
+  },
+  "raw_manifest": {
+    "perf-out/github-issue-discovery/automatic/asyncpg-1386-first-check-20261126-b17/graph.json": "7eeff027d269e01abfb80c383f7ba6b57f6cf4e1882fe5aff0e916081e04d704",
+    "perf-out/github-issue-discovery/automatic/asyncpg-1386-first-check-20261126-b17/native-observation.json": "b807fba4703f989cca1c574a79483560d9317a4380ecc034abf2fb1b0c8c6f0f",
+    "perf-out/github-issue-discovery/automatic/asyncpg-1386-first-check-20261126-b17/run.log": "0e1a4b417767e5a4c8e0e0be793af7ffa550a834e5a2efa1a82bd5c6ba6edcbd",
+    "perf-out/github-issue-discovery/automatic/asyncpg-1386-first-check-20261126-b17/execution.json": "4099cad27e61a6aa7e5cf9ef01af8fcd2c83a59106a8f120b8af58e067722642",
+    "research/github-issue-discovery/asyncpg-1386-first-check-20261126-b17/check_once.py": "b6dec68d78fac8c5ed021665c631df9fdaf9468ebdab572f44aa6fb2799119d2",
+    "research/github-issue-discovery/asyncpg-1386-first-check-20261126-b17/run_once.py": "d1f9304ee59b4edef2a83e2c6e1c8689963eaae6b6c539011a671ba6a7bee899",
+    "agents/python/corostitch_agent.py": "91dda6510c613d27a13be1d71d8ce7595de7a648a5e4ba970a9ca098d2b96a9b"
+  }
+}
