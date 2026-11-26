@@ -1,0 +1,22 @@
+{
+  "changed_files": [
+    "agents/python/corostitch_agent.py",
+    "tests/test_corostitch_cli.py",
+    "README.md"
+  ],
+  "problem": "An inherited output path lets a later-exiting helper replace the parent capture.",
+  "pre_fix_regression": "Failed: parent_work creation missing from canonical graph after helper shutdown.",
+  "post_fix_tests": {
+    "passed": 8,
+    "failed": 0,
+    "command": "uv run --no-project --with pytest --python .tools/psycopg-1502-b12/bin/python python -B -m pytest -q tests/test_corostitch_cli.py"
+  },
+  "regressions": [
+    "Inherited helper writes a separate graph and preserves parent Task records.",
+    "Helper explicitly selecting a different output keeps its own canonical path."
+  ],
+  "scope": "Independent standard-library subprocess tests only; no LMCache workload replay.",
+  "patch": "data/python-helper-capture-fix-b13.patch",
+  "collector_before_sha256": "d7c5857287ec068178741f2ca847a0773cc7c04964cab96e4897ac4da3f2ff93",
+  "collector_after_sha256": "91dda6510c613d27a13be1d71d8ce7595de7a648a5e4ba970a9ca098d2b96a9b"
+}

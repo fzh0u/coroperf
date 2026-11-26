@@ -17,9 +17,9 @@
     "excluded_after_review": 53,
     "needs_review": 821,
     "skipped_review": 182,
-    "external_environment_required": 13,
+    "external_environment_required": 12,
     "already_catalogued": 11,
-    "component_reproduced": 3,
+    "component_reproduced": 4,
     "verified_case": 8
   },
   "coverage": [
@@ -40685,8 +40685,8 @@
       "async_signal": true,
       "observed_at": "2026-11-26T12:04:14+00:00",
       "heat": 4.7161,
-      "status": "external_environment_required",
-      "reason": "Runtime, fixture and capture not ready within first-check budget. Preserve compiled CPU source and generated protobuf modules; no more preparation in this pass. Native extensions compiled successfully at 149.95s. Bitmap import passed; generated protobuf import remained the first failure. Generator later exited 0, not yet re-imported. Zero issue workloads/captures.",
+      "status": "component_reproduced",
+      "reason": "One real CPU StorageManager batch at pinned source50a845b uses1MiB L1, the default0.5 retained-byte watermark and an attached native filesystem L2. An initial request and eight queued requests share eight64KiB resident chunks. After each read release, locked bytes are0 and the next queued request is admissible; its containing actual poll still returns after about500ms with no ready event. Median release-to-result is501.624ms. All nine native completions report8 L1/0 L2 hits. Process and storage/tempdir cleanup succeed;137.85s first check. The final CoroPerf graph is empty, so historical caller recovery is unverified and the selected catalogue stays134. An independent standard-library subprocess regression confirms that a later-exiting helper inheriting the same output can overwrite the parent graph. The collector now isolates helper outputs by PID; eight CLI tests pass. The historical empty file did not record its writer PID, so its exact writer is not proven. No LMCache replay was used to refill capture data.",
       "query_kinds": [
         "recent"
       ]
@@ -51899,9 +51899,9 @@
       "id": "lmcache--lmcache--6965",
       "title": "Queued MP prefetch waits for poll timeout after reader release",
       "url": "https://github.com/LMCache/LMCache/issues/6965",
-      "status": "external_environment_required",
-      "reason": "Runtime, fixture and capture not ready within first-check budget. Preserve compiled CPU source and generated protobuf modules; no more preparation in this pass. Native extensions compiled successfully at 149.95s. Bitmap import passed; generated protobuf import remained the first failure. Generator later exited 0, not yet re-imported. Zero issue workloads/captures.",
-      "reason_zh": "149.95 秒完成真实 CPU 原生扩展编译；Bitmap 导入通过。StorageManager 首次导入缺 protobuf，官方生成器随后退出 0，但未重试导入。场景和捕获未在首检时限内就绪；工作负载与 CoroPerf 捕获均为 0，本轮停止准备。",
+      "status": "component_reproduced",
+      "reason": "One real CPU StorageManager batch at pinned source50a845b uses1MiB L1, the default0.5 retained-byte watermark and an attached native filesystem L2. An initial request and eight queued requests share eight64KiB resident chunks. After each read release, locked bytes are0 and the next queued request is admissible; its containing actual poll still returns after about500ms with no ready event. Median release-to-result is501.624ms. All nine native completions report8 L1/0 L2 hits. Process and storage/tempdir cleanup succeed;137.85s first check. The final CoroPerf graph is empty, so historical caller recovery is unverified and the selected catalogue stays134. An independent standard-library subprocess regression confirms that a later-exiting helper inheriting the same output can overwrite the parent graph. The collector now isolates helper outputs by PID; eight CLI tests pass. The historical empty file did not record its writer PID, so its exact writer is not proven. No LMCache replay was used to refill capture data.",
+      "reason_zh": "固定源码50a845b 的一次真实 CPU StorageManager 工作负载使用1MiB L1、默认0.5保留字节水位和真实原生文件系统 L2。初始请求与八个排队请求共享八个64KiB驻留块。每次读取释放后锁定字节均为0，下一个排队请求已可准入，但覆盖该释放时刻的真实 poll 仍约500ms后才返回，且没有就绪事件。释放到结果的中位等待501.624ms；九次原生日志均为8个 L1 命中、0个 L2 命中。进程、存储管理器和临时目录正常清理，含准备首检137.85秒。最终 CoroPerf 图为空，历史 caller 恢复未验证，已选目录保持134。独立的标准库子进程回归确认，继承同一输出路径且较晚退出的辅助进程会覆盖主图；采集器现按 PID 隔离辅助输出，8项 CLI 测试通过。历史空图未记录写入 PID，不能直接确定具体写入者。没有重跑 LMCache 补数据。",
       "proposed_identity_join": [
         "external request/session ID",
         "controller-returned PrefetchRequestId",
@@ -51914,11 +51914,13 @@
       "coroperf_captures": 0,
       "native_reproductions": 0,
       "coroperf_validated": false,
-      "reviewed_at": "2026-11-26T13:08:39.833972+00:00",
+      "reviewed_at": "2026-11-26T13:28:31.360635+00:00",
       "sources": [
         "https://github.com/LMCache/LMCache/issues/6965"
       ],
-      "preparation_record": "data/lmcache-6965-preparation-b12.json"
+      "preparation_record": "data/lmcache-6965-preparation-b12.json",
+      "successful_component_runs": 1,
+      "evidence": "data/lmcache-6965-native-b13.json"
     },
     "lmcache--lmcache--5339": {
       "id": "lmcache--lmcache--5339",
@@ -52671,6 +52673,24 @@
       "summary": "The historical report loses generated-wrapper failure frames in a compiler process. Generic Task creation does not recover those frames. No generic ProcessPool replacement, CUDA workload or claimed reproduction.",
       "summary_zh": "历史报告丢失编译进程内生成 wrapper 的失败栈。通用 Task 创建记录不能还原这些帧；未用通用 ProcessPool 替代，未运行 CUDA 场景或声称复现。",
       "path": "data/pytorch-109610-screen-b12.json"
+    },
+    {
+      "id": "lmcache-6965-native-b13",
+      "checked_at": "2026-11-26T13:28:31.360635+00:00",
+      "title": "LMCache queued prefetch: native500ms delay, caller capture unverified",
+      "title_zh": "LMCache 排队预取：原生500ms延迟已复现，caller 捕获未验证",
+      "summary": "One real CPU StorageManager batch at pinned source50a845b uses1MiB L1, the default0.5 retained-byte watermark and an attached native filesystem L2. An initial request and eight queued requests share eight64KiB resident chunks. After each read release, locked bytes are0 and the next queued request is admissible; its containing actual poll still returns after about500ms with no ready event. Median release-to-result is501.624ms. All nine native completions report8 L1/0 L2 hits. Process and storage/tempdir cleanup succeed;137.85s first check. The final CoroPerf graph is empty, so historical caller recovery is unverified and the selected catalogue stays134. An independent standard-library subprocess regression confirms that a later-exiting helper inheriting the same output can overwrite the parent graph. The collector now isolates helper outputs by PID; eight CLI tests pass. The historical empty file did not record its writer PID, so its exact writer is not proven. No LMCache replay was used to refill capture data.",
+      "summary_zh": "固定源码50a845b 的一次真实 CPU StorageManager 工作负载使用1MiB L1、默认0.5保留字节水位和真实原生文件系统 L2。初始请求与八个排队请求共享八个64KiB驻留块。每次读取释放后锁定字节均为0，下一个排队请求已可准入，但覆盖该释放时刻的真实 poll 仍约500ms后才返回，且没有就绪事件。释放到结果的中位等待501.624ms；九次原生日志均为8个 L1 命中、0个 L2 命中。进程、存储管理器和临时目录正常清理，含准备首检137.85秒。最终 CoroPerf 图为空，历史 caller 恢复未验证，已选目录保持134。独立的标准库子进程回归确认，继承同一输出路径且较晚退出的辅助进程会覆盖主图；采集器现按 PID 隔离辅助输出，8项 CLI 测试通过。历史空图未记录写入 PID，不能直接确定具体写入者。没有重跑 LMCache 补数据。",
+      "path": "evidence/lmcache-6965-native-b13.html"
+    },
+    {
+      "id": "python-helper-capture-fix-b13",
+      "checked_at": "2026-11-26T13:28:31.360635+00:00",
+      "title": "Python helper output isolation: independent regression repaired",
+      "title_zh": "Python 辅助进程输出隔离：独立回归已修复",
+      "summary": "A helper inheriting the capture path can replace the parent graph at shutdown. Preserve canonical parent output, write PID-specific helper files, and retain process metadata. Eight CLI tests pass, including separate explicit child output. No LMCache replay or recovered lost caller is claimed.",
+      "summary_zh": "继承采集路径的辅助进程可在退出时覆盖主图。主进程保留原路径，辅助进程使用 PID 文件并记录进程身份；8项 CLI 测试通过，包含子进程显式另选路径的情形。未重跑 LMCache，也不声称找回已丢失 caller。",
+      "path": "data/python-helper-capture-fix-b13.json"
     }
   ],
   "deferred_registry": [
@@ -65391,23 +65411,15 @@
     "previous_observed_at": "2026-11-26T10:09:17+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T13:15:16+00:00",
+  "ledger_refreshed_at": "2026-11-26T13:28:31+00:00",
   "progress_summary": {
     "source": "report_update",
-    "assembled_at": "2026-11-26T13:15:16+00:00",
-    "comparison_reported_at": "2026-11-26T12:49:45+00:00",
+    "assembled_at": "2026-11-26T13:28:31+00:00",
+    "comparison_reported_at": "2026-11-26T13:18:02.813724+00:00",
     "verified_catalogue_entries": 134,
-    "new_verified_ids": [
-      "psycopg--psycopg--1502"
-    ],
+    "new_verified_ids": [],
     "review_decisions": 252,
-    "new_review_decision_ids": [
-      "lmcache--lmcache--5339",
-      "lmcache--lmcache--6965",
-      "psycopg--psycopg--1502",
-      "pytorch--pytorch--109610",
-      "sgl-project--sglang--40360"
-    ],
+    "new_review_decision_ids": [],
     "manual_holds": 89,
     "automatic_signal_holds": 977,
     "scope": "Catalogue and review totals; deltas compare with the most recent report whose Git publication succeeded. Search hits are not verified cases."

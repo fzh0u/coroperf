@@ -1,0 +1,594 @@
+{
+  "checked_at": "2026-11-26T13:28:31.360635+00:00",
+  "verification": {
+    "checked_at": "2026-11-26T13:26:44.198363+00:00",
+    "id": "lmcache--lmcache--6965",
+    "successful_issue_batches": 1,
+    "workload_replays_after_success": 0,
+    "process_exit_code": 0,
+    "cleanup": {
+      "storage_manager_closed": true,
+      "temporary_directory_removed": true
+    },
+    "first_check_seconds": 137.85,
+    "median_release_to_result_seconds": 0.5016237990000001,
+    "requests": 9,
+    "queued_requests": 8,
+    "source_commit": "50a845b715c9ac24b540399e1bc625ce9c2c4983",
+    "native_release_pending_poll_result_relations": [
+      {
+        "index": 1,
+        "prefetch_request_id": 1,
+        "external_request_id": "issue6965-1",
+        "task_object_id_hex": "0x75669022eec0",
+        "release_to_result_seconds": 0.451716618,
+        "containing_poll_seconds": 0.500557689,
+        "poll_return_ready": [],
+        "release_to_poll_return_seconds": 0.449773907,
+        "pending_after_release": true,
+        "can_admit_after_release": true
+      },
+      {
+        "index": 2,
+        "prefetch_request_id": 2,
+        "external_request_id": "issue6965-2",
+        "task_object_id_hex": "0x75669022ee00",
+        "release_to_result_seconds": 0.50167192,
+        "containing_poll_seconds": 0.500528816,
+        "poll_return_ready": [],
+        "release_to_poll_return_seconds": 0.499907613,
+        "pending_after_release": true,
+        "can_admit_after_release": true
+      },
+      {
+        "index": 3,
+        "prefetch_request_id": 3,
+        "external_request_id": "issue6965-3",
+        "task_object_id_hex": "0x75669022ef80",
+        "release_to_result_seconds": 0.503641672,
+        "containing_poll_seconds": 0.500528242,
+        "poll_return_ready": [],
+        "release_to_poll_return_seconds": 0.499925527,
+        "pending_after_release": true,
+        "can_admit_after_release": true
+      },
+      {
+        "index": 4,
+        "prefetch_request_id": 4,
+        "external_request_id": "issue6965-4",
+        "task_object_id_hex": "0x75669022f040",
+        "release_to_result_seconds": 0.5005676,
+        "containing_poll_seconds": 0.500365347,
+        "poll_return_ready": [],
+        "release_to_poll_return_seconds": 0.498185474,
+        "pending_after_release": true,
+        "can_admit_after_release": true
+      },
+      {
+        "index": 5,
+        "prefetch_request_id": 5,
+        "external_request_id": "issue6965-5",
+        "task_object_id_hex": "0x75669022f100",
+        "release_to_result_seconds": 0.501575678,
+        "containing_poll_seconds": 0.50052469,
+        "poll_return_ready": [],
+        "release_to_poll_return_seconds": 0.499308748,
+        "pending_after_release": true,
+        "can_admit_after_release": true
+      },
+      {
+        "index": 6,
+        "prefetch_request_id": 6,
+        "external_request_id": "issue6965-6",
+        "task_object_id_hex": "0x75669022f1c0",
+        "release_to_result_seconds": 0.502889973,
+        "containing_poll_seconds": 0.500541339,
+        "poll_return_ready": [],
+        "release_to_poll_return_seconds": 0.500009743,
+        "pending_after_release": true,
+        "can_admit_after_release": true
+      },
+      {
+        "index": 7,
+        "prefetch_request_id": 7,
+        "external_request_id": "issue6965-7",
+        "task_object_id_hex": "0x75669022f280",
+        "release_to_result_seconds": 0.501426084,
+        "containing_poll_seconds": 0.500526494,
+        "poll_return_ready": [],
+        "release_to_poll_return_seconds": 0.499342107,
+        "pending_after_release": true,
+        "can_admit_after_release": true
+      },
+      {
+        "index": 8,
+        "prefetch_request_id": 8,
+        "external_request_id": "issue6965-8",
+        "task_object_id_hex": "0x75669022f400",
+        "release_to_result_seconds": 0.502044433,
+        "containing_poll_seconds": 0.500532602,
+        "poll_return_ready": [],
+        "release_to_poll_return_seconds": 0.499760362,
+        "pending_after_release": true,
+        "can_admit_after_release": true
+      }
+    ],
+    "coroperf_graph_segments_saved": 0,
+    "coroperf_caller_recovery_verified": false,
+    "selected_case_added": false,
+    "capture_failure": {
+      "observed": "The final shared graph.json is empty despite explicit semantic calls in the parent workload.",
+      "independent_regression": "A standard-library-only parent/helper test fails before the collector fix: the helper graph overwrites the parent graph. After process-scoped output routing, all eight CLI tests pass.",
+      "historical_writer_identity": "Not captured. SharedMemory/resource_tracker startup is present in the executed source path, but the exact process that wrote the historical empty graph cannot be proven from saved metadata.",
+      "repair_scope": "Future inherited-output helpers get graph.pid-<PID>.json. No LMCache request was replayed to refill the lost graph."
+    },
+    "limitations": [
+      "Real resident-prefix CPU variant with native filesystem L2 attached; all observed fetch hits are L1. No disk-prefetch variant or serving/model/GPU traffic.",
+      "Native MP logs already carry external request and prefetch IDs. The tool has not verified additional historical caller value for this issue.",
+      "Targeted read-only line tracing and explicit API-returned handle/Task observations supplement generic capture. Timings describe this instrumented batch only.",
+      "Eight queued consumers form the single reported workload; there was no repeat batch, changed timeout/priority/version or fix comparison."
+    ]
+  },
+  "native_observation": {
+    "source_commit": "50a845b715c9ac24b540399e1bc625ce9c2c4983",
+    "torch": "2.13.0+cpu",
+    "watermark": 0.5,
+    "l1_bytes": 1048576,
+    "chunk_bytes": 65536,
+    "chunks": 8,
+    "l2_adapter": "NativeConnectorL2Adapter",
+    "poll_timeout_ms": 500,
+    "before_release": {
+      "locked_bytes": 524288,
+      "pending_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "can_admit": false
+    },
+    "owners": {
+      "0": {
+        "task_object_id_hex": "0x75669022e980",
+        "task_name": "kv-request-0",
+        "prefetch_request_id": 0,
+        "external_request_id": "issue6965-0",
+        "handle_object_id_hex": "0x7566901d4380"
+      },
+      "1": {
+        "task_object_id_hex": "0x75669022eec0",
+        "task_name": "kv-request-1",
+        "prefetch_request_id": 1,
+        "external_request_id": "issue6965-1",
+        "handle_object_id_hex": "0x7566901d5220"
+      },
+      "2": {
+        "task_object_id_hex": "0x75669022ee00",
+        "task_name": "kv-request-2",
+        "prefetch_request_id": 2,
+        "external_request_id": "issue6965-2",
+        "handle_object_id_hex": "0x7566901d5250"
+      },
+      "3": {
+        "task_object_id_hex": "0x75669022ef80",
+        "task_name": "kv-request-3",
+        "prefetch_request_id": 3,
+        "external_request_id": "issue6965-3",
+        "handle_object_id_hex": "0x7566901d5280"
+      },
+      "4": {
+        "task_object_id_hex": "0x75669022f040",
+        "task_name": "kv-request-4",
+        "prefetch_request_id": 4,
+        "external_request_id": "issue6965-4",
+        "handle_object_id_hex": "0x7566901d52b0"
+      },
+      "5": {
+        "task_object_id_hex": "0x75669022f100",
+        "task_name": "kv-request-5",
+        "prefetch_request_id": 5,
+        "external_request_id": "issue6965-5",
+        "handle_object_id_hex": "0x7566901d5340"
+      },
+      "6": {
+        "task_object_id_hex": "0x75669022f1c0",
+        "task_name": "kv-request-6",
+        "prefetch_request_id": 6,
+        "external_request_id": "issue6965-6",
+        "handle_object_id_hex": "0x7566901d53a0"
+      },
+      "7": {
+        "task_object_id_hex": "0x75669022f280",
+        "task_name": "kv-request-7",
+        "prefetch_request_id": 7,
+        "external_request_id": "issue6965-7",
+        "handle_object_id_hex": "0x7566901d5400"
+      },
+      "8": {
+        "task_object_id_hex": "0x75669022f400",
+        "task_name": "kv-request-8",
+        "prefetch_request_id": 8,
+        "external_request_id": "issue6965-8",
+        "handle_object_id_hex": "0x7566901d5460"
+      }
+    },
+    "transitions": [
+      {
+        "index": 1,
+        "released_ns": 1907882573263620,
+        "pending_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "locked_bytes_after_release": 0,
+        "can_admit_after_release": true,
+        "task_object_id_hex": "0x75669022eec0",
+        "native_task_stack": [
+          {
+            "function": "await_real_prefetch",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/check_once.py",
+            "line": 59
+          }
+        ],
+        "completed_ns": 1907883024980238,
+        "release_to_result_seconds": 0.451716618,
+        "prefix_hits": 8
+      },
+      {
+        "index": 2,
+        "released_ns": 1907883025138982,
+        "pending_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "locked_bytes_after_release": 0,
+        "can_admit_after_release": true,
+        "task_object_id_hex": "0x75669022ee00",
+        "native_task_stack": [
+          {
+            "function": "await_real_prefetch",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/check_once.py",
+            "line": 59
+          }
+        ],
+        "completed_ns": 1907883526810902,
+        "release_to_result_seconds": 0.50167192,
+        "prefix_hits": 8
+      },
+      {
+        "index": 3,
+        "released_ns": 1907883526967724,
+        "pending_ids": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "locked_bytes_after_release": 0,
+        "can_admit_after_release": true,
+        "task_object_id_hex": "0x75669022ef80",
+        "native_task_stack": [
+          {
+            "function": "await_real_prefetch",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/check_once.py",
+            "line": 59
+          }
+        ],
+        "completed_ns": 1907884030609396,
+        "release_to_result_seconds": 0.503641672,
+        "prefix_hits": 8
+      },
+      {
+        "index": 4,
+        "released_ns": 1907884030834334,
+        "pending_ids": [
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "locked_bytes_after_release": 0,
+        "can_admit_after_release": true,
+        "task_object_id_hex": "0x75669022f040",
+        "native_task_stack": [
+          {
+            "function": "await_real_prefetch",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/check_once.py",
+            "line": 59
+          }
+        ],
+        "completed_ns": 1907884531401934,
+        "release_to_result_seconds": 0.5005676,
+        "prefix_hits": 8
+      },
+      {
+        "index": 5,
+        "released_ns": 1907884531507121,
+        "pending_ids": [
+          5,
+          6,
+          7,
+          8
+        ],
+        "locked_bytes_after_release": 0,
+        "can_admit_after_release": true,
+        "task_object_id_hex": "0x75669022f100",
+        "native_task_stack": [
+          {
+            "function": "await_real_prefetch",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/check_once.py",
+            "line": 59
+          }
+        ],
+        "completed_ns": 1907885033082799,
+        "release_to_result_seconds": 0.501575678,
+        "prefix_hits": 8
+      },
+      {
+        "index": 6,
+        "released_ns": 1907885033267382,
+        "pending_ids": [
+          6,
+          7,
+          8
+        ],
+        "locked_bytes_after_release": 0,
+        "can_admit_after_release": true,
+        "task_object_id_hex": "0x75669022f1c0",
+        "native_task_stack": [
+          {
+            "function": "await_real_prefetch",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/check_once.py",
+            "line": 59
+          }
+        ],
+        "completed_ns": 1907885536157355,
+        "release_to_result_seconds": 0.502889973,
+        "prefix_hits": 8
+      },
+      {
+        "index": 7,
+        "released_ns": 1907885536306130,
+        "pending_ids": [
+          7,
+          8
+        ],
+        "locked_bytes_after_release": 0,
+        "can_admit_after_release": true,
+        "task_object_id_hex": "0x75669022f280",
+        "native_task_stack": [
+          {
+            "function": "await_real_prefetch",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/check_once.py",
+            "line": 59
+          }
+        ],
+        "completed_ns": 1907886037732214,
+        "release_to_result_seconds": 0.501426084,
+        "prefix_hits": 8
+      },
+      {
+        "index": 8,
+        "released_ns": 1907886037972525,
+        "pending_ids": [
+          8
+        ],
+        "locked_bytes_after_release": 0,
+        "can_admit_after_release": true,
+        "task_object_id_hex": "0x75669022f400",
+        "native_task_stack": [
+          {
+            "function": "await_real_prefetch",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/check_once.py",
+            "line": 59
+          }
+        ],
+        "completed_ns": 1907886540016958,
+        "release_to_result_seconds": 0.502044433,
+        "prefix_hits": 8
+      }
+    ],
+    "poll_events": [
+      {
+        "phase": "enter",
+        "time_ns": 1907882509071135
+      },
+      {
+        "phase": "return",
+        "time_ns": 1907882515856773,
+        "ready": [
+          [
+            18,
+            1
+          ]
+        ]
+      },
+      {
+        "phase": "enter",
+        "time_ns": 1907882517529959
+      },
+      {
+        "phase": "return",
+        "time_ns": 1907882522330832,
+        "ready": [
+          [
+            18,
+            1
+          ]
+        ]
+      },
+      {
+        "phase": "enter",
+        "time_ns": 1907882522479838
+      },
+      {
+        "phase": "return",
+        "time_ns": 1907883023037527,
+        "ready": []
+      },
+      {
+        "phase": "enter",
+        "time_ns": 1907883024517779
+      },
+      {
+        "phase": "return",
+        "time_ns": 1907883525046595,
+        "ready": []
+      },
+      {
+        "phase": "enter",
+        "time_ns": 1907883526365009
+      },
+      {
+        "phase": "return",
+        "time_ns": 1907884026893251,
+        "ready": []
+      },
+      {
+        "phase": "enter",
+        "time_ns": 1907884028654461
+      },
+      {
+        "phase": "return",
+        "time_ns": 1907884529019808,
+        "ready": []
+      },
+      {
+        "phase": "enter",
+        "time_ns": 1907884530291179
+      },
+      {
+        "phase": "return",
+        "time_ns": 1907885030815869,
+        "ready": []
+      },
+      {
+        "phase": "enter",
+        "time_ns": 1907885032735786
+      },
+      {
+        "phase": "return",
+        "time_ns": 1907885533277125,
+        "ready": []
+      },
+      {
+        "phase": "enter",
+        "time_ns": 1907885535121743
+      },
+      {
+        "phase": "return",
+        "time_ns": 1907886035648237,
+        "ready": []
+      },
+      {
+        "phase": "enter",
+        "time_ns": 1907886037200285
+      },
+      {
+        "phase": "return",
+        "time_ns": 1907886537732887,
+        "ready": []
+      },
+      {
+        "phase": "enter",
+        "time_ns": 1907886539499320
+      }
+    ],
+    "median_release_to_result_seconds": 0.5016237990000001,
+    "scope": "One real resident-prefix CPU StorageManager workload with attached native filesystem L2. Explicit API-returned handle/Task observer and targeted poll line observer supplement generic Task capture. No file-backed-prefetch variant, timeout change, fix or replay."
+  },
+  "execution": {
+    "command": [
+      "/data1/fzhou/coro/.tools/lmcache-6965-b12/bin/python",
+      "-B",
+      "/data1/fzhou/coro/research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/check_once.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 137.85,
+    "process_attempts": 1
+  },
+  "cleanup": {
+    "storage_manager_closed": true,
+    "temporary_directory_removed": true
+  },
+  "native_log": "\u001b[32;20m[2026-11-26 21:21:02,792] LMCache INFO:\u001b[0m torch_dev=StubCPUDevice(device_type=cpu), torch_device_type=cpu \u001b[3m(_device_detect.py:311:lmcache.v1.platform._device_detect)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:03,109] LMCache INFO:\u001b[0m Starting L1EvictionController... \u001b[3m(eviction_controller.py:53:lmcache.v1.distributed.storage_controllers.eviction_controller)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:03,114] LMCache INFO:\u001b[0m Created FS native L2 adapter: /tmp/coroperf-lmcache6965-7k7qb_hg (workers=1, odirect=False, read_ahead=None, num_read_workers=1, read_max_bytes_in_flight=1610612736) \u001b[3m(fs_native_l2_adapter.py:231:lmcache.v1.distributed.l2_adapters.fs_native_l2_adapter)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:03,115] LMCache INFO:\u001b[0m L2 adapter 0 (fs_native) uses L1 _default \u001b[3m(storage_manager.py:1634:lmcache.v1.distributed.storage_manager)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:03,115] LMCache INFO:\u001b[0m Starting L2EvictionController... \u001b[3m(eviction_controller.py:250:lmcache.v1.distributed.storage_controllers.eviction_controller)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:03,115] LMCache INFO:\u001b[0m Starting StoreController... \u001b[3m(store_controller.py:346:lmcache.v1.distributed.storage_controllers.store_controller)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:03,116] LMCache INFO:\u001b[0m Starting PrefetchController... \u001b[3m(prefetch_controller.py:878:lmcache.v1.distributed.storage_controllers.prefetch_controller)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:03,128] LMCache INFO:\u001b[0m Prefetch request completed (L1+L2): 8/8 retained keys (8 L1, 0 L2) in 5.4 ms (external_request_id=issue6965-0, prefetch_request_id=0) \u001b[3m(storage_manager.py:628:lmcache.v1.distributed.storage_manager)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:03,632] LMCache INFO:\u001b[0m Prefetch request completed (L1+L2): 8/8 retained keys (8 L1, 0 L2) in 502.5 ms (external_request_id=issue6965-1, prefetch_request_id=1) \u001b[3m(storage_manager.py:628:lmcache.v1.distributed.storage_manager)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:04,134] LMCache INFO:\u001b[0m Prefetch request completed (L1+L2): 8/8 retained keys (8 L1, 0 L2) in 1004.3 ms (external_request_id=issue6965-2, prefetch_request_id=2) \u001b[3m(storage_manager.py:628:lmcache.v1.distributed.storage_manager)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:04,637] LMCache INFO:\u001b[0m Prefetch request completed (L1+L2): 8/8 retained keys (8 L1, 0 L2) in 1507.8 ms (external_request_id=issue6965-3, prefetch_request_id=3) \u001b[3m(storage_manager.py:628:lmcache.v1.distributed.storage_manager)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:05,138] LMCache INFO:\u001b[0m Prefetch request completed (L1+L2): 8/8 retained keys (8 L1, 0 L2) in 2009.0 ms (external_request_id=issue6965-4, prefetch_request_id=4) \u001b[3m(storage_manager.py:628:lmcache.v1.distributed.storage_manager)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:05,640] LMCache INFO:\u001b[0m Prefetch request completed (L1+L2): 8/8 retained keys (8 L1, 0 L2) in 2510.6 ms (external_request_id=issue6965-5, prefetch_request_id=5) \u001b[3m(storage_manager.py:628:lmcache.v1.distributed.storage_manager)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:06,143] LMCache INFO:\u001b[0m Prefetch request completed (L1+L2): 8/8 retained keys (8 L1, 0 L2) in 3013.3 ms (external_request_id=issue6965-6, prefetch_request_id=6) \u001b[3m(storage_manager.py:628:lmcache.v1.distributed.storage_manager)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:06,645] LMCache INFO:\u001b[0m Prefetch request completed (L1+L2): 8/8 retained keys (8 L1, 0 L2) in 3515.0 ms (external_request_id=issue6965-7, prefetch_request_id=7) \u001b[3m(storage_manager.py:628:lmcache.v1.distributed.storage_manager)\u001b[0m\n\u001b[32;20m[2026-11-26 21:21:07,147] LMCache INFO:\u001b[0m Prefetch request completed (L1+L2): 8/8 retained keys (8 L1, 0 L2) in 4017.3 ms (external_request_id=issue6965-8, prefetch_request_id=8) \u001b[3m(storage_manager.py:628:lmcache.v1.distributed.storage_manager)\u001b[0m\n{\"median_seconds\": 0.5016237990000001, \"requests\": 9, \"before_release\": {\"locked_bytes\": 524288, \"pending_ids\": [1, 2, 3, 4, 5, 6, 7, 8], \"can_admit\": false}}\n",
+  "saved_coroperf_graph": {
+    "schema_version": 1,
+    "language": "python",
+    "runtime": "asyncio-sitecustomize",
+    "frame_order": "root_to_leaf",
+    "producer": {
+      "name": "asyncio-frame-inspection",
+      "identity_kind": "runtime-token-generation",
+      "continuation_storage": "stackless-state",
+      "frame_order": "root_to_leaf",
+      "clock": "monotonic-ns",
+      "observation_kind": "task_snapshot"
+    },
+    "segments": [],
+    "edges": [],
+    "active_coroutines": 0,
+    "agent": {
+      "python": "3.12.4",
+      "sample_interval_seconds": 0.02,
+      "stack_limit": 32,
+      "transparent_launch": true,
+      "remote_attach": false,
+      "seeded_tasks": 0,
+      "interpreter_id": 0,
+      "interpreter_count": 1,
+      "main_interpreter": true,
+      "coverage_unit": "one-interpreter"
+    }
+  },
+  "raw_manifest": {
+    "perf-out/github-issue-discovery/automatic/lmcache-6965-first-check-20261126-b13/graph.json": "4afdee05e2db5d83ec091f2e7d3a08bb238ca6ba8427d99453a3bd459aaa7ea1",
+    "perf-out/github-issue-discovery/automatic/lmcache-6965-first-check-20261126-b13/native-observation.json": "4b1090912d9b074feff2564367c7240a5fedaeccb9a6819eb58d588ec84b3bf1",
+    "perf-out/github-issue-discovery/automatic/lmcache-6965-first-check-20261126-b13/run.log": "af993393819dd7468a6e8891b369c78ea44b423ad9d6cb061fce3462f3c9fa59",
+    "perf-out/github-issue-discovery/automatic/lmcache-6965-first-check-20261126-b13/execution.json": "09158e23341778c2d42b4449bddb12508bc3988e360294f7bd646df8d9dc478b",
+    "perf-out/github-issue-discovery/automatic/lmcache-6965-first-check-20261126-b13/cleanup.json": "cff45a7132e368757a11a08d8a9ffdca76e7ceeb52eef7cfaf38a3d47ca769cf",
+    "research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/check_once.py": "08cc8b3b8f150059b8918f96c90f1a6769484771622756d3c3fccf90aec220b7",
+    "research/github-issue-discovery/lmcache-6965-first-check-20261126-b13/agent-at-capture.py": "d7c5857287ec068178741f2ca847a0773cc7c04964cab96e4897ac4da3f2ff93"
+  },
+  "collector_repair": {
+    "changed_files": [
+      "agents/python/corostitch_agent.py",
+      "tests/test_corostitch_cli.py",
+      "README.md"
+    ],
+    "problem": "An inherited output path lets a later-exiting helper replace the parent capture.",
+    "pre_fix_regression": "Failed: parent_work creation missing from canonical graph after helper shutdown.",
+    "post_fix_tests": {
+      "passed": 8,
+      "failed": 0,
+      "command": "uv run --no-project --with pytest --python .tools/psycopg-1502-b12/bin/python python -B -m pytest -q tests/test_corostitch_cli.py"
+    },
+    "regressions": [
+      "Inherited helper writes a separate graph and preserves parent Task records.",
+      "Helper explicitly selecting a different output keeps its own canonical path."
+    ],
+    "scope": "Independent standard-library subprocess tests only; no LMCache workload replay.",
+    "patch": "data/python-helper-capture-fix-b13.patch",
+    "collector_before_sha256": "d7c5857287ec068178741f2ca847a0773cc7c04964cab96e4897ac4da3f2ff93",
+    "collector_after_sha256": "91dda6510c613d27a13be1d71d8ce7595de7a648a5e4ba970a9ca098d2b96a9b"
+  }
+}

@@ -1,0 +1,146 @@
+--- a/agents/python/corostitch_agent.py
++++ b/agents/python/corostitch_agent.py
+@@ -16,6 +16,13 @@
+ 
+ 
+ OUTPUT = Path(os.environ.get("COROSTITCH_OUT", "perf-out/corostitch/python-transparent/graph.json"))
++# Re-executed helpers inherit the output setting. Keep the original launch's
++# canonical file; helpers write separate process-scoped captures beside it.
++_output_key = str(OUTPUT.resolve())
++if os.environ.get("COROSTITCH_OUTPUT_OWNER_PATH") != _output_key:
++    os.environ["COROSTITCH_OUTPUT_OWNER_PATH"] = _output_key
++    os.environ["COROSTITCH_OUTPUT_OWNER_PID"] = str(os.getpid())
++_output_owner_pid = int(os.environ["COROSTITCH_OUTPUT_OWNER_PID"])
+ SAMPLE_INTERVAL = max(float(os.environ.get("COROSTITCH_SAMPLE_INTERVAL", "0.2")), 0.001)
+ STACK_LIMIT = max(int(os.environ.get("COROSTITCH_STACK_LIMIT", "32")), 1)
+ EXCEPTION_FILES = {str(Path(p).resolve()) for p in
+@@ -318,6 +325,10 @@
+ 
+ 
+ def _write_output() -> None:
++    process_id = os.getpid()
++    output = OUTPUT if process_id == _output_owner_pid else OUTPUT.with_name(
++        f"{OUTPUT.stem}.pid-{process_id}{OUTPUT.suffix}"
++    )
+     interpreter_id = 0
+     interpreter_count = 1
+     main_interpreter = True
+@@ -342,6 +353,9 @@
+             "active_coroutines": len(_active),
+             "agent": {
+                 "python": sys.version.split()[0],
++                "process_id": process_id,
++                "parent_process_id": os.getppid(),
++                "output_owner_process_id": _output_owner_pid,
+                 "sample_interval_seconds": SAMPLE_INTERVAL,
+                 "stack_limit": STACK_LIMIT,
+                 "transparent_launch": not _remote_attach,
+@@ -355,10 +369,10 @@
+         }
+         if CAPTURE_UNAWAITED:
+             graph["agent"]["unawaited_capture"] = _unawaited_enabled
+-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+-    temporary = OUTPUT.with_suffix(OUTPUT.suffix + ".tmp")
++    output.parent.mkdir(parents=True, exist_ok=True)
++    temporary = output.with_suffix(output.suffix + ".tmp")
+     temporary.write_text(json.dumps(graph, indent=2) + "\n", encoding="utf-8")
+-    temporary.replace(OUTPUT)
++    temporary.replace(output)
+ 
+ 
+ def install() -> None:
+--- a/tests/test_corostitch_cli.py
++++ b/tests/test_corostitch_cli.py
+@@ -40,6 +40,78 @@
+     assert "assembly-attach" in result.stdout
+     assert "native-runtime" in result.stdout
+     assert "async-hooks-ebpf" in result.stdout
++
++
++def test_python_helper_exit_does_not_overwrite_parent_capture(tmp_path):
++    program = tmp_path / "parent.py"
++    program.write_text('''\
++import asyncio
++import json
++import os
++import subprocess
++import sys
++
++helper_code = """
++import asyncio
++import sys
++sys.stdin.read()
++async def helper_work():
++    await asyncio.sleep(.01)
++asyncio.run(helper_work())
++"""
++helper = subprocess.Popen([sys.executable, '-B', '-c', helper_code], stdin=subprocess.PIPE)
++async def parent_work():
++    await asyncio.sleep(.02)
++asyncio.run(parent_work())
++print(json.dumps({'parent_pid': os.getpid(), 'helper_pid': helper.pid}), flush=True)
++# Interpreter shutdown closes the pipe after the parent's capture is flushed.
++# The inherited helper then flushes its own, different Task graph.
++''')
++    capture = tmp_path / "graph.json"
++    env = dict(os.environ, PYTHONPATH=str(ROOT / "agents/python"),
++               COROSTITCH_ENABLE="1", COROSTITCH_OUT=str(capture),
++               COROSTITCH_SAMPLE_INTERVAL=".005")
++    env.pop("COROSTITCH_OUTPUT_OWNER_PID", None)
++    result = subprocess.run([sys.executable, '-B', str(program)], env=env,
++                            check=True, capture_output=True, text=True, timeout=10)
++    pids = json.loads(result.stdout)
++    parent = json.loads(capture.read_text())
++    assert any(s.get('function_name') == 'parent_work' for s in parent['segments'])
++    assert not any(s.get('function_name') == 'helper_work' for s in parent['segments'])
++    child_file = tmp_path / f"graph.pid-{pids['helper_pid']}.json"
++    child = json.loads(child_file.read_text())
++    assert any(s.get('function_name') == 'helper_work' for s in child['segments'])
++    assert parent['agent']['process_id'] == pids['parent_pid']
++    assert child['agent']['process_id'] == pids['helper_pid']
++    assert parent['agent']['output_owner_process_id'] == child['agent']['output_owner_process_id'] == pids['parent_pid']
++
++
++def test_python_helper_with_its_own_output_keeps_the_canonical_path(tmp_path):
++    child_output = tmp_path / 'child.json'
++    program = tmp_path / 'separate-output.py'
++    program.write_text('''\
++import asyncio
++import json
++import os
++import subprocess
++import sys
++child_env = dict(os.environ, COROSTITCH_OUT=sys.argv[1])
++child = subprocess.run([sys.executable, '-B', '-c',
++    'import asyncio,os; asyncio.run(asyncio.sleep(.01)); print(os.getpid())'],
++    env=child_env, check=True, capture_output=True, text=True)
++asyncio.run(asyncio.sleep(.01))
++print(json.dumps({'parent_pid': os.getpid(), 'helper_pid': int(child.stdout)}))
++''')
++    capture = tmp_path / 'parent.json'
++    env = dict(os.environ, PYTHONPATH=str(ROOT / 'agents/python'),
++               COROSTITCH_ENABLE='1', COROSTITCH_OUT=str(capture))
++    result = subprocess.run([sys.executable, '-B', str(program), str(child_output)],
++                            env=env, check=True, capture_output=True, text=True, timeout=10)
++    pids = json.loads(result.stdout)
++    for path, pid in [(capture, pids['parent_pid']), (child_output, pids['helper_pid'])]:
++        graph = json.loads(path.read_text())
++        assert graph['segments']
++        assert graph['agent']['process_id'] == graph['agent']['output_owner_process_id'] == pid
+ 
+ 
+ def test_transparent_python_launch_closes_exception_and_cancel_tasks(tmp_path):
+--- a/README.md
++++ b/README.md
+@@ -256,6 +256,11 @@
+ CPython 的创建栈记录，沿用 Python 的警告过滤规则，并在退出时回收不可达循环后
+ 保存结果。分配栈在警告发出时从同一对象读取，实际分配时刻未知。
+ 
++Python 辅助进程继承同一个采集输出路径时，主进程保留 `graph.json`，
++辅助进程分别写入 `graph.pid-<PID>.json`，避免退出时互相覆盖。每份图记录
++进程身份，仍按单个解释器分析；若辅助进程显式指定另一个输出路径，则使用
++该路径保存自己的图。
++
+ 系统级安装：`sudo ./scripts/install.sh --prefix /usr/local`；同一命令加
+ `--uninstall` 可以完整移除。
+ 
