@@ -15,9 +15,9 @@
   "counts": {
     "no_async_signal": 420,
     "excluded_after_review": 55,
-    "needs_review": 825,
+    "needs_review": 824,
     "skipped_review": 171,
-    "external_environment_required": 15,
+    "external_environment_required": 16,
     "already_catalogued": 10,
     "component_reproduced": 5,
     "verified_case": 13
@@ -41035,12 +41035,11 @@
       "async_signal": true,
       "observed_at": "2026-11-26T14:13:42+00:00",
       "heat": 4.2824,
-      "status": "needs_review",
-      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "status": "external_environment_required",
+      "reason": "The observing harness incorrectly cast LambdaMonoSubscriber to AtomicReference. Native ClassCastException occurs in unwrapSubscription before disposable.dispose(), so the reported cancellation/discard path has not been tested. Finally disposes the scheduler and the supplier returns during cleanup. Collector reports a deadline failure; its VM-death/process-exit handling does not distinguish a shutdown race from a genuine live deadline. Target normal exit is unrecorded; no matching target/collector process remains. Preserve and stop this pass, not a successful issue reproduction.",
       "query_kinds": [
         "recent"
-      ],
-      "coverage_rank": 818
+      ]
     },
     {
       "id": "reactor--reactor-core--4398",
@@ -41065,7 +41064,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 819
+      "coverage_rank": 818
     },
     {
       "id": "reactor--reactor-core--4399",
@@ -41090,7 +41089,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 820
+      "coverage_rank": 819
     },
     {
       "id": "reactor--reactor-core--4406",
@@ -41115,7 +41114,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 821
+      "coverage_rank": 820
     },
     {
       "id": "reactor--reactor-core--4415",
@@ -41142,7 +41141,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 822
+      "coverage_rank": 821
     },
     {
       "id": "reactor--reactor-core--4442",
@@ -41167,7 +41166,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 823
+      "coverage_rank": 822
     },
     {
       "id": "reactor--reactor-core--4459",
@@ -41192,7 +41191,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 824
+      "coverage_rank": 823
     },
     {
       "id": "reactor--reactor-core--4467",
@@ -41217,7 +41216,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 825
+      "coverage_rank": 824
     },
     {
       "id": "reactor--reactor-core--4478",
@@ -48673,7 +48672,6 @@
     "reactor--reactor-core--4483",
     "lmcache--lmcache--6934",
     "reactor--reactor-core--4285",
-    "reactor--reactor-core--4397",
     "reactor--reactor-core--4398",
     "reactor--reactor-core--4399",
     "reactor--reactor-core--4406",
@@ -51632,6 +51630,18 @@
       "evidence": "data/asyncpg-1397-native-b28.json",
       "partial_connect_Task_caller_verified": true,
       "warning_Future_ownership_verified": false
+    },
+    "reactor--reactor-core--4397": {
+      "status": "external_environment_required",
+      "reviewed_at": "2026-11-26T16:10:00.318322+00:00",
+      "reason": "The observing harness incorrectly cast LambdaMonoSubscriber to AtomicReference. Native ClassCastException occurs in unwrapSubscription before disposable.dispose(), so the reported cancellation/discard path has not been tested. Finally disposes the scheduler and the supplier returns during cleanup. Collector reports a deadline failure; its VM-death/process-exit handling does not distinguish a shutdown race from a genuine live deadline. Target normal exit is unrecorded; no matching target/collector process remains. Preserve and stop this pass, not a successful issue reproduction.",
+      "reason_zh": "观察程序错误地把LambdaMonoSubscriber转成AtomicReference；unwrapSubscription抛出ClassCastException，尚未执行disposable.dispose()，因此未测试报告中的取消/discard路径。finally处置scheduler，supplier在清理中返回。采集器报deadline失败，其VM死亡/进程退出处理未区分关停时序竞争与真实超时。没有目标正常退出记录，复核无相关目标或采集进程残留。保留并停止本轮，不能当成问题复现成功。",
+      "sources": [
+        "https://github.com/reactor/reactor-core/issues/4397"
+      ],
+      "evidence": "data/reactor-4397-observer-b29.json",
+      "successful_component_runs": 0,
+      "coroperf_validated": false
     }
   },
   "supplemental_records": [
@@ -52489,6 +52499,15 @@
       "summary": "One exact asyncpg0.32.0/CPython3.13.1 original silent TCP cancellation sweep stops on the first matching unretrieved Future ConnectionError atstep4, after3cleantrials. Targetexit0, listener/writer/serverTask cleanup verified; preparation/run134.06s. Future warning ID0x770a639f8320 is native. Generic capture separately recovers launch_ssl_connect for cancelled Taskg12 via creation71→cancellation77;6focused observations are attributed. The Task address was reused from step1/g3 and correctly separated. Future allocations=[]: the observer tested its direct caller, but TLSUpgradeProto creates on_data through _create_future. No actual Future→Task allocation bridge was captured. Full warning attribution remains unverified; no selected case or replay.",
       "summary_zh": "准确asyncpg0.32.0/CPython3.13.1的原始静默TCP取消扫描一次，在第4步首次出现未取回Future ConnectionError后停止，前3步无该告警。目标退出0，监听器/写端/服务Task清理确认，含准备运行134.06秒。原生告警Future ID为0x770a639f8320。通用采集另外通过创建71→取消77恢复被取消Taskg12的launch_ssl_connect，聚焦6个观察均归因。Task地址曾被step1/g3使用，分析正确区分。Future分配记录为空：探针仅检查直接调用者，但TLSUpgradeProto经_create_future创建on_data，因此没有捕获真实Future→Task分配关联。完整告警归因仍未验证，不新增案例、不重放。",
       "path": "evidence/asyncpg-1397-native-b28.html"
+    },
+    {
+      "id": "reactor-4397-observer-b29",
+      "checked_at": "2026-11-26T16:10:48.213787+00:00",
+      "title": "Reactor discard check: observing cast fails before cancellation",
+      "title_zh": "Reactor discard检查：观察器类型转换在取消前失败",
+      "summary": "One3.8.7/JDK21.0.1 attempt fails at an observing LambdaMonoSubscriber→AtomicReference cast, before reported disposable.dispose. No WAIT/CANCEL/ORACLE/NATIVE result; cleanup-return state2 is not the issue reproduction. Collector exits1; raw streams preserved, no remaining target/collector.161.30s; correct read-only Scannable parent access and process-exit supervision before a fresh later-batch async check.",
+      "summary_zh": "一次3.8.7/JDK21.0.1尝试在观察器把LambdaMonoSubscriber转成AtomicReference时失败，尚未执行报告中的disposable.dispose。无WAIT/CANCEL/ORACLE/NATIVE结果，清理中的返回state2不能当成问题复现。采集器退出1，流式原始输出保留，无目标/采集进程残留。161.30秒；后续先修正只读Scannable父链读取和进程退出监督，再按新批次检查原异步场景。",
+      "path": "data/reactor-4397-observer-b29.json"
     }
   ],
   "deferred_registry": [
@@ -65711,16 +65730,17 @@
     "previous_observed_at": "2026-11-26T12:18:46+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T16:01:48+00:00",
+  "ledger_refreshed_at": "2026-11-26T16:11:08+00:00",
   "progress_summary": {
     "source": "report_update",
-    "assembled_at": "2026-11-26T16:01:48+00:00",
+    "assembled_at": "2026-11-26T16:11:08+00:00",
     "comparison_reported_at": "2026-11-26T15:53:54.755401+00:00",
     "verified_catalogue_entries": 139,
     "new_verified_ids": [],
-    "review_decisions": 264,
+    "review_decisions": 265,
     "new_review_decision_ids": [
-      "magicstack--asyncpg--1397"
+      "magicstack--asyncpg--1397",
+      "reactor--reactor-core--4397"
     ],
     "manual_holds": 91,
     "automatic_signal_holds": 1017,

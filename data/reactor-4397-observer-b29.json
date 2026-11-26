@@ -1,0 +1,87 @@
+{
+  "id": "reactor--reactor-core--4397",
+  "checked_at": "2026-11-26T16:10:00.318322+00:00",
+  "status": "observer_failed_before_reported_cancellation",
+  "execution": {
+    "issue_id": "reactor--reactor-core--4397",
+    "workload_executions": 1,
+    "build_attempts": 1,
+    "build_exit_code": 0,
+    "collector_exit_code": 1,
+    "first_check_seconds": 161.30487608909607,
+    "finished_at": "2026-11-26T16:06:46.506781+00:00"
+  },
+  "target_launches": 1,
+  "successful_issue_workloads": 0,
+  "native_issue_reproduced": false,
+  "coroperf_caller_recovery_verified": false,
+  "selected_case_added": false,
+  "first_attempt_seconds": 161.30487608909607,
+  "reactor_version": "3.8.7",
+  "jdk_path": ".tools/affected-jdk21/jdk-21.0.1+12",
+  "native_stdout": "CLEANUP schedulerDisposed=true\n",
+  "native_stderr": "Exception in thread \"main\" java.lang.ClassCastException: class reactor.core.publisher.LambdaMonoSubscriber cannot be cast to class java.util.concurrent.atomic.AtomicReference (reactor.core.publisher.LambdaMonoSubscriber is in unnamed module of loader 'app'; java.util.concurrent.atomic.AtomicReference is in module java.base of loader 'bootstrap')\n\tat DiscardReplay.unwrapSubscription(DiscardReplay.java:24)\n\tat DiscardReplay.main(DiscardReplay.java:39)\n",
+  "collector_stderr": "Exception in thread \"main\" java.lang.IllegalStateException: Owned target exceeded collector deadline\n\tat Capture.main(Capture.java:48)\n",
+  "events": [
+    {
+      "kind": "PROCESS",
+      "fields": [
+        "3937617"
+      ]
+    },
+    {
+      "kind": "CREATE",
+      "fields": [
+        "430",
+        "cmVhY3Rvci5jb3JlLnB1Ymxpc2hlci5GbHV4U3Vic2NyaWJlT25DYWxsYWJsZSRDYWxsYWJsZVN1YnNjcmliZU9uU3Vic2NyaXB0aW9uLjxpbml0PihGbHV4U3Vic2NyaWJlT25DYWxsYWJsZS5qYXZhOjEyNikKcmVhY3Rvci5jb3JlLnB1Ymxpc2hlci5Nb25vU3Vic2NyaWJlT25DYWxsYWJsZS5zdWJzY3JpYmUoTW9ub1N1YnNjcmliZU9uQ2FsbGFibGUuamF2YTo0OCkKcmVhY3Rvci5jb3JlLnB1Ymxpc2hlci5Nb25vLnN1YnNjcmliZShNb25vLmphdmE6NDU2OSkKcmVhY3Rvci5jb3JlLnB1Ymxpc2hlci5Nb25vLnN1YnNjcmliZVdpdGgoTW9uby5qYXZhOjQ2MzQpCnJlYWN0b3IuY29yZS5wdWJsaXNoZXIuTW9uby5zdWJzY3JpYmUoTW9uby5qYXZhOjQ1MzUpCnJlYWN0b3IuY29yZS5wdWJsaXNoZXIuTW9uby5zdWJzY3JpYmUoTW9uby5qYXZhOjQ0NzEpCnJlYWN0b3IuY29yZS5wdWJsaXNoZXIuTW9uby5zdWJzY3JpYmUoTW9uby5qYXZhOjQ0MTgpCkRpc2NhcmRSZXBsYXkubGF1bmNoRGVmZXJyZWRTdXBwbGllcihEaXNjYXJkUmVwbGF5LmphdmE6MjEpCkRpc2NhcmRSZXBsYXkubWFpbihEaXNjYXJkUmVwbGF5LmphdmE6Mzcp"
+      ],
+      "stack": [
+        "reactor.core.publisher.FluxSubscribeOnCallable$CallableSubscribeOnSubscription.<init>(FluxSubscribeOnCallable.java:126)",
+        "reactor.core.publisher.MonoSubscribeOnCallable.subscribe(MonoSubscribeOnCallable.java:48)",
+        "reactor.core.publisher.Mono.subscribe(Mono.java:4569)",
+        "reactor.core.publisher.Mono.subscribeWith(Mono.java:4634)",
+        "reactor.core.publisher.Mono.subscribe(Mono.java:4535)",
+        "reactor.core.publisher.Mono.subscribe(Mono.java:4471)",
+        "reactor.core.publisher.Mono.subscribe(Mono.java:4418)",
+        "DiscardReplay.launchDeferredSupplier(DiscardReplay.java:21)",
+        "DiscardReplay.main(DiscardReplay.java:37)"
+      ]
+    },
+    {
+      "kind": "RETURN",
+      "fields": [
+        "430",
+        "2"
+      ]
+    }
+  ],
+  "post_cleanup_processes": [],
+  "reason": "The observing harness incorrectly cast LambdaMonoSubscriber to AtomicReference. Native ClassCastException occurs in unwrapSubscription before disposable.dispose(), so the reported cancellation/discard path has not been tested. Finally disposes the scheduler and the supplier returns during cleanup. Collector reports a deadline failure; its VM-death/process-exit handling does not distinguish a shutdown race from a genuine live deadline. Target normal exit is unrecorded; no matching target/collector process remains. Preserve and stop this pass, not a successful issue reproduction.",
+  "reason_zh": "观察程序错误地把LambdaMonoSubscriber转成AtomicReference；unwrapSubscription抛出ClassCastException，尚未执行disposable.dispose()，因此未测试报告中的取消/discard路径。finally处置scheduler，supplier在清理中返回。采集器报deadline失败，其VM死亡/进程退出处理未区分关停时序竞争与真实超时。没有目标正常退出记录，复核无相关目标或采集进程残留。保留并停止本轮，不能当成问题复现成功。",
+  "source_correction": {
+    "LambdaMonoSubscriber_is_not_AtomicReference": true,
+    "read_only_parent_API_source": "\t}\n\n\t@Override\n\tpublic @Nullable Object scanUnsafe(Attr key) {\n\t\tif (key == Attr.PARENT) {\n\t\t\treturn subscription;\n\t\t}\n\t\tif (key == Attr.PREFETCH) {\n\t\t\treturn Integer.MAX_VALUE;\n\t\t}\n\t\tif (key == Attr.TERMINATED || key == Attr.CANCELLED) {",
+    "next_observer": "Use the real Scannable PARENT chain with type checks before cancelling; do not retain an AtomicReference assumption. Preserve the original asynchronous supplier/latch scenario.",
+    "collector_followup": "After VMDeath/disconnect, wait briefly for owned OS process exit before labeling a deadline; always preserve streamed output and terminate only owned process/session on actual timeout.",
+    "correction_executed": false
+  },
+  "limitations": [
+    "Native cleanup-return state2 is not the reported subscription cancel/discard failure. No CANCEL, WAIT, ORACLE or NATIVE result was captured.",
+    "One failed target launch, not a successful reproduction. The synchronous no-request variant and other operator variants were not run.",
+    "Reported context mentions JDK21.0.12/RHEL8; available attempted runtime is JDK21.0.1/Linux x86_64. No full fuzzer or production-context reproduction is claimed."
+  ],
+  "sources": [
+    "https://github.com/reactor/reactor-core/issues/4397"
+  ],
+  "raw_manifest": {
+    "research/github-issue-discovery/reactor-4397-first-check-20261127-b29/DiscardReplay.java": "73cba351e399af782aaa96c5a131b5174fe2d35996d61b7ff3a152ad16a8c9af",
+    "research/github-issue-discovery/reactor-4397-first-check-20261127-b29/Capture.java": "aea9b32802aaa1df3e86a14157114d674b50d943042a98cf52c2bf73c7e776b4",
+    "research/github-issue-discovery/reactor-4397-first-check-20261127-b29/run_once.py": "dca4ddc2e61470d369fd8cfe4e04e3d5bc2b3352017c759fa586b4d55456e01d",
+    "research/github-issue-discovery/reactor-4397-first-check-20261127-b29/started.json": "5e847190746c31cb323f5d67560d3895ce8c8250c3ee75ac879a6d6dc43d54f2",
+    "perf-out/github-issue-discovery/automatic/reactor-4397-first-check-20261127-b29/events.tsv": "e82d8bec9d1005674bf6ae86cc484caf738e506e0233e555a870b9ef0d1dbdbd",
+    "perf-out/github-issue-discovery/automatic/reactor-4397-first-check-20261127-b29/stdout.log": "74046ab2b9ff6c3b7dd116b7c7eaac663279fe52d8d700673bc451aca6c425d9",
+    "perf-out/github-issue-discovery/automatic/reactor-4397-first-check-20261127-b29/stderr.log": "8bc2c579acc8e454df39da2da3af56ac07b52548d2ef16e81ec5e66492c01770",
+    "perf-out/github-issue-discovery/automatic/reactor-4397-first-check-20261127-b29/collector.stderr.log": "8246e932a88c51f1376063e0d4a23f1de66a4daf2e4b8006a973d3e668281206",
+    "perf-out/github-issue-discovery/automatic/reactor-4397-first-check-20261127-b29/first-check.json": "57ff728d877d945bd534a8e52ab9ff7d8d977af1c2146666daf4cef13fd49da7"
+  }
+}
