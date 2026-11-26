@@ -43,7 +43,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(36)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(37)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -611,13 +611,34 @@
               <small>Reproduction follow-up paused under safety restrictions</small>
             </th>
             <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/pgjdbc/pgjdbc/issues/4155">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
+          </tr>
+          <tr id="followup-npgsql--npgsql--6665">
+            <th scope="row">
+              <a href="https://github.com/npgsql/npgsql/issues/6665"><span>npgsql/npgsql #6665</span>Npgsql #6665: user skipped</a>
+              <small>Reproduction follow-up paused under safety restrictions</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/npgsql/npgsql/issues/6665">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
+          </tr>
+          <tr id="followup-stackexchange--stackexchange.redis--3260">
+            <th scope="row">
+              <a href="https://github.com/seredis/StackExchange.Redis/issues/3260"><span>seredis/StackExchange.Redis #3260</span>Redis #3260: user skipped</a>
+              <small>Reproduction follow-up paused under safety restrictions</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/seredis/StackExchange.Redis/issues/3260">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
+          </tr>
+          <tr id="followup-tokio-rs--tokio--7051">
+            <th scope="row">
+              <a href="https://github.com/tokio-rs/tokio/issues/7051"><span>tokio-rs/tokio #7051</span>Tokio #7051: user skipped</a>
+              <small>Reproduction follow-up paused under safety restrictions</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/tokio-rs/tokio/issues/7051">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
           </tr></tbody>
         </table>
       </div>
     </section>
 
     <section class="block" id="caller_recovery" aria-labelledby="caller_recovery-title">
-      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">36 issues</span></div>
+      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">37 issues</span></div>
       <p class="section-copy">Recover an application entry or call path missing from a traceback, live snapshot, or native stack.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="caller_recovery-title">
@@ -802,6 +823,11 @@
         <th scope="row"><a href="evidence/pgjdbc--pgjdbc--4328.html#call-stack"><span>pgjdbc/pgjdbc #4328</span>Which replication task owned the COPY that became inactive after an idle timeout?</a></th>
         <td><p>Recover the actual FutureTask submission entry and combine explicit same-COPY identity observations across the earlier timeout and later inactive-operation failure.</p></td>
         <td class="row-status"><a class="state-pill state-open" href="https://github.com/pgjdbc/pgjdbc/issues/4328">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/psycopg--psycopg--1502.html#call-stack"><span>psycopg/psycopg #1502</span>Which application opened the pool whose cancelling worker stalls shutdown?</a></th>
+        <td><p>Recover the application pool-opening entry for the exact native worker seen swallowing cancellation and later awaiting its queue.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/psycopg/psycopg/issues/1502">Open</a><span class="fix-label">Fix unconfirmed</span></td>
       </tr></tbody>
         </table>
       </div>

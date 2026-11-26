@@ -1,0 +1,970 @@
+{
+  "checked_at": "2026-11-26T13:14:55.784359+00:00",
+  "case": {
+    "id": "psycopg--psycopg--1502",
+    "repo": "psycopg/psycopg",
+    "issue": 1502,
+    "url": "https://github.com/psycopg/psycopg/issues/1502",
+    "upstream_reference": "https://github.com/psycopg/psycopg/issues/1502",
+    "title": "Which application opened the pool whose cancelling worker stalls shutdown?",
+    "title_zh": "取消后仍等待的连接池 worker，来自哪个应用入口？",
+    "verified_on": "2026-11-26",
+    "reproduction": "Component reproduced",
+    "diagnosis": "Direct",
+    "graph": "perf-out/github-issue-discovery/automatic/psycopg-1502-first-check-20261126-b12/worker-analysis/graph.json",
+    "findings": {
+      "observation": "One reported silent-loopback connect/shutdown scenario with psycopg3.3.9, psycopg-pool3.3.3 and CPython3.12.16 accepts one connection. At0.604s after startup, asyncio.run is still in _cancel_all_tasks; worker0 is unfinished with cancelling()=1 at pool_async.py:679 awaiting q.get. Other pool workers are cancelled. Preparation and the sole run take76.80s. The diagnostic callback saves evidence and exits the process0.",
+      "interpretation": "The actual Task address0x79ac9a18c100 independently matches asyncio.all_tasks, the pool-held worker reference and the generic CoroPerf creation/sample records. CoroPerf recovers start_connection_pool from the worker creation stack, absent from its later native/current wait stack and unavailable in native debug creation traces. The same worker has a scoped CancelledError observation in _connect/_add_connection before returning to queue wait. The focused capture has30 attributed observations; the catalogue highlights one cancellation observation and the last wait snapshot. The source report already describes cancellation swallowing; the added fact is historical application ownership.",
+      "limits": "This proves a bounded shutdown stall, not infinite duration. asyncio.run does not return normally: the observer calls os._exit(0), closing owned loopback sockets. No pool.close workaround, fix, extra cancellation, reset path, other version or replay was tested. start_connection_pool is a submission helper introduced in this standalone harness. No exception-object identity was captured, so propagation records are not counted as distinct errors. A file-scoped exception probe supplements generic Task birth/sample capture; the original graph is preserved and the focused graph selects only the independently identified worker, without synthesizing runtime events."
+    },
+    "symptom_zh": "psycopg3.3.9、psycopg-pool3.3.3、CPython3.12.16 运行一次报告中的本机静默端口连接/退出场景，真实接受一个连接。启动后0.604秒，asyncio.run 仍在 _cancel_all_tasks 中，worker0 的 cancelling()=1，未结束且在 pool_async.py:679 等待 q.get；其他 worker 已取消。准备及唯一一次运行共76.80秒。诊断回调保存证据后直接退出进程0。",
+    "reasoning_zh": "真实 Task 地址0x79ac9a18c100 在 asyncio.all_tasks、连接池持有的 worker 引用和通用 CoroPerf 创建/采样记录中一致。CoroPerf 从历史创建栈恢复 start_connection_pool，而稍后的原生/当前等待栈没有该入口，原生 debug 创建栈也未启用。同一 worker 先在 _connect/_add_connection 留下 CancelledError 观察，随后回到队列等待。聚焦捕获的30个观察均得到归属；目录展示一个取消观察与最后等待快照。报告已说明吞取消根因，新增事实是历史应用入口归属。",
+    "limits_zh": "只证明有界退出卡顿，不声称永久等待。asyncio.run 没有正常返回；观察器调用 os._exit(0)，由进程退出关闭其本机套接字。未测试 pool.close 绕行、修复、额外取消、reset 路径、其他版本或重放。start_connection_pool 是该独立 harness 增加的提交辅助函数。没有异常对象身份，不能把传播记录算成多个独立错误。文件范围异常探针补充通用 Task 创建/采样；保留原始 graph，聚焦图只筛选原生引用独立确认的 worker，不生成运行时事件。"
+  },
+  "verification": {
+    "successful_workloads": 1,
+    "workload_replays_after_success": 0,
+    "first_check_seconds": 76.8,
+    "native_observation_seconds": 0.6042847810313106,
+    "worker_task_object": "0x79ac9a18c100",
+    "coroperf_task_identity": "python-asyncio-task-0x79ac9a18c100-g3",
+    "native_all_tasks_and_pool_worker_references_match": true,
+    "native_worker_cancelling_count": 1,
+    "native_worker_done": false,
+    "runner_returned": false,
+    "native_shutdown_stack_has_cancel_all_tasks": true,
+    "native_task_debug_creation_traceback_available": false,
+    "recovered_creator": "start_connection_pool",
+    "native_current_worker_has_creator": false,
+    "captured_creation_stack_has_creator": true,
+    "creation_segment": "3",
+    "cancellation_observation_segment": "27",
+    "waiting_observation_segment": "57",
+    "focused_capture_observations": 30,
+    "selected_catalogue_observations": 2,
+    "limitations": [
+      "The report already explains cancellation swallowing; recovered historical ownership is the added diagnostic fact.",
+      "Only a bounded 0.604s stall is established; no infinite-duration claim.",
+      "The observer calls os._exit(0); asyncio.run does not return normally. Process exit closes its owned loopback sockets.",
+      "No pool.close workaround, patched version, extra cancellation, reset path or replay.",
+      "The application submission helper is introduced for this standalone harness, not an original production caller.",
+      "Scoped exception records do not include exception object identity; no distinct-error count is inferred."
+    ],
+    "checked_at": "2026-11-26T13:14:55.784359+00:00",
+    "coroperf_caller_recovery_verified": true,
+    "focused_analysis": {
+      "instances": 1,
+      "observations": 30,
+      "attributed_observations": 30,
+      "creator_links": 1,
+      "recorded_parent_links": 1,
+      "open_at_trace_end": 1,
+      "completed_storage_observed": 0,
+      "observation_kinds": [
+        "task_snapshot",
+        "scoped_exception"
+      ],
+      "diagnostics": 0,
+      "capture_loss": null,
+      "analysis_ms": 9.504340999999997,
+      "input": "perf-out/github-issue-discovery/automatic/psycopg-1502-first-check-20261126-b12/worker-capture.json",
+      "query_matches": 1,
+      "schema": "corostitch.evidence/v1"
+    },
+    "source_integrity": {
+      "psycopg_pool/pool_async.py": {
+        "sha256": "cf4480a4e181fe16a5e65114ab6f8afa3b2e17a8d0b8064b1e8575924b917fbb",
+        "matches_installed_wheel_RECORD": true
+      },
+      "psycopg_pool/_acompat.py": {
+        "sha256": "fba7d4b13e8454ceb5410b39b8ffb3c7ee4785d8b5551b7100a3750ef5e1a2b8",
+        "matches_installed_wheel_RECORD": true
+      },
+      "psycopg_pool/sched_async.py": {
+        "sha256": "30311bba9cafb4ffe7093665ef6358f60fae0049677aa8d40945776f36d19149",
+        "matches_installed_wheel_RECORD": true
+      }
+    }
+  },
+  "native_observation": {
+    "psycopg": "3.3.9",
+    "psycopg_pool": "3.3.3",
+    "python": "3.12.16 (main, Oct 26 2026, 14:08:45) [Clang 23.1.3 ]",
+    "elapsed_seconds": 0.6042847810313106,
+    "tcp_accepted": true,
+    "accepted_connections": 1,
+    "runner_returned": false,
+    "tasks": [
+      {
+        "object_id_hex": "0x79ac9a18c100",
+        "name": "pool-1-worker-0",
+        "done": false,
+        "cancelled": false,
+        "cancelling": 1,
+        "coroutine": "AsyncConnectionPool.worker",
+        "stack": [
+          {
+            "function": "worker",
+            "file": "/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+            "line": 679
+          }
+        ],
+        "source_traceback_present": false
+      }
+    ],
+    "pool_workers": [
+      {
+        "object_id_hex": "0x79ac9a18c100",
+        "name": "pool-1-worker-0",
+        "done": false,
+        "cancelled": false,
+        "cancelling": 1
+      },
+      {
+        "object_id_hex": "0x79ac9a18c1c0",
+        "name": "pool-1-worker-1",
+        "done": true,
+        "cancelled": true,
+        "cancelling": 1
+      },
+      {
+        "object_id_hex": "0x79ac9a18c280",
+        "name": "pool-1-worker-2",
+        "done": true,
+        "cancelled": true,
+        "cancelling": 1
+      }
+    ],
+    "pool_object_id_hex": "0x79ac9b0f22d0",
+    "pool_closed": false,
+    "observer_stack": [
+      "  File \"/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py\", line 97, in <module>\n    asyncio.run(main())\n",
+      "  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 194, in run\n    with Runner(debug=debug, loop_factory=loop_factory) as runner:\n",
+      "  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 62, in __exit__\n    self.close()\n",
+      "  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 70, in close\n    _cancel_all_tasks(loop)\n",
+      "  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 206, in _cancel_all_tasks\n    loop.run_until_complete(tasks.gather(*to_cancel, return_exceptions=True))\n",
+      "  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 678, in run_until_complete\n    self.run_forever()\n",
+      "  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 645, in run_forever\n    self._run_once()\n",
+      "  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 1999, in _run_once\n    handle._run()\n",
+      "  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py\", line 88, in _run\n    self._context.run(self._callback, *self._args)\n",
+      "  File \"/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py\", line 65, in snapshot_and_stop\n    'observer_stack': traceback.format_stack(),\n"
+    ],
+    "scope": "One real upstream silent-loopback connect/shutdown scenario; bounded observation, no fix or second cancellation. Process exit closes owned sockets without replaying the pool-close workaround."
+  },
+  "native_threads": "Thread 0x000079ac999ff640 (most recent call first):\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/socket.py\", line 295 in accept\n  File \"/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py\", line 33 in accept_forever\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/threading.py\", line 1012 in run\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/threading.py\", line 1075 in _bootstrap_inner\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/threading.py\", line 1032 in _bootstrap\n\nCurrent thread 0x000079ac9c562740 (most recent call first):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py\", line 72 in snapshot_and_stop\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py\", line 88 in _run\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 1999 in _run_once\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 645 in run_forever\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py\", line 678 in run_until_complete\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 206 in _cancel_all_tasks\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 70 in close\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 62 in __exit__\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py\", line 194 in run\n  File \"/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py\", line 97 in <module>\n",
+  "execution": {
+    "command": [
+      "/data1/fzhou/coro/.tools/psycopg-1502-b12/bin/python",
+      "-B",
+      "/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py"
+    ],
+    "exit_code": 0,
+    "first_check_elapsed_seconds": 76.8,
+    "workload_attempts": 1,
+    "source": "https://github.com/psycopg/psycopg/issues/1502"
+  },
+  "capture": {
+    "schema_version": 1,
+    "language": "python",
+    "runtime": "asyncio-sitecustomize",
+    "frame_order": "root_to_leaf",
+    "producer": {
+      "name": "asyncio-frame-inspection",
+      "identity_kind": "runtime-token-generation",
+      "continuation_storage": "stackless-state",
+      "frame_order": "root_to_leaf",
+      "clock": "monotonic-ns",
+      "observation_kind": "task_snapshot"
+    },
+    "segments": [
+      {
+        "id": 3,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "create",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275238710688,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py",
+          "run:195:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "run:118:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "run_until_complete:678:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "run_forever:645:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "_run_once:1999:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "_run:88:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+          "main:91:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py",
+          "start_connection_pool:85:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py",
+          "open:435:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_open:459:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_start_workers:485:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "aspawn:110:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/_acompat.py",
+          "create_task:420:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py"
+        ],
+        "function_name": "AsyncConnectionPool.worker",
+        "coroutine_object_id": "133782226179904",
+        "parent_coroutine_id": "python-asyncio-task-0x79ac9b236b00-g1"
+      },
+      {
+        "id": 8,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275257689540,
+        "frames": [
+          "worker:685:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "run:1038:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_run:1077:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_add_connection:756:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_connect:701:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "connect:125:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg/connection_async.py",
+          "wait_conn_async:353:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg/waiting.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 13,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275280062718,
+        "frames": [
+          "worker:685:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "run:1038:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_run:1077:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_add_connection:756:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_connect:701:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "connect:125:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg/connection_async.py",
+          "wait_conn_async:353:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg/waiting.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 18,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275300488053,
+        "frames": [
+          "worker:685:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "run:1038:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_run:1077:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_add_connection:756:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_connect:701:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "connect:125:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg/connection_async.py",
+          "wait_conn_async:353:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg/waiting.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 23,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275320867813,
+        "frames": [
+          "worker:685:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "run:1038:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_run:1077:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_add_connection:756:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_connect:701:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "connect:125:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg/connection_async.py",
+          "wait_conn_async:353:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg/waiting.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 27,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275340946202,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py",
+          "run:194:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "__exit__:62:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "close:70:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "_cancel_all_tasks:206:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "run_until_complete:678:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "run_forever:645:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "_run_once:1999:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "_run:88:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+          "worker:685:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "run:1038:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_run:1077:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_add_connection:756:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_connect:701:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py"
+        ],
+        "label": "exception:CancelledError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "CancelledError"
+      },
+      {
+        "id": 28,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275341070328,
+        "frames": [
+          "<module>:97:/data1/fzhou/coro/research/github-issue-discovery/psycopg-1502-first-check-20261126-b12/check_once.py",
+          "run:194:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "__exit__:62:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "close:70:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "_cancel_all_tasks:206:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "run_until_complete:678:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "run_forever:645:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "_run_once:1999:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "_run:88:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+          "worker:685:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "run:1038:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_run:1077:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "_add_connection:756:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py"
+        ],
+        "label": "exception:CancelledError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "CancelledError"
+      },
+      {
+        "id": 34,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275341855451,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 35,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275362058320,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 36,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275387049743,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 37,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275407294201,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 38,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275427510001,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 39,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275447717335,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 40,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275467936672,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 41,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275493520176,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 42,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275513749793,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 43,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275533957500,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 44,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275554181337,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 45,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275574386641,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 46,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275600022851,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 47,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275620253884,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 48,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275640467912,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 49,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275660673842,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 50,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275680880719,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 51,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275707092061,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 52,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275727325407,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 53,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275747539976,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 54,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275767747065,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 55,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275787970729,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 56,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275814403241,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 57,
+        "coroutine_id": "python-asyncio-task-0x79ac9a18c100-g3",
+        "capture_reason": "sample",
+        "thread_id": 3906720,
+        "timestamp_ns": 1907275834627571,
+        "frames": [
+          "worker:679:/data1/fzhou/coro/.tools/psycopg-1502-b12/lib/python3.12/site-packages/psycopg_pool/pool_async.py",
+          "get:158:/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/queues.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      }
+    ],
+    "edges": [
+      {
+        "from": 3,
+        "to": 8,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 3,
+        "to": 8,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 13,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 8,
+        "to": 13,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 18,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 13,
+        "to": 18,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 23,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 18,
+        "to": 23,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 27,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 23,
+        "to": 27,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 28,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 27,
+        "to": 28,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 34,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 28,
+        "to": 34,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 35,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 34,
+        "to": 35,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 36,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 35,
+        "to": 36,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 37,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 36,
+        "to": 37,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 38,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 37,
+        "to": 38,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 39,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 38,
+        "to": 39,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 40,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 39,
+        "to": 40,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 41,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 40,
+        "to": 41,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 42,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 41,
+        "to": 42,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 43,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 42,
+        "to": 43,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 44,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 43,
+        "to": 44,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 45,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 44,
+        "to": 45,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 46,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 45,
+        "to": 46,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 47,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 46,
+        "to": 47,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 48,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 47,
+        "to": 48,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 49,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 48,
+        "to": 49,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 50,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 49,
+        "to": 50,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 51,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 50,
+        "to": 51,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 52,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 51,
+        "to": 52,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 53,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 52,
+        "to": 53,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 54,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 53,
+        "to": 54,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 55,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 54,
+        "to": 55,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 56,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 55,
+        "to": 56,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 3,
+        "to": 57,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 56,
+        "to": 57,
+        "kind": "same_task_next_sample"
+      }
+    ],
+    "active_coroutines": 1,
+    "agent": {
+      "python": "3.12.16",
+      "sample_interval_seconds": 0.02,
+      "stack_limit": 32,
+      "transparent_launch": true,
+      "remote_attach": false,
+      "seeded_tasks": 0,
+      "interpreter_id": 0,
+      "interpreter_count": 1,
+      "main_interpreter": true,
+      "coverage_unit": "one-interpreter"
+    },
+    "source_metadata": {
+      "selection": "Only the worker whose actual Task object address independently matches both asyncio.all_tasks and pool._workers. Original graph.json is retained unchanged; no synthesized runtime event.",
+      "native_reference": "0x79ac9a18c100",
+      "limitations": "No terminal event: bounded observer exits the process after capturing the shutdown stall. Scoped exception records may be propagation observations; exception object identity was not captured."
+    }
+  },
+  "raw_manifest": {
+    "execution.json": "e18db5cd28f3aeb980cd4f2a3675c9b7220c1a15b8db18f3fc22338df1c8b481",
+    "native-threads.txt": "fd26bcb518481c000e0e3e8af0d5f396f33a5f5355753682f7c6690289bf9d32",
+    "run.log": "8fcd444fae8c26be010c4c2fb84c69a3d3851efe7008867988551138b7e31fe2",
+    "graph.json": "46362f8944ec385d5fad2f42984be37c62c94c3560df6b3c26cc20a23ea45e41",
+    "native-observation.json": "dd0adf3a2384cb66284fd7e8956951ab9637e88df490d3a9bc3fcd51f708c4d4"
+  }
+}
