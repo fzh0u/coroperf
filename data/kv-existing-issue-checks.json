@@ -1,0 +1,111 @@
+{
+  "checked_at": "2026-11-26T07:56:36.256390+00:00",
+  "scope": "Four already-discovered issues advanced; one scheduler-mechanism component execution and three source reviews.",
+  "native_component_runs": 1,
+  "new_selected_cases": 0,
+  "selected_catalogue_entries": 130,
+  "scheduler_component": {
+    "id": "lmcache--lmcache--2080",
+    "checked_at": "2026-11-26T07:51:18.468532+00:00",
+    "status": "scheduler_component_mechanism_confirmed",
+    "upstream_url": "https://github.com/LMCache/LMCache/issues/2080",
+    "successful_component_runs": 1,
+    "full_lmcache_pd_reproduction": false,
+    "generic_coroperf_capture": false,
+    "coroperf_diagnostic_value_validated": false,
+    "selected_catalogue_entry": false,
+    "vllm_version": "0.28.0+cpu",
+    "controlled_connector": {
+      "kind": "cached vLLM test MockKVConnector",
+      "matched_tokens": 255,
+      "is_async": true,
+      "request_count": 4,
+      "prompt_tokens_each": 256
+    },
+    "observation": {
+      "compute_token_budget": 64,
+      "compute_tokens_scheduled": 0,
+      "requests_waiting_for_remote_kvs": 4,
+      "logical_free_blocks_before": 127,
+      "logical_free_blocks_after": 63,
+      "logical_blocks_reserved": 64,
+      "block_size_tokens": 16
+    },
+    "execution": {
+      "exit_code": 0,
+      "finished_at": "2026-11-26T07:51:18.468532+00:00",
+      "elapsed_from_source_start_seconds": 149.578396,
+      "observation_exists": true
+    },
+    "source_integrity": {
+      "vllm/v1/core/sched/scheduler.py": {
+        "sha256": "4b79ab760c3864af6838d555c01335deea3aac97c9be2be415fa0e5dab32f07e",
+        "record_hash": "sha256=S3mrdgw4ZK9oONVVwBM13uo6rJfJvivkFfoOXasy8H4",
+        "record_match": true
+      },
+      "vllm/v1/core/kv_cache_manager.py": {
+        "sha256": "2d20c3d98845cfd8d88a2f66b8fc6402ea1fcfbee16879d2364a4a9e45b8fa47",
+        "record_hash": "sha256=LSDD2YhFz9jYii9muPxkAuofz77haHnSNkpKnkW4-kc",
+        "record_match": true
+      },
+      "vllm/v1/core/block_pool.py": {
+        "sha256": "ddee56dccb2208411b3a035918e917ce8f56a9858471e9ca12b420d5d79bc69c",
+        "record_hash": "sha256=3e5W3MsiCEEbOgNZGOkXzo9WqYWEcenKErQg1debxpw",
+        "record_match": true
+      },
+      "tests/v1/core/utils.py": {
+        "sha256": "6729c7544ab3c9ddc62ac3f0d7d625f0c27234b1907ce3200314cfc920df04f7"
+      },
+      "tests/v1/kv_connector/unit/utils.py": {
+        "sha256": "a9283b14ad9198b08b7f2a6c3a3ea742deaac65e617bd876a00bdffaee4817e9"
+      }
+    },
+    "scope": "Real CPU scheduler, upstream MockKVConnector and four metadata-only Requests; no LMCache runtime, model weights, GPU tensors, PD traffic or network transfer. Full-hit semantics controlled to match upstream issue discussion.",
+    "attribution_limit": "Explicit request-submission Task IDs and stacks are saved. This is not generic Task-birth capture, actual KV-object ownership or a validated CoroPerf diagnosis. No physical GPU allocation, transport saturation, retained-memory leak or indefinite stall is established.",
+    "interpretation": "A compute token budget does not cap this controlled asynchronous external-KV reservation path. This mechanism is consistent with the upstream scheduler discussion, but does not establish a broken compute-accounting contract or the original LMCache PD allocation retry. No baseline, fix or second run."
+  },
+  "source_reviews": [
+    {
+      "id": "lmcache--lmcache--3490",
+      "status": "source_reviewed_environment_deferred",
+      "target_workloads": 0,
+      "coroperf_captures": 0,
+      "finding": "PR3540 is closed unmerged. At its base 34de71775a32ac4cfda95854807e60fb31d8e017, StorageManager.async_lookup_and_prefetch has no num_computed_tokens argument. MP-mode fix claims are not proof the classic connector path is fixed.",
+      "coroperf_value": "Quantify redundant reads by request/lookup Task, chunk intervals, APC computed-token boundary and actual bytes read; Task stacks alone do not determine GPU residency."
+    },
+    {
+      "id": "kvcache-ai--mooncake--1033",
+      "status": "source_reviewed_conditional_build_fix",
+      "target_workloads": 0,
+      "coroperf_captures": 0,
+      "finding": "PR1053 merged an event-driven completion branch, but its common.cmake defaults USE_EVENT_DRIVEN_COMPLETION to OFF and transfer_task.cpp retains the polling branch. This is a historical patch finding, not a claim about current wheels.",
+      "coroperf_value": "A CPU profile already locates the busy poll. Additional value requires transfer/batch/request ownership and actual completion latency, plus the build configuration; no independent attribution validated."
+    },
+    {
+      "id": "ai-dynamo--dynamo--5012",
+      "status": "external_environment_required",
+      "checked_at": "2026-11-26T07:54:19.916888+00:00",
+      "elapsed_seconds": 99.01,
+      "source_sha": "f49d6873e417ef82090ed492ef00b6939bd5a8d0",
+      "target_workloads": 0,
+      "coroperf_captures": 0,
+      "upstream_environment": {
+        "kvbm": "0.7.0",
+        "vllm": "0.11.0",
+        "nixl": "0.7.1"
+      },
+      "source_findings": [
+        "The Dec 25 follow-up already identifies createXferReq with no potential backend and carries request_id, operation_id and active-message id through the transfer logs. This is more specific than an unexplained disk-read wait.",
+        "At the reviewed v0.7.0 source, BlockTransferHandler marks connector-scheduled transfer handles complete for both Ok and Err. It acknowledges the active message regardless of the transfer result, so an ACK is not proof of transfer success.",
+        "Worker get_finished polls connector.is_complete per onboarding request. LocalOnboardTask logs process_onboard_request errors and keeps consuming. This does not by itself prove that errors are dropped before the scheduler slot, nor that the same path explains every reported hang."
+      ],
+      "coroperf_opportunity": "Correlate request and operation IDs with actual Rust task identity, transfer terminal Result and request-slot state. Do not present generic Task stacks as a NIXL backend diagnosis; logs already carry substantial identity context.",
+      "blocker": "Checked cached CPU vLLM environment has no kvbm, nixl, nixl-cu12 or ai-dynamo-runtime distribution. Matching old native bindings/transport/model are not ready. GPUs exist; no full serving, native build or mock substitute attempted.",
+      "source_sha256": {
+        "lib__kvbm__src__block_manager__vllm__connector__leader__slot.rs": "7f88fb593ab21cd76bb3f156a9051b8abc3ff67582b3a5f4a821b6bb515bb249",
+        "lib__kvbm__src__block_manager__vllm__connector__worker.rs": "28c3150b67dbaccf9b4df1588927fd7db9719b9b8a361b1aaacd7eef5ff28529",
+        "lib__llm__src__block_manager__distributed__transfer.rs": "be53e17bbbac1ca10631351dfaf79b15fc5cd10deb79851c7a89ba96287d177d"
+      }
+    }
+  ]
+}

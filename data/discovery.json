@@ -43987,6 +43987,49 @@
       ],
       "reviewed_at": "2026-11-26T07:46:18.812153+00:00",
       "prior_local_execution": false
+    },
+    "lmcache--lmcache--2080": {
+      "status": "component_reproduced",
+      "reason": "One cached vLLM 0.28.0+cpu scheduler step with the cached upstream test MockKVConnector (255 matched tokens, async) admits four 256-token metadata requests into WAITING_FOR_REMOTE_KVS, schedules zero compute tokens against budget 64, and reserves 64 logical blocks (free 127 to 63). Exit 0, 149.58s including preparation. This confirms a scheduler mechanism from the discussion, not the full LMCache PD failure. No actual transfer/GPU allocation or generic CoroPerf capture; explicit submission-Task observer only. CoroPerf benefit unverified and not selected. Frozen, no replay.",
+      "reason_zh": "缓存 vLLM 0.28.0+cpu 的一次真实调度步骤，配合受控 MockKVConnector（命中 255 token、异步），让四个 256-token 元数据请求进入 WAITING_FOR_REMOTE_KVS。计算预算 64，实际计数 0，逻辑块预留 64 个（空闲 127 降至 63）。退出 0，含准备共 149.58 秒。确认讨论中的调度机制，不等于完整 LMCache PD 故障复现；没有实际传输、GPU 分配或通用 CoroPerf 采集。保存了额外的提交 Task 观察，工具增量仍未验证，不加入精选目录，不重跑。",
+      "sources": [
+        "https://github.com/LMCache/LMCache/issues/2080",
+        "https://github.com/LMCache/LMCache/issues/1990"
+      ],
+      "reviewed_at": "2026-11-26T07:56:36.256390+00:00",
+      "successful_component_runs": 1,
+      "coroperf_validated": false
+    },
+    "lmcache--lmcache--3490": {
+      "status": "external_environment_required",
+      "reason": "Source-only: the classic StorageManager.async_lookup_and_prefetch at PR3540 base has no num_computed_tokens parameter. PR3540 is closed unmerged; an MP-mode fix claim does not prove the classic connector path is fixed. Requires actual backend read/interval/APC observations, not a task-only proxy. No target workload or capture.",
+      "reason_zh": "仅来源核对：PR3540 的 base 中，经典 StorageManager.async_lookup_and_prefetch 未接收 num_computed_tokens。PR3540 已关闭未合并，MP 模式的修复说法不能证明经典 connector 路径已修好。需实际后端读取、token 区间与 APC 状态观察；未运行工作负载或采集。",
+      "sources": [
+        "https://github.com/LMCache/LMCache/issues/3490",
+        "https://github.com/LMCache/LMCache/pull/3540"
+      ],
+      "reviewed_at": "2026-11-26T07:56:36.256390+00:00",
+      "prior_local_execution": false
+    },
+    "kvcache-ai--mooncake--1033": {
+      "status": "excluded_after_review",
+      "reason": "Historical merged PR1053 introduces event-driven completion behind USE_EVENT_DRIVEN_COMPLETION, default OFF; the patch retains default polling. Not an unconditional fix or evidence about current wheels. A CPU profiler already exposes the wait loop; no independent missing ownership/caller join is established for CoroPerf. Deprioritized after source review, zero workload/capture.",
+      "reason_zh": "历史已合并 PR1053 把事件驱动完成等待放在 USE_EVENT_DRIVEN_COMPLETION 开关后，默认 OFF，仍保留默认轮询分支；不能称为无条件修复或据此判断当前 wheel。普通 CPU profiler 已能指出等待循环，尚未建立 CoroPerf 独立的归属关联增量，因此来源审阅后降低优先级，未运行负载或采集。",
+      "sources": [
+        "https://github.com/kvcache-ai/Mooncake/issues/1033",
+        "https://github.com/kvcache-ai/Mooncake/pull/1053"
+      ],
+      "reviewed_at": "2026-11-26T07:56:36.256390+00:00"
+    },
+    "ai-dynamo--dynamo--5012": {
+      "status": "external_environment_required",
+      "reason": "v0.7.0 source and follow-up logs inspected: NIXL reports no potential backend; request/operation/message IDs already exist. Transfer handler marks connector completion for Ok and Err and ACKs regardless, so ACK is not success. The exact request-slot error transition remains unverified. Cached CPU environment lacks kvbm/NIXL bindings; no workload/capture, source/prerequisite check stopped after 99.01s.",
+      "reason_zh": "核对 v0.7.0 源码及后续日志：NIXL 已报告无可用传输 backend，并已有 request、operation 和消息 ID。传输 handler 对成功和失败均标记完成，且无论结果都会 ACK，故 ACK 不等于传输成功。请求 slot 的具体错误转换仍未验证。缓存 CPU 环境缺少 kvbm/NIXL 绑定；99.01 秒结束来源及前置检查，未运行负载或采集。",
+      "sources": [
+        "https://github.com/ai-dynamo/dynamo/issues/5012"
+      ],
+      "reviewed_at": "2026-11-26T07:56:36.256390+00:00",
+      "prior_local_execution": false
     }
   },
   "supplemental_records": [
@@ -44529,6 +44572,15 @@
       "summary_zh": "源码确认 LMCache pin=True 传递；核对 Mooncake 受影响 tag 和修复，修正旧连接组解释，并定位 vLLM 接收失败的终态通知缺口。未运行负载或采集，不新增已验证案例。",
       "path": "evidence/kv-cache-followup.html",
       "checked_at": "2026-11-26T07:46:18.812153+00:00"
+    },
+    {
+      "id": "kv-existing-issue-checks-20261126",
+      "title": "Existing KV issues: real scheduler check and three source decisions",
+      "title_zh": "已搜到的 KV issue：真实调度器检查与三条来源结论",
+      "summary": "One vLLM 0.28.0+cpu scheduler step confirms zero compute-token charge with four async external-KV waiters and 64 logical blocks reserved. Controlled MockKVConnector, no LMCache PD/GPU transfer or generic CoroPerf capture. PR3540 unmerged, PR1053 event-driven completion default OFF, and Dynamo transfer ACK/result distinction verified in source. No new selected case.",
+      "summary_zh": "一次 vLLM 0.28.0+cpu 调度步骤确认：四个异步外部 KV 等待请求，计算 token 计数为零，逻辑块预留 64 个。使用受控 MockKVConnector，未运行 LMCache PD/GPU 传输或通用 CoroPerf 采集。同时核对 PR3540 未合并、PR1053 事件等待默认关闭，以及 Dynamo 传输 ACK 与结果的区别。不新增精选案例。",
+      "path": "evidence/kv-existing-issue-checks.html",
+      "checked_at": "2026-11-26T07:56:36.256390+00:00"
     }
   ],
   "deferred_registry": [
@@ -55610,17 +55662,21 @@
     "previous_observed_at": "2026-11-26T04:11:26+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T07:46:27+00:00",
+  "ledger_refreshed_at": "2026-11-26T07:56:58+00:00",
   "progress_summary": {
     "source": "report_update",
-    "assembled_at": "2026-11-26T07:46:27+00:00",
+    "assembled_at": "2026-11-26T07:56:58+00:00",
     "comparison_reported_at": "2026-11-26T06:53:10.483958+00:00",
     "verified_catalogue_entries": 130,
     "new_verified_ids": [],
-    "review_decisions": 209,
+    "review_decisions": 213,
     "new_review_decision_ids": [
+      "ai-dynamo--dynamo--5012",
+      "kvcache-ai--mooncake--1033",
       "kvcache-ai--mooncake--4209",
-      "lmcache--lmcache--1034"
+      "lmcache--lmcache--1034",
+      "lmcache--lmcache--2080",
+      "lmcache--lmcache--3490"
     ],
     "manual_holds": 84,
     "automatic_signal_holds": 845,

@@ -1,0 +1,60 @@
+{
+  "id": "lmcache--lmcache--2080",
+  "checked_at": "2026-11-26T07:51:18.468532+00:00",
+  "status": "scheduler_component_mechanism_confirmed",
+  "upstream_url": "https://github.com/LMCache/LMCache/issues/2080",
+  "successful_component_runs": 1,
+  "full_lmcache_pd_reproduction": false,
+  "generic_coroperf_capture": false,
+  "coroperf_diagnostic_value_validated": false,
+  "selected_catalogue_entry": false,
+  "vllm_version": "0.28.0+cpu",
+  "controlled_connector": {
+    "kind": "cached vLLM test MockKVConnector",
+    "matched_tokens": 255,
+    "is_async": true,
+    "request_count": 4,
+    "prompt_tokens_each": 256
+  },
+  "observation": {
+    "compute_token_budget": 64,
+    "compute_tokens_scheduled": 0,
+    "requests_waiting_for_remote_kvs": 4,
+    "logical_free_blocks_before": 127,
+    "logical_free_blocks_after": 63,
+    "logical_blocks_reserved": 64,
+    "block_size_tokens": 16
+  },
+  "execution": {
+    "exit_code": 0,
+    "finished_at": "2026-11-26T07:51:18.468532+00:00",
+    "elapsed_from_source_start_seconds": 149.578396,
+    "observation_exists": true
+  },
+  "source_integrity": {
+    "vllm/v1/core/sched/scheduler.py": {
+      "sha256": "4b79ab760c3864af6838d555c01335deea3aac97c9be2be415fa0e5dab32f07e",
+      "record_hash": "sha256=S3mrdgw4ZK9oONVVwBM13uo6rJfJvivkFfoOXasy8H4",
+      "record_match": true
+    },
+    "vllm/v1/core/kv_cache_manager.py": {
+      "sha256": "2d20c3d98845cfd8d88a2f66b8fc6402ea1fcfbee16879d2364a4a9e45b8fa47",
+      "record_hash": "sha256=LSDD2YhFz9jYii9muPxkAuofz77haHnSNkpKnkW4-kc",
+      "record_match": true
+    },
+    "vllm/v1/core/block_pool.py": {
+      "sha256": "ddee56dccb2208411b3a035918e917ce8f56a9858471e9ca12b420d5d79bc69c",
+      "record_hash": "sha256=3e5W3MsiCEEbOgNZGOkXzo9WqYWEcenKErQg1debxpw",
+      "record_match": true
+    },
+    "tests/v1/core/utils.py": {
+      "sha256": "6729c7544ab3c9ddc62ac3f0d7d625f0c27234b1907ce3200314cfc920df04f7"
+    },
+    "tests/v1/kv_connector/unit/utils.py": {
+      "sha256": "a9283b14ad9198b08b7f2a6c3a3ea742deaac65e617bd876a00bdffaee4817e9"
+    }
+  },
+  "scope": "Real CPU scheduler, upstream MockKVConnector and four metadata-only Requests; no LMCache runtime, model weights, GPU tensors, PD traffic or network transfer. Full-hit semantics controlled to match upstream issue discussion.",
+  "attribution_limit": "Explicit request-submission Task IDs and stacks are saved. This is not generic Task-birth capture, actual KV-object ownership or a validated CoroPerf diagnosis. No physical GPU allocation, transport saturation, retained-memory leak or indefinite stall is established.",
+  "interpretation": "A compute token budget does not cap this controlled asynchronous external-KV reservation path. This mechanism is consistent with the upstream scheduler discussion, but does not establish a broken compute-accounting contract or the original LMCache PD allocation retry. No baseline, fix or second run."
+}
