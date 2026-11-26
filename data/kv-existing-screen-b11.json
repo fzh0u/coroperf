@@ -1,0 +1,91 @@
+{
+  "checked_at": "2026-11-26T12:52:26.662500+00:00",
+  "elapsed_seconds": 138.45,
+  "source_only": true,
+  "source_rows": [
+    {
+      "id": "lmcache--lmcache--6965",
+      "title": "Queued MP prefetch waits for poll timeout after reader release",
+      "url": "https://github.com/LMCache/LMCache/issues/6965",
+      "status": "external_environment_required",
+      "reason": "Source supports a CPU-only retained-budget notification lead. The controller multiplexes requests on one background thread and polls at 500 ms. No installed matching LMCache/native Bitmap/StorageManager runtime was located in the workspace cache; do not replace them with a hand-written poll model. Requires an attached filesystem L2 because the no-L2 path completes synchronously. No local latency reproduction or CoroPerf gain is established.",
+      "reason_zh": "源码支持 CPU 上的预算释放通知线索：多个预取请求共享后台线程，轮询间隔为 500ms。工作区缓存未找到匹配的 LMCache/native Bitmap/StorageManager 运行环境；不能用自写轮询模型替代。必须挂载文件系统 L2，否则无 L2 路径会同步完成。尚未本地验证延迟或 CoroPerf 增益。",
+      "proposed_identity_join": [
+        "external request/session ID",
+        "controller-returned PrefetchRequestId",
+        "queued/admission state",
+        "L1 read-lock owner and release",
+        "actual poll wake reason and completion"
+      ],
+      "native_baseline": "Existing MP observability already emits request/session and prefetch events; compare its retained facts before claiming any missing relation. Generic thread ancestry cannot identify each multiplexed request.",
+      "target_workloads": 0,
+      "coroperf_captures": 0,
+      "native_reproductions": 0,
+      "coroperf_validated": false
+    },
+    {
+      "id": "lmcache--lmcache--5339",
+      "title": "MP request-state retention in client and sidecar",
+      "url": "https://github.com/LMCache/LMCache/issues/5339",
+      "status": "external_environment_required",
+      "reason": "The report distinguishes a process-lifetime dedup set from abandoned sidecar prefetch/completion ownership. The first has an explicit source owner and is not a proven lost-caller problem. The second is a conditional lifecycle-history lead. The reported dev 05fc77a plus vLLM MP connector/fs_native sidecar deployment is not prepared; no native memory-growth or CoroPerf result.",
+      "reason_zh": "报告区分客户端去重集合与 sidecar 预取完成状态的所有权；前者源码所有者已明确，并非已证实的 caller 丢失。后者保留为生命周期历史线索。报告中的 dev 05fc77a、vLLM MP connector 与 fs_native sidecar 未准备，未验证原生内存增长或 CoroPerf 结果。",
+      "proposed_identity_join": [
+        "vLLM request ID",
+        "sidecar session and _PrefetchJob",
+        "controller prefetch ID",
+        "completion consumed or abandoned",
+        "END_SESSION and late completion ordering"
+      ],
+      "native_baseline": "Native request IDs, active_prefetch_jobs and completed_results_count already exist; generic Task creation cannot prove native Bitmap/lock ownership.",
+      "target_workloads": 0,
+      "coroperf_captures": 0,
+      "native_reproductions": 0,
+      "coroperf_validated": false
+    },
+    {
+      "id": "sgl-project--sglang--40360",
+      "title": "Aborted LMCache sessions and cache request finalization",
+      "url": "https://github.com/sgl-project/sglang/issues/40360",
+      "status": "external_environment_required",
+      "reason": "The report is a source/unit-test analysis at 174a5f37b9, explicitly not a production runtime leak observation. Real MP daemon/host hit and abort-before-init_load_back timing are unprepared. Fake connector tests demonstrate a hook-contract gap only and must not be counted as real LMCache lock/session or CoroPerf attribution evidence.",
+      "reason_zh": "报告基于 174a5f37b9 的源码与单测分析，明确不是生产运行时泄漏观察。真实 MP daemon、host hit 与 init_load_back 前的中止窗口尚未准备；fake connector 单测只能说明 hook 合约缺口，不能计为真实 LMCache 锁、session 或 CoroPerf 归因证据。",
+      "proposed_identity_join": [
+        "CacheRequestHandle(rid, attempt_id)",
+        "LMCache rid/session",
+        "match_prefix lookup ownership",
+        "abort/cancel boundary",
+        "optional STORE and terminal finish"
+      ],
+      "native_baseline": "The issue already lists source paths and ordering. Additional historical per-attempt identity must be measured; a creation stack alone does not establish safe cleanup.",
+      "target_workloads": 0,
+      "coroperf_captures": 0,
+      "native_reproductions": 0,
+      "coroperf_validated": false
+    }
+  ],
+  "target_workloads": 0,
+  "coroperf_captures": 0,
+  "new_selected_cases": 0,
+  "catalogue_count": 133,
+  "rule": "Stop preparation in this pass. Later checks require matching real prerequisites; preserve all prior user skips and frozen successes.",
+  "lmcache_source_commit": "50a845b715c9ac24b540399e1bc625ce9c2c4983",
+  "automation_recovery": {
+    "reason": "Two prior independent SSH clones timed out after a successful scheduled scan. Publication now seeds an independent checkout from local committed objects, fetches remote main and checks out its exact head before generating the three discovery files.",
+    "tests_passed": 68,
+    "regression": "Remote advances are preserved; divergent local-only commits, uncommitted changes and untracked files are excluded.",
+    "publication": {
+      "status": "pushed",
+      "commit": "aec761c262cf22c9d4d6e9a1704c674db41080b5",
+      "url": "https://fzh0u.github.io/coroperf/zh-cn/discovery.html",
+      "pending_supplemental_record_ids": [],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "pushed"
+        }
+      ]
+    },
+    "chat_delivery": "not_configured"
+  }
+}
