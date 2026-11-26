@@ -1,0 +1,52 @@
+{
+  "id": "grpc--grpc-go--9544",
+  "checked_at": "2026-11-26T15:51:51.530562+00:00",
+  "status": "source_reviewed_native_probe_pending",
+  "first_check_seconds": 195.31567335128784,
+  "source_commit": "6ce1c873d713459706a2aa887fe83a183e758be3",
+  "source_selection": "Inference: latest upstream commit before original issue creation(2026-10-21T19:51:12Z), not a reporter-pinned affected version. Current body was updated later.",
+  "source_commit_date": "2026-10-21T17:28:08Z",
+  "archive_pax_matches_commit": true,
+  "target_workloads": 0,
+  "build_attempts": 0,
+  "coroperf_captures": 0,
+  "native_overlap_verified": false,
+  "coroperf_caller_recovery_verified": false,
+  "source_findings": [
+    {
+      "path": "balancer/lazy/lazy.go",
+      "fact": "Idle picker spawns go b.ExitIdle, but lazyBalancer.ExitIdle/Close/ResolverError/UpdateClientConnState hold lb.mu while forwarding. Different goroutine origin alone does not establish simultaneous child-method execution."
+    },
+    {
+      "path": "balancer/endpointsharding/endpointsharding.go",
+      "fact": "Selected source uses childMu in child exitIdle and close; a naive unguarded go-child hypothesis is not established for this revision."
+    },
+    {
+      "path": "internal/balancer/gracefulswitch/gracefulswitch.go",
+      "fact": "swap creates a Close goroutine, which acquires currentMu before cur.Close(). The actual callback/Close overlap or goroutine-affinity property needs a native probe; spawning alone is not proof of a race."
+    }
+  ],
+  "reason": "The source report spans multiple policies and supplies no single executable reproduction or affected SHA. A timestamp-selected archive is now saved. Inspected paths contain synchronization omitted by a simple go-call reading, so do not assert concurrent execution from goroutine creation alone. No native probe/build ran before the first-check cutoff. Retain a specific method-invocation/actual child-policy identity and overlap-or-affinity measurement design; do not manufacture an overlap by calling a child after its wrapper closed it. Source preparation ended155.73s, but assessment completion195.32s exceeds the180s first-check budget; this overrun is preserved, not reset.",
+  "reason_zh": "来源涵盖多个策略，但没有单个可执行复现或受影响SHA。已保存按issue发布时间选择的源码归档。核对路径存在同步保护，不能仅凭go调用断言并发。首检截止前未构建或运行原生探针。后续需记录具体方法调用、真实子策略身份及重叠/同goroutine属性，不能通过绕过wrapper在子策略关闭后强行调用来制造重叠。源码准备于155.73秒结束，但结论记录完成195.32秒，超过180秒首检预算；保留该超时事实，不重置时钟。",
+  "proposed_coroperf_opportunity": "Actual method invocation and child-policy object → native callback/ExitIdle/Close goroutine ID → true native birth stack and later invocation/wait stack. Compare existing native locks, dumps and traces. Generic ancestry does not prove object sharing or overlap.",
+  "remaining_prerequisites": [
+    "Identify the precise wrapper/method property to measure and a matching revision; distinguish serialization from same-goroutine affinity.",
+    "Build a bounded native component using the real upstream wrapper and a documented observing child policy; preserve valid top-down method ordering and real callbacks.",
+    "Collect actual invocation intervals, child identity and native goroutine IDs before claiming overlap/caller recovery."
+  ],
+  "sources": [
+    "https://github.com/grpc/grpc-go/issues/9544",
+    "https://github.com/grpc/grpc-go/tree/6ce1c873d713459706a2aa887fe83a183e758be3"
+  ],
+  "source_hashes": {
+    "source.tar.gz": "79a289461c60da2bd0c5d0a75bdd4c33d58732c5359bf52dc5eba08fa3bf8638",
+    "lazy.go.txt": "e8b806a5b1090ff637d9d0154abb7607f9c0f498d75bffccdc603fd797401e6c",
+    "endpointsharding.go.txt": "0c86aace9630a05af24a171d88ea17008f9a829f3b8e6c3b5379904173e4f53f",
+    "gracefulswitch.go.txt": "f44b3da3c81ef06997fb2736c1d768fdc69234f83116b5b1359430fb75fba6b0",
+    "balancergroup.go.txt": "cc2ccac818e0ec2384a3fc1ee51230bd2599cc54bfa8deee95271aeee2bfa0c8"
+  },
+  "last_source_preparation_seconds": 155.7340486049652,
+  "assessment_recorded_seconds": 195.31567335128784,
+  "budget_seconds": 180,
+  "budget_overrun_seconds": 15.32
+}
