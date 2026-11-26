@@ -43964,6 +43964,17 @@
       ],
       "reviewed_at": "2026-11-26T06:50:09.606446+00:00",
       "successful_component_runs": 1
+    },
+    "lmcache--lmcache--1034": {
+      "status": "external_environment_required",
+      "reason": "Affected source fragments confirm conditional pin state, early scheduler return and retrieval-based unpin, but the pin=True lookup transport link and compatible installed LMCache revision remain unverified. Eight A100 GPUs exist; no cache operation, inference workload or CoroPerf capture ran. Stop after 158s preparation rather than substitute a mock.",
+      "reason_zh": "已核对条件 pin、调度器提前返回及 retrieve 中 unpin 的源码片段；lookup 传输是否传入 pin=True 和受影响版本的安装兼容性尚未验证。机器有八张 A100，缺口是软件版本准备。约 158 秒停止准备，没有缓存操作、推理工作负载或 CoroPerf 采集。",
+      "sources": [
+        "https://github.com/LMCache/LMCache/issues/1034",
+        "https://github.com/LMCache/LMCache/pull/1046"
+      ],
+      "reviewed_at": "2026-11-26T07:29:19.041427+00:00",
+      "prior_local_execution": false
     }
   },
   "supplemental_records": [
@@ -44488,6 +44499,15 @@
       "summary_zh": "核对六个项目的官方 GitHub 关注度，并来源审阅五条具体问题，梳理请求到预取、pin/unpin 及传输完成的身份桥接需求。未运行工作负载，不新增已验证案例。",
       "path": "evidence/kv-cache-opportunities.html",
       "checked_at": "2026-11-26T07:19:37.474946+00:00"
+    },
+    {
+      "id": "lmcache-1034-source-check-20261126",
+      "title": "LMCache pin lifecycle: source path and execution prerequisites",
+      "title_zh": "LMCache pin 生命周期：源码路径与执行前置条件",
+      "summary": "Four affected source files checked; end-to-end pin transport binding is still unverified. Existing A100 hardware is sufficient for follow-up, but compatible affected LMCache is not installed. No workload or capture. LMCache and Mooncake join the next regular scan, increasing configured coverage from 31 to 33; the saved 31-repository snapshot is unchanged.",
+      "summary_zh": "已核对四份受影响源码，端到端 pin 传输绑定仍未验证。现有 A100 硬件可用于后续验证，但受影响 LMCache 软件版本尚未匹配安装。未运行工作负载或采集。LMCache 与 Mooncake 纳入下一轮定时扫描，配置覆盖从 31 增至 33；已有 31 仓库快照不变。",
+      "path": "data/lmcache-1034-source-check.json",
+      "checked_at": "2026-11-26T07:29:19.041427+00:00"
     }
   ],
   "deferred_registry": [
@@ -55569,7 +55589,7 @@
     "previous_observed_at": "2026-11-26T04:11:26+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T07:19:37+00:00",
+  "ledger_refreshed_at": "2026-11-26T07:29:20+00:00",
   "progress_summary": {
     "source": "report_update",
     "assembled_at": "2026-11-26T06:50:10+00:00",

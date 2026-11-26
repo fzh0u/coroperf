@@ -1,0 +1,25 @@
+{
+  "id": "lmcache--lmcache--1034",
+  "checked_at": "2026-11-26T07:27:03.134424+00:00",
+  "status": "preparation_deferred",
+  "source_base_sha": "2b8c260f8fa71e6d9d13aea31e6b921d2d5e121a",
+  "source_files_checked": 4,
+  "target_workload_executions": 0,
+  "coroperf_captures": 0,
+  "first_check_stopped_after_seconds": 158.28,
+  "blocker": "The affected LMCache package is not installed. The original LocalCPUBackend constructor creates torch.cuda.Stream, and cache_engine imports GPU connectors. A cached Torch/vLLM environment exists but compatibility and a faithful CPU execution path are unverified. Stop before attempting dependency installation or framework workloads.",
+  "security_assessment": "No security conclusion; this is a normal resource-lifecycle debugging candidate.",
+  "next_prerequisites": "Affected LMCache revision with compatible Torch/vLLM and CUDA, or a demonstrably faithful CPU component path preserving real lookup/skip-retrieve/pin/unpin logic.",
+  "source_sha256": {
+    "source/lmcache/v1/cache_engine.py": "22c4938c70946f615484946cf786abb7de9346254ddcc3b8a153dcd0832aa0e4",
+    "source/lmcache/v1/memory_management.py": "44b262fea54dcd49e5157e71a7c95f79f85965953c808a4c2e774ee48a6b6986",
+    "source/lmcache/v1/storage_backend/local_cpu_backend.py": "87332affe78123a44f1bba8cb69bcc654233bcf0d799f4ad8acc2b5eab50581e",
+    "source/lmcache/integration/vllm/vllm_v1_adapter.py": "7a8a6b2a6baf26240071a8cf6629ec98e73967eca1563eda68da6354be56f203"
+  },
+  "hardware_inventory": {
+    "gpu_count": 8,
+    "gpu_model": "NVIDIA A100-SXM4-80GB",
+    "assessment": "Hardware exists; the blocker is affected-revision package compatibility, not absent GPUs."
+  },
+  "source_chain_gap": "CacheEngine.lookup defaults pin=False; LookupClient/LookupServer propagation of pin=True has not been independently checked in this batch. The whole end-to-end pin sequence is not proven by the four inspected files alone."
+}
