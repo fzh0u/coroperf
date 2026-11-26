@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-26T07:19:37.474946+00:00",
+  "scope": "Current KV-cache project attention and five source-only debugging opportunities; no new reproduction or selected case.",
+  "attention_measure": "GitHub stars observed via official repository API on 2026-11-26; projects cover different layers and this is not an exhaustive popularity ranking.",
+  "projects": [
+    {
+      "repository": "LMCache/LMCache",
+      "url": "https://github.com/LMCache/LMCache",
+      "stars": 12481,
+      "forks": 2198,
+      "pushed_at": "2026-11-26T06:29:06Z",
+      "description": "LMCache: Supercharge Your LLM with the Fastest KV Cache Layer",
+      "observed_at": "2026-11-26T07:06:05.168582+00:00"
+    },
+    {
+      "repository": "kvcache-ai/Mooncake",
+      "url": "https://github.com/kvcache-ai/Mooncake",
+      "stars": 7136,
+      "forks": 1537,
+      "pushed_at": "2026-11-26T06:56:47Z",
+      "description": "Mooncake is the serving platform for Kimi, a leading LLM service provided by Moonshot AI.",
+      "observed_at": "2026-11-26T07:06:05.184042+00:00"
+    },
+    {
+      "repository": "ai-dynamo/dynamo",
+      "url": "https://github.com/ai-dynamo/dynamo",
+      "stars": 8571,
+      "forks": 1911,
+      "pushed_at": "2026-11-26T06:15:31Z",
+      "description": "A Datacenter Scale Distributed Inference Serving Framework",
+      "observed_at": "2026-11-26T07:06:05.167200+00:00"
+    },
+    {
+      "repository": "ai-dynamo/nixl",
+      "url": "https://github.com/ai-dynamo/nixl",
+      "stars": 1384,
+      "forks": 537,
+      "pushed_at": "2026-11-25T22:17:30Z",
+      "description": "NVIDIA Inference Xfer Library (NIXL)",
+      "observed_at": "2026-11-26T07:06:05.228815+00:00"
+    },
+    {
+      "repository": "bytedance/InfiniStore",
+      "url": "https://github.com/bytedance/InfiniStore",
+      "stars": 458,
+      "forks": 49,
+      "pushed_at": "2026-09-16T06:06:57Z",
+      "description": "KV cache store for distributed LLM inference",
+      "observed_at": "2026-11-26T07:06:05.198819+00:00"
+    },
+    {
+      "repository": "sgl-project/sglang",
+      "url": "https://github.com/sgl-project/sglang",
+      "stars": 39075,
+      "forks": 10868,
+      "pushed_at": "2026-11-26T07:05:03Z",
+      "description": "SGLang is a high-performance serving framework for large language models and multimodal models.",
+      "observed_at": "2026-11-26T07:06:05.332037+00:00"
+    }
+  ],
+  "issues": [
+    {
+      "id": "lmcache--lmcache--3490",
+      "repository": "LMCache/LMCache",
+      "number": 3490,
+      "url": "https://github.com/LMCache/LMCache/issues/3490",
+      "title": "Async prefetch repeats reads of GPU-resident prefix",
+      "title_zh": "异步预取重复读取 GPU 已有的前缀",
+      "observed_upstream_state": "closed_stale",
+      "priority": "conditional_performance_lead",
+      "coroperf_assessment_zh": "需将请求、prefetch Task、chunk key 和实际读取字节关联；单靠调用栈不能判定哪些 token 已在 GPU。原生原因在来源中已较清楚，新增价值主要是按请求量化冗余 I/O。",
+      "required_observations": "request_id / Task identity / chunk key / token interval / backend read bytes",
+      "source_review_only": true,
+      "workload_executed": false,
+      "coroperf_validated": false
+    },
+    {
+      "id": "lmcache--lmcache--1034",
+      "repository": "LMCache/LMCache",
+      "number": 1034,
+      "url": "https://github.com/LMCache/LMCache/issues/1034",
+      "title": "Lookup pin remains when retrieval is skipped",
+      "title_zh": "lookup 命中后跳过 retrieve，pin 未释放",
+      "observed_upstream_state": "closed_stale",
+      "priority": "priority_resource_lifecycle_lead",
+      "coroperf_assessment_zh": "更贴合资源生命周期归因：追踪是哪次 lookup/请求留下 pin，并定位缺失的 unpin。共享块需记录多 owner 与 pin 状态变化，不能只用 Task 创建树推断。",
+      "required_observations": "request_id / memory-object identity / pin-unpin events / lookup and retrieval decision",
+      "source_review_only": true,
+      "workload_executed": false,
+      "coroperf_validated": false
+    },
+    {
+      "id": "kvcache-ai--mooncake--4209",
+      "repository": "kvcache-ai/Mooncake",
+      "number": 4209,
+      "url": "https://github.com/kvcache-ai/Mooncake/issues/4209",
+      "title": "Idle-retired TCP group rejects transfer; decode keeps waiting",
+      "title_zh": "空闲 TCP 连接组退役后拒绝传输，decode 仍等待",
+      "observed_upstream_state": "open",
+      "priority": "priority_async_wait_lead",
+      "coroperf_assessment_zh": "关联 producer 传输失败与 consumer 的 WAITING_FOR_REMOTE_KVS：哪批 transfer 属于哪个请求，完成或失败是否传到等待它的 Future。原报告需要双 GPU/vLLM 环境，CPU 组件检查不能代替完整复现。",
+      "required_observations": "request_id / transfer batch and lane-group identity / completion Future / error propagation",
+      "source_review_only": true,
+      "workload_executed": false,
+      "coroperf_validated": false
+    },
+    {
+      "id": "kvcache-ai--mooncake--1033",
+      "repository": "kvcache-ai/Mooncake",
+      "number": 1033,
+      "url": "https://github.com/kvcache-ai/Mooncake/issues/1033",
+      "title": "Busy-wait during transfer completion",
+      "title_zh": "传输完成等待忙轮询占用 CPU",
+      "observed_upstream_state": "closed_completed_PR1053",
+      "priority": "secondary_performance_lead",
+      "coroperf_assessment_zh": "普通 CPU profiler 已能指出热点函数；CoroPerf 的可能增量是把忙等接回具体 transfer 及请求。需要 C++ operation/batch 身份到上层 Task 的桥接；不能声称单靠 CoroPerf 诊断 RDMA 拥塞。",
+      "required_observations": "operation-state identity / batch_id / submitting Task / completion status",
+      "source_review_only": true,
+      "workload_executed": false,
+      "coroperf_validated": false
+    },
+    {
+      "id": "ai-dynamo--dynamo--5012",
+      "repository": "ai-dynamo/dynamo",
+      "number": 5012,
+      "url": "https://github.com/ai-dynamo/dynamo/issues/5012",
+      "title": "Disk-to-device KV onboarding stalls",
+      "title_zh": "KVBM 从磁盘回载到设备时等待不结束",
+      "observed_upstream_state": "closed_stale",
+      "priority": "conditional_hardware_lead",
+      "coroperf_assessment_zh": "日志已有 request_id，增量问题是哪个迁移 Task/Future 没完成，以及等待落在磁盘、传输还是 GPU copy。需要 block 与迁移任务的真实身份，原始 GPU 场景尚未验证。",
+      "required_observations": "request_id / KV block identity / migration Task / disk and transfer completion",
+      "source_review_only": true,
+      "workload_executed": false,
+      "coroperf_validated": false
+    }
+  ],
+  "suggested_first_targets": [
+    "lmcache--lmcache--1034",
+    "kvcache-ai--mooncake--4209"
+  ],
+  "native_workloads": 0,
+  "new_verified_cases": 0,
+  "selected_catalogue_entries_unchanged": 130,
+  "caution": "Closed because of inactivity does not establish a fix. CoroPerf contributions are proposals requiring stable task/resource identity observations, not already verified capabilities."
+}
