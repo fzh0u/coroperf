@@ -1,0 +1,347 @@
+{
+  "checked_at": "2026-11-26T14:53:52.656174+00:00",
+  "case": {
+    "id": "grpc--grpc-go--9393",
+    "repo": "grpc/grpc-go",
+    "issue": 9393,
+    "url": "https://github.com/grpc/grpc-go/issues/9393",
+    "upstream_reference": "https://github.com/grpc/grpc-go/issues/9393",
+    "title": "Who submitted the graceful and forced stops waiting on the same server?",
+    "title_zh": "等待同一Server的优雅关停和强制关停，分别由谁提交？",
+    "verified_on": "2026-11-26",
+    "reproduction": "Component reproduced",
+    "diagnosis": "Direct",
+    "graph": "perf-out/github-issue-discovery/automatic/grpc-go-9393-first-check-20261126-b22/analysis/graph.json",
+    "findings": {
+      "observation": "The original TCP health RPC shutdown example runs once with gRPC-Go v1.83.1, Go1.25.0 and WaitForHandlers(false). After the original 200ms+1s connection-drain sequence, Stop remains blocked for15.001s. Native goroutine227 waits in handlersWG.Wait at server.go1989; goroutine196 waits on s.mu.Lock at1959. Both dumps show Server 0xc0002da008. Closing the original handler release channel ends both shutdown calls and the process exits0. Full preparation/build/run121.16s; an earlier duplicate-source compilation failure had no workload and is archived.",
+      "interpretation": "Both goroutines self-report their native runtime IDs; independent all-goroutine dumps match the runtime trace birth/wait/exit events. CoroPerf joins creation0 to wait1 for227, restoring beginGracefulShutdown, and creation3 to wait4 for196, restoring submitForcedStop. Neither outer helper appears in the corresponding current dump or wait stack. Native wait intervals are16.002s and15.001s. Standard runtime trace already contains the full creator stacks; CoroPerf provides the normalized identity joins and combined view. Exact source retains s.mu via defer while waiting for handlers, explaining the stall when read with the native stacks.",
+      "limits": "Named helpers only split the existing two go submission expressions; no additional shutdown goroutine is introduced. These are harness entry names, not recovered unknown production names. The same Server reference is visible in native dumps, and mutex ownership is a source-backed inference, not a generic ancestry or dynamic lock-owner observation. This confirms a15-second bounded stall and normal original release cleanup, not infinite lifetime or the production15-minute duration. The issue already explains the mutex cause. One successful workload only; no replay, alternate deadline/version, extra RPC batch or fix experiment."
+    },
+    "symptom_zh": "原始TCP健康RPC关停示例在gRPC-Go v1.83.1、Go1.25.0及WaitForHandlers(false)下一次运行。保留原始200毫秒+1秒连接排空顺序，Stop仍阻塞15.001秒。原生goroutine227在server.go1989的handlersWG.Wait等待，196在1959的s.mu.Lock等待；两份栈均显示Server 0xc0002da008。关闭原始handler释放通道后，两次关停均返回，进程退出0。含准备、构建、运行121.16秒；此前因重复源码编译失败，未运行负载，日志已存档。",
+    "reasoning_zh": "两个goroutine自报的原生运行时ID与独立全goroutine快照、trace创建/等待/退出事件一致。CoroPerf将227的创建0接到等待1，恢复beginGracefulShutdown；将196的创建3接到等待4，恢复submitForcedStop。对应的当前dump和等待栈均没有这两个外层入口。原生等待区间分别16.002秒和15.001秒。标准runtime trace原本已包含完整创建栈；CoroPerf提供统一身份关联和合并视图。准确版本源码在等待handlers时仍以defer持有s.mu，与原生栈共同解释该阻塞。",
+    "limits_zh": "具名辅助函数只拆分原有两个go提交表达式，没有增加关停goroutine；入口名称属于本地采集程序，不冒充未知生产入口。相同Server引用来自原生dump；锁持有关系是源码支持的推断，不是通用祖先关系或动态锁所有权探针结果。只确认15秒有界阻塞及原始释放后的正常清理，不证明无限存活或生产15分钟时长。issue已解释互斥锁原因。成功负载一次，没有重放、其他时限/版本、额外RPC批次或修复试验。"
+  },
+  "verification": {
+    "id": "grpc--grpc-go--9393",
+    "checked_at": "2026-11-26T14:52:49.862158+00:00",
+    "successful_issue_workloads": 1,
+    "workload_replays_after_success": 0,
+    "first_check_seconds": 121.16118860244751,
+    "process_exit_code": 0,
+    "grpc_version": "1.83.1",
+    "go_version": "go1.25.0",
+    "reported_observation_seconds": 15,
+    "native_stop_elapsed_seconds": 15.001592518,
+    "joins": [
+      {
+        "goroutine_id": 227,
+        "creation_segment": "0",
+        "wait_segment": "1",
+        "exit_segment": "2",
+        "recovered_submitter": "main.beginGracefulShutdown",
+        "native_wait_ns": 16002067584,
+        "independent_dump_matches_ID_and_server_reference": true,
+        "native_created_by_has_only_immediate_creator": true,
+        "native_dump_block": "goroutine 227 [sync.WaitGroup.Wait]:\nsync.runtime_SemacquireWaitGroup(0x0?, 0x0?)\n\t/home/fzhou/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.0.linux-amd64/src/runtime/sema.go:114 +0x2e\nsync.(*WaitGroup).Wait(0xc0002da1e8)\n\t/home/fzhou/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.0.linux-amd64/src/sync/waitgroup.go:206 +0x85\ngoogle.golang.org/grpc.(*Server).stop(0xc0002da008, 0x1)\n\t/home/fzhou/go/pkg/mod/google.golang.org/grpc@v1.83.1/server.go:1989 +0x2fd\ngoogle.golang.org/grpc.(*Server).GracefulStop(...)\n\t/home/fzhou/go/pkg/mod/google.golang.org/grpc@v1.83.1/server.go:1951\nmain.startGracefulShutdown.func1()\n\t/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go:47 +0x54\ncreated by main.startGracefulShutdown in goroutine 1\n\t/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go:47 +0x7d\n"
+      },
+      {
+        "goroutine_id": 196,
+        "creation_segment": "3",
+        "wait_segment": "4",
+        "exit_segment": "5",
+        "recovered_submitter": "main.submitForcedStop",
+        "native_wait_ns": 15001403200,
+        "independent_dump_matches_ID_and_server_reference": true,
+        "native_created_by_has_only_immediate_creator": true,
+        "native_dump_block": "goroutine 196 [sync.Mutex.Lock]:\ninternal/sync.runtime_SemacquireMutex(0x41df54?, 0xe8?, 0x429245?)\n\t/home/fzhou/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.0.linux-amd64/src/runtime/sema.go:95 +0x25\ninternal/sync.(*Mutex).lockSlow(0xc0002da178)\n\t/home/fzhou/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.0.linux-amd64/src/internal/sync/mutex.go:149 +0x15d\ninternal/sync.(*Mutex).Lock(...)\n\t/home/fzhou/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.0.linux-amd64/src/internal/sync/mutex.go:70\nsync.(*Mutex).Lock(...)\n\t/home/fzhou/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.0.linux-amd64/src/sync/mutex.go:46\ngoogle.golang.org/grpc.(*Server).stop(0xc0002da008, 0x0)\n\t/home/fzhou/go/pkg/mod/google.golang.org/grpc@v1.83.1/server.go:1959 +0x10d\ngoogle.golang.org/grpc.(*Server).Stop(...)\n\t/home/fzhou/go/pkg/mod/google.golang.org/grpc@v1.83.1/server.go:1944\nmain.startForcedStop.func1()\n\t/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go:51 +0x51\ncreated by main.startForcedStop in goroutine 1\n\t/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go:51 +0x7d"
+      }
+    ],
+    "creation_observation_pairs": [
+      [
+        "0",
+        "1"
+      ],
+      [
+        "3",
+        "4"
+      ]
+    ],
+    "coroperf_caller_recovery_verified": true,
+    "limits": [
+      "Standard native trace already contains creator stacks; CoroPerf provides normalized identity joins and the combined causal view.",
+      "Named helpers split only the two existing goroutine submission expressions; no new shutdown goroutine topology is introduced. The helper names describe this controlled harness, not unknown production entry names.",
+      "Native dump shows WaitGroup and Mutex waits on the same Server API reference. Source establishes the s.mu hold across handlersWG.Wait; generic goroutine ancestry does not recover mutex ownership.",
+      "Fifteen-second bounded stall, released by the original handler cleanup; no infinite deadlock claim, external server, production15min observation, alternate version, fix or replay."
+    ]
+  },
+  "analysis": {
+    "instances": 2,
+    "observations": 2,
+    "attributed_observations": 2,
+    "creator_links": 0,
+    "recorded_parent_links": 0,
+    "open_at_trace_end": 0,
+    "completed_storage_observed": 0,
+    "observation_kinds": [
+      "runtime_wait_transition"
+    ],
+    "diagnostics": 0,
+    "capture_loss": null,
+    "analysis_ms": 10.172564000000005,
+    "input": "perf-out/github-issue-discovery/automatic/grpc-go-9393-first-check-20261126-b22/capture.json",
+    "query_matches": 2,
+    "schema": "corostitch.evidence/v1"
+  },
+  "native_observation": {
+    "elapsed_stop_seconds": 15.001592518,
+    "go": "go1.25.0",
+    "graceful_goroutine_id": 227,
+    "graceful_returned_after_release": true,
+    "grpc": "1.83.1",
+    "release_closed": true,
+    "reproduced": true,
+    "scope": "Original v1.83.1 TCP health RPC, WaitForHandlers(false), 200ms+1s drainage, 15s observation. Named wrappers only split existing go submissions; no mutex owner inference from ancestry.",
+    "server_api_reference": "0xc0002da008",
+    "stop_goroutine_id": 196,
+    "stop_returned_after_release": true
+  },
+  "source_integrity": {
+    "module_info": {
+      "Version": "v1.83.1",
+      "Time": "2026-08-19T06:44:47Z",
+      "Origin": {
+        "VCS": "git",
+        "URL": "https://github.com/grpc/grpc-go",
+        "Hash": "1550d9e0cddb30ce99e61a2102e8294a49461e5e",
+        "Ref": "refs/tags/v1.83.1"
+      }
+    },
+    "binary_modules": "perf-out/github-issue-discovery/automatic/grpc-go-9393-first-check-20261126-b22/native: go1.25.0\n\tpath\tcommand-line-arguments\n\tdep\tgolang.org/x/net\tv0.55.0\th1:bcvxaJn3e1U6InsFWt1JUq1aSjnRxLzT2rtD2KfkDF8=\n\tdep\tgolang.org/x/sys\tv0.45.0\th1:dO4czNzziLiiXplLQgBCEpCvXQ3dnkn0SdaZSYdQ+FY=\n\tdep\tgolang.org/x/text\tv0.37.0\th1:Cqjiwd9eSg8e0QAkyCaQTNHFIIzWtidPahFWR83rTrc=\n\tdep\tgoogle.golang.org/genproto/googleapis/rpc\tv0.0.0-20260526163538-3dc84a4a5aaa\th1:mZHHdPZl0dbGHCflZgAq/Q468DWVFcU2whhB2KAo8fk=\n\tdep\tgoogle.golang.org/grpc\tv1.83.1\th1:HIO0+BEtBP6soyqvqC8sNUjZ7bTs+0hFQuFF+RAy++Y=\n\tdep\tgoogle.golang.org/protobuf\tv1.36.11\th1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=1\n\tbuild\tCGO_CFLAGS=\n\tbuild\tCGO_CPPFLAGS=\n\tbuild\tCGO_CXXFLAGS=\n\tbuild\tCGO_LDFLAGS=\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n",
+    "grpc_checksum_from_go_sum": [
+      "google.golang.org/grpc v1.83.1 h1:HIO0+BEtBP6soyqvqC8sNUjZ7bTs+0hFQuFF+RAy++Y=",
+      "google.golang.org/grpc v1.83.1/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ="
+    ],
+    "compiled_server_go_matches_independent_raw_tag": true,
+    "server_go_sha256": "a09f192cb707172d7b9004813f300697e0eab8eb781389978683460ed0ddc49e",
+    "source_backed_mutex_inference": "Exact stop source holds s.mu with defer while handlersWG.Wait executes at1989; native dump shows same Server argument in graceful and force stop. No dynamic lock ownership instrumentation is claimed.",
+    "go_mod_verify": {
+      "exit_code": 0,
+      "stdout": "all modules verified",
+      "checked_at": "2026-11-26T14:54:35.616490+00:00"
+    }
+  },
+  "execution": {
+    "id": "grpc--grpc-go--9393",
+    "build_attempts": 2,
+    "workload_executions": 1,
+    "go_tool": "/home/fzhou/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.0.linux-amd64/bin/go",
+    "build_exit_code": 0,
+    "exit_code": 0,
+    "elapsed_seconds": 121.16118860244751,
+    "finished_at": "2026-11-26T14:50:53.944172+00:00"
+  },
+  "capture": {
+    "schema_version": 1,
+    "language": "go",
+    "runtime": "go1.25.0",
+    "frame_order": "leaf_to_root",
+    "producer": {
+      "name": "standard-runtime-trace-birth-and-state-transitions",
+      "identity_kind": "native-runtime-goroutine-id",
+      "frame_order": "leaf_to_root"
+    },
+    "clock": {
+      "domain": "Go-runtime-trace-monotonic",
+      "unit": "ns"
+    },
+    "source_metadata": {
+      "scope": "Original v1.83.1 TCP health RPC, WaitForHandlers(false), 200ms+1s drainage, 15s observation. Named wrappers only split existing go submissions; no mutex owner inference from ancestry.",
+      "source_information": "Full creator stacks already exist in standard runtime trace. CoroPerf normalizes native IDs and joins each historical creator to its actual wait transition.",
+      "resource_limits": "Native dump and explicit API reference identify the same server. Mutex ownership is source-backed inference, not a generic ancestry/lock-owner probe."
+    },
+    "segments": [
+      {
+        "id": "0",
+        "coroutine_id": "go:227",
+        "capture_reason": "create",
+        "timestamp_ns": "1913257107103744",
+        "frames": [
+          {
+            "function": "main.startGracefulShutdown",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go",
+            "line": 47,
+            "ip": "0x83117c"
+          },
+          {
+            "function": "main.beginGracefulShutdown",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go",
+            "line": 45,
+            "ip": "0x8310d2"
+          },
+          {
+            "function": "main.main",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go",
+            "line": 77,
+            "ip": "0x831932"
+          }
+        ]
+      },
+      {
+        "id": "1",
+        "coroutine_id": "go:227",
+        "capture_reason": "sample",
+        "sample_kind": "runtime_wait_transition",
+        "timestamp_ns": "1913257308435840",
+        "wait_duration_ns": 16002067584,
+        "frames": [
+          {
+            "function": "sync.(*WaitGroup).Wait",
+            "file": "/home/fzhou/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.0.linux-amd64/src/sync/waitgroup.go",
+            "line": 206,
+            "ip": "0x491204"
+          },
+          {
+            "function": "google.golang.org/grpc.(*Server).stop",
+            "file": "/home/fzhou/go/pkg/mod/google.golang.org/grpc@v1.83.1/server.go",
+            "line": 1989,
+            "ip": "0x81dc9c"
+          },
+          {
+            "function": "google.golang.org/grpc.(*Server).GracefulStop",
+            "file": "/home/fzhou/go/pkg/mod/google.golang.org/grpc@v1.83.1/server.go",
+            "line": 1951,
+            "ip": "0x831213"
+          },
+          {
+            "function": "main.startGracefulShutdown.func1",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go",
+            "line": 47,
+            "ip": "0x8311ce"
+          }
+        ],
+        "semantic": {
+          "native_state": "Waiting",
+          "native_reason": "sync"
+        }
+      },
+      {
+        "id": "2",
+        "coroutine_id": "go:227",
+        "capture_reason": "exit",
+        "timestamp_ns": "1913273310530816",
+        "frames": []
+      },
+      {
+        "id": "3",
+        "coroutine_id": "go:196",
+        "capture_reason": "create",
+        "timestamp_ns": "1913258309075392",
+        "frames": [
+          {
+            "function": "main.startForcedStop",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go",
+            "line": 51,
+            "ip": "0x8312fc"
+          },
+          {
+            "function": "main.submitForcedStop",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go",
+            "line": 49,
+            "ip": "0x831252"
+          },
+          {
+            "function": "main.main",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go",
+            "line": 88,
+            "ip": "0x831a19"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "coroutine_id": "go:196",
+        "capture_reason": "sample",
+        "sample_kind": "runtime_wait_transition",
+        "timestamp_ns": "1913258309118080",
+        "wait_duration_ns": 15001403200,
+        "frames": [
+          {
+            "function": "sync.(*Mutex).Lock",
+            "file": "/home/fzhou/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.0.linux-amd64/src/sync/mutex.go",
+            "line": 46,
+            "ip": "0x81da6b"
+          },
+          {
+            "function": "google.golang.org/grpc.(*Server).stop",
+            "file": "/home/fzhou/go/pkg/mod/google.golang.org/grpc@v1.83.1/server.go",
+            "line": 1959,
+            "ip": "0x81da7b"
+          },
+          {
+            "function": "google.golang.org/grpc.(*Server).Stop",
+            "file": "/home/fzhou/go/pkg/mod/google.golang.org/grpc@v1.83.1/server.go",
+            "line": 1944,
+            "ip": "0x831390"
+          },
+          {
+            "function": "main.startForcedStop.func1",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go",
+            "line": 51,
+            "ip": "0x83134e"
+          }
+        ],
+        "semantic": {
+          "native_state": "Waiting",
+          "native_reason": "sync"
+        }
+      },
+      {
+        "id": "5",
+        "coroutine_id": "go:196",
+        "capture_reason": "exit",
+        "timestamp_ns": "1913273310551680",
+        "frames": []
+      }
+    ],
+    "edges": [
+      {
+        "from_segment_id": "0",
+        "to_segment_id": "1",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "go:227"
+      },
+      {
+        "from_segment_id": "1",
+        "to_segment_id": "2",
+        "edge_kind": "same_coroutine_exit",
+        "coroutine_id": "go:227"
+      },
+      {
+        "from_segment_id": "3",
+        "to_segment_id": "4",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "go:196"
+      },
+      {
+        "from_segment_id": "4",
+        "to_segment_id": "5",
+        "edge_kind": "same_coroutine_exit",
+        "coroutine_id": "go:196"
+      }
+    ]
+  },
+  "raw_manifest": {
+    "perf-out/github-issue-discovery/automatic/grpc-go-9393-first-check-20261126-b22/runtime.trace": "f17c1f575592076cdff46f575967cb41dc86a6334d00469adb3ea14bd09a4191",
+    "perf-out/github-issue-discovery/automatic/grpc-go-9393-first-check-20261126-b22/runtime-events.txt": "b462c1d46beef87118b67a8562954f243576c74c23ed8e33b31c04f542ec694e",
+    "perf-out/github-issue-discovery/automatic/grpc-go-9393-first-check-20261126-b22/goroutines.txt": "e58dae736148378992174bd19fb96a17af1d4e1c1efa3ecd6f28fdee1cc43e90",
+    "perf-out/github-issue-discovery/automatic/grpc-go-9393-first-check-20261126-b22/native-observation.json": "6e61d9cc84b8068e62a2141e29a9e7581f42d67a0b837f833687b9f608e0c6d4",
+    "perf-out/github-issue-discovery/automatic/grpc-go-9393-first-check-20261126-b22/execution.json": "bf29a2dca8ffa2fec8ff27a10b03b602df2a41c0447328ef27aed59dc9c01c18",
+    "perf-out/github-issue-discovery/automatic/grpc-go-9393-first-check-20261126-b22/run.log": "a8fdfaf25e0fe4a40293bf7c470b3d644e9fcc6ac54a34e4c6f3178efd4bfaa9",
+    "perf-out/github-issue-discovery/automatic/grpc-go-9393-first-check-20261126-b22/binary-modules.txt": "9b88b6584b32c3feba40c8bb9dcba10d750fbfee8541633c03022d2915376a8e",
+    "research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/main.go": "7672cd329797dcb7ce315e98af0908d21046dcaaf88521e23d650c3c59a21d44",
+    "research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/upstream.go": "339e52531e430a91b12481dc67ab79a7f2146a6a7cf85e8aa7e064663ed81e41",
+    "research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/run_once.py": "aaf3099a4e5618fd1ed7950fa59529acd8f24d34ff4146181fa98a87ad6ea877",
+    "research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/go.mod": "539d48fceeeafd72e0ea7977c1a8510615d1d493e9e9c4159e5a199313cc9237",
+    "research/github-issue-discovery/grpc-go-9393-first-check-20261126-b22/go.sum": "85d3be06600ab1242235da7f6b019732cae7550bc26700e6d5c9df4faa3a6f32"
+  }
+}

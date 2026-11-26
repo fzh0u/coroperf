@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Who submitted the graceful and forced stops waiting on the same server?">
+  <title>grpc/grpc-go #9393 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/grpc--grpc-go--9393.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="grpc--grpc-go--9393.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/grpc--grpc-go--9393.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">grpc/grpc-go #9393</p>
+        <h1>Who submitted the graceful and forced stops waiting on the same server?</h1>
+        <div class="case-links"><a href="https://github.com/grpc/grpc-go/issues/9393">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Caller recovery</dd></div>
+          <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>Go</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Join native runtime goroutine births to the actual graceful/forced-stop waits, restoring the outer submission contexts absent from later dumps.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 1 · Suspended for 16002.1 ms</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · runtime_wait_transition</span></div><ol class="frames"><li><code>main.startGracefulShutdown.func1</code><span>main.go:47</span></li><li><code>google.golang.org/grpc.(*Server).GracefulStop</code><span>server.go:1951</span></li><li><code>google.golang.org/grpc.(*Server).stop</code><span>server.go:1989</span></li><li><code>sync.(*WaitGroup).Wait</code><span>waitgroup.go:206</span></li></ol></section>
+          <p class="small trace-note">Frames from record 1 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · runtime_wait_transition</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>main.startGracefulShutdown.func1</code><span>main.go:47</span></li><li><code>google.golang.org/grpc.(*Server).GracefulStop</code><span>server.go:1951</span></li><li><code>google.golang.org/grpc.(*Server).stop</code><span>server.go:1989</span></li><li><code>sync.(*WaitGroup).Wait</code><span>waitgroup.go:206</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">Record 1</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>main.main</code><span>main.go:77</span></li><li><code>main.beginGracefulShutdown</code><span>main.go:45</span></li><li><code>main.startGracefulShutdown</code><span>main.go:47</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 4 · Suspended for 15001.4 ms</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · runtime_wait_transition</span></div><ol class="frames"><li><code>main.startForcedStop.func1</code><span>main.go:51</span></li><li><code>google.golang.org/grpc.(*Server).Stop</code><span>server.go:1944</span></li><li><code>google.golang.org/grpc.(*Server).stop</code><span>server.go:1959</span></li><li><code>sync.(*Mutex).Lock</code><span>mutex.go:46</span></li></ol></section>
+          <p class="small trace-note">Frames from record 4 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>4 → 3</code></a></nav>
+          <section class="stack observed" id="join-2-record-4"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 4 · runtime_wait_transition</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>main.startForcedStop.func1</code><span>main.go:51</span></li><li><code>google.golang.org/grpc.(*Server).Stop</code><span>server.go:1944</span></li><li><code>google.golang.org/grpc.(*Server).stop</code><span>server.go:1959</span></li><li><code>sync.(*Mutex).Lock</code><span>mutex.go:46</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-2-record-4">Record 4</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 3 → 4</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>main.main</code><span>main.go:88</span></li><li><code>main.submitForcedStop</code><span>main.go:49</span></li><li><code>main.startForcedStop</code><span>main.go:51</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>The original TCP health RPC shutdown example runs once with gRPC-Go v1.83.1, Go1.25.0 and WaitForHandlers(false). After the original 200ms+1s connection-drain sequence, Stop remains blocked for15.001s. Native goroutine227 waits in handlersWG.Wait at server.go1989; goroutine196 waits on s.mu.Lock at1959. Both dumps show Server [address]. Closing the original handler release channel ends both shutdown calls and the process exits0. Full preparation/build/run121.16s; an earlier duplicate-source compilation failure had no workload and is archived.</dd></div><div><dt>What CoroPerf showed</dt><dd>Both goroutines self-report their native runtime IDs; independent all-goroutine dumps match the runtime trace birth/wait/exit events. CoroPerf joins creation0 to wait1 for227, restoring beginGracefulShutdown, and creation3 to wait4 for196, restoring submitForcedStop. Neither outer helper appears in the corresponding current dump or wait stack. Native wait intervals are16.002s and15.001s. Standard runtime trace already contains the full creator stacks; CoroPerf provides the normalized identity joins and combined view. Exact source retains s.mu via defer while waiting for handlers, explaining the stall when read with the native stacks.</dd></div><div><dt>Scope and limits</dt><dd>Named helpers only split the existing two go submission expressions; no additional shutdown goroutine is introduced. These are harness entry names, not recovered unknown production names. The same Server reference is visible in native dumps, and mutex ownership is a source-backed inference, not a generic ancestry or dynamic lock-owner observation. This confirms a15-second bounded stall and normal original release cleanup, not infinite lifetime or the production15-minute duration. The issue already explains the mutex cause. One successful workload only; no replay, alternate deadline/version, extra RPC batch or fix experiment.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

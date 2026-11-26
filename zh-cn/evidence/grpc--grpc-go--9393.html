@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="等待同一Server的优雅关停和强制关停，分别由谁提交？">
+  <title>grpc/grpc-go #9393 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/grpc--grpc-go--9393.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/grpc--grpc-go--9393.html" lang="en" hreflang="en">English</a><a href="grpc--grpc-go--9393.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">grpc/grpc-go #9393</p>
+        <h1>等待同一Server的优雅关停和强制关停，分别由谁提交？</h1>
+        <div class="case-links"><a href="https://github.com/grpc/grpc-go/issues/9393">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>补回调用来源</dd></div>
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Go</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>把原生运行时goroutine创建关联到实际优雅/强制关停等待，恢复稍后dump缺失的外层提交上下文。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 1 · 挂起 16002.1 毫秒</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1 · runtime_wait_transition</span></div><ol class="frames"><li><code>main.startGracefulShutdown.func1</code><span>main.go:47</span></li><li><code>google.golang.org/grpc.(*Server).GracefulStop</code><span>server.go:1951</span></li><li><code>google.golang.org/grpc.(*Server).stop</code><span>server.go:1989</span></li><li><code>sync.(*WaitGroup).Wait</code><span>waitgroup.go:206</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 1 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 1 · runtime_wait_transition</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>main.startGracefulShutdown.func1</code><span>main.go:47</span></li><li><code>google.golang.org/grpc.(*Server).GracefulStop</code><span>server.go:1951</span></li><li><code>google.golang.org/grpc.(*Server).stop</code><span>server.go:1989</span></li><li><code>sync.(*WaitGroup).Wait</code><span>waitgroup.go:206</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">记录 1</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>main.main</code><span>main.go:77</span></li><li><code>main.beginGracefulShutdown</code><span>main.go:45</span></li><li><code>main.startGracefulShutdown</code><span>main.go:47</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 4 · 挂起 15001.4 毫秒</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · runtime_wait_transition</span></div><ol class="frames"><li><code>main.startForcedStop.func1</code><span>main.go:51</span></li><li><code>google.golang.org/grpc.(*Server).Stop</code><span>server.go:1944</span></li><li><code>google.golang.org/grpc.(*Server).stop</code><span>server.go:1959</span></li><li><code>sync.(*Mutex).Lock</code><span>mutex.go:46</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>4 → 3</code></a></nav>
+          <section class="stack observed" id="join-2-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · runtime_wait_transition</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>main.startForcedStop.func1</code><span>main.go:51</span></li><li><code>google.golang.org/grpc.(*Server).Stop</code><span>server.go:1944</span></li><li><code>google.golang.org/grpc.(*Server).stop</code><span>server.go:1959</span></li><li><code>sync.(*Mutex).Lock</code><span>mutex.go:46</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 3 → 4</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>main.main</code><span>main.go:88</span></li><li><code>main.submitForcedStop</code><span>main.go:49</span></li><li><code>main.startForcedStop</code><span>main.go:51</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>原始TCP健康RPC关停示例在gRPC-Go v1.83.1、Go1.25.0及WaitForHandlers(false)下一次运行。保留原始200毫秒+1秒连接排空顺序，Stop仍阻塞15.001秒。原生goroutine227在server.go1989的handlersWG.Wait等待，196在1959的s.mu.Lock等待；两份栈均显示Server [address]。关闭原始handler释放通道后，两次关停均返回，进程退出0。含准备、构建、运行121.16秒；此前因重复源码编译失败，未运行负载，日志已存档。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>两个goroutine自报的原生运行时ID与独立全goroutine快照、trace创建/等待/退出事件一致。CoroPerf将227的创建0接到等待1，恢复beginGracefulShutdown；将196的创建3接到等待4，恢复submitForcedStop。对应的当前dump和等待栈均没有这两个外层入口。原生等待区间分别16.002秒和15.001秒。标准runtime trace原本已包含完整创建栈；CoroPerf提供统一身份关联和合并视图。准确版本源码在等待handlers时仍以defer持有s.mu，与原生栈共同解释该阻塞。</dd></div><div><dt>适用范围与局限</dt><dd>具名辅助函数只拆分原有两个go提交表达式，没有增加关停goroutine；入口名称属于本地采集程序，不冒充未知生产入口。相同Server引用来自原生dump；锁持有关系是源码支持的推断，不是通用祖先关系或动态锁所有权探针结果。只确认15秒有界阻塞及原始释放后的正常清理，不证明无限存活或生产15分钟时长。issue已解释互斥锁原因。成功负载一次，没有重放、其他时限/版本、额外RPC批次或修复试验。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

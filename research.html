@@ -43,7 +43,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(40)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(41)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -645,7 +645,7 @@
     </section>
 
     <section class="block" id="caller_recovery" aria-labelledby="caller_recovery-title">
-      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">40 issues</span></div>
+      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">41 issues</span></div>
       <p class="section-copy">Recover an application entry or call path missing from a traceback, live snapshot, or native stack.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="caller_recovery-title">
@@ -850,6 +850,11 @@
         <th scope="row"><a href="evidence/psycopg--psycopg--1466.html#call-stack"><span>psycopg/psycopg #1466</span>Which pool check swallowed cancellation and dropped the healthy connection?</a></th>
         <td><p>Recover the actual pool-check Task submission context at swallowed cancellation; extra API observations identify its Pool and healthy Connection.</p></td>
         <td class="row-status"><a class="state-pill state-open" href="https://github.com/psycopg/psycopg/issues/1466">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/grpc--grpc-go--9393.html#call-stack"><span>grpc/grpc-go #9393</span>Who submitted the graceful and forced stops waiting on the same server?</a></th>
+        <td><p>Join native runtime goroutine births to the actual graceful/forced-stop waits, restoring the outer submission contexts absent from later dumps.</p></td>
+        <td class="row-status"><a class="state-pill state-closed" href="https://github.com/grpc/grpc-go/issues/9393">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
       </tr></tbody>
         </table>
       </div>
