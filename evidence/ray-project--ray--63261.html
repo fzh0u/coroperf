@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which request owns the gRPC completion that leaves Ray cache unchanged?">
+  <title>ray-project/ray #63261 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/ray-project--ray--63261.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="ray-project--ray--63261.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/ray-project--ray--63261.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">ray-project/ray #63261</p>
+        <h1>Which request owns the gRPC completion that leaves Ray cache unchanged?</h1>
+        <div class="case-links"><a href="https://github.com/ray-project/ray/issues/63261">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Caller recovery</dd></div>
+          <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
+          <div><dt>Upstream status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Recover the original request submitter from a real owner Task creation join; an explicit exact-Call bridge relates the external completion callback to that Task.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 12</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 12 · task_snapshot</span></div><ol class="frames"><li><code>perform_request</code><span>first_check.py:54</span></li></ol></section>
+          <p class="small trace-note">Frames from record 12 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>12 → 3</code></a></nav>
+          <section class="stack observed" id="join-1-record-12"><div class="stack-head"><h4>Observed task stack</h4><span>Record 12 · task_snapshot</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>perform_request</code><span>first_check.py:54</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-3">Record 3</a><span aria-hidden="true">→</span><a href="#join-1-record-12">Record 12</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 3 → 12</code></p>
+        </aside><section class="stack " id="join-1-record-3"><div class="stack-head"><h4>Creation stack</h4><span>Record 3</span><span class="record-instance">Instance from record 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>first_check.py:101</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>first_check.py:85</span></li><li><code>submit_ingress_request</code><span>first_check.py:60</span></li><li><code>create_task</code><span>tasks.py:420</span></li><li><code>create_task</code><span>base_events.py:463</span></li><li><code>task_factory</code><span>python_asyncio_debugger.py:59</span></li></ol></section>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>One real grpc.aio request fails with UNAVAILABLE under Ray 2.59.0. Ray receives the same UnaryUnaryCall object in its completion callback, and the queue-length cache entry remains 0 after callback and cleanup. The callback runs with no current asyncio Task; its physical stack omits the original request submission.</dd></div><div><dt>What CoroPerf showed</dt><dd>An explicit observer matches the callback Call to the Call created inside the actual owner Task. Generic asyncio creation, suspended-stack and exit records identify that same Task. CoroPerf joins its recorded creation to the suspended request stack, recovering submit_ingress_request. Four involved Ray source files match their installed distribution RECORD hashes. The callback stack is stored separately and is not mislabeled as owner-Task execution.</dd></div><div><dt>Scope and limits</dt><dd>This uses real Ray completion/result/cache classes with router control-plane initialization and metrics replaced by a minimal component fixture. It does not start a Serve cluster or observe a subsequent routing decision. A local service is configured to return UNAVAILABLE, but handler arrival and error details were not recorded, so the exact error origin is unverified. The Task completes and the process exits 0. No fix, actor-transport comparison, alternate version or replay ran; the earlier import failure remains archived.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

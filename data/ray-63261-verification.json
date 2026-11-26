@@ -1,0 +1,293 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-26T06:20:15.394991+00:00",
+  "case": {
+    "id": "ray-project--ray--63261",
+    "repo": "ray-project/ray",
+    "issue": 63261,
+    "url": "https://github.com/ray-project/ray/issues/63261",
+    "upstream_reference": "https://github.com/ray-project/ray/issues/63261",
+    "title": "Which request owns the gRPC completion that leaves Ray cache unchanged?",
+    "title_zh": "Ray 的 gRPC 完成回调未清除缓存时，原始请求来自哪里？",
+    "verified_on": "2026-11-26",
+    "reproduction": "Component reproduced",
+    "diagnosis": "Direct",
+    "graph": "perf-out/github-issue-discovery/automatic/ray-63261-later-batch-20261126/analysis/graph.json",
+    "findings": {
+      "observation": "One real grpc.aio request fails with UNAVAILABLE under Ray 2.59.0. Ray receives the same UnaryUnaryCall object in its completion callback, and the queue-length cache entry remains 0 after callback and cleanup. The callback runs with no current asyncio Task; its physical stack omits the original request submission.",
+      "interpretation": "An explicit observer matches the callback Call to the Call created inside the actual owner Task. Generic asyncio creation, suspended-stack and exit records identify that same Task. CoroPerf joins its recorded creation to the suspended request stack, recovering submit_ingress_request. Four involved Ray source files match their installed distribution RECORD hashes. The callback stack is stored separately and is not mislabeled as owner-Task execution.",
+      "limits": "This uses real Ray completion/result/cache classes with router control-plane initialization and metrics replaced by a minimal component fixture. It does not start a Serve cluster or observe a subsequent routing decision. A local service is configured to return UNAVAILABLE, but handler arrival and error details were not recorded, so the exact error origin is unverified. The Task completes and the process exits 0. No fix, actor-transport comparison, alternate version or replay ran; the earlier import failure remains archived."
+    },
+    "symptom_zh": "Ray 2.59.0 下的一次真实 grpc.aio 请求以 UNAVAILABLE 失败。Ray 完成回调收到同一个 UnaryUnaryCall 对象，回调及清理后队列长度缓存条目仍为 0。回调执行时没有当前 asyncio Task，物理栈缺少原始请求提交入口。",
+    "reasoning_zh": "明确增加的观察器将回调中的 Call 接回真实所属 Task 中创建的同一 Call；通用 asyncio 记录保留该 Task 的创建、暂停栈及退出。CoroPerf 用同一 Task 身份关联创建与暂停栈，恢复 submit_ingress_request。相关四份 Ray 源码与安装包 RECORD 哈希一致。回调物理栈单独保存，没有冒充所属 Task 的执行栈。",
+    "limits_zh": "使用真实 Ray 完成回调、结果和缓存类，路由器控制面初始化及指标设施由最小组件夹具代替；未启动 Serve 集群或观察下一次路由决定。本地服务配置返回 UNAVAILABLE，但没有记录处理器到达及错误详情，因此确切错误来源未验证。Task 正常完成，进程退出 0。未测试修复、actor 传输对照、多版本或重跑；此前导入失败保留归档。"
+  },
+  "verification": {
+    "issue_url": "https://github.com/ray-project/ray/issues/63261",
+    "successful_component_runs": 1,
+    "ray": "2.59.0",
+    "grpcio": "1.85.4",
+    "exit_code": 0,
+    "first_check_seconds": 44.840022802352905,
+    "runtime_seconds": 1.7518009420018643,
+    "call_identity_matches": true,
+    "callback_has_no_current_task": true,
+    "queue_cache_after_failed_callback": 0,
+    "task_id": "task:0x7a28f6f0e500",
+    "create_record": "3",
+    "sample_record": "12",
+    "exit_record": "14",
+    "recovered_creator": "submit_ingress_request",
+    "package_RECORD_checks": {
+      "ray/serve/_private/router.py": true,
+      "ray/serve/_private/replica_result.py": true,
+      "ray/serve/_private/request_router/common.py": true,
+      "ray/serve/_private/request_router/pow_2_router.py": true
+    },
+    "collector_scope": "Generic Task creation/current stack/exit plus an explicit Call-to-owning-Task observer. Callback physical stack is stored separately.",
+    "limitations": [
+      "Component-only setup omits full Serve control-plane and metrics initialization; no next-request routing or actor-transport variant ran.",
+      "A local service was configured to abort with UNAVAILABLE. The saved status is UNAVAILABLE, but error details and handler arrival were not captured; its exact source is not independently established.",
+      "The unchanged cache entry is confirmed; a production stale-routing incident or cache-invalidation fix was not run.",
+      "No replay or alternate version. Prior batch failed before importing the framework."
+    ],
+    "artifact_sha256": {
+      "native.json": "72614980aa0ebae04f87882ed5d3cb9af25f05802de66438cd3d7cfb017002e7",
+      "graph.json": "d3415fca8432dbab6d48817d0c84288eb41b3435fb73e8d573cbfe8124b2708f",
+      "stdout.log": "1c182344d9b269e59f2bd571b3c92207d4f8f49f8dec0e4f9447b70d3e31747f",
+      "stderr.log": "5bef0da8f8a2513cdc64cdb5b55dcb61a3ff832cc4b3f8df53b04d316c9b0696",
+      "first-check.json": "92ff595f8b0f80e2e401c72e9cd767af54cd1449cd1351b99d82748feb901849",
+      "first_check.py": "fb06aac6fa430674620894cb431baf5c42e0f32a77c316421729974d487b6744"
+    },
+    "coroperf_creator_recovered": true
+  },
+  "native_result": {
+    "call_id": "0x7a28f7121520",
+    "owner_task_id": "task:0x7a28f6f0e500",
+    "callback_result_type": "UnaryUnaryCall",
+    "same_call_object": true,
+    "callback_call_id": "0x7a28f7121520",
+    "callback_current_task_is_none": true,
+    "callback_physical_stack": [
+      {
+        "function": "_process_finished_request",
+        "file": "/data1/fzhou/coro/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/router.py",
+        "line": 956
+      },
+      {
+        "function": "_run",
+        "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+        "line": 88
+      },
+      {
+        "function": "_run_once",
+        "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "line": 1999
+      },
+      {
+        "function": "run_forever",
+        "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "line": 645
+      },
+      {
+        "function": "run_until_complete",
+        "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "line": 678
+      },
+      {
+        "function": "run",
+        "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "line": 118
+      },
+      {
+        "function": "run",
+        "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "line": 195
+      },
+      {
+        "function": "<module>",
+        "file": "/data1/fzhou/coro/research/github-issue-discovery/ray-63261-later-batch-20261126/first_check.py",
+        "line": 101
+      }
+    ],
+    "cache_after_callback": 0,
+    "request_id": "owned-internal-request",
+    "rpc_code": "UNAVAILABLE",
+    "rpc_error_type": "AioRpcError",
+    "ray_version": "2.59.0",
+    "grpc_version": "1.85.4",
+    "cache_after_cleanup": 0,
+    "task_cancelled": false,
+    "task_done": true,
+    "native_runs": 1,
+    "scope": "Real grpc.aio Call and unmodified cached Ray result/callback/cache code; router control-plane and metrics initialization omitted. Not full Serve routing or a next-request routing replay.",
+    "extra_observer": "Targeted profile return hook records the exact callback Call object and live actual owner Task; generic asyncio collector records Task create/sample/exit."
+  },
+  "capture": {
+    "schema_version": 1,
+    "frame_order": "leaf_to_root",
+    "language": "python",
+    "runtime": "Ray 2.59.0 / asyncio / Python 3.12.16",
+    "producer": {
+      "name": "generic-asyncio-Task-creation-sample-exit",
+      "identity_kind": "actual-asyncio-Task",
+      "frame_order": "leaf_to_root"
+    },
+    "source_metadata": {
+      "scope": "Actual owner Task only; the external callback is not labeled as execution of this Task.",
+      "extra_bridge": "Exact callback Call matches the Call created in the observed owner Task. Targeted profile observer is required.",
+      "full_trace_segments": 16,
+      "selected_task_segments": 3,
+      "callback_observation": [
+        {
+          "function": "_process_finished_request",
+          "file": "/data1/fzhou/coro/.tools/ray-68460-native/lib/python3.12/site-packages/ray/serve/_private/router.py",
+          "line": 956
+        },
+        {
+          "function": "_run",
+          "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+          "line": 88
+        },
+        {
+          "function": "_run_once",
+          "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "line": 1999
+        },
+        {
+          "function": "run_forever",
+          "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "line": 645
+        },
+        {
+          "function": "run_until_complete",
+          "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+          "line": 678
+        },
+        {
+          "function": "run",
+          "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "line": 118
+        },
+        {
+          "function": "run",
+          "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+          "line": 195
+        },
+        {
+          "function": "<module>",
+          "file": "/data1/fzhou/coro/research/github-issue-discovery/ray-63261-later-batch-20261126/first_check.py",
+          "line": 101
+        }
+      ]
+    },
+    "segments": [
+      {
+        "id": 3,
+        "capture_reason": "create",
+        "coroutine_id": "task:0x7a28f6f0e500",
+        "thread_id": 3853119,
+        "timestamp": 1795673739.9824734,
+        "frames": [
+          {
+            "function": "task_factory",
+            "file": "/data1/fzhou/coro/scripts/python_asyncio_debugger.py",
+            "line": 59
+          },
+          {
+            "function": "create_task",
+            "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+            "line": 463
+          },
+          {
+            "function": "create_task",
+            "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py",
+            "line": 420
+          },
+          {
+            "function": "submit_ingress_request",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/ray-63261-later-batch-20261126/first_check.py",
+            "line": 60
+          },
+          {
+            "function": "main",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/ray-63261-later-batch-20261126/first_check.py",
+            "line": 85
+          },
+          {
+            "function": "_run",
+            "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+            "line": 88
+          },
+          {
+            "function": "_run_once",
+            "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+            "line": 1999
+          },
+          {
+            "function": "run_forever",
+            "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+            "line": 645
+          },
+          {
+            "function": "run_until_complete",
+            "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+            "line": 678
+          },
+          {
+            "function": "run",
+            "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+            "line": 118
+          },
+          {
+            "function": "run",
+            "file": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+            "line": 195
+          },
+          {
+            "function": "<module>",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/ray-63261-later-batch-20261126/first_check.py",
+            "line": 101
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "capture_reason": "sample",
+        "coroutine_id": "task:0x7a28f6f0e500",
+        "thread_id": 3853119,
+        "timestamp": 1795673739.9865136,
+        "frames": [
+          {
+            "function": "perform_request",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/ray-63261-later-batch-20261126/first_check.py",
+            "line": 54
+          }
+        ],
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 14,
+        "capture_reason": "exit",
+        "coroutine_id": "task:0x7a28f6f0e500",
+        "thread_id": 3853119,
+        "timestamp": 1795673739.9866922,
+        "frames": []
+      }
+    ],
+    "edges": [
+      {
+        "from_segment_id": 3,
+        "to_segment_id": 12,
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "task:0x7a28f6f0e500"
+      },
+      {
+        "from_segment_id": 12,
+        "to_segment_id": 14,
+        "edge_kind": "same_coroutine_exit",
+        "coroutine_id": "task:0x7a28f6f0e500"
+      }
+    ]
+  }
+}

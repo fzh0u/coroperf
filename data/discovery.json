@@ -17,9 +17,9 @@
     "excluded_after_review": 29,
     "needs_review": 660,
     "skipped_review": 151,
-    "external_environment_required": 8,
+    "external_environment_required": 7,
     "already_catalogued": 9,
-    "verified_case": 2,
+    "verified_case": 3,
     "component_reproduced": 1
   },
   "coverage": [
@@ -21404,8 +21404,8 @@
       "async_signal": true,
       "observed_at": "2026-11-26T06:01:04+00:00",
       "heat": 11.7881,
-      "status": "external_environment_required",
-      "reason": "First-check preparation deferred: resolving the venv interpreter symlink bypassed its site-packages, and grpc import failed before Ray or the framework workload. One process attempt, zero native reproductions and zero captures. Preserve the venv path for a later batch; do not retry in this pass.",
+      "status": "verified_case",
+      "reason": "One real grpc.aio request fails with UNAVAILABLE under Ray 2.59.0. Ray receives the same UnaryUnaryCall object in its completion callback, and the queue-length cache entry remains 0 after callback and cleanup. The callback runs with no current asyncio Task; its physical stack omits the original request submission. An explicit observer matches the callback Call to the Call created inside the actual owner Task. Generic asyncio creation, suspended-stack and exit records identify that same Task. CoroPerf joins its recorded creation to the suspended request stack, recovering submit_ingress_request. Four involved Ray source files match their installed distribution RECORD hashes. The callback stack is stored separately and is not mislabeled as owner-Task execution.",
       "query_kinds": [
         "recent"
       ]
@@ -43862,16 +43862,15 @@
       "native_process_exit_code_verified": false
     },
     "ray-project--ray--63261": {
-      "status": "external_environment_required",
-      "reason": "First-check preparation deferred: resolving the venv interpreter symlink bypassed its site-packages, and grpc import failed before Ray or the framework workload. One process attempt, zero native reproductions and zero captures. Preserve the venv path for a later batch; do not retry in this pass.",
-      "reason_zh": "首检准备暂缓：启动器解析虚拟环境解释器符号链接后旁路了 site-packages，grpc 在 Ray 和框架工作负载开始前导入失败。一次进程尝试，原生复现和采集均为 0。后续批次需保留虚拟环境解释器路径，本批不重试。",
+      "status": "verified_case",
+      "reason": "One real grpc.aio request fails with UNAVAILABLE under Ray 2.59.0. Ray receives the same UnaryUnaryCall object in its completion callback, and the queue-length cache entry remains 0 after callback and cleanup. The callback runs with no current asyncio Task; its physical stack omits the original request submission. An explicit observer matches the callback Call to the Call created inside the actual owner Task. Generic asyncio creation, suspended-stack and exit records identify that same Task. CoroPerf joins its recorded creation to the suspended request stack, recovering submit_ingress_request. Four involved Ray source files match their installed distribution RECORD hashes. The callback stack is stored separately and is not mislabeled as owner-Task execution.",
+      "reason_zh": "Ray 2.59.0 下的一次真实 grpc.aio 请求以 UNAVAILABLE 失败。Ray 完成回调收到同一个 UnaryUnaryCall 对象，回调及清理后队列长度缓存条目仍为 0。回调执行时没有当前 asyncio Task，物理栈缺少原始请求提交入口。明确增加的观察器将回调中的 Call 接回真实所属 Task 中创建的同一 Call；通用 asyncio 记录保留该 Task 的创建、暂停栈及退出。CoroPerf 用同一 Task 身份关联创建与暂停栈，恢复 submit_ingress_request。相关四份 Ray 源码与安装包 RECORD 哈希一致。回调物理栈单独保存，没有冒充所属 Task 的执行栈。",
       "sources": [
         "https://github.com/ray-project/ray/issues/63261"
       ],
-      "reviewed_at": "2026-11-26T06:10:51.563707+00:00",
-      "prior_local_execution": false,
-      "native_reproductions": 0,
-      "process_attempts": 1
+      "reviewed_at": "2026-11-26T06:20:15.394991+00:00",
+      "successful_component_runs": 1,
+      "prior_preparation_failure_preserved": true
     },
     "tokio-rs--tokio--3709": {
       "status": "excluded_after_review",
@@ -43899,6 +43898,17 @@
         "https://github.com/reactor/reactor-core/issues/1099"
       ],
       "reviewed_at": "2026-11-26T06:11:21.768306+00:00"
+    },
+    "tokio-rs--tokio--8696": {
+      "status": "skipped_review",
+      "skip_reason": "automatic_review_rejection",
+      "reason": "Automatic approval review rejected the delegated Rust first-check turn for possible cybersecurity risk. Only metadata/gate artifacts are available; no successful workload or capture can be verified. Preserve records and stop further setup, execution, attribution, fix work or retry through related IDs.",
+      "reason_zh": "自动审批审查以可能涉及网络安全风险为由拒绝 Rust 首检分支。目前仅有元数据和前检查记录，无法验证成功运行或采集。保留已有记录，停止后续准备、执行、归属、修复及关联 ID 重试；这不是确认存在安全漏洞。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/8696"
+      ],
+      "reviewed_at": "2026-11-26T06:19:24.226298+00:00",
+      "local_execution_verified": false
     }
   },
   "supplemental_records": [
@@ -44369,6 +44379,24 @@
       "summary_zh": "一次真实 SchedulerTask 构造到中断的对象身份关联恢复了历史提交入口。原生行为已确认；采集器收尾退出 1、原生退出码未验证均明确注明，没有重跑。",
       "path": "data/reactor-3068-verification.json",
       "checked_at": "2026-11-26T06:10:18.844357+00:00"
+    },
+    {
+      "id": "ray-63261-selected-result-20261126",
+      "title": "New Ray Serve gRPC completion Task creation case",
+      "title_zh": "新增 Ray Serve gRPC 完成回调 Task 创建案例",
+      "summary": "One real failed gRPC Call leaves the queue-length cache unchanged. Exact Call identity plus the actual owning Task creation recovers the original request submitter. Exit 0, 1.75s runtime, no replay; full Serve routing and a fix remain untested.",
+      "summary_zh": "一次真实失败 gRPC Call 完成后缓存未清除；同一 Call 身份加真实所属 Task 创建记录恢复原始请求提交入口。退出 0、运行 1.75 秒，没有重跑；未验证完整 Serve 路由或修复。",
+      "path": "data/ray-63261-verification.json",
+      "checked_at": "2026-11-26T06:20:15.394991+00:00"
+    },
+    {
+      "id": "tokio-8696-automatic-review-hold-20261126",
+      "title": "Rust first-check turn rejected by automatic review",
+      "title_zh": "Rust 首检分支被自动审查拒绝",
+      "summary": "After selecting Tokio #8696, automatic approval review rejected the delegated turn for possible cybersecurity risk. Only metadata/gate artifacts are available; successful execution and capture are unverified. The branch is stopped without retry.",
+      "summary_zh": "选中 Tokio #8696 后，自动审批审查以可能涉及网络安全风险为由拒绝委派分支。仅保留元数据和前检查记录，成功运行及采集未验证；支线已停止，不重试。",
+      "path": "data/tokio-8696-automatic-review-hold.json",
+      "checked_at": "2026-11-26T06:20:15.394991+00:00"
     }
   ],
   "deferred_registry": [
@@ -45273,6 +45301,17 @@
       "reviewed_at": "2026-11-26T05:59:24.879920+00:00",
       "prior_local_execution": false,
       "review_note_zh": "用户要求停止当前条目。保留来源审阅；没有执行 Ray actor 程序或采集。主报告与重复项一并跳过。 跳过依据是用户指示，不是安全漏洞结论。"
+    },
+    {
+      "id": "tokio-rs--tokio--8696",
+      "url": "https://github.com/tokio-rs/tokio/issues/8696",
+      "title": "Tokio #8696: automatic-review hold",
+      "title_zh": "Tokio #8696：自动审查暂缓",
+      "security_impact": "未评估；自动审查拒绝不等于确认漏洞。",
+      "skip_reason": "automatic_review_rejection",
+      "reviewed_at": "2026-11-26T06:19:24.226298+00:00",
+      "prior_local_execution": null,
+      "review_note_zh": "自动审批审查以可能涉及网络安全风险为由拒绝 Rust 首检分支。目前仅有元数据和前检查记录，无法验证成功运行或采集。保留已有记录，停止后续准备、执行、归属、修复及关联 ID 重试；这不是确认存在安全漏洞。 未评估；自动审查拒绝不等于确认漏洞。"
     }
   ],
   "signal_holds": [
@@ -55428,7 +55467,7 @@
     "previous_observed_at": "2026-11-26T04:11:26+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T06:13:14+00:00",
+  "ledger_refreshed_at": "2026-11-26T06:20:16+00:00",
   "progress_summary": {
     "source": "scheduled_search",
     "assembled_at": "2026-11-26T06:13:14+00:00",

@@ -43,7 +43,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(31)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(32)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -583,13 +583,20 @@
               <small>Reproduction follow-up paused under safety restrictions</small>
             </th>
             <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/ray-project/ray/issues/10324">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
+          </tr>
+          <tr id="followup-tokio-rs--tokio--8696">
+            <th scope="row">
+              <a href="https://github.com/tokio-rs/tokio/issues/8696"><span>tokio-rs/tokio #8696</span>Tokio #8696: automatic-review hold</a>
+              <small>Reproduction follow-up paused under safety restrictions</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/tokio-rs/tokio/issues/8696">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
           </tr></tbody>
         </table>
       </div>
     </section>
 
     <section class="block" id="caller_recovery" aria-labelledby="caller_recovery-title">
-      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">31 issues</span></div>
+      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">32 issues</span></div>
       <p class="section-copy">Recover an application entry or call path missing from a traceback, live snapshot, or native stack.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="caller_recovery-title">
@@ -749,6 +756,11 @@
         <th scope="row"><a href="evidence/reactor--reactor-core--3068.html#call-stack"><span>reactor/reactor-core #3068</span>Which submitted task was interrupted by Reactor scheduler shutdown?</a></th>
         <td><p>Join the actual interrupted SchedulerTask receiver to its observed constructor, recovering the historical submission entry missing from the native exception stack.</p></td>
         <td class="row-status"><a class="state-pill state-closed" href="https://github.com/reactor/reactor-core/issues/3068">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/ray-project--ray--63261.html#call-stack"><span>ray-project/ray #63261</span>Which request owns the gRPC completion that leaves Ray cache unchanged?</a></th>
+        <td><p>Recover the original request submitter from a real owner Task creation join; an explicit exact-Call bridge relates the external completion callback to that Task.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/ray-project/ray/issues/63261">Open</a><span class="fix-label">Fix unconfirmed</span></td>
       </tr></tbody>
         </table>
       </div>
