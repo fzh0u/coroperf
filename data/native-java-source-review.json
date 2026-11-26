@@ -1,0 +1,95 @@
+{
+  "checked_at": "2026-11-26T01:38:59.071308+00:00",
+  "reviews": {
+    "netty--netty--6096": {
+      "status": "external_environment_required",
+      "title": "Netty should stop swallowing",
+      "upstream_status": "open",
+      "comments": 34,
+      "positive_reactions": 28,
+      "repository_stars": 35071,
+      "heat": 26.1886,
+      "reason": "Broad Throwable propagation discussion. A recent reactor-netty report describes a stranded Mono, but provides no pinned, independent reproducer. Keep as an unverified lifecycle-provenance lead rather than a selected CoroPerf result.",
+      "reason_zh": "这是 Throwable 传播语义的长期讨论。近期 reactor-netty 评论描述 Mono 悬空，但没有固定版本的独立复现；保留为尚未验证的生命周期来源线索，不列为 CoroPerf 成功案例。",
+      "native_diagnostic_assessment": "Existing errors identify allocation/decoder/event-loop paths; they do not identify the affected business subscription or request.",
+      "native_diagnostic_assessment_zh": "已有错误栈给出分配、decoder 与 event-loop 路径，但没有标识受影响的业务订阅或请求。",
+      "coroperf_gap_assessment": "Would require exact Throwable-to-Channel/Promise/Mono identity plus historical task or subscription registration origin. A sampled Java Thread stack alone cannot supply these joins; CoroPerf support and benefit remain unverified.",
+      "coroperf_gap_assessment_zh": "需要精确 Throwable→Channel/Promise/Mono 身份及任务或订阅登记历史；仅采样 Java Thread 栈无法补齐，CoroPerf 的采集支持与收益均未验证。",
+      "reproduction_prerequisites": "A pinned affected Netty/reactor-netty version, a bounded controlled managed-error fixture, observable terminal state and exact request/Promise identity. No independent quick fixture is supplied; real memory exhaustion is unnecessary and was not attempted.",
+      "reproduction_prerequisites_zh": "需固定受影响版本、受控且有界的 managed-error fixture、可观测终止状态及精确请求/Promise 身份。来源未给独立快速程序；没有尝试真实内存耗尽。",
+      "sources": [
+        "https://github.com/netty/netty/issues/6096",
+        "https://github.com/netty/netty/issues/6096#issuecomment-264574221",
+        "https://github.com/netty/netty/issues/6096#issuecomment-329475075",
+        "https://github.com/netty/netty/issues/6096#issuecomment-5915019397"
+      ],
+      "source_review_window_utc": {
+        "start": "2026-11-25T22:22:20Z",
+        "end": "2026-11-25T22:23:23Z",
+        "elapsed_seconds_upper_bound": 63
+      },
+      "security_or_native_fault_classification": "No explicit exploit or native memory-fault signal established. Managed Error propagation alone is not a confirmed safety finding.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "selected": false
+    },
+    "netty--netty--11020": {
+      "status": "excluded_after_review",
+      "title": "Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider",
+      "upstream_status": "closed",
+      "comments": 71,
+      "positive_reactions": 10,
+      "repository_stars": 35071,
+      "heat": 27.135,
+      "reason": "The platform-provider load cause is explicit. Despite a stackless DNS timeout leaf, the outer failure already includes the HTTP request and Spring Gateway checkpoints; no missing business entry point is established.",
+      "reason_zh": "平台 provider 装载原因已明确。尽管 DNS timeout 末端无栈，外层异常已包含 HTTP 请求和 Spring Gateway checkpoint；尚未发现缺失的业务入口。",
+      "native_diagnostic_assessment": "The chain reports UnsatisfiedLinkError, then a request ID, HTTP route and assembly checkpoints around DNS failure.",
+      "native_diagnostic_assessment_zh": "异常链给出 UnsatisfiedLinkError，以及 DNS 失败对应的请求 ID、HTTP 路由与 assembly checkpoint。",
+      "coroperf_gap_assessment": "An exact provider/resolver-to-request identity relation is not captured, but the current report does not need it to recover its entry point. Another caller graph would not establish a DNS or packaging cause beyond the supplied diagnostics.",
+      "coroperf_gap_assessment_zh": "未采集精确 provider/resolver→请求身份关系，但现有报告恢复入口并不依赖它；额外调用图尚无超出已有 DNS/依赖诊断的已证实收益。",
+      "reproduction_prerequisites": "Reported macOS x86_64/OpenJ9 Java 15, Netty 4.1.58, reactor-netty 1.0.3 and three Spring Cloud/Eureka modules; architecture/classifier and resolver environment matter. This is not a self-contained Linux first check.",
+      "reproduction_prerequisites_zh": "原始前提为 macOS x86_64/OpenJ9 Java 15、Netty 4.1.58、reactor-netty 1.0.3 及三模块 Spring Cloud/Eureka；架构、classifier 和 resolver 环境均关键，不是当前 Linux 上的独立快速首检。",
+      "sources": [
+        "https://github.com/netty/netty/issues/11020"
+      ],
+      "source_review_window_utc": {
+        "start": "2026-11-25T22:22:53Z",
+        "end": "2026-11-25T22:23:51Z",
+        "elapsed_seconds_upper_bound": 58
+      },
+      "security_or_native_fault_classification": "A managed native-library linkage failure; no explicit native crash, memory corruption or exploit signal established. This diagnostic exclusion is not a security hold.",
+      "issue_program_executed": false,
+      "dependencies_installed": false,
+      "coroperf_capture_ran": false,
+      "selected": false
+    },
+    "tokio-rs--tokio--5835": {
+      "status": "excluded_after_review",
+      "reason": "The reporter retracted the initial report: an empty JoinSet::join_next returns Ready(None) and does not retain a waker. Later comments discuss wake-on-push expectations in a custom outer Future, not a demonstrated lost historical task origin. No program, build or capture ran.",
+      "reason_zh": "报告者已撤回最初结论：空 JoinSet::join_next 返回 Ready(None)，不会保存 waker。后续评论讨论自定义外层 Future 的 push 唤醒预期，尚未建立历史任务来源缺失；未执行程序、构建或采集。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/5835",
+        "https://github.com/tokio-rs/tokio/issues/5835#issuecomment-1613308533"
+      ],
+      "reviewed_at": "2026-11-26T01:38:59.071308+00:00",
+      "issue_program_executed": false
+    },
+    "chriskohlhoff--asio--1156": {
+      "status": "skipped_review",
+      "reason": "The supplied native C++ program explicitly reports a failing strand assertion after nested cancellation. Keep as a reported native-failure hold; impact is unassessed. Source review only, no dependency setup, build, workload, capture or fix test.",
+      "reason_zh": "所附原生 C++ 程序明确报告嵌套取消后的 strand 断言失败，按原生故障线索暂缓，影响未评估。仅来源审阅，没有准备依赖、构建、运行、采集或修复测试。",
+      "sources": [
+        "https://github.com/chriskohlhoff/asio/issues/1156"
+      ],
+      "reviewed_at": "2026-11-26T01:38:59.071308+00:00",
+      "skip_reason": "reported_runtime_failure",
+      "prior_local_execution": false
+    }
+  },
+  "new_native_reproductions": 0,
+  "workloads_executed": 0,
+  "dependencies_installed": false,
+  "selected_catalogue_entries": 127,
+  "scope": "Two high-heat Netty reviews, one retracted Tokio report, and one metadata-only native-failure hold. User-skipped Tokio #8772 remains stopped."
+}
