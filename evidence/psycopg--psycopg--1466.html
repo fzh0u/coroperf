@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which pool check swallowed cancellation and dropped the healthy connection?">
+  <title>psycopg/psycopg #1466 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/psycopg--psycopg--1466.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="psycopg--psycopg--1466.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/psycopg--psycopg--1466.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">psycopg/psycopg #1466</p>
+        <h1>Which pool check swallowed cancellation and dropped the healthy connection?</h1>
+        <div class="case-links"><a href="https://github.com/psycopg/psycopg/issues/1466">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Caller recovery</dd></div>
+          <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
+          <div><dt>Upstream status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Recover the actual pool-check Task submission context at swallowed cancellation; extra API observations identify its Pool and healthy Connection.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 104</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 104 · scoped_exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:73</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>check</code><span>pool_async.py:612</span></li></ol></section>
+          <p class="small trace-note">Frames from record 104 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>104 → 11</code></a></nav>
+          <section class="stack observed" id="join-1-record-104"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 104 · scoped_exception</span><span class="record-instance">Instance from record 11</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:73</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>check</code><span>pool_async.py:612</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-11">Record 11</a><span aria-hidden="true">→</span><a href="#join-1-record-104">Record 104</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 11 → 104</code></p>
+        </aside><section class="stack " id="join-1-record-11"><div class="stack-head"><h4>Creation stack</h4><span>Record 11</span><span class="record-instance">Instance from record 11</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:73</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:678</span></li><li><code>run_forever</code><span>base_events.py:645</span></li><li><code>_run_once</code><span>base_events.py:1999</span></li><li><code>_run</code><span>events.py:88</span></li><li><code>main</code><span>check_once.py:37</span></li><li><code>launch_pool_check</code><span>check_once.py:16</span></li><li><code>create_task</code><span>tasks.py:420</span></li></ol></section>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>One run of the original async pool check/cancel example at exact development source e1fc504e34d13e577730afb19b31388e58f42669 confirms cancellation is swallowed: the check Task returns normally, cancelled() is false, cancelling() is 1, and connections_lost becomes 1. The actual dropped Connection is open, absent from the pool, and still answers SELECT 1 after pool close. CPython3.12.16/private PostgreSQL17.1/pure-Python libpq; exit0, explicit connection/server cleanup, full preparation/run70.30s.</dd></div><div><dt>What CoroPerf showed</dt><dd>The independently held check Task object [address] matches CoroPerf runtime generation g6. Native get_stack contains only check. CoroPerf joins creation11 to the CancelledError observation104 inside pool_async.check and recovers launch_pool_check, missing from both the native pending stack and the cancellation observation. The same Task later exits by return. Extra API observation12 identifies Pool [address] and checked Connection [address]. Sixty focused observations are attributed; cleanup Tasks reusing the address as generations g7/g8 are excluded. The report already describes the cause; added evidence identifies the actual operation and historical submission context.</dd></div><div><dt>Scope and limits</dt><dd>Read-only diagnostic references retain checked Connections and defer GC: this proves the pool drops an open healthy connection, not durable leakage without the observer. Original min_size3, slow-check sleep0.2s, cancellation at0.1s and existing create_task topology are retained; launch_pool_check only names the existing submission expression. Generic Task ancestry does not infer resource ownership or the cancellation initiator; Pool/Connection identity comes from extra API observations. Exact development source is tested, not cached distribution version metadata. Two exception propagation observations do not prove two exception objects. One successful async component; no replay, sync pool, escaping BaseException, wait_for deadline, starvation, version matrix or fix test.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
