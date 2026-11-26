@@ -1,0 +1,198 @@
+{
+  "checked_at": "2026-11-26T08:09:16.675515+00:00",
+  "scope": "Existing-issue follow-up b5; no new search or successful native target result.",
+  "new_selected_cases": 0,
+  "selected_catalogue_entries": 130,
+  "go_preparation": {
+    "id": "grpc--grpc-go--9010",
+    "build_attempts": 2,
+    "workload_executions": 0,
+    "preparation_fix": "Make the copied module-cache go.sum writable; no source or version change.",
+    "error": "First-check timebox reached before build",
+    "elapsed_seconds": 188.36,
+    "finished_at": "2026-11-26T08:02:08.632390+00:00",
+    "third_build_started": false,
+    "status": "preparation_deferred",
+    "last_launched_build_seconds": 152.5,
+    "blocker": "Offline module cache lacked transitive versions; online attempt fetched prerequisites but failed updating read-only go.sum copied from module cache. Permission corrected; the later pre-build deadline check prevented a third compilation. No workload or trace."
+  },
+  "database_preparation": {
+    "id": "sqlalchemy--sqlalchemy--5967",
+    "status": "preparation_deferred",
+    "checked_at": "2026-11-26T08:09:16.675515+00:00",
+    "maintainer_component": "Ten raw asyncpg prepared-statement Tasks share one real connection; original source comment provides this standalone example.",
+    "python_processes_started": 1,
+    "prepared_statement_workloads": 0,
+    "saved_coroperf_captures": 0,
+    "first_process": {
+      "id": "sqlalchemy--sqlalchemy--5967",
+      "workload_executions": 1,
+      "exit_code": 1,
+      "private_postgres_cleanup_returned": true,
+      "elapsed_seconds": 157.24,
+      "finished_at": "2026-11-26T08:05:50.564975+00:00"
+    },
+    "deadline_guard": {
+      "id": "sqlalchemy--sqlalchemy--5967",
+      "workload_executions": 0,
+      "error": "First-check budget reached",
+      "elapsed_seconds": 175.65,
+      "finished_at": "2026-11-26T08:06:08.980602+00:00"
+    },
+    "blocker": "Private PostgreSQL initializes the current-user role, not postgres. The only process failed authentication before the concurrent prepare/fetch example. Fixture changed to getpass.getuser(); the 175.65s guard prevented another cluster/process.",
+    "scope": "No SQLAlchemy ORM or Discord bot execution; no InterfaceError target reproduction. Original failure, fixture correction and blocked retry are distinct records.",
+    "next_prerequisite": "A later batch can use the known current-user role and a fresh timebox; do not restart in this pass."
+  },
+  "source_decisions": [
+    {
+      "id": "tokio-rs--tokio--4827",
+      "number": 4827,
+      "title": "meta: Stabilize WASI support",
+      "status": "excluded_after_review",
+      "reason": "WASI stabilization tracker: API availability and disabled tests, not a concrete missing Task/caller attribution incident.",
+      "reason_zh": "WASI 稳定化跟踪，涉及 API 可用性与未启用测试，未给出缺失 Task/caller 归因的具体故障。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/4827"
+      ],
+      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "tokio-rs--tokio--3162",
+      "number": 3162,
+      "title": "Scoped tasks",
+      "status": "excluded_after_review",
+      "reason": "Requests a scoped-task lifetime API for non-static futures. A Task creation graph cannot supply the proposed borrowing semantics. No runtime bug check.",
+      "reason_zh": "请求支持非 static future 的 scoped-task 生命周期 API。Task 创建图不能提供所提议的借用语义；未运行故障检查。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/3162"
+      ],
+      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "tokio-rs--tokio--1318",
+      "number": 1318,
+      "title": "rfc: collapse Tokio sub crates into single `tokio` crate",
+      "status": "excluded_after_review",
+      "reason": "Crate consolidation and feature-flag packaging RFC; no runtime failure or missing asynchronous caller established.",
+      "reason_zh": "crate 合并与 feature flag 打包 RFC，未建立运行故障或异步调用者缺失。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/1318"
+      ],
+      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "tokio-rs--tokio--1830",
+      "number": 1830,
+      "title": "Consider making JoinHandle cancel on drop",
+      "status": "excluded_after_review",
+      "reason": "Proposes changing JoinHandle drop semantics from detach to cancel. This is a task-lifecycle API contract decision; no independent failure/attribution gap is established by this report.",
+      "reason_zh": "提议把 JoinHandle 丢弃语义从 detach 改为 cancel，属于任务生命周期 API 契约选择；该报告未建立独立故障或归因缺口。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/1830"
+      ],
+      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "tokio-rs--tokio--2716",
+      "number": 2716,
+      "title": "io: propose new AsyncRead / AsyncWrite traits",
+      "status": "excluded_after_review",
+      "reason": "AsyncRead/AsyncWrite trait redesign about buffer initialization and vectored I/O; no concrete caller-recovery check is supplied.",
+      "reason_zh": "AsyncRead/AsyncWrite trait 重设计，涉及缓冲初始化与 vectored I/O，未提供具体调用者恢复检查。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/2716"
+      ],
+      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "tokio-rs--tokio--1791",
+      "number": 1791,
+      "title": "Consider defaulting Tokio features to off instead of on.",
+      "status": "excluded_after_review",
+      "reason": "Default feature-flag policy discussion; no coroutine execution incident to reproduce.",
+      "reason_zh": "默认 feature flag 策略讨论，没有可复现的协程执行故障。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/1791"
+      ],
+      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "tokio-rs--tokio--4249",
+      "number": 4249,
+      "title": "Proposal: use env to specify the default worker thread count for multi-thread runtime",
+      "status": "excluded_after_review",
+      "reason": "Requests configurable default worker count through TOKIO_WORKER_THREADS. The issue supplies configuration requirements, not a missing Task provenance incident.",
+      "reason_zh": "请求通过 TOKIO_WORKER_THREADS 配置默认 worker 数量。来源给出配置需求，未建立 Task 来源缺失故障。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/4249"
+      ],
+      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "tokio-rs--tokio--5076",
+      "number": 5076,
+      "title": "Tokio NUMA awareness",
+      "status": "external_environment_required",
+      "reason": "Concrete cross-machine NUMA throughput report, but source attribution is already known. CoroPerf Task creation joins alone cannot establish remote-memory cost, affinity or scheduler utilization. Original NUMA topology and counters are needed; no load test run.",
+      "reason_zh": "具体的跨机器 NUMA 吞吐报告，但来源调用归属已知。CoroPerf Task 创建关联不能单独确定远端内存开销、亲和性或调度利用率；需要原始 NUMA 拓扑与硬件计数，未运行负载测试。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/5076"
+      ],
+      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "grpc--grpc-go--1017",
+      "status": "excluded_after_review",
+      "reason": "Historical Serve/GracefulStop return-value contract report. Upstream comments directly identify the listener Accept close error and link documentation work #1018. No missing coroutine caller or shutdown attribution gap is established; no old-version recreation or modern substitute run.",
+      "reason_zh": "历史 Serve/GracefulStop 返回值契约报告。上游评论已直接指出 listener Accept 的关闭错误并链接文档工作 #1018，未建立协程 caller 或关闭来源缺失；未重建旧版或用新版替代运行。",
+      "sources": [
+        "https://github.com/grpc/grpc-go/issues/1017"
+      ],
+      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
+      "target_workloads": 0
+    },
+    {
+      "id": "grpc--grpc-go--7541",
+      "status": "excluded_after_review",
+      "reason": "Cancellation-cause diagnostics request concerning transport RST_STREAM, context cause and stats.End status. Task creation ancestry alone cannot distinguish remote reset, caller cancellation or intermediary behavior; transport/status semantics are required. Source review establishes no independent CoroPerf caller-recovery case; no frames sent or workload run.",
+      "reason_zh": "取消原因诊断请求，涉及传输 RST_STREAM、context cause 与 stats.End 状态。Task 创建祖先关系不能独立区分远端 reset、调用者取消或中间层行为，仍需传输和状态语义。来源审阅未建立独立 CoroPerf 调用者恢复案例；未发送 frame 或运行工作负载。",
+      "sources": [
+        "https://github.com/grpc/grpc-go/issues/7541"
+      ],
+      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
+      "target_workloads": 0
+    }
+  ],
+  "automatic_review_batch": {
+    "batch": "java-existing-check-20261126-b5",
+    "agent": "/root/netty_heat_review",
+    "status": "automatic_review_rejection",
+    "reported_reason": "This content was flagged for possible cybersecurity risk.",
+    "requested_candidates": [
+      "netty--netty--2519",
+      "pgjdbc--pgjdbc--4155"
+    ],
+    "selected_candidate_verified": false,
+    "artifact_check": "No research or perf-out batch directory existed before this metadata record was written. No downloaded source, successful build, workload or capture is verified.",
+    "workload_status": "unverified",
+    "security_finding": false,
+    "action": "Hold both requested candidates conservatively at the batch boundary; do not attribute rejection to a confirmed individual issue or retry through another agent/related ID.",
+    "checked_at": "2026-11-26T08:04:04.876181+00:00"
+  }
+}
