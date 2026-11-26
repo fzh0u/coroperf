@@ -39,9 +39,10 @@
       "elapsed_seconds": 175.65,
       "finished_at": "2026-11-26T08:06:08.980602+00:00"
     },
-    "blocker": "Private PostgreSQL initializes the current-user role, not postgres. The only process failed authentication before the concurrent prepare/fetch example. Fixture changed to getpass.getuser(); the 175.65s guard prevented another cluster/process.",
+    "blocker": "The only b5 process failed authentication as postgres before the concurrent prepared-statement workload. The attempted current-user correction was unverified; the later b6 source check identifies the actual helper role as coroperf.",
     "scope": "No SQLAlchemy ORM or Discord bot execution; no InterfaceError target reproduction. Original failure, fixture correction and blocked retry are distinct records.",
-    "next_prerequisite": "A later batch can use the known current-user role and a fresh timebox; do not restart in this pass."
+    "next_prerequisite": "A later batch can use the known current-user role and a fresh timebox; do not restart in this pass.",
+    "role_assumption_correction": "The helper actually uses initdb -U coroperf. The b5 edit to the OS-user role was a guess and remained untested in that pass; b6 checked the helper and completed the sole target workload with role coroperf."
   },
   "source_decisions": [
     {
@@ -194,5 +195,6 @@
     "security_finding": false,
     "action": "Hold both requested candidates conservatively at the batch boundary; do not attribute rejection to a confirmed individual issue or retry through another agent/related ID.",
     "checked_at": "2026-11-26T08:04:04.876181+00:00"
-  }
+  },
+  "superseded_by": "data/sqlalchemy-5967-verification.json"
 }

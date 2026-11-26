@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which completed gRPC method created the child goroutine still waiting?">
+  <title>grpc/grpc-go #9010 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/grpc--grpc-go--9010.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="grpc--grpc-go--9010.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/grpc--grpc-go--9010.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">grpc/grpc-go #9010</p>
+        <h1>Which completed gRPC method created the child goroutine still waiting?</h1>
+        <div class="case-links"><a href="https://github.com/grpc/grpc-go/issues/9010">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Caller recovery</dd></div>
+          <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>Go</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Join actual standard-runtime goroutine birth and waiting events by native ID, recovering the completed gRPC method from its historical creator stack.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 1 · Suspended for 31.0 ms</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 1 · task_snapshot</span></div><ol class="frames"><li><code>main.enqueueContinuation.func1</code><span>main.go:8</span></li><li><code>runtime.chanrecv1</code><span>chan.go:489</span></li></ol></section>
+          <p class="small trace-note">Frames from record 1 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>Observed task stack</h4><span>Record 1 · task_snapshot</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>main.enqueueContinuation.func1</code><span>main.go:8</span></li><li><code>runtime.chanrecv1</code><span>chan.go:489</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">Record 1</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>google.golang.org/grpc.(*Server).serveStreams.func2.1</code><span>server.go:1016</span></li><li><code>google.golang.org/grpc.(*Server).handleStream</code><span>server.go:1783</span></li><li><code>google.golang.org/grpc.(*Server).processUnaryRPC</code><span>server.go:1372</span></li><li><code>google.golang.org/grpc/health/grpc_health_v1._Health_Check_Handler</code><span>health_grpc.pb.go:184</span></li><li><code>main.(*service).Check</code><span>main.go:11</span></li><li><code>main.enqueueContinuation</code><span>main.go:8</span></li></ol></section>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>One Go1.23.0/grpc1.60.1 bufconn Health/Check RPC returns SERVING. Its controlled child goroutine171 remains in channel receive during a bounded 30ms snapshot. The native child dump records only enqueueContinuation as immediate creator; the earlier server-handler goroutine170 is absent. Normal child and server cleanup completes with process exit0.</dd></div><div><dt>What CoroPerf showed</dt><dd>Standard runtime trace records goroutine171 birth with the full creator stack through service.Check, the generated gRPC handler and Server.processUnaryRPC. Child self-reported native ID and independent all-goroutine snapshot match the same runtime trace ID. CoroPerf joins birth to the waiting stack and restores the historical gRPC method origin absent from the current stack. The measured trace waiting interval is about 30.96ms. The source information already exists in standard Go trace; CoroPerf supplies the normalized identity join and combined view.</dd></div><div><dt>Scope and limits</dt><dd>This is a controlled diagnostic component illustrating issue9010 on cached Go1.23/grpc1.60.1, not a current Go1.27 regression, the original goroutine-label implementation or a panic/crash reproduction. One in-memory RPC and one child continuation ran. It does not establish a stuck server, resource leak, cross-process request ID or complete RPC causal graph. No modern-label, fixed-version or additional RPC comparison ran.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

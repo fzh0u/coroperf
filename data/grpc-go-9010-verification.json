@@ -1,0 +1,191 @@
+{
+  "checked_at": "2026-11-26T08:22:30.047283+00:00",
+  "case": {
+    "id": "grpc--grpc-go--9010",
+    "repo": "grpc/grpc-go",
+    "issue": 9010,
+    "url": "https://github.com/grpc/grpc-go/issues/9010",
+    "upstream_reference": "https://github.com/grpc/grpc-go/issues/9010",
+    "title": "Which completed gRPC method created the child goroutine still waiting?",
+    "title_zh": "方法已经返回，仍在等待的子 goroutine 来自哪个 gRPC 入口？",
+    "verified_on": "2026-11-26",
+    "reproduction": "Component reproduced",
+    "diagnosis": "Direct",
+    "graph": "perf-out/github-issue-discovery/automatic/grpc-go-9010-later-batch-20261126-b6/analysis/graph.json",
+    "findings": {
+      "observation": "One Go1.23.0/grpc1.60.1 bufconn Health/Check RPC returns SERVING. Its controlled child goroutine171 remains in channel receive during a bounded 30ms snapshot. The native child dump records only enqueueContinuation as immediate creator; the earlier server-handler goroutine170 is absent. Normal child and server cleanup completes with process exit0.",
+      "interpretation": "Standard runtime trace records goroutine171 birth with the full creator stack through service.Check, the generated gRPC handler and Server.processUnaryRPC. Child self-reported native ID and independent all-goroutine snapshot match the same runtime trace ID. CoroPerf joins birth to the waiting stack and restores the historical gRPC method origin absent from the current stack. The measured trace waiting interval is about 30.96ms. The source information already exists in standard Go trace; CoroPerf supplies the normalized identity join and combined view.",
+      "limits": "This is a controlled diagnostic component illustrating issue9010 on cached Go1.23/grpc1.60.1, not a current Go1.27 regression, the original goroutine-label implementation or a panic/crash reproduction. One in-memory RPC and one child continuation ran. It does not establish a stuck server, resource leak, cross-process request ID or complete RPC causal graph. No modern-label, fixed-version or additional RPC comparison ran."
+    },
+    "symptom_zh": "Go1.23.0/grpc1.60.1 的一次真实 bufconn Health/Check RPC 返回 SERVING；受控子 goroutine171 在 30 毫秒有界快照中等待 channel。原生子栈仅记直接创建函数 enqueueContinuation，更早的服务端 handler goroutine170 已不在快照中。正常清理子任务与服务端，进程退出 0。",
+    "reasoning_zh": "标准 runtime trace 记录 goroutine171 诞生时经过 service.Check、生成的 gRPC handler 和 Server.processUnaryRPC 的完整创建栈。子任务自报原生 ID、独立全 goroutine 快照与 trace ID 一致。CoroPerf 将创建记录接到等待栈，恢复当前栈缺少的历史 gRPC 方法入口；trace 等待区间约 30.96 毫秒。来源信息本来就在 Go trace 中，工具提供统一身份关联与合并视图。",
+    "limits_zh": "这是在缓存 Go1.23/grpc1.60.1 上展示 #9010 诊断问题的受控组件，不是当前 Go1.27 回归、原始 goroutine label 实现或 panic/crash 复现。只运行一个进程内 RPC 和一个子 continuation；不证明服务卡住、资源泄漏、跨进程请求 ID 或完整 RPC 因果图。没有新版 label、修复版或额外 RPC 对照。"
+  },
+  "verification": {
+    "checked_at": "2026-11-26T08:22:30.047283+00:00",
+    "successful_component_runs": 1,
+    "exit_code": 0,
+    "native_identity": {
+      "goroutine_id": 171,
+      "native_creation_parent": 170,
+      "independent_snapshot_matches": true,
+      "creator_parent_absent_from_later_dump": true,
+      "creator_has_grpc_handler": true,
+      "current_child_snapshot_has_grpc_handler": false,
+      "native_wait_ns": 30964224,
+      "native_cleanup_completed": true,
+      "scope": "One real in-memory gRPC Check with a controlled child continuation; diagnostic attribution scenario from issue9010, not its label patch, a crash, or a current Go1.27 regression."
+    },
+    "runtime_creation_observed": true,
+    "coroperf_creator_recovered": true,
+    "grpc_handler": "main.(*service).Check",
+    "rpc_method": "/grpc.health.v1.Health/Check",
+    "first_check_seconds": 40.15,
+    "module_integrity": {
+      "command": "go mod verify",
+      "toolchain": "go1.23.0",
+      "goproxy": "off",
+      "exit_code": 0,
+      "stdout": "all modules verified",
+      "scope": "Offline verification of cached module source integrity; no target replay."
+    },
+    "replayed": false
+  },
+  "native_result": {
+    "child_cleanup_completed": true,
+    "child_goroutine_id": 171,
+    "go": "go1.23.0",
+    "grpc": "v1.60.1",
+    "observation_ms": 30,
+    "rpc_method": "/grpc.health.v1.Health/Check",
+    "rpc_returned": "SERVING",
+    "scope": "One real in-memory gRPC Check with a controlled child continuation; diagnostic attribution scenario from issue9010, not its label patch, a crash, or a current Go1.27 regression.",
+    "serve_error": "<nil>",
+    "workload_runs": 1
+  },
+  "capture": {
+    "schema_version": 1,
+    "language": "go",
+    "runtime": "go1.23.0",
+    "frame_order": "leaf_to_root",
+    "producer": {
+      "name": "standard Go runtime trace birth/state transitions",
+      "identity_kind": "native-runtime-goroutine-id",
+      "frame_order": "leaf_to_root"
+    },
+    "clock": {
+      "domain": "Go-runtime-trace-monotonic",
+      "unit": "ns"
+    },
+    "source_metadata": {
+      "identity": "Child self-reports runtime.Stack native ID; independent all-goroutine snapshot and runtime trace match.",
+      "scope": "One real in-memory gRPC Check with a controlled child continuation; diagnostic attribution scenario from issue9010, not its label patch, a crash, or a current Go1.27 regression.",
+      "source_information": "Creator stack is already present in standard Go runtime trace; CoroPerf normalizes and joins it to the current wait stack."
+    },
+    "segments": [
+      {
+        "id": "0",
+        "coroutine_id": "go:171",
+        "capture_reason": "create",
+        "timestamp_ns": "1889466562921280",
+        "frames": [
+          {
+            "function": "main.enqueueContinuation",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9010/main.go",
+            "line": 8,
+            "ip": "0x80ecb9"
+          },
+          {
+            "function": "main.(*service).Check",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9010/main.go",
+            "line": 11,
+            "ip": "0x80ecf2"
+          },
+          {
+            "function": "google.golang.org/grpc/health/grpc_health_v1._Health_Check_Handler",
+            "file": "/data1/fzhou/coro/.tools/systems-repro/rqlite-member-suffrage/gopath/pkg/mod/google.golang.org/grpc@v1.60.1/health/grpc_health_v1/health_grpc.pb.go",
+            "line": 184,
+            "ip": "0x80bd65"
+          },
+          {
+            "function": "google.golang.org/grpc.(*Server).processUnaryRPC",
+            "file": "/data1/fzhou/coro/.tools/systems-repro/rqlite-member-suffrage/gopath/pkg/mod/google.golang.org/grpc@v1.60.1/server.go",
+            "line": 1372,
+            "ip": "0x7f8190"
+          },
+          {
+            "function": "google.golang.org/grpc.(*Server).handleStream",
+            "file": "/data1/fzhou/coro/.tools/systems-repro/rqlite-member-suffrage/gopath/pkg/mod/google.golang.org/grpc@v1.60.1/server.go",
+            "line": 1783,
+            "ip": "0x7fd0d7"
+          },
+          {
+            "function": "google.golang.org/grpc.(*Server).serveStreams.func2.1",
+            "file": "/data1/fzhou/coro/.tools/systems-repro/rqlite-member-suffrage/gopath/pkg/mod/google.golang.org/grpc@v1.60.1/server.go",
+            "line": 1016,
+            "ip": "0x7f61f2"
+          }
+        ]
+      },
+      {
+        "id": "1",
+        "coroutine_id": "go:171",
+        "capture_reason": "sample",
+        "sample_kind": "task_snapshot",
+        "timestamp_ns": "1889466563011072",
+        "wait_duration_ns": 30964224,
+        "frames": [
+          {
+            "function": "runtime.chanrecv1",
+            "file": "/data1/fzhou/coro/.tools/go1.23.0/go/src/runtime/chan.go",
+            "line": 489,
+            "ip": "0x40b1b1"
+          },
+          {
+            "function": "main.enqueueContinuation.func1",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/grpc-go-9010/main.go",
+            "line": 8,
+            "ip": "0x80fa96"
+          }
+        ],
+        "semantic": {
+          "state": "Waiting",
+          "native_reason": "chan receive"
+        }
+      },
+      {
+        "id": "2",
+        "coroutine_id": "go:171",
+        "capture_reason": "exit",
+        "timestamp_ns": "1889466593989888",
+        "frames": []
+      }
+    ],
+    "edges": [
+      {
+        "from_segment_id": "0",
+        "to_segment_id": "1",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "go:171"
+      },
+      {
+        "from_segment_id": "1",
+        "to_segment_id": "2",
+        "edge_kind": "same_coroutine_exit",
+        "coroutine_id": "go:171"
+      }
+    ]
+  },
+  "execution": {
+    "mode": "go",
+    "target_processes": 1,
+    "workload_success": true,
+    "source_batch_start": "2026-11-26T08:13:27.055134+00:00",
+    "build_attempts": 1,
+    "build_exit_code": 0,
+    "exit_code": 0,
+    "fixture_sha256": "cca770fc37dac68bf25ea80d52a9330ed2be3ded442271c7dc9fa2896e14550e",
+    "elapsed_seconds": 40.15,
+    "finished_at": "2026-11-26T08:14:07.205283+00:00"
+  }
+}

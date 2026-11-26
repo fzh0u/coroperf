@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="相同 asyncpg 异常背后，哪些事件提交共用了连接？">
+  <title>sqlalchemy/sqlalchemy #5967 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/sqlalchemy--sqlalchemy--5967.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/sqlalchemy--sqlalchemy--5967.html" lang="en" hreflang="en">English</a><a href="sqlalchemy--sqlalchemy--5967.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">sqlalchemy/sqlalchemy #5967</p>
+        <h1>相同 asyncpg 异常背后，哪些事件提交共用了连接？</h1>
+        <div class="case-links"><a href="https://github.com/sqlalchemy/sqlalchemy/issues/5967">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>补回调用来源</dd></div>
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>为真实驱动异常恢复两类历史提交入口，再用明确增加的 Connection 到 Task API 观察确定共享资源。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 11:traceback</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 11:traceback · exception_traceback</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 11:traceback 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>11:traceback → 2</code></a></nav>
+          <section class="stack observed" id="join-1-record-11:traceback"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 11:traceback · exception_traceback</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-11:traceback">记录 11:traceback</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 2 → 11:traceback</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:33</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>check_once.py:20</span></li><li><code>&lt;listcomp&gt;</code><span>check_once.py:20</span></li><li><code>submit_moderation_update</code><span>check_once.py:15</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li><li><code>task_factory</code><span>python_asyncio_debugger.py:59</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 12:traceback</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 12:traceback · exception_traceback</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 12:traceback 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>12:traceback → 3</code></a></nav>
+          <section class="stack observed" id="join-2-record-12:traceback"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 12:traceback · exception_traceback</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-3">记录 3</a><span aria-hidden="true">→</span><a href="#join-2-record-12:traceback">记录 12:traceback</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 3 → 12:traceback</code></p>
+        </aside><section class="stack " id="join-2-record-3"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 3</span><span class="record-instance">实例首次见于记录 3</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:33</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>check_once.py:20</span></li><li><code>&lt;listcomp&gt;</code><span>check_once.py:20</span></li><li><code>submit_member_log_update</code><span>check_once.py:13</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li><li><code>task_factory</code><span>python_asyncio_debugger.py:59</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 13:traceback</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 13:traceback · exception_traceback</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 13:traceback 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-3-point-1">拼接点 1 <code>13:traceback → 4</code></a></nav>
+          <section class="stack observed" id="join-3-record-13:traceback"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 13:traceback · exception_traceback</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-3-record-4">记录 4</a><span aria-hidden="true">→</span><a href="#join-3-record-13:traceback">记录 13:traceback</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 4 → 13:traceback</code></p>
+        </aside><section class="stack " id="join-3-record-4"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 4</span><span class="record-instance">实例首次见于记录 4</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:33</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>check_once.py:20</span></li><li><code>&lt;listcomp&gt;</code><span>check_once.py:20</span></li><li><code>submit_moderation_update</code><span>check_once.py:15</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li><li><code>task_factory</code><span>python_asyncio_debugger.py:59</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 14:traceback</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 14:traceback · exception_traceback</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 14:traceback 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-4-point-1">拼接点 1 <code>14:traceback → 5</code></a></nav>
+          <section class="stack observed" id="join-4-record-14:traceback"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 14:traceback · exception_traceback</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-4-record-5">记录 5</a><span aria-hidden="true">→</span><a href="#join-4-record-14:traceback">记录 14:traceback</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 5 → 14:traceback</code></p>
+        </aside><section class="stack " id="join-4-record-5"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 5</span><span class="record-instance">实例首次见于记录 5</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:33</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>check_once.py:20</span></li><li><code>&lt;listcomp&gt;</code><span>check_once.py:20</span></li><li><code>submit_member_log_update</code><span>check_once.py:13</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li><li><code>task_factory</code><span>python_asyncio_debugger.py:59</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 15:traceback</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 15:traceback · exception_traceback</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 15:traceback 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-5-point-1">拼接点 1 <code>15:traceback → 6</code></a></nav>
+          <section class="stack observed" id="join-5-record-15:traceback"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 15:traceback · exception_traceback</span><span class="record-instance">实例首次见于记录 6</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+        <aside class="join-marker" id="join-5-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-5-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-5-record-6">记录 6</a><span aria-hidden="true">→</span><a href="#join-5-record-15:traceback">记录 15:traceback</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 6 → 15:traceback</code></p>
+        </aside><section class="stack " id="join-5-record-6"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 6</span><span class="record-instance">实例首次见于记录 6</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:33</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>check_once.py:20</span></li><li><code>&lt;listcomp&gt;</code><span>check_once.py:20</span></li><li><code>submit_moderation_update</code><span>check_once.py:15</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li><li><code>task_factory</code><span>python_asyncio_debugger.py:59</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 16:traceback</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 16:traceback · exception_traceback</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 16:traceback 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-6-point-1">拼接点 1 <code>16:traceback → 7</code></a></nav>
+          <section class="stack observed" id="join-6-record-16:traceback"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 16:traceback · exception_traceback</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+        <aside class="join-marker" id="join-6-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-6-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-6-record-7">记录 7</a><span aria-hidden="true">→</span><a href="#join-6-record-16:traceback">记录 16:traceback</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 7 → 16:traceback</code></p>
+        </aside><section class="stack " id="join-6-record-7"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 7</span><span class="record-instance">实例首次见于记录 7</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:33</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>check_once.py:20</span></li><li><code>&lt;listcomp&gt;</code><span>check_once.py:20</span></li><li><code>submit_member_log_update</code><span>check_once.py:13</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li><li><code>task_factory</code><span>python_asyncio_debugger.py:59</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 17:traceback</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 17:traceback · exception_traceback</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 17:traceback 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-7-point-1">拼接点 1 <code>17:traceback → 8</code></a></nav>
+          <section class="stack observed" id="join-7-record-17:traceback"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 17:traceback · exception_traceback</span><span class="record-instance">实例首次见于记录 8</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+        <aside class="join-marker" id="join-7-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-7-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-7-record-8">记录 8</a><span aria-hidden="true">→</span><a href="#join-7-record-17:traceback">记录 17:traceback</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 8 → 17:traceback</code></p>
+        </aside><section class="stack " id="join-7-record-8"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 8</span><span class="record-instance">实例首次见于记录 8</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:33</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>check_once.py:20</span></li><li><code>&lt;listcomp&gt;</code><span>check_once.py:20</span></li><li><code>submit_moderation_update</code><span>check_once.py:15</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li><li><code>task_factory</code><span>python_asyncio_debugger.py:59</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 18:traceback</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 18:traceback · exception_traceback</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 18:traceback 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-8-point-1">拼接点 1 <code>18:traceback → 9</code></a></nav>
+          <section class="stack observed" id="join-8-record-18:traceback"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 18:traceback · exception_traceback</span><span class="record-instance">实例首次见于记录 9</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+        <aside class="join-marker" id="join-8-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-8-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-8-record-9">记录 9</a><span aria-hidden="true">→</span><a href="#join-8-record-18:traceback">记录 18:traceback</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 9 → 18:traceback</code></p>
+        </aside><section class="stack " id="join-8-record-9"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 9</span><span class="record-instance">实例首次见于记录 9</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:33</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>check_once.py:20</span></li><li><code>&lt;listcomp&gt;</code><span>check_once.py:20</span></li><li><code>submit_member_log_update</code><span>check_once.py:13</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li><li><code>task_factory</code><span>python_asyncio_debugger.py:59</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 19:traceback</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 19:traceback · exception_traceback</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 19:traceback 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-9-point-1">拼接点 1 <code>19:traceback → 10</code></a></nav>
+          <section class="stack observed" id="join-9-record-19:traceback"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 19:traceback · exception_traceback</span><span class="record-instance">实例首次见于记录 10</span></div><ol class="frames"><li><code>run_asyncpg_statement</code><span>check_once.py:10</span></li><li><code>prepare</code><span>connection.py:636</span></li><li><code>_prepare</code><span>connection.py:654</span></li><li><code>_get_statement</code><span>connection.py:433</span></li><li><code>prepare</code><span>protocol.pyx:151</span></li><li><code>asyncpg.protocol.protocol.BaseProtocol._check_state</code><span>protocol.pyx:744</span></li></ol></section>
+        <aside class="join-marker" id="join-9-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-9-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-9-record-10">记录 10</a><span aria-hidden="true">→</span><a href="#join-9-record-19:traceback">记录 19:traceback</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 10 → 19:traceback</code></p>
+        </aside><section class="stack " id="join-9-record-10"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 10</span><span class="record-instance">实例首次见于记录 10</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:33</span></li><li><code>run</code><span>runners.py:190</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:641</span></li><li><code>run_forever</code><span>base_events.py:608</span></li><li><code>_run_once</code><span>base_events.py:1936</span></li><li><code>_run</code><span>events.py:84</span></li><li><code>main</code><span>check_once.py:20</span></li><li><code>&lt;listcomp&gt;</code><span>check_once.py:20</span></li><li><code>submit_moderation_update</code><span>check_once.py:15</span></li><li><code>create_task</code><span>tasks.py:384</span></li><li><code>create_task</code><span>base_events.py:443</span></li><li><code>task_factory</code><span>python_asyncio_debugger.py:59</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>一次维护者提供的 raw-asyncpg 示例运行中，十个 Task 共用一个真实 PostgreSQL 连接：九次 prepare 报原生 InterfaceError（另一个操作正在进行），一次返回数据。gather(return_exceptions=True) 用于有界清理；连接关闭、PostgreSQL 日志确认关闭，进程退出 0。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>CoroPerf 将九个异常栈逐一接回实际 Task 创建记录，恢复原生异常栈缺少的日志与审核提交辅助函数。明确增加的 API 观察记录了十个真实 Task 使用同一 Connection/protocol 对象，从而把提交来源与共享资源联系起来；Task 创建祖先关系本身不能证明连接归属。</dd></div><div><dt>适用范围与局限</dt><dd>范围是 asyncpg0.29.0 的维护者独立驱动组件，不是原始 Discord bot 或 SQLAlchemy1.4 beta ORM。两个具名提交辅助函数与有界异常收集是归因适配，函数名不是恢复出的 Discord 注册入口。保留两次早先认证失败；只有一次成功执行的并发 prepare/fetch 工作负载。没有每 Task 独立连接的修复、多版本或查询重跑，上游修复建议未经本地验证。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

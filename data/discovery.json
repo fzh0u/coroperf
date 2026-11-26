@@ -17,10 +17,10 @@
     "excluded_after_review": 39,
     "needs_review": 843,
     "skipped_review": 185,
-    "external_environment_required": 12,
+    "external_environment_required": 10,
     "already_catalogued": 8,
     "component_reproduced": 3,
-    "verified_case": 4
+    "verified_case": 6
   },
   "coverage": [
     {
@@ -11098,8 +11098,8 @@
       "async_signal": true,
       "observed_at": "2026-11-26T08:06:54+00:00",
       "heat": 19.0433,
-      "status": "external_environment_required",
-      "reason": "Private PostgreSQL initializes the current-user role, not postgres. The only process failed authentication before the concurrent prepare/fetch example. Fixture changed to getpass.getuser(); the 175.65s guard prevented another cluster/process. Native target behavior and CoroPerf value remain unverified; zero prepared-statement workloads/captures.",
+      "status": "verified_case",
+      "reason": "One execution of the maintainer raw-asyncpg example uses ten Tasks and one real PostgreSQL connection. Nine prepare calls raise the native InterfaceError that another operation is in progress; one returns data. Gather with return_exceptions=True permits bounded cleanup. The connection closes, PostgreSQL logs shutdown and the process exits 0. CoroPerf joins all nine captured exception stacks to their actual Task creation records, recovering the named member-log and moderation submission helpers absent from the native/current exception stacks. An explicitly added API observer records all ten actual Tasks using the same Connection/protocol objects. Together they expose both submission origins and the shared resource; generic Task ancestry alone does not establish connection ownership. This is the maintainer standalone driver component on asyncpg0.29.0, not the original Discord bot or SQLAlchemy1.4 beta ORM. Two named submission helpers and bounded exception collection adapt the example for attribution. Those helper names are fixture entries, not recovered Discord registrations. Two earlier authentication failures are preserved; this is the only successful prepared-statement workload. No per-Task connection fix, alternate version or query replay ran. Known upstream guidance to use distinct connections is not a locally tested fix.",
       "query_kinds": [
         "discussion"
       ]
@@ -19794,8 +19794,8 @@
       "async_signal": true,
       "observed_at": "2026-11-26T08:10:59+00:00",
       "heat": 14.9641,
-      "status": "external_environment_required",
-      "reason": "A bounded real in-memory gRPC attribution fixture was prepared with Go1.23/grpc1.60.1, explicitly a historical diagnostic scenario rather than a Go1.27-label regression. Offline build lacked dependencies; online build fetched them but failed on read-only copied go.sum. Permission corrected, then deadline guard prevented a third build. Two compiler launches, zero target processes/traces. Stop this pass; only a later batch with fitting prerequisites may execute.",
+      "status": "verified_case",
+      "reason": "One Go1.23.0/grpc1.60.1 bufconn Health/Check RPC returns SERVING. Its controlled child goroutine171 remains in channel receive during a bounded 30ms snapshot. The native child dump records only enqueueContinuation as immediate creator; the earlier server-handler goroutine170 is absent. Normal child and server cleanup completes with process exit0. Standard runtime trace records goroutine171 birth with the full creator stack through service.Check, the generated gRPC handler and Server.processUnaryRPC. Child self-reported native ID and independent all-goroutine snapshot match the same runtime trace ID. CoroPerf joins birth to the waiting stack and restores the historical gRPC method origin absent from the current stack. The measured trace waiting interval is about 30.96ms. The source information already exists in standard Go trace; CoroPerf supplies the normalized identity join and combined view. This is a controlled diagnostic component illustrating issue9010 on cached Go1.23/grpc1.60.1, not a current Go1.27 regression, the original goroutine-label implementation or a panic/crash reproduction. One in-memory RPC and one child continuation ran. It does not establish a stuck server, resource leak, cross-process request ID or complete RPC causal graph. No modern-label, fixed-version or additional RPC comparison ran.",
       "query_kinds": [
         "recent"
       ]
@@ -51250,14 +51250,14 @@
       "coroperf_captures": 0
     },
     "grpc--grpc-go--9010": {
-      "status": "external_environment_required",
-      "reason": "A bounded real in-memory gRPC attribution fixture was prepared with Go1.23/grpc1.60.1, explicitly a historical diagnostic scenario rather than a Go1.27-label regression. Offline build lacked dependencies; online build fetched them but failed on read-only copied go.sum. Permission corrected, then deadline guard prevented a third build. Two compiler launches, zero target processes/traces. Stop this pass; only a later batch with fitting prerequisites may execute.",
-      "reason_zh": "已准备 Go1.23/grpc1.60.1 的真实进程内 gRPC 归因 fixture，明确属于历史诊断场景，不是 Go1.27 label 回归验证。离线构建缺依赖，在线构建拉取依赖后因复制的 go.sum 只读而失败；修正权限后，时限检查阻止第三次构建。两次编译命令、零目标进程或 trace，本轮停止，后续批次仅在前置条件能满足预算时继续。",
+      "status": "verified_case",
+      "reason": "One Go1.23.0/grpc1.60.1 bufconn Health/Check RPC returns SERVING. Its controlled child goroutine171 remains in channel receive during a bounded 30ms snapshot. The native child dump records only enqueueContinuation as immediate creator; the earlier server-handler goroutine170 is absent. Normal child and server cleanup completes with process exit0. Standard runtime trace records goroutine171 birth with the full creator stack through service.Check, the generated gRPC handler and Server.processUnaryRPC. Child self-reported native ID and independent all-goroutine snapshot match the same runtime trace ID. CoroPerf joins birth to the waiting stack and restores the historical gRPC method origin absent from the current stack. The measured trace waiting interval is about 30.96ms. The source information already exists in standard Go trace; CoroPerf supplies the normalized identity join and combined view. This is a controlled diagnostic component illustrating issue9010 on cached Go1.23/grpc1.60.1, not a current Go1.27 regression, the original goroutine-label implementation or a panic/crash reproduction. One in-memory RPC and one child continuation ran. It does not establish a stuck server, resource leak, cross-process request ID or complete RPC causal graph. No modern-label, fixed-version or additional RPC comparison ran.",
+      "reason_zh": "Go1.23.0/grpc1.60.1 的一次真实 bufconn Health/Check RPC 返回 SERVING；受控子 goroutine171 在 30 毫秒有界快照中等待 channel。原生子栈仅记直接创建函数 enqueueContinuation，更早的服务端 handler goroutine170 已不在快照中。正常清理子任务与服务端，进程退出 0。标准 runtime trace 记录 goroutine171 诞生时经过 service.Check、生成的 gRPC handler 和 Server.processUnaryRPC 的完整创建栈。子任务自报原生 ID、独立全 goroutine 快照与 trace ID 一致。CoroPerf 将创建记录接到等待栈，恢复当前栈缺少的历史 gRPC 方法入口；trace 等待区间约 30.96 毫秒。来源信息本来就在 Go trace 中，工具提供统一身份关联与合并视图。这是在缓存 Go1.23/grpc1.60.1 上展示 #9010 诊断问题的受控组件，不是当前 Go1.27 回归、原始 goroutine label 实现或 panic/crash 复现。只运行一个进程内 RPC 和一个子 continuation；不证明服务卡住、资源泄漏、跨进程请求 ID 或完整 RPC 因果图。没有新版 label、修复版或额外 RPC 对照。",
       "sources": [
         "https://github.com/grpc/grpc-go/issues/9010"
       ],
-      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
-      "prior_local_execution": false
+      "reviewed_at": "2026-11-26T08:22:30.047283+00:00",
+      "successful_component_runs": 1
     },
     "grpc--grpc-go--1017": {
       "status": "excluded_after_review",
@@ -51280,16 +51280,14 @@
       "target_workloads": 0
     },
     "sqlalchemy--sqlalchemy--5967": {
-      "status": "external_environment_required",
-      "reason": "Private PostgreSQL initializes the current-user role, not postgres. The only process failed authentication before the concurrent prepare/fetch example. Fixture changed to getpass.getuser(); the 175.65s guard prevented another cluster/process. Native target behavior and CoroPerf value remain unverified; zero prepared-statement workloads/captures.",
-      "reason_zh": "维护者提供了独立 raw-asyncpg 十 Task 共享连接示例。唯一进程因私有 PostgreSQL 不存在 postgres 角色而在认证阶段失败，尚未执行并发 prepare/fetch。已改为当前用户角色；175.65 秒时限检查阻止第二次集群或进程。目标现象和 CoroPerf 增量均未验证，本轮不重试。",
+      "status": "verified_case",
+      "reason": "One execution of the maintainer raw-asyncpg example uses ten Tasks and one real PostgreSQL connection. Nine prepare calls raise the native InterfaceError that another operation is in progress; one returns data. Gather with return_exceptions=True permits bounded cleanup. The connection closes, PostgreSQL logs shutdown and the process exits 0. CoroPerf joins all nine captured exception stacks to their actual Task creation records, recovering the named member-log and moderation submission helpers absent from the native/current exception stacks. An explicitly added API observer records all ten actual Tasks using the same Connection/protocol objects. Together they expose both submission origins and the shared resource; generic Task ancestry alone does not establish connection ownership. This is the maintainer standalone driver component on asyncpg0.29.0, not the original Discord bot or SQLAlchemy1.4 beta ORM. Two named submission helpers and bounded exception collection adapt the example for attribution. Those helper names are fixture entries, not recovered Discord registrations. Two earlier authentication failures are preserved; this is the only successful prepared-statement workload. No per-Task connection fix, alternate version or query replay ran. Known upstream guidance to use distinct connections is not a locally tested fix.",
+      "reason_zh": "一次维护者提供的 raw-asyncpg 示例运行中，十个 Task 共用一个真实 PostgreSQL 连接：九次 prepare 报原生 InterfaceError（另一个操作正在进行），一次返回数据。gather(return_exceptions=True) 用于有界清理；连接关闭、PostgreSQL 日志确认关闭，进程退出 0。CoroPerf 将九个异常栈逐一接回实际 Task 创建记录，恢复原生异常栈缺少的日志与审核提交辅助函数。明确增加的 API 观察记录了十个真实 Task 使用同一 Connection/protocol 对象，从而把提交来源与共享资源联系起来；Task 创建祖先关系本身不能证明连接归属。范围是 asyncpg0.29.0 的维护者独立驱动组件，不是原始 Discord bot 或 SQLAlchemy1.4 beta ORM。两个具名提交辅助函数与有界异常收集是归因适配，函数名不是恢复出的 Discord 注册入口。保留两次早先认证失败；只有一次成功执行的并发 prepare/fetch 工作负载。没有每 Task 独立连接的修复、多版本或查询重跑，上游修复建议未经本地验证。",
       "sources": [
         "https://github.com/sqlalchemy/sqlalchemy/issues/5967"
       ],
-      "reviewed_at": "2026-11-26T08:09:16.675515+00:00",
-      "python_processes_started": 1,
-      "target_workloads": 0,
-      "coroperf_captures": 0
+      "reviewed_at": "2026-11-26T08:22:30.047283+00:00",
+      "successful_component_runs": 1
     }
   },
   "supplemental_records": [
@@ -51850,6 +51848,24 @@
       "summary_zh": "两次 Go 构建与一次数据库认证失败均未产生目标现象；已修正可供后续批次使用的前置条件。八条 Rust、两条 Go 来源结论区分 API 设计、取消语义、NUMA 要求与 caller 恢复机会。Java 委派批次被自动拒绝，选中 issue 与工作负载均未验证；不新增精选案例。",
       "path": "evidence/existing-issue-followup-b5.html",
       "checked_at": "2026-11-26T08:09:16.675515+00:00"
+    },
+    {
+      "id": "prepared-b6-verified-components-20261126",
+      "title": "Two verified component attribution results from prepared fixtures",
+      "title_zh": "已准备 fixture 得到两条组件归因结果",
+      "summary": "One maintainer asyncpg example produces nine native InterfaceErrors and nine actual Task creation/exception joins; an explicit API observer verifies ten Tasks share one Connection. One real in-memory gRPC method yields a native goroutine birth/wait/snapshot join recovering its completed handler. Both processes exit0; no replay. Go is an older-version diagnostic scenario, not the Go1.27 label patch.",
+      "summary_zh": "一次维护者 asyncpg 示例得到九个原生 InterfaceError，并按真实 Task 连接九条创建与异常；额外 API 观察确认十个 Task 共享一个连接。一次真实进程内 gRPC 方法通过原生 goroutine 创建、等待与快照身份关联恢复已返回的 handler。两进程退出0，无重跑；Go 是旧版本诊断场景，不是 Go1.27 label 补丁验证。",
+      "path": "evidence/sqlalchemy-5967-report.html",
+      "checked_at": "2026-11-26T08:22:30.047283+00:00"
+    },
+    {
+      "id": "grpc-go-9010-b6-verified-20261126",
+      "title": "gRPC child goroutine: native creator restores method origin",
+      "title_zh": "gRPC 子 goroutine：原生创建记录恢复方法来源",
+      "summary": "Go1.23/grpc1.60.1: one bufconn Check, child171, original handler absent from later dump, full creator stack retained in standard trace. CoroPerf identity join restores service.Check; bounded 30ms observation and normal cleanup.",
+      "summary_zh": "Go1.23/grpc1.60.1 的一次 bufconn Check：子 goroutine171 的稍后 dump 已无原始 handler，标准 trace 保有完整创建栈。CoroPerf 通过身份关联恢复 service.Check；30毫秒有界观察后正常清理。",
+      "path": "evidence/grpc-go-9010-report.html",
+      "checked_at": "2026-11-26T08:22:30.047283+00:00"
     }
   ],
   "deferred_registry": [
@@ -63721,36 +63737,18 @@
     "previous_observed_at": "2026-11-26T06:13:13+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T08:18:57+00:00",
+  "ledger_refreshed_at": "2026-11-26T08:24:08+00:00",
   "progress_summary": {
-    "source": "scheduled_search",
-    "assembled_at": "2026-11-26T08:18:57+00:00",
-    "comparison_reported_at": "2026-11-26T06:53:10.483958+00:00",
-    "verified_catalogue_entries": 130,
-    "new_verified_ids": [],
-    "review_decisions": 227,
-    "new_review_decision_ids": [
-      "ai-dynamo--dynamo--5012",
-      "grpc--grpc-go--1017",
-      "grpc--grpc-go--7541",
+    "source": "report_update",
+    "assembled_at": "2026-11-26T08:24:08+00:00",
+    "comparison_reported_at": "2026-11-26T08:18:57+00:00",
+    "verified_catalogue_entries": 132,
+    "new_verified_ids": [
       "grpc--grpc-go--9010",
-      "kvcache-ai--mooncake--1033",
-      "kvcache-ai--mooncake--4209",
-      "lmcache--lmcache--1034",
-      "lmcache--lmcache--2080",
-      "lmcache--lmcache--3490",
-      "netty--netty--2519",
-      "pgjdbc--pgjdbc--4155",
-      "sqlalchemy--sqlalchemy--5967",
-      "tokio-rs--tokio--1318",
-      "tokio-rs--tokio--1791",
-      "tokio-rs--tokio--1830",
-      "tokio-rs--tokio--2716",
-      "tokio-rs--tokio--3162",
-      "tokio-rs--tokio--4249",
-      "tokio-rs--tokio--4827",
-      "tokio-rs--tokio--5076"
+      "sqlalchemy--sqlalchemy--5967"
     ],
+    "review_decisions": 227,
+    "new_review_decision_ids": [],
     "manual_holds": 86,
     "automatic_signal_holds": 909,
     "scope": "Catalogue and review totals; deltas compare with the most recent report whose Git publication succeeded. Search hits are not verified cases."

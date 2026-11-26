@@ -1,0 +1,304 @@
+{
+  "checked_at": "2026-11-26T08:22:30.047283+00:00",
+  "case": {
+    "id": "sqlalchemy--sqlalchemy--5967",
+    "repo": "sqlalchemy/sqlalchemy",
+    "issue": 5967,
+    "url": "https://github.com/sqlalchemy/sqlalchemy/issues/5967",
+    "upstream_reference": "https://github.com/sqlalchemy/sqlalchemy/issues/5967",
+    "title": "Which event submissions share the connection behind identical asyncpg errors?",
+    "title_zh": "相同 asyncpg 异常背后，哪些事件提交共用了连接？",
+    "verified_on": "2026-11-26",
+    "reproduction": "Component reproduced",
+    "diagnosis": "Direct",
+    "graph": "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/analysis/graph.json",
+    "findings": {
+      "observation": "One execution of the maintainer raw-asyncpg example uses ten Tasks and one real PostgreSQL connection. Nine prepare calls raise the native InterfaceError that another operation is in progress; one returns data. Gather with return_exceptions=True permits bounded cleanup. The connection closes, PostgreSQL logs shutdown and the process exits 0.",
+      "interpretation": "CoroPerf joins all nine captured exception stacks to their actual Task creation records, recovering the named member-log and moderation submission helpers absent from the native/current exception stacks. An explicitly added API observer records all ten actual Tasks using the same Connection/protocol objects. Together they expose both submission origins and the shared resource; generic Task ancestry alone does not establish connection ownership.",
+      "limits": "This is the maintainer standalone driver component on asyncpg0.29.0, not the original Discord bot or SQLAlchemy1.4 beta ORM. Two named submission helpers and bounded exception collection adapt the example for attribution. Those helper names are fixture entries, not recovered Discord registrations. Two earlier authentication failures are preserved; this is the only successful prepared-statement workload. No per-Task connection fix, alternate version or query replay ran. Known upstream guidance to use distinct connections is not a locally tested fix."
+    },
+    "symptom_zh": "一次维护者提供的 raw-asyncpg 示例运行中，十个 Task 共用一个真实 PostgreSQL 连接：九次 prepare 报原生 InterfaceError（另一个操作正在进行），一次返回数据。gather(return_exceptions=True) 用于有界清理；连接关闭、PostgreSQL 日志确认关闭，进程退出 0。",
+    "reasoning_zh": "CoroPerf 将九个异常栈逐一接回实际 Task 创建记录，恢复原生异常栈缺少的日志与审核提交辅助函数。明确增加的 API 观察记录了十个真实 Task 使用同一 Connection/protocol 对象，从而把提交来源与共享资源联系起来；Task 创建祖先关系本身不能证明连接归属。",
+    "limits_zh": "范围是 asyncpg0.29.0 的维护者独立驱动组件，不是原始 Discord bot 或 SQLAlchemy1.4 beta ORM。两个具名提交辅助函数与有界异常收集是归因适配，函数名不是恢复出的 Discord 注册入口。保留两次早先认证失败；只有一次成功执行的并发 prepare/fetch 工作负载。没有每 Task 独立连接的修复、多版本或查询重跑，上游修复建议未经本地验证。"
+  },
+  "verification": {
+    "checked_at": "2026-11-26T08:22:30.047283+00:00",
+    "successful_component_runs": 1,
+    "exit_code": 0,
+    "native_interface_errors": 9,
+    "native_successes": 1,
+    "generic_exception_stack_observations": 9,
+    "creation_to_exception_joins": 9,
+    "distinct_actual_tasks": 10,
+    "distinct_observed_connections": 1,
+    "native_connection_closed": true,
+    "private_postgres_shutdown_logged": true,
+    "first_check_seconds": 57.42,
+    "source_integrity": {
+      "asyncpg/connection.py": {
+        "sha256": "7f7d09a3c5e595ab6a8dabef96b90d09c82721a2a735342f7f7d8d5490771313",
+        "record_hash": "sha256=f30Jo8XllatqjavvlrkNCcgnIaKnNTQvf32NVJB3ExM",
+        "record_match": true
+      },
+      "asyncpg/protocol/protocol.cpython-311-x86_64-linux-gnu.so": {
+        "sha256": "8c5fe80fb9cdffafb6ea6d4c97c696523986a90932e3028ab52ecf74046fcf85",
+        "record_hash": "sha256=jF_oD7nN_6-26m1Ml8aWUjmGqQky4wKKtS7PdARvz4U",
+        "record_match": true
+      }
+    },
+    "joins": [
+      {
+        "task_id": "task:0x77938c1aabc0",
+        "create_segment": "2",
+        "exception_segment": "11",
+        "recovered_submitter": "submit_moderation_update",
+        "native_traceback_has_submitter": false,
+        "same_actual_connection_observed": true
+      },
+      {
+        "task_id": "task:0x77938c1aac80",
+        "create_segment": "3",
+        "exception_segment": "12",
+        "recovered_submitter": "submit_member_log_update",
+        "native_traceback_has_submitter": false,
+        "same_actual_connection_observed": true
+      },
+      {
+        "task_id": "task:0x77938c1aad40",
+        "create_segment": "4",
+        "exception_segment": "13",
+        "recovered_submitter": "submit_moderation_update",
+        "native_traceback_has_submitter": false,
+        "same_actual_connection_observed": true
+      },
+      {
+        "task_id": "task:0x77938c1aae00",
+        "create_segment": "5",
+        "exception_segment": "14",
+        "recovered_submitter": "submit_member_log_update",
+        "native_traceback_has_submitter": false,
+        "same_actual_connection_observed": true
+      },
+      {
+        "task_id": "task:0x77938c1aaec0",
+        "create_segment": "6",
+        "exception_segment": "15",
+        "recovered_submitter": "submit_moderation_update",
+        "native_traceback_has_submitter": false,
+        "same_actual_connection_observed": true
+      },
+      {
+        "task_id": "task:0x77938c1aaf80",
+        "create_segment": "7",
+        "exception_segment": "16",
+        "recovered_submitter": "submit_member_log_update",
+        "native_traceback_has_submitter": false,
+        "same_actual_connection_observed": true
+      },
+      {
+        "task_id": "task:0x77938c1ab040",
+        "create_segment": "8",
+        "exception_segment": "17",
+        "recovered_submitter": "submit_moderation_update",
+        "native_traceback_has_submitter": false,
+        "same_actual_connection_observed": true
+      },
+      {
+        "task_id": "task:0x77938c1ab100",
+        "create_segment": "9",
+        "exception_segment": "18",
+        "recovered_submitter": "submit_member_log_update",
+        "native_traceback_has_submitter": false,
+        "same_actual_connection_observed": true
+      },
+      {
+        "task_id": "task:0x77938c1ab280",
+        "create_segment": "10",
+        "exception_segment": "19",
+        "recovered_submitter": "submit_moderation_update",
+        "native_traceback_has_submitter": false,
+        "same_actual_connection_observed": true
+      }
+    ],
+    "normalization": "A captured terminal exception supplies its original lifecycle event and a diagnostic_stacktrace facet with the same original source_segment_id; this is offline representation of one saved event, not another runtime observation. Exception traceback frames are normalized from root-to-leaf to leaf-to-root.",
+    "extra_observer": "Actual Connection/protocol object identity and current Task recorded at the query API boundary. Resource sharing is not inferred from Task ancestry.",
+    "scope": "Maintainer raw-asyncpg example on asyncpg0.29.0 with ten shared-connection Tasks; no original SQLAlchemy1.4 beta ORM or Discord bot run.",
+    "replayed": false
+  },
+  "observation": {
+    "asyncpg_version": "0.29.0",
+    "backend_pid": 3871395,
+    "shared_connection_object_id": 131475595122848,
+    "owners": [
+      {
+        "task_id": "task:0x77938c1aa800",
+        "task_object_id": 131475594455040,
+        "connection_object_id": 131475595122848,
+        "protocol_object_id": 131475595317456,
+        "argument": 0,
+        "timestamp_ns": 1889483820324991
+      },
+      {
+        "task_id": "task:0x77938c1aabc0",
+        "task_object_id": 131475594456000,
+        "connection_object_id": 131475595122848,
+        "protocol_object_id": 131475595317456,
+        "argument": 1,
+        "timestamp_ns": 1889483820359061
+      },
+      {
+        "task_id": "task:0x77938c1aac80",
+        "task_object_id": 131475594456192,
+        "connection_object_id": 131475595122848,
+        "protocol_object_id": 131475595317456,
+        "argument": 2,
+        "timestamp_ns": 1889483820382169
+      },
+      {
+        "task_id": "task:0x77938c1aad40",
+        "task_object_id": 131475594456384,
+        "connection_object_id": 131475595122848,
+        "protocol_object_id": 131475595317456,
+        "argument": 3,
+        "timestamp_ns": 1889483820390997
+      },
+      {
+        "task_id": "task:0x77938c1aae00",
+        "task_object_id": 131475594456576,
+        "connection_object_id": 131475595122848,
+        "protocol_object_id": 131475595317456,
+        "argument": 4,
+        "timestamp_ns": 1889483820397914
+      },
+      {
+        "task_id": "task:0x77938c1aaec0",
+        "task_object_id": 131475594456768,
+        "connection_object_id": 131475595122848,
+        "protocol_object_id": 131475595317456,
+        "argument": 5,
+        "timestamp_ns": 1889483820404421
+      },
+      {
+        "task_id": "task:0x77938c1aaf80",
+        "task_object_id": 131475594456960,
+        "connection_object_id": 131475595122848,
+        "protocol_object_id": 131475595317456,
+        "argument": 6,
+        "timestamp_ns": 1889483820413032
+      },
+      {
+        "task_id": "task:0x77938c1ab040",
+        "task_object_id": 131475594457152,
+        "connection_object_id": 131475595122848,
+        "protocol_object_id": 131475595317456,
+        "argument": 7,
+        "timestamp_ns": 1889483820420433
+      },
+      {
+        "task_id": "task:0x77938c1ab100",
+        "task_object_id": 131475594457344,
+        "connection_object_id": 131475595122848,
+        "protocol_object_id": 131475595317456,
+        "argument": 8,
+        "timestamp_ns": 1889483820432064
+      },
+      {
+        "task_id": "task:0x77938c1ab280",
+        "task_object_id": 131475594457728,
+        "connection_object_id": 131475595122848,
+        "protocol_object_id": 131475595317456,
+        "argument": 9,
+        "timestamp_ns": 1889483820440692
+      }
+    ],
+    "results": [
+      {
+        "task_id": "task:0x77938c1aa800",
+        "task_object_id": 131475594455040,
+        "exception_type": null,
+        "result": [
+          {
+            "some_data": 0
+          }
+        ]
+      },
+      {
+        "task_id": "task:0x77938c1aabc0",
+        "task_object_id": 131475594456000,
+        "exception_type": "InterfaceError",
+        "message": "cannot perform operation: another operation is in progress",
+        "native_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/check_once.py\", line 10, in run_asyncpg_statement\n    prepared_stmt=await connection.prepare('SELECT $1::int AS some_data')\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 636, in prepare\n    return await self._prepare(\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 654, in _prepare\n    stmt = await self._get_statement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 433, in _get_statement\n    statement = await self._protocol.prepare(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 151, in prepare\n  File \"asyncpg/protocol/protocol.pyx\", line 744, in asyncpg.protocol.protocol.BaseProtocol._check_state\nasyncpg.exceptions._base.InterfaceError: cannot perform operation: another operation is in progress\n"
+      },
+      {
+        "task_id": "task:0x77938c1aac80",
+        "task_object_id": 131475594456192,
+        "exception_type": "InterfaceError",
+        "message": "cannot perform operation: another operation is in progress",
+        "native_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/check_once.py\", line 10, in run_asyncpg_statement\n    prepared_stmt=await connection.prepare('SELECT $1::int AS some_data')\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 636, in prepare\n    return await self._prepare(\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 654, in _prepare\n    stmt = await self._get_statement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 433, in _get_statement\n    statement = await self._protocol.prepare(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 151, in prepare\n  File \"asyncpg/protocol/protocol.pyx\", line 744, in asyncpg.protocol.protocol.BaseProtocol._check_state\nasyncpg.exceptions._base.InterfaceError: cannot perform operation: another operation is in progress\n"
+      },
+      {
+        "task_id": "task:0x77938c1aad40",
+        "task_object_id": 131475594456384,
+        "exception_type": "InterfaceError",
+        "message": "cannot perform operation: another operation is in progress",
+        "native_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/check_once.py\", line 10, in run_asyncpg_statement\n    prepared_stmt=await connection.prepare('SELECT $1::int AS some_data')\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 636, in prepare\n    return await self._prepare(\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 654, in _prepare\n    stmt = await self._get_statement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 433, in _get_statement\n    statement = await self._protocol.prepare(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 151, in prepare\n  File \"asyncpg/protocol/protocol.pyx\", line 744, in asyncpg.protocol.protocol.BaseProtocol._check_state\nasyncpg.exceptions._base.InterfaceError: cannot perform operation: another operation is in progress\n"
+      },
+      {
+        "task_id": "task:0x77938c1aae00",
+        "task_object_id": 131475594456576,
+        "exception_type": "InterfaceError",
+        "message": "cannot perform operation: another operation is in progress",
+        "native_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/check_once.py\", line 10, in run_asyncpg_statement\n    prepared_stmt=await connection.prepare('SELECT $1::int AS some_data')\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 636, in prepare\n    return await self._prepare(\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 654, in _prepare\n    stmt = await self._get_statement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 433, in _get_statement\n    statement = await self._protocol.prepare(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 151, in prepare\n  File \"asyncpg/protocol/protocol.pyx\", line 744, in asyncpg.protocol.protocol.BaseProtocol._check_state\nasyncpg.exceptions._base.InterfaceError: cannot perform operation: another operation is in progress\n"
+      },
+      {
+        "task_id": "task:0x77938c1aaec0",
+        "task_object_id": 131475594456768,
+        "exception_type": "InterfaceError",
+        "message": "cannot perform operation: another operation is in progress",
+        "native_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/check_once.py\", line 10, in run_asyncpg_statement\n    prepared_stmt=await connection.prepare('SELECT $1::int AS some_data')\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 636, in prepare\n    return await self._prepare(\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 654, in _prepare\n    stmt = await self._get_statement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 433, in _get_statement\n    statement = await self._protocol.prepare(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 151, in prepare\n  File \"asyncpg/protocol/protocol.pyx\", line 744, in asyncpg.protocol.protocol.BaseProtocol._check_state\nasyncpg.exceptions._base.InterfaceError: cannot perform operation: another operation is in progress\n"
+      },
+      {
+        "task_id": "task:0x77938c1aaf80",
+        "task_object_id": 131475594456960,
+        "exception_type": "InterfaceError",
+        "message": "cannot perform operation: another operation is in progress",
+        "native_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/check_once.py\", line 10, in run_asyncpg_statement\n    prepared_stmt=await connection.prepare('SELECT $1::int AS some_data')\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 636, in prepare\n    return await self._prepare(\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 654, in _prepare\n    stmt = await self._get_statement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 433, in _get_statement\n    statement = await self._protocol.prepare(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 151, in prepare\n  File \"asyncpg/protocol/protocol.pyx\", line 744, in asyncpg.protocol.protocol.BaseProtocol._check_state\nasyncpg.exceptions._base.InterfaceError: cannot perform operation: another operation is in progress\n"
+      },
+      {
+        "task_id": "task:0x77938c1ab040",
+        "task_object_id": 131475594457152,
+        "exception_type": "InterfaceError",
+        "message": "cannot perform operation: another operation is in progress",
+        "native_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/check_once.py\", line 10, in run_asyncpg_statement\n    prepared_stmt=await connection.prepare('SELECT $1::int AS some_data')\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 636, in prepare\n    return await self._prepare(\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 654, in _prepare\n    stmt = await self._get_statement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 433, in _get_statement\n    statement = await self._protocol.prepare(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 151, in prepare\n  File \"asyncpg/protocol/protocol.pyx\", line 744, in asyncpg.protocol.protocol.BaseProtocol._check_state\nasyncpg.exceptions._base.InterfaceError: cannot perform operation: another operation is in progress\n"
+      },
+      {
+        "task_id": "task:0x77938c1ab100",
+        "task_object_id": 131475594457344,
+        "exception_type": "InterfaceError",
+        "message": "cannot perform operation: another operation is in progress",
+        "native_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/check_once.py\", line 10, in run_asyncpg_statement\n    prepared_stmt=await connection.prepare('SELECT $1::int AS some_data')\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 636, in prepare\n    return await self._prepare(\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 654, in _prepare\n    stmt = await self._get_statement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 433, in _get_statement\n    statement = await self._protocol.prepare(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 151, in prepare\n  File \"asyncpg/protocol/protocol.pyx\", line 744, in asyncpg.protocol.protocol.BaseProtocol._check_state\nasyncpg.exceptions._base.InterfaceError: cannot perform operation: another operation is in progress\n"
+      },
+      {
+        "task_id": "task:0x77938c1ab280",
+        "task_object_id": 131475594457728,
+        "exception_type": "InterfaceError",
+        "message": "cannot perform operation: another operation is in progress",
+        "native_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/check_once.py\", line 10, in run_asyncpg_statement\n    prepared_stmt=await connection.prepare('SELECT $1::int AS some_data')\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 636, in prepare\n    return await self._prepare(\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 654, in _prepare\n    stmt = await self._get_statement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/systems-repro/asyncpg-cursor/venv/lib/python3.11/site-packages/asyncpg/connection.py\", line 433, in _get_statement\n    statement = await self._protocol.prepare(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"asyncpg/protocol/protocol.pyx\", line 151, in prepare\n  File \"asyncpg/protocol/protocol.pyx\", line 744, in asyncpg.protocol.protocol.BaseProtocol._check_state\nasyncpg.exceptions._base.InterfaceError: cannot perform operation: another operation is in progress\n"
+      }
+    ],
+    "connection_closed": true,
+    "workload_runs": 1,
+    "scope": "Maintainer raw-asyncpg prepare/fetch example with ten Tasks sharing one real connection. Named submission helpers, private local PostgreSQL and gather(return_exceptions=True) for bounded cleanup. No SQLAlchemy ORM or Discord bot, connection-per-task fix, or replay."
+  },
+  "execution": {
+    "mode": "database",
+    "target_processes": 1,
+    "workload_success": true,
+    "source_batch_start": "2026-11-26T08:13:27.055134+00:00",
+    "exit_code": 0,
+    "private_postgres_cleanup_returned": true,
+    "fixture_sha256": "bb683046954d0f5604fb401982b7c3e612290e8cb3e7ef173d62aaf10da9dc8c",
+    "elapsed_seconds": 57.42,
+    "finished_at": "2026-11-26T08:14:24.476191+00:00"
+  }
+}
