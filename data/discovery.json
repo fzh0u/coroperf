@@ -17,10 +17,10 @@
     "excluded_after_review": 55,
     "needs_review": 828,
     "skipped_review": 170,
-    "external_environment_required": 15,
+    "external_environment_required": 14,
     "already_catalogued": 10,
     "component_reproduced": 4,
-    "verified_case": 12
+    "verified_case": 13
   },
   "coverage": [
     {
@@ -32544,8 +32544,8 @@
       "async_signal": true,
       "observed_at": "2026-11-26T14:06:44+00:00",
       "heat": 8.3148,
-      "status": "external_environment_required",
-      "reason": "Matching Python/client/server-major packages are prepared, but native loader prerequisites prevent startup. Stop after153.36s; no cancellation/pipeline error was reproduced or attributed.",
+      "status": "verified_case",
+      "reason": "Psycopg3.3.6/CPython3.13.5/pure-Python libpq18.7/private PostgreSQL18.7 runs one original timing-sweep batch and stops on its first matching error, at trial2. Trial1 returns CancelledError; trial2 receives2cancel calls but ends with OperationalError: cannot exit pipeline mode while busy. The matching Task has cancelled()false/cancelling()2, and the connection remains in pipeline mode(status1). Native traceback shows cancellation followed by cleanup failure and executemany rethrow. Targetexit0, connections closed, table dropped and private server shutdown. New-batch setup/run79.84s; earlier socket startup failed before any target and is archived. The API-returned Task 0x7b3b4dcf7490 matches CoroPerf generationg3. Creation25 joins cancellation27 and pipeline cleanup OperationalError36, restoring launch_update_batch, absent from native error traceback, completed Task error stack and current.folded. The same Task exits with exception; all14 focused observations are attributed. Explicit API observation26 binds the actual Task/Connection/Cursor within trial2. Connection address 0x7b3b4dd08550 and the underlying coroutine object address were reused between the two trials, while the Task runtime identities remain distinct. The earlier Task is excluded, so address equality is not misread as shared connection ownership. The report already explains cleanup masking cancellation; added diagnostic evidence is the exact operation and its historical submitter at both phases. One upstream batch with2trials, stopped immediately at the first matching error; no400trial distribution, further timing trials, alternative version/implementation or fix comparison. Locally2cancel calls are observed, not the report's exact three-cancellation sequence; exception propagation observations are not distinct exception-object counts. The original victim Task,1000-row table,two UPDATE parameters and delay/gap schedule remain; the helper only names the existing create_task expression. Extra API observations supply resource associations within the matching trial; generic ancestry cannot infer resource ownership, cross-trial object lifetime or cancellation initiator. Harness helper names are not unknown production caller names. Full Chancy worker retry/shutdown behavior is unverified. Report gives PostgreSQL18 without a patch; local18.7 is explicit.",
       "query_kinds": [
         "recent"
       ]
@@ -51586,16 +51586,17 @@
       "coroperf_validated": false
     },
     "psycopg--psycopg--1435": {
-      "status": "external_environment_required",
-      "reviewed_at": "2026-11-26T15:05:59.858384+00:00",
-      "reason": "Matching Python/client/server-major packages are prepared, but native loader prerequisites prevent startup. Stop after153.36s; no cancellation/pipeline error was reproduced or attributed.",
-      "reason_zh": "已准备匹配Python、客户端及服务端主版本包，但本地动态库缺口阻止启动。153.36秒停止；尚未复现取消或pipeline错误，也未验证CoroPerf归因。",
+      "status": "verified_case",
+      "reviewed_at": "2026-11-26T15:12:40.509313+00:00",
+      "successful_component_runs": 1,
+      "trial_count_in_single_upstream_batch": 2,
+      "coroperf_validated": true,
+      "reason": "Psycopg3.3.6/CPython3.13.5/pure-Python libpq18.7/private PostgreSQL18.7 runs one original timing-sweep batch and stops on its first matching error, at trial2. Trial1 returns CancelledError; trial2 receives2cancel calls but ends with OperationalError: cannot exit pipeline mode while busy. The matching Task has cancelled()false/cancelling()2, and the connection remains in pipeline mode(status1). Native traceback shows cancellation followed by cleanup failure and executemany rethrow. Targetexit0, connections closed, table dropped and private server shutdown. New-batch setup/run79.84s; earlier socket startup failed before any target and is archived. The API-returned Task 0x7b3b4dcf7490 matches CoroPerf generationg3. Creation25 joins cancellation27 and pipeline cleanup OperationalError36, restoring launch_update_batch, absent from native error traceback, completed Task error stack and current.folded. The same Task exits with exception; all14 focused observations are attributed. Explicit API observation26 binds the actual Task/Connection/Cursor within trial2. Connection address 0x7b3b4dd08550 and the underlying coroutine object address were reused between the two trials, while the Task runtime identities remain distinct. The earlier Task is excluded, so address equality is not misread as shared connection ownership. The report already explains cleanup masking cancellation; added diagnostic evidence is the exact operation and its historical submitter at both phases. One upstream batch with2trials, stopped immediately at the first matching error; no400trial distribution, further timing trials, alternative version/implementation or fix comparison. Locally2cancel calls are observed, not the report's exact three-cancellation sequence; exception propagation observations are not distinct exception-object counts. The original victim Task,1000-row table,two UPDATE parameters and delay/gap schedule remain; the helper only names the existing create_task expression. Extra API observations supply resource associations within the matching trial; generic ancestry cannot infer resource ownership, cross-trial object lifetime or cancellation initiator. Harness helper names are not unknown production caller names. Full Chancy worker retry/shutdown behavior is unverified. Report gives PostgreSQL18 without a patch; local18.7 is explicit.",
+      "reason_zh": "Psycopg3.3.6、CPython3.13.5、纯Python libpq18.7和私有PostgreSQL18.7一次运行原始时序扫描批次，在第2个trial首次匹配错误后立即停止。第1个trial返回CancelledError；第2个收到2次cancel，却以OperationalError: cannot exit pipeline mode while busy结束。对应Task的cancelled()为false、cancelling()为2，连接仍处于pipeline模式(status1)。原生回溯显示取消后清理失败，executemany再抛出。目标退出0，连接、表、私有数据库均清理。新批次含准备运行79.84秒；此前socket启动失败发生在目标前，日志已存档。API返回的实际Task 0x7b3b4dcf7490与CoroPerf代次g3匹配。创建25分别接到取消27、pipeline清理OperationalError36，恢复原生错误回溯、已结束Task错误栈和current.folded都缺失的launch_update_batch。同一Task以异常退出，聚焦14个观察均归因。额外API观察26在第2个trial内记录实际Task/Connection/Cursor。两个trial复用了Connection地址0x7b3b4dd08550及底层协程对象地址，但Task运行时身份不同；分析排除了前一个Task，没有把地址相等误当作共享连接所有权。报告已说明清理掩盖取消，新增诊断证据是两阶段的实际操作及历史提交入口。一次上游批次含2个trial，首次匹配错误后停止；无完整400次分布、后续时序扫描、其他版本/实现或修复对比。本地记录2次cancel，不断言报告的精确三次取消顺序；异常传播观察数量不代表异常对象数量。保留原victim Task、1000行表、两个UPDATE参数及delay/gap顺序；辅助函数只给原create_task表达式命名。资源关联来自额外API观察并限定于匹配trial，通用祖先关系不推断资源所有权、跨trial对象寿命或取消发起者。辅助函数名属于采集程序，不冒充未知生产入口。未验证完整Chancy工作线程重试/关停行为。报告只指定PostgreSQL18，本地18.7已明确标注。",
       "sources": [
         "https://github.com/psycopg/psycopg/issues/1435"
       ],
-      "evidence": "data/psycopg-1435-preparation-b24.json",
-      "successful_component_runs": 0,
-      "coroperf_validated": false
+      "evidence": "data/psycopg-1435-verification.json"
     }
   },
   "supplemental_records": [
@@ -52417,6 +52418,15 @@
       "summary": "Exact psycopg3.3.6/Python3.13.5 and official PostgreSQL/libpq18.7 packages are prepared. Before target startup, postgres lacks liburing.so.2 and Psycopg cannot discover extracted libpq. Stop153.36s; no native cancellation workload, capture or successful reproduction. Preserve prerequisites and original fixture for a later fresh-clock check after loader correction.",
       "summary_zh": "准确psycopg3.3.6/Python3.13.5及官方PostgreSQL/libpq18.7包已准备。目标启动前发现postgres缺liburing.so.2，Psycopg无法发现解包后的libpq。153.36秒停止，未运行原生取消负载、采集或成功复现。保留依赖及原始fixture，后续修正动态库后按新时钟检查。",
       "path": "data/psycopg-1435-preparation-b24.json"
+    },
+    {
+      "id": "psycopg-1435-verified-b25",
+      "checked_at": "2026-11-26T15:12:40.509313+00:00",
+      "title": "Psycopg pipeline cleanup: cancellation replacement and caller verified",
+      "title_zh": "Psycopg pipeline清理：取消被替换及caller已验证",
+      "summary": "One original3.3.6/Python3.13/libpq18/PG18 batch stops at trial2:2cancel calls end in OperationalError with pipeline still active. Creation25 joins cancellation27 and cleanup error36; CoroPerf restores launch_update_batch. Extra API resources are scoped per Task/trial because Connection and coroutine addresses were reused.14 observations,exit0,79.84s,clean cleanup,no replay.",
+      "summary_zh": "原始3.3.6/Python3.13/libpq18/PG18批次在第2个trial停止：2次cancel却得到OperationalError，pipeline仍打开。创建25接到取消27及清理错误36，CoroPerf恢复launch_update_batch。Connection及协程地址被复用，额外API资源按Task/trial限定。14个观察、退出0、79.84秒、清理完成、无重放。",
+      "path": "evidence/psycopg-1435-report.html"
     }
   ],
   "deferred_registry": [
@@ -65628,19 +65638,19 @@
     "previous_observed_at": "2026-11-26T12:18:46+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T15:06:45+00:00",
+  "ledger_refreshed_at": "2026-11-26T15:13:09+00:00",
   "progress_summary": {
     "source": "report_update",
-    "assembled_at": "2026-11-26T15:06:45+00:00",
-    "comparison_reported_at": "2026-11-26T15:01:56.858053+00:00",
-    "verified_catalogue_entries": 138,
-    "new_verified_ids": [],
-    "review_decisions": 261,
-    "new_review_decision_ids": [
+    "assembled_at": "2026-11-26T15:13:09+00:00",
+    "comparison_reported_at": "2026-11-26T15:07:38.214459+00:00",
+    "verified_catalogue_entries": 139,
+    "new_verified_ids": [
       "psycopg--psycopg--1435"
     ],
+    "review_decisions": 261,
+    "new_review_decision_ids": [],
     "manual_holds": 90,
     "automatic_signal_holds": 1017,
-    "scope": "Catalogue/review totals; deltas compare with successful Git publication, not user delivery."
+    "scope": "Catalogue/review totals; deltas compare with last successful Git publication, not user delivery."
   }
 }

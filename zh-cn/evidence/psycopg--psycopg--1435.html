@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="哪个批量更新Task在pipeline清理时丢失了取消？">
+  <title>psycopg/psycopg #1435 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/psycopg--psycopg--1435.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/psycopg--psycopg--1435.html" lang="en" hreflang="en">English</a><a href="psycopg--psycopg--1435.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">psycopg/psycopg #1435</p>
+        <h1>哪个批量更新Task在pipeline清理时丢失了取消？</h1>
+        <div class="case-links"><a href="https://github.com/psycopg/psycopg/issues/1435">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>补回调用来源</dd></div>
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>已关闭</dd></div>
+          <div><dt>修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>在取消及后续pipeline清理失败处恢复同一实际批量更新Task的提交入口；额外API观察将资源限定在该trial，避免地址复用误关联。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 27</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 27 · scoped_exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>victim</code><span>check_once.py:17</span></li><li><code>executemany</code><span>cursor_async.py:137</span></li><li><code>_pipeline_nolock</code><span>connection_async.py:509</span></li><li><code>__aexit__</code><span>_pipeline_async.py:69</span></li><li><code>wait</code><span>connection_async.py:532</span></li><li><code>wait_async</code><span>waiting.py:222</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 27 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>27 → 25</code></a></nav>
+          <section class="stack observed" id="join-1-record-27"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 27 · scoped_exception</span><span class="record-instance">实例首次见于记录 25</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>victim</code><span>check_once.py:17</span></li><li><code>executemany</code><span>cursor_async.py:137</span></li><li><code>_pipeline_nolock</code><span>connection_async.py:509</span></li><li><code>__aexit__</code><span>_pipeline_async.py:69</span></li><li><code>wait</code><span>connection_async.py:532</span></li><li><code>wait_async</code><span>waiting.py:222</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-25">记录 25</a><span aria-hidden="true">→</span><a href="#join-1-record-27">记录 27</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 25 → 27</code></p>
+        </aside><section class="stack " id="join-1-record-25"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 25</span><span class="record-instance">实例首次见于记录 25</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>main</code><span>check_once.py:53</span></li><li><code>one</code><span>check_once.py:23</span></li><li><code>launch_update_batch</code><span>check_once.py:9</span></li><li><code>create_task</code><span>tasks.py:410</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 36</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 36 · scoped_exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>victim</code><span>check_once.py:17</span></li><li><code>executemany</code><span>cursor_async.py:137</span></li><li><code>_pipeline_nolock</code><span>connection_async.py:509</span></li><li><code>__aexit__</code><span>_pipeline_async.py:77</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 36 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>36 → 25</code></a></nav>
+          <section class="stack observed" id="join-2-record-36"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 36 · scoped_exception</span><span class="record-instance">实例首次见于记录 25</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>victim</code><span>check_once.py:17</span></li><li><code>executemany</code><span>cursor_async.py:137</span></li><li><code>_pipeline_nolock</code><span>connection_async.py:509</span></li><li><code>__aexit__</code><span>_pipeline_async.py:77</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-25">记录 25</a><span aria-hidden="true">→</span><a href="#join-2-record-36">记录 36</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 25 → 36</code></p>
+        </aside><section class="stack " id="join-2-record-25"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 25</span><span class="record-instance">实例首次见于记录 25</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>main</code><span>check_once.py:53</span></li><li><code>one</code><span>check_once.py:23</span></li><li><code>launch_update_batch</code><span>check_once.py:9</span></li><li><code>create_task</code><span>tasks.py:410</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>Psycopg3.3.6、CPython3.13.5、纯Python libpq18.7和私有PostgreSQL18.7一次运行原始时序扫描批次，在第2个trial首次匹配错误后立即停止。第1个trial返回CancelledError；第2个收到2次cancel，却以OperationalError: cannot exit pipeline mode while busy结束。对应Task的cancelled()为false、cancelling()为2，连接仍处于pipeline模式(status1)。原生回溯显示取消后清理失败，executemany再抛出。目标退出0，连接、表、私有数据库均清理。新批次含准备运行79.84秒；此前socket启动失败发生在目标前，日志已存档。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>API返回的实际Task 0x7b3b4dcf7490与CoroPerf代次g3匹配。创建25分别接到取消27、pipeline清理OperationalError36，恢复原生错误回溯、已结束Task错误栈和current.folded都缺失的launch_update_batch。同一Task以异常退出，聚焦14个观察均归因。额外API观察26在第2个trial内记录实际Task/Connection/Cursor。两个trial复用了Connection地址0x7b3b4dd08550及底层协程对象地址，但Task运行时身份不同；分析排除了前一个Task，没有把地址相等误当作共享连接所有权。报告已说明清理掩盖取消，新增诊断证据是两阶段的实际操作及历史提交入口。</dd></div><div><dt>适用范围与局限</dt><dd>一次上游批次含2个trial，首次匹配错误后停止；无完整400次分布、后续时序扫描、其他版本/实现或修复对比。本地记录2次cancel，不断言报告的精确三次取消顺序；异常传播观察数量不代表异常对象数量。保留原victim Task、1000行表、两个UPDATE参数及delay/gap顺序；辅助函数只给原create_task表达式命名。资源关联来自额外API观察并限定于匹配trial，通用祖先关系不推断资源所有权、跨trial对象寿命或取消发起者。辅助函数名属于采集程序，不冒充未知生产入口。未验证完整Chancy工作线程重试/关停行为。报告只指定PostgreSQL18，本地18.7已明确标注。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

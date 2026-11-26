@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which batch-update Task lost cancellation during pipeline cleanup?">
+  <title>psycopg/psycopg #1435 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/psycopg--psycopg--1435.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="psycopg--psycopg--1435.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/psycopg--psycopg--1435.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">psycopg/psycopg #1435</p>
+        <h1>Which batch-update Task lost cancellation during pipeline cleanup?</h1>
+        <div class="case-links"><a href="https://github.com/psycopg/psycopg/issues/1435">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Caller recovery</dd></div>
+          <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Recover the same actual batch-update Task submitter at cancellation and later pipeline cleanup failure; extra API observations scope resources to that trial despite address reuse.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 27</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 27 · scoped_exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>victim</code><span>check_once.py:17</span></li><li><code>executemany</code><span>cursor_async.py:137</span></li><li><code>_pipeline_nolock</code><span>connection_async.py:509</span></li><li><code>__aexit__</code><span>_pipeline_async.py:69</span></li><li><code>wait</code><span>connection_async.py:532</span></li><li><code>wait_async</code><span>waiting.py:222</span></li></ol></section>
+          <p class="small trace-note">Frames from record 27 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>27 → 25</code></a></nav>
+          <section class="stack observed" id="join-1-record-27"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 27 · scoped_exception</span><span class="record-instance">Instance from record 25</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>victim</code><span>check_once.py:17</span></li><li><code>executemany</code><span>cursor_async.py:137</span></li><li><code>_pipeline_nolock</code><span>connection_async.py:509</span></li><li><code>__aexit__</code><span>_pipeline_async.py:69</span></li><li><code>wait</code><span>connection_async.py:532</span></li><li><code>wait_async</code><span>waiting.py:222</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-25">Record 25</a><span aria-hidden="true">→</span><a href="#join-1-record-27">Record 27</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 25 → 27</code></p>
+        </aside><section class="stack " id="join-1-record-25"><div class="stack-head"><h4>Creation stack</h4><span>Record 25</span><span class="record-instance">Instance from record 25</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>main</code><span>check_once.py:53</span></li><li><code>one</code><span>check_once.py:23</span></li><li><code>launch_update_batch</code><span>check_once.py:9</span></li><li><code>create_task</code><span>tasks.py:410</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>Observation 36</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 36 · scoped_exception</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>victim</code><span>check_once.py:17</span></li><li><code>executemany</code><span>cursor_async.py:137</span></li><li><code>_pipeline_nolock</code><span>connection_async.py:509</span></li><li><code>__aexit__</code><span>_pipeline_async.py:77</span></li></ol></section>
+          <p class="small trace-note">Frames from record 36 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-2-point-1">Join point 1 <code>36 → 25</code></a></nav>
+          <section class="stack observed" id="join-2-record-36"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 36 · scoped_exception</span><span class="record-instance">Instance from record 25</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>victim</code><span>check_once.py:17</span></li><li><code>executemany</code><span>cursor_async.py:137</span></li><li><code>_pipeline_nolock</code><span>connection_async.py:509</span></li><li><code>__aexit__</code><span>_pipeline_async.py:77</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-2-record-25">Record 25</a><span aria-hidden="true">→</span><a href="#join-2-record-36">Record 36</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 25 → 36</code></p>
+        </aside><section class="stack " id="join-2-record-25"><div class="stack-head"><h4>Creation stack</h4><span>Record 25</span><span class="record-instance">Instance from record 25</span></div><ol class="frames"><li><code>&lt;module&gt;</code><span>check_once.py:64</span></li><li><code>run</code><span>runners.py:195</span></li><li><code>run</code><span>runners.py:118</span></li><li><code>run_until_complete</code><span>base_events.py:712</span></li><li><code>run_forever</code><span>base_events.py:683</span></li><li><code>_run_once</code><span>base_events.py:2042</span></li><li><code>_run</code><span>events.py:89</span></li><li><code>main</code><span>check_once.py:53</span></li><li><code>one</code><span>check_once.py:23</span></li><li><code>launch_update_batch</code><span>check_once.py:9</span></li><li><code>create_task</code><span>tasks.py:410</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>Psycopg3.3.6/CPython3.13.5/pure-Python libpq18.7/private PostgreSQL18.7 runs one original timing-sweep batch and stops on its first matching error, at trial2. Trial1 returns CancelledError; trial2 receives2cancel calls but ends with OperationalError: cannot exit pipeline mode while busy. The matching Task has cancelled()false/cancelling()2, and the connection remains in pipeline mode(status1). Native traceback shows cancellation followed by cleanup failure and executemany rethrow. Targetexit0, connections closed, table dropped and private server shutdown. New-batch setup/run79.84s; earlier socket startup failed before any target and is archived.</dd></div><div><dt>What CoroPerf showed</dt><dd>The API-returned Task [address] matches CoroPerf generationg3. Creation25 joins cancellation27 and pipeline cleanup OperationalError36, restoring launch_update_batch, absent from native error traceback, completed Task error stack and current.folded. The same Task exits with exception; all14 focused observations are attributed. Explicit API observation26 binds the actual Task/Connection/Cursor within trial2. Connection address [address] and the underlying coroutine object address were reused between the two trials, while the Task runtime identities remain distinct. The earlier Task is excluded, so address equality is not misread as shared connection ownership. The report already explains cleanup masking cancellation; added diagnostic evidence is the exact operation and its historical submitter at both phases.</dd></div><div><dt>Scope and limits</dt><dd>One upstream batch with2trials, stopped immediately at the first matching error; no400trial distribution, further timing trials, alternative version/implementation or fix comparison. Locally2cancel calls are observed, not the report&#x27;s exact three-cancellation sequence; exception propagation observations are not distinct exception-object counts. The original victim Task,1000-row table,two UPDATE parameters and delay/gap schedule remain; the helper only names the existing create_task expression. Extra API observations supply resource associations within the matching trial; generic ancestry cannot infer resource ownership, cross-trial object lifetime or cancellation initiator. Harness helper names are not unknown production caller names. Full Chancy worker retry/shutdown behavior is unverified. Report gives PostgreSQL18 without a patch; local18.7 is explicit.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
