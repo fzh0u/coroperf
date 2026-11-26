@@ -1,0 +1,31 @@
+{
+  "id": "ray-project--ray--63261",
+  "source": "https://github.com/ray-project/ray/issues/63261",
+  "status": "preparation_deferred",
+  "checked_at": "2026-11-26T06:06:56.227870+00:00",
+  "issue_workload_executed": false,
+  "native_reproductions": 0,
+  "process_attempts": 1,
+  "task_capture_available": false,
+  "coroperf_attribution_verified": false,
+  "native_success": false,
+  "first_process_started_seconds": 148.870489,
+  "process_result": {
+    "runtime_attempts": 1,
+    "exit_code": 1,
+    "elapsed_runtime_seconds": 0.06718373508192599,
+    "first_check_elapsed_seconds": 148.937709,
+    "finished_at": "2026-11-26T06:05:24.378599+00:00"
+  },
+  "stop_check_elapsed_seconds": 177.844916,
+  "blocker": "The runner resolved the venv executable symlink to its base interpreter, bypassing venv site-packages; grpc import failed before Ray import or framework execution.",
+  "source_and_fixture_scope": "Intended component uses actual grpc.aio unary failure on owned loopback and unmodified Ray gRPCReplicaResult/AsyncioRouter completion/cache methods; omits full Ray Serve control plane. No generic asyncio replacement ran. Fixture remains unvalidated.",
+  "verified_environment_facts": {
+    "venv_executable": "/data1/fzhou/coro/.tools/ray-68460-native/bin/python",
+    "resolved_executable": "/home/fzhou/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+    "grpc_package_directory_exists": true,
+    "ray_router_source_exists": true
+  },
+  "followup": "Preserve the virtual-environment executable path rather than resolving it to the base interpreter. Do not retry in this pass; no claim that correcting launch alone proves the fixture or issue.",
+  "shared_ledger_or_website_modified": false
+}

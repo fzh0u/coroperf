@@ -14,12 +14,12 @@
   "execution_policy": "Read-only metadata collection. No issue code, linked commands or reproductions are executed.",
   "counts": {
     "no_async_signal": 409,
-    "excluded_after_review": 31,
-    "needs_review": 800,
+    "excluded_after_review": 34,
+    "needs_review": 795,
     "skipped_review": 168,
-    "external_environment_required": 8,
+    "external_environment_required": 9,
     "already_catalogued": 10,
-    "verified_case": 2,
+    "verified_case": 3,
     "component_reproduced": 2
   },
   "coverage": [
@@ -5993,12 +5993,11 @@
       "async_signal": true,
       "observed_at": "2026-11-26T04:09:58+00:00",
       "heat": 22.9412,
-      "status": "needs_review",
-      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "status": "excluded_after_review",
+      "reason": "Source review identifies an operator backpressure-policy problem and subsequent alternative implementation discussion. No missing creator identity or CoroPerf diagnosis is demonstrated by this review; excluded from this caller-recovery batch, not a claim that the reported symptom is absent. No workload ran.",
       "query_kinds": [
         "discussion"
-      ],
-      "coverage_rank": 16
+      ]
     },
     {
       "id": "stackexchange--stackexchange.redis--1438",
@@ -6106,7 +6105,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 43
+      "coverage_rank": 16
     },
     {
       "id": "sgl-project--sglang--8179",
@@ -7872,7 +7871,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 69
+      "coverage_rank": 43
     },
     {
       "id": "stackexchange--stackexchange.redis--38",
@@ -8628,7 +8627,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 95
+      "coverage_rank": 69
     },
     {
       "id": "golang--go--25218",
@@ -9220,7 +9219,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 121
+      "coverage_rank": 95
     },
     {
       "id": "apache--datafusion--17334",
@@ -9525,7 +9524,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 146
+      "coverage_rank": 121
     },
     {
       "id": "apache--datafusion--16200",
@@ -10470,12 +10469,11 @@
       "async_signal": true,
       "observed_at": "2026-11-26T04:09:58+00:00",
       "heat": 19.1988,
-      "status": "needs_review",
-      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "status": "excluded_after_review",
+      "reason": "Maintainers classify this as invalid in Reactor core: asyncCancel derives cleanup from an emitted resource; a value not emitted cannot be handed to that callback. The linked pool problem is separate. Source-only review, no workload.",
       "query_kinds": [
         "discussion"
-      ],
-      "coverage_rank": 171
+      ]
     },
     {
       "id": "npgsql--npgsql--493",
@@ -11387,7 +11385,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 196
+      "coverage_rank": 146
     },
     {
       "id": "magicstack--asyncpg--121",
@@ -11824,7 +11822,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 221
+      "coverage_rank": 171
     },
     {
       "id": "grpc--grpc-go--1014",
@@ -12206,7 +12204,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 246
+      "coverage_rank": 196
     },
     {
       "id": "ai-dynamo--dynamo--288",
@@ -12488,7 +12486,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 267
+      "coverage_rank": 221
     },
     {
       "id": "apache--datafusion--12393",
@@ -12764,7 +12762,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 288
+      "coverage_rank": 246
     },
     {
       "id": "pgjdbc--pgjdbc--1939",
@@ -13266,7 +13264,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 313
+      "coverage_rank": 267
     },
     {
       "id": "ai-dynamo--dynamo--15274",
@@ -13409,7 +13407,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 292
+      "coverage_rank": 288
     },
     {
       "id": "dotnet--runtime--805",
@@ -13437,7 +13435,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 317
+      "coverage_rank": 313
     },
     {
       "id": "mysql-net--mysqlconnector--178",
@@ -13573,7 +13571,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 334
+      "coverage_rank": 292
     },
     {
       "id": "magicstack--asyncpg--1058",
@@ -13734,7 +13732,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 338
+      "coverage_rank": 334
     },
     {
       "id": "dotnet--runtime--39116",
@@ -14412,7 +14410,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 361
+      "coverage_rank": 317
     },
     {
       "id": "grpc--grpc-go--7261",
@@ -16685,12 +16683,11 @@
       "async_signal": true,
       "observed_at": "2026-11-26T04:09:58+00:00",
       "heat": 15.8439,
-      "status": "needs_review",
-      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "status": "verified_case",
+      "reason": "One bounded check of Reactor 3.8.8 confirms that forceful bounded-elastic dispose interrupts a running SchedulerTask. The native InterruptedException stack identifies the blocking operation but omits the earlier submitOrderSynchronization entry. Standard JDI observes the actual SchedulerTask constructor receiver and the receiver on the interrupted worker stack. Both have object ID 431. A separate read of the application returnedTask field confirms the same object. CoroPerf joins the saved creation and interruption events and recovers the historical submission entry. Collector shutdown failure is recorded separately; no replay.",
       "query_kinds": [
         "discussion"
-      ],
-      "coverage_rank": 384
+      ]
     },
     {
       "id": "reactor--reactor-core--777",
@@ -16718,7 +16715,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 403
+      "coverage_rank": 338
     },
     {
       "id": "reactor--reactor-core--79",
@@ -16746,7 +16743,7 @@
       "query_kinds": [
         "discussion"
       ],
-      "coverage_rank": 425
+      "coverage_rank": 361
     },
     {
       "id": "mysql-net--mysqlconnector--49",
@@ -19732,7 +19729,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 447
+      "coverage_rank": 384
     },
     {
       "id": "tokio-rs--tokio--3247",
@@ -20749,7 +20746,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 407
+      "coverage_rank": 403
     },
     {
       "id": "etcd-io--etcd--21673",
@@ -21206,7 +21203,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 429
+      "coverage_rank": 425
     },
     {
       "id": "stackexchange--stackexchange.redis--1302",
@@ -21968,7 +21965,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 411
+      "coverage_rank": 407
     },
     {
       "id": "apache--datafusion--24860",
@@ -22319,7 +22316,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 433
+      "coverage_rank": 429
     },
     {
       "id": "tokio-rs--tokio--3709",
@@ -22343,12 +22340,11 @@
       "async_signal": true,
       "observed_at": "2026-11-26T04:09:29+00:00",
       "heat": 12.1456,
-      "status": "needs_review",
-      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "status": "excluded_after_review",
+      "reason": "The maintainer closed this as intended behavior: advancing paused time does not guarantee ordering against execution of another runnable task. Source-only applicability review; no new caller recovery result or workload.",
       "query_kinds": [
         "discussion-depth"
-      ],
-      "coverage_rank": 451
+      ]
     },
     {
       "id": "magicstack--asyncpg--1155",
@@ -22531,12 +22527,11 @@
       "async_signal": true,
       "observed_at": "2026-11-26T04:00:49+00:00",
       "heat": 11.7881,
-      "status": "needs_review",
-      "reason": "Search candidate. CoroPerf applicability and reproduction are unverified.",
+      "status": "external_environment_required",
+      "reason": "First-check preparation deferred: resolving the venv interpreter symlink bypassed its site-packages, and grpc import failed before Ray or the framework workload. One process attempt, zero native reproductions and zero captures. Preserve the venv path for a later batch; do not retry in this pass.",
       "query_kinds": [
         "recent"
-      ],
-      "coverage_rank": 264
+      ]
     },
     {
       "id": "duckdb--duckdb--22277",
@@ -22749,7 +22744,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 469
+      "coverage_rank": 447
     },
     {
       "id": "apache--datafusion-ballista--1180",
@@ -23029,7 +23024,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 415
+      "coverage_rank": 411
     },
     {
       "id": "chriskohlhoff--asio--316",
@@ -23054,7 +23049,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 437
+      "coverage_rank": 433
     },
     {
       "id": "chriskohlhoff--asio--368",
@@ -23897,7 +23892,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 473
+      "coverage_rank": 415
     },
     {
       "id": "reactor--reactor-core--4338",
@@ -23924,7 +23919,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 491
+      "coverage_rank": 437
     },
     {
       "id": "reactor--reactor-core--4443",
@@ -23949,7 +23944,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 513
+      "coverage_rank": 451
     },
     {
       "id": "mysql-net--mysqlconnector--1290",
@@ -24088,7 +24083,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 477
+      "coverage_rank": 469
     },
     {
       "id": "pytorch--pytorch--206193",
@@ -24927,7 +24922,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 289
+      "coverage_rank": 264
     },
     {
       "id": "ray-project--ray--19905",
@@ -24955,7 +24950,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 314
+      "coverage_rank": 289
     },
     {
       "id": "ray-project--ray--20103",
@@ -24984,7 +24979,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 335
+      "coverage_rank": 314
     },
     {
       "id": "ray-project--ray--20106",
@@ -25012,7 +25007,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 358
+      "coverage_rank": 335
     },
     {
       "id": "ray-project--ray--20463",
@@ -25040,7 +25035,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 381
+      "coverage_rank": 358
     },
     {
       "id": "ray-project--ray--22200",
@@ -25068,7 +25063,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 404
+      "coverage_rank": 381
     },
     {
       "id": "ray-project--ray--23503",
@@ -25097,7 +25092,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 426
+      "coverage_rank": 404
     },
     {
       "id": "ray-project--ray--23581",
@@ -25126,7 +25121,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 448
+      "coverage_rank": 426
     },
     {
       "id": "ray-project--ray--24200",
@@ -25154,7 +25149,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 470
+      "coverage_rank": 448
     },
     {
       "id": "ray-project--ray--25115",
@@ -25183,7 +25178,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 492
+      "coverage_rank": 470
     },
     {
       "id": "ray-project--ray--25355",
@@ -25210,7 +25205,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 514
+      "coverage_rank": 492
     },
     {
       "id": "ray-project--ray--27115",
@@ -25239,7 +25234,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 536
+      "coverage_rank": 514
     },
     {
       "id": "ray-project--ray--30086",
@@ -25267,7 +25262,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 558
+      "coverage_rank": 536
     },
     {
       "id": "ray-project--ray--32047",
@@ -25297,7 +25292,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 579
+      "coverage_rank": 558
     },
     {
       "id": "ray-project--ray--32617",
@@ -25326,7 +25321,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 600
+      "coverage_rank": 579
     },
     {
       "id": "ray-project--ray--47449",
@@ -25355,7 +25350,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 620
+      "coverage_rank": 600
     },
     {
       "id": "ray-project--ray--60552",
@@ -25415,7 +25410,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 640
+      "coverage_rank": 620
     },
     {
       "id": "ray-project--ray--67446",
@@ -25443,7 +25438,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 657
+      "coverage_rank": 640
     },
     {
       "id": "ray-project--ray--8578",
@@ -25682,7 +25677,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 495
+      "coverage_rank": 473
     },
     {
       "id": "tokio-rs--tokio--2312",
@@ -25712,7 +25707,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 517
+      "coverage_rank": 491
     },
     {
       "id": "tokio-rs--tokio--2812",
@@ -25740,7 +25735,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 535
+      "coverage_rank": 513
     },
     {
       "id": "tokio-rs--tokio--3117",
@@ -25770,7 +25765,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 557
+      "coverage_rank": 535
     },
     {
       "id": "tokio-rs--tokio--3305",
@@ -25828,7 +25823,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 578
+      "coverage_rank": 557
     },
     {
       "id": "tokio-rs--tokio--3570",
@@ -25857,7 +25852,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 599
+      "coverage_rank": 578
     },
     {
       "id": "tokio-rs--tokio--3805",
@@ -25886,7 +25881,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 619
+      "coverage_rank": 599
     },
     {
       "id": "tokio-rs--tokio--3830",
@@ -25914,7 +25909,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 639
+      "coverage_rank": 619
     },
     {
       "id": "tokio-rs--tokio--4111",
@@ -25943,7 +25938,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 656
+      "coverage_rank": 639
     },
     {
       "id": "tokio-rs--tokio--4181",
@@ -25972,7 +25967,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 673
+      "coverage_rank": 656
     },
     {
       "id": "tokio-rs--tokio--4602",
@@ -26003,7 +25998,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 687
+      "coverage_rank": 673
     },
     {
       "id": "tokio-rs--tokio--4756",
@@ -26032,7 +26027,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 701
+      "coverage_rank": 687
     },
     {
       "id": "tokio-rs--tokio--4868",
@@ -26061,7 +26056,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 714
+      "coverage_rank": 701
     },
     {
       "id": "tokio-rs--tokio--4912",
@@ -26090,7 +26085,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 726
+      "coverage_rank": 714
     },
     {
       "id": "tokio-rs--tokio--5214",
@@ -26119,7 +26114,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 738
+      "coverage_rank": 726
     },
     {
       "id": "tokio-rs--tokio--5340",
@@ -26148,7 +26143,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 748
+      "coverage_rank": 738
     },
     {
       "id": "tokio-rs--tokio--8620",
@@ -26206,7 +26201,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 539
+      "coverage_rank": 477
     },
     {
       "id": "reactor--reactor-core--4488",
@@ -26233,7 +26228,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 561
+      "coverage_rank": 495
     },
     {
       "id": "sidorares--node-mysql2--3655",
@@ -27291,7 +27286,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 745
+      "coverage_rank": 744
     },
     {
       "id": "apache--datafusion--26877",
@@ -27447,7 +27442,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 582
+      "coverage_rank": 517
     },
     {
       "id": "reactor--reactor-core--1316",
@@ -27475,7 +27470,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 603
+      "coverage_rank": 539
     },
     {
       "id": "reactor--reactor-core--1356",
@@ -27503,7 +27498,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 623
+      "coverage_rank": 561
     },
     {
       "id": "magicstack--asyncpg--1409",
@@ -28143,7 +28138,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 674
+      "coverage_rank": 657
     },
     {
       "id": "ray-project--ray--68249",
@@ -28171,7 +28166,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 688
+      "coverage_rank": 674
     },
     {
       "id": "sidorares--node-mysql2--1009",
@@ -29290,7 +29285,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 747
+      "coverage_rank": 746
     },
     {
       "id": "tokio-rs--tokio--8527",
@@ -30021,7 +30016,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 746
+      "coverage_rank": 745
     },
     {
       "id": "sqlalchemy--sqlalchemy--13622",
@@ -30050,7 +30045,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 755
+      "coverage_rank": 754
     },
     {
       "id": "sqlalchemy--sqlalchemy--13639",
@@ -30112,7 +30107,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 763
+      "coverage_rank": 762
     },
     {
       "id": "sqlalchemy--sqlalchemy--13688",
@@ -30671,7 +30666,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 642
+      "coverage_rank": 582
     },
     {
       "id": "reactor--reactor-core--1025",
@@ -30699,7 +30694,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 659
+      "coverage_rank": 603
     },
     {
       "id": "reactor--reactor-core--1031",
@@ -30726,7 +30721,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 676
+      "coverage_rank": 623
     },
     {
       "id": "reactor--reactor-core--1072",
@@ -30753,7 +30748,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 690
+      "coverage_rank": 642
     },
     {
       "id": "reactor--reactor-core--1095",
@@ -30782,7 +30777,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 704
+      "coverage_rank": 659
     },
     {
       "id": "reactor--reactor-core--1102",
@@ -30809,7 +30804,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 717
+      "coverage_rank": 676
     },
     {
       "id": "reactor--reactor-core--1123",
@@ -30836,7 +30831,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 729
+      "coverage_rank": 690
     },
     {
       "id": "reactor--reactor-core--1151",
@@ -30863,7 +30858,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 741
+      "coverage_rank": 704
     },
     {
       "id": "reactor--reactor-core--1166",
@@ -30888,7 +30883,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 750
+      "coverage_rank": 717
     },
     {
       "id": "reactor--reactor-core--1167",
@@ -30915,7 +30910,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 757
+      "coverage_rank": 729
     },
     {
       "id": "reactor--reactor-core--1193",
@@ -30942,7 +30937,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 765
+      "coverage_rank": 740
     },
     {
       "id": "reactor--reactor-core--1269",
@@ -30969,7 +30964,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 772
+      "coverage_rank": 747
     },
     {
       "id": "reactor--reactor-core--1313",
@@ -30996,7 +30991,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 778
+      "coverage_rank": 756
     },
     {
       "id": "reactor--reactor-core--1374",
@@ -31023,7 +31018,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 783
+      "coverage_rank": 764
     },
     {
       "id": "reactor--reactor-core--1388",
@@ -31051,7 +31046,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 786
+      "coverage_rank": 771
     },
     {
       "id": "reactor--reactor-core--810",
@@ -31079,7 +31074,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 787
+      "coverage_rank": 777
     },
     {
       "id": "reactor--reactor-core--941",
@@ -31106,7 +31101,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 788
+      "coverage_rank": 781
     },
     {
       "id": "huggingface--text-embeddings-inference--429",
@@ -31654,7 +31649,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 754
+      "coverage_rank": 753
     },
     {
       "id": "npgsql--npgsql--6665",
@@ -32431,7 +32426,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 702
+      "coverage_rank": 688
     },
     {
       "id": "ray-project--ray--68086",
@@ -32489,7 +32484,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 715
+      "coverage_rank": 702
     },
     {
       "id": "duckdb--duckdb--10257",
@@ -33063,7 +33058,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 756
+      "coverage_rank": 755
     },
     {
       "id": "netty--netty--8507",
@@ -33088,7 +33083,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 764
+      "coverage_rank": 763
     },
     {
       "id": "netty--netty--8513",
@@ -33113,7 +33108,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 771
+      "coverage_rank": 770
     },
     {
       "id": "tokio-rs--tokio--8073",
@@ -33142,7 +33137,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 759
+      "coverage_rank": 749
     },
     {
       "id": "tokio-rs--tokio--8695",
@@ -33264,7 +33259,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 767
+      "coverage_rank": 758
     },
     {
       "id": "grpc--grpc-go--9543",
@@ -34045,7 +34040,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 770
+      "coverage_rank": 769
     },
     {
       "id": "apache--datafusion--14632",
@@ -34921,7 +34916,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 740
+      "coverage_rank": 739
     },
     {
       "id": "stackexchange--stackexchange.redis--3348",
@@ -34950,7 +34945,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 749
+      "coverage_rank": 748
     },
     {
       "id": "reactor--reactor-core--3373",
@@ -34977,7 +34972,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 789
+      "coverage_rank": 784
     },
     {
       "id": "reactor--reactor-core--4176",
@@ -35028,7 +35023,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 790
+      "coverage_rank": 785
     },
     {
       "id": "reactor--reactor-core--4483",
@@ -35053,7 +35048,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 791
+      "coverage_rank": 786
     },
     {
       "id": "huggingface--text-embeddings-inference--6",
@@ -35710,7 +35705,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 777
+      "coverage_rank": 776
     },
     {
       "id": "apache--datafusion-ballista--1847",
@@ -36013,7 +36008,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 774
+      "coverage_rank": 766
     },
     {
       "id": "mysql-net--mysqlconnector--1652",
@@ -36242,7 +36237,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 762
+      "coverage_rank": 761
     },
     {
       "id": "vllm-project--vllm--69924",
@@ -36267,7 +36262,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 769
+      "coverage_rank": 768
     },
     {
       "id": "vllm-project--vllm--69989",
@@ -36504,7 +36499,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 727
+      "coverage_rank": 715
     },
     {
       "id": "ray-project--ray--68300",
@@ -36533,7 +36528,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 739
+      "coverage_rank": 727
     },
     {
       "id": "ray-project--ray--68326",
@@ -37001,7 +36996,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 782
+      "coverage_rank": 780
     },
     {
       "id": "tokio-rs--tokio--8740",
@@ -37031,7 +37026,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 780
+      "coverage_rank": 773
     },
     {
       "id": "grpc--grpc-go--9400",
@@ -38188,7 +38183,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 742
+      "coverage_rank": 741
     },
     {
       "id": "magicstack--asyncpg--946",
@@ -38213,7 +38208,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 751
+      "coverage_rank": 750
     },
     {
       "id": "chriskohlhoff--asio--1684",
@@ -38489,7 +38484,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 758
+      "coverage_rank": 757
     },
     {
       "id": "stackexchange--stackexchange.redis--3282",
@@ -38518,7 +38513,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 766
+      "coverage_rank": 765
     },
     {
       "id": "stackexchange--stackexchange.redis--3283",
@@ -38547,7 +38542,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 773
+      "coverage_rank": 772
     },
     {
       "id": "stackexchange--stackexchange.redis--3362",
@@ -38576,7 +38571,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 776
+      "coverage_rank": 775
     },
     {
       "id": "stackexchange--stackexchange.redis--3367",
@@ -38605,7 +38600,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 781
+      "coverage_rank": 779
     },
     {
       "id": "stackexchange--stackexchange.redis--3369",
@@ -38634,7 +38629,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 785
+      "coverage_rank": 783
     },
     {
       "id": "reactor--reactor-core--4285",
@@ -38662,7 +38657,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 792
+      "coverage_rank": 787
     },
     {
       "id": "reactor--reactor-core--4397",
@@ -38687,7 +38682,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 793
+      "coverage_rank": 788
     },
     {
       "id": "reactor--reactor-core--4398",
@@ -38712,7 +38707,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 794
+      "coverage_rank": 789
     },
     {
       "id": "reactor--reactor-core--4399",
@@ -38737,7 +38732,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 795
+      "coverage_rank": 790
     },
     {
       "id": "reactor--reactor-core--4406",
@@ -38762,7 +38757,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 796
+      "coverage_rank": 791
     },
     {
       "id": "reactor--reactor-core--4415",
@@ -38789,7 +38784,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 797
+      "coverage_rank": 792
     },
     {
       "id": "reactor--reactor-core--4442",
@@ -38814,7 +38809,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 798
+      "coverage_rank": 793
     },
     {
       "id": "reactor--reactor-core--4459",
@@ -38839,7 +38834,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 799
+      "coverage_rank": 794
     },
     {
       "id": "reactor--reactor-core--4467",
@@ -38864,7 +38859,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 800
+      "coverage_rank": 795
     },
     {
       "id": "reactor--reactor-core--4478",
@@ -38967,7 +38962,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 743
+      "coverage_rank": 742
     },
     {
       "id": "sidorares--node-mysql2--4521",
@@ -38995,7 +38990,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 752
+      "coverage_rank": 751
     },
     {
       "id": "sidorares--node-mysql2--4651",
@@ -39020,7 +39015,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 760
+      "coverage_rank": 759
     },
     {
       "id": "npgsql--npgsql--1462",
@@ -39420,7 +39415,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 744
+      "coverage_rank": 743
     },
     {
       "id": "npgsql--npgsql--5873",
@@ -39445,7 +39440,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 753
+      "coverage_rank": 752
     },
     {
       "id": "npgsql--npgsql--6237",
@@ -39470,7 +39465,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 761
+      "coverage_rank": 760
     },
     {
       "id": "npgsql--npgsql--6701",
@@ -39523,7 +39518,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 768
+      "coverage_rank": 767
     },
     {
       "id": "npgsql--npgsql--6767",
@@ -39548,7 +39543,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 775
+      "coverage_rank": 774
     },
     {
       "id": "npgsql--npgsql--6770",
@@ -39573,7 +39568,7 @@
       "query_kinds": [
         "recent"
       ],
-      "coverage_rank": 779
+      "coverage_rank": 778
     },
     {
       "id": "npgsql--npgsql--728",
@@ -39598,7 +39593,7 @@
       "query_kinds": [
         "discussion-depth"
       ],
-      "coverage_rank": 784
+      "coverage_rank": 782
     },
     {
       "id": "psycopg--psycopg--1451",
@@ -45597,7 +45592,7 @@
     "pytorch--pytorch--107960",
     "npgsql--npgsql--121",
     "etcd-io--etcd--6584",
-    "reactor--reactor-core--1099",
+    "reactor--reactor-core--979",
     "ai-dynamo--dynamo--15274",
     "pgjdbc--pgjdbc--194",
     "apache--datafusion-ballista--1142",
@@ -45624,7 +45619,7 @@
     "pytorch--pytorch--96041",
     "pgjdbc--pgjdbc--1508",
     "tikv--tikv--11148",
-    "reactor--reactor-core--979",
+    "reactor--reactor-core--2184",
     "ai-dynamo--dynamo--16192",
     "magicstack--asyncpg--530",
     "apache--datafusion-ballista--1316",
@@ -45650,7 +45645,7 @@
     "pytorch--pytorch--136360",
     "pgjdbc--pgjdbc--1360",
     "etcd-io--etcd--16291",
-    "reactor--reactor-core--2184",
+    "reactor--reactor-core--3424",
     "ai-dynamo--dynamo--813",
     "sidorares--node-mysql2--653",
     "apache--datafusion-ballista--2298",
@@ -45676,7 +45671,7 @@
     "pytorch--pytorch--203022",
     "apache--datafusion--15269",
     "apache--datafusion-ballista--1164",
-    "reactor--reactor-core--3424",
+    "reactor--reactor-core--879",
     "ai-dynamo--dynamo--814",
     "sidorares--node-mysql2--695",
     "etcd-io--etcd--22714",
@@ -45702,7 +45697,7 @@
     "pytorch--pytorch--100709",
     "apache--datafusion--16200",
     "apache--datafusion-ballista--1180",
-    "reactor--reactor-core--879",
+    "reactor--reactor-core--1186",
     "ai-dynamo--dynamo--1808",
     "magicstack--asyncpg--121",
     "etcd-io--etcd--5123",
@@ -45727,7 +45722,7 @@
     "pytorch--pytorch--103874",
     "apache--datafusion--12393",
     "apache--datafusion-ballista--1239",
-    "reactor--reactor-core--1186",
+    "reactor--reactor-core--2845",
     "ai-dynamo--dynamo--19442",
     "sidorares--node-mysql2--2362",
     "etcd-io--etcd--731",
@@ -45752,7 +45747,7 @@
     "ray-project--ray--52970",
     "magicstack--asyncpg--56",
     "apache--datafusion-ballista--1021",
-    "reactor--reactor-core--3695",
+    "reactor--reactor-core--2352",
     "ai-dynamo--dynamo--18518",
     "sidorares--node-mysql2--604",
     "etcd-io--etcd--7369",
@@ -45777,7 +45772,7 @@
     "ray-project--ray--63018",
     "sidorares--node-mysql2--930",
     "apache--datafusion-ballista--1296",
-    "reactor--reactor-core--2845",
+    "reactor--reactor-core--2054",
     "ai-dynamo--dynamo--10563",
     "magicstack--asyncpg--87",
     "etcd-io--etcd--22081",
@@ -45802,7 +45797,7 @@
     "ray-project--ray--19390",
     "mysql-net--mysqlconnector--62",
     "tikv--tikv--18247",
-    "reactor--reactor-core--2352",
+    "reactor--reactor-core--1557",
     "ai-dynamo--dynamo--11768",
     "sidorares--node-mysql2--782",
     "etcd-io--etcd--22480",
@@ -45827,7 +45822,7 @@
     "pytorch--pytorch--201520",
     "magicstack--asyncpg--158",
     "etcd-io--etcd--22635",
-    "reactor--reactor-core--2054",
+    "reactor--reactor-core--3340",
     "ai-dynamo--dynamo--10411",
     "sidorares--node-mysql2--1287",
     "tikv--tikv--11596",
@@ -45845,10 +45840,10 @@
     "sqlalchemy--sqlalchemy--5811",
     "grpc--grpc-go--5401",
     "golang--go--82472",
-    "ray-project--ray--63261",
+    "ray-project--ray--17588",
     "magicstack--asyncpg--863",
     "apache--datafusion-ballista--1209",
-    "reactor--reactor-core--1557",
+    "reactor--reactor-core--2173",
     "pytorch--pytorch--205565",
     "mysql-net--mysqlconnector--1113",
     "etcd-io--etcd--22847",
@@ -45869,11 +45864,11 @@
     "sgl-project--sglang--40360",
     "sqlalchemy--sqlalchemy--13636",
     "grpc--grpc-go--5436",
-    "reactor--reactor-core--3340",
-    "ray-project--ray--17588",
+    "dotnet--runtime--42037",
+    "ray-project--ray--19905",
     "apache--datafusion--3410",
     "apache--datafusion-ballista--1242",
-    "dotnet--runtime--42037",
+    "reactor--reactor-core--3177",
     "pytorch--pytorch--205750",
     "sidorares--node-mysql2--985",
     "tikv--tikv--14949",
@@ -45894,11 +45889,11 @@
     "sgl-project--sglang--8326",
     "sqlalchemy--sqlalchemy--7567",
     "grpc--grpc-go--8041",
-    "reactor--reactor-core--2173",
-    "ray-project--ray--19905",
+    "dotnet--runtime--805",
+    "ray-project--ray--20103",
     "apache--datafusion--5383",
     "apache--datafusion-ballista--1387",
-    "dotnet--runtime--805",
+    "reactor--reactor-core--570",
     "pytorch--pytorch--206324",
     "mysql-net--mysqlconnector--309",
     "tikv--tikv--15561",
@@ -45915,11 +45910,11 @@
     "vllm-project--vllm--4257",
     "sqlalchemy--sqlalchemy--13738",
     "netty--netty--8518",
-    "reactor--reactor-core--3177",
-    "ray-project--ray--20103",
+    "dotnet--runtime--111795",
+    "ray-project--ray--20106",
     "stackexchange--stackexchange.redis--1350",
     "grpc--grpc-go--8281",
-    "dotnet--runtime--111795",
+    "reactor--reactor-core--777",
     "sgl-project--sglang--10626",
     "apache--datafusion--7601",
     "apache--datafusion-ballista--2168",
@@ -45939,10 +45934,10 @@
     "stackexchange--stackexchange.redis--19",
     "netty--netty--1019",
     "dotnet--runtime--88027",
-    "ray-project--ray--20106",
+    "ray-project--ray--20463",
     "apache--datafusion--824",
     "grpc--grpc-go--8620",
-    "reactor--reactor-core--570",
+    "reactor--reactor-core--79",
     "sgl-project--sglang--11354",
     "sqlalchemy--sqlalchemy--2703",
     "apache--datafusion-ballista--714",
@@ -45962,10 +45957,10 @@
     "stackexchange--stackexchange.redis--2559",
     "netty--netty--2426",
     "dotnet--runtime--95658",
-    "ray-project--ray--20463",
+    "ray-project--ray--22200",
     "sqlalchemy--sqlalchemy--5743",
     "grpc--grpc-go--9330",
-    "reactor--reactor-core--3068",
+    "reactor--reactor-core--3338",
     "sgl-project--sglang--19946",
     "apache--datafusion--27543",
     "tikv--tikv--17058",
@@ -45984,19 +45979,19 @@
     "vllm-project--vllm--5924",
     "stackexchange--stackexchange.redis--2664",
     "netty--netty--2774",
-    "reactor--reactor-core--777",
-    "ray-project--ray--22200",
+    "dotnet--runtime--133127",
+    "ray-project--ray--23503",
     "sqlalchemy--sqlalchemy--6059",
     "grpc--grpc-go--9544",
-    "dotnet--runtime--133127",
+    "tokio-rs--tokio--8470",
     "sgl-project--sglang--20973",
     "apache--datafusion--24860",
     "tikv--tikv--18104",
-    "tokio-rs--tokio--8470",
+    "chriskohlhoff--asio--297",
     "ai-dynamo--dynamo--12952",
     "sidorares--node-mysql2--1009",
     "apache--datafusion-ballista--2068",
-    "chriskohlhoff--asio--297",
+    "reactor--reactor-core--3323",
     "pgjdbc--pgjdbc--1822",
     "magicstack--asyncpg--1139",
     "duckdb--duckdb--19478",
@@ -46006,19 +46001,19 @@
     "vllm-project--vllm--6103",
     "stackexchange--stackexchange.redis--3123",
     "netty--netty--2796",
-    "reactor--reactor-core--79",
-    "ray-project--ray--23503",
+    "dotnet--runtime--128766",
+    "ray-project--ray--23581",
     "sqlalchemy--sqlalchemy--6825",
     "grpc--grpc-go--8693",
-    "dotnet--runtime--128766",
+    "tokio-rs--tokio--2357",
     "sgl-project--sglang--25487",
     "apache--datafusion--25804",
     "tikv--tikv--18212",
-    "tokio-rs--tokio--2357",
+    "chriskohlhoff--asio--316",
     "ai-dynamo--dynamo--13336",
     "sidorares--node-mysql2--1071",
     "apache--datafusion-ballista--2410",
-    "chriskohlhoff--asio--316",
+    "reactor--reactor-core--4338",
     "pgjdbc--pgjdbc--3642",
     "magicstack--asyncpg--1211",
     "duckdb--duckdb--22178",
@@ -46028,11 +46023,11 @@
     "vllm-project--vllm--6465",
     "stackexchange--stackexchange.redis--676",
     "netty--netty--2982",
-    "reactor--reactor-core--3338",
-    "ray-project--ray--23581",
+    "tokio-rs--tokio--8703",
+    "ray-project--ray--24200",
     "sqlalchemy--sqlalchemy--7826",
     "grpc--grpc-go--9509",
-    "tokio-rs--tokio--3709",
+    "reactor--reactor-core--4443",
     "sgl-project--sglang--36522",
     "apache--datafusion--26697",
     "tikv--tikv--20045",
@@ -46050,15 +46045,15 @@
     "vllm-project--vllm--6700",
     "stackexchange--stackexchange.redis--1979",
     "netty--netty--3063",
-    "tokio-rs--tokio--8703",
-    "ray-project--ray--24200",
+    "dotnet--runtime--136685",
+    "ray-project--ray--25115",
     "sqlalchemy--sqlalchemy--11141",
     "grpc--grpc-go--9621",
-    "reactor--reactor-core--3323",
+    "tokio-rs--tokio--1673",
     "sgl-project--sglang--39675",
     "apache--datafusion--26877",
     "tikv--tikv--3549",
-    "dotnet--runtime--136685",
+    "reactor--reactor-core--4289",
     "ai-dynamo--dynamo--15688",
     "sidorares--node-mysql2--1349",
     "apache--datafusion-ballista--2768",
@@ -46072,11 +46067,11 @@
     "vllm-project--vllm--8416",
     "stackexchange--stackexchange.redis--2066",
     "netty--netty--3921",
-    "reactor--reactor-core--4338",
-    "ray-project--ray--25115",
+    "tokio-rs--tokio--2312",
+    "ray-project--ray--25355",
     "sqlalchemy--sqlalchemy--11819",
     "grpc--grpc-go--9543",
-    "tokio-rs--tokio--1673",
+    "reactor--reactor-core--4488",
     "sgl-project--sglang--45189",
     "apache--datafusion--27549",
     "tikv--tikv--3773",
@@ -46094,11 +46089,11 @@
     "vllm-project--vllm--8984",
     "stackexchange--stackexchange.redis--2223",
     "netty--netty--4867",
-    "reactor--reactor-core--4443",
-    "ray-project--ray--25355",
+    "tokio-rs--tokio--2812",
+    "ray-project--ray--27115",
     "sqlalchemy--sqlalchemy--5905",
     "tikv--tikv--5577",
-    "tokio-rs--tokio--2312",
+    "reactor--reactor-core--1014",
     "sgl-project--sglang--5794",
     "apache--datafusion--3353",
     "apache--datafusion-ballista--405",
@@ -46116,11 +46111,11 @@
     "vllm-project--vllm--9180",
     "stackexchange--stackexchange.redis--2365",
     "netty--netty--5078",
-    "tokio-rs--tokio--2812",
-    "ray-project--ray--27115",
+    "tokio-rs--tokio--3117",
+    "ray-project--ray--30086",
     "sqlalchemy--sqlalchemy--6409",
     "tikv--tikv--6441",
-    "reactor--reactor-core--4289",
+    "reactor--reactor-core--1316",
     "sgl-project--sglang--7819",
     "sidorares--node-mysql2--3597",
     "apache--datafusion-ballista--554",
@@ -46138,11 +46133,11 @@
     "vllm-project--vllm--56172",
     "stackexchange--stackexchange.redis--2398",
     "netty--netty--5850",
-    "tokio-rs--tokio--3117",
-    "ray-project--ray--30086",
+    "tokio-rs--tokio--3475",
+    "ray-project--ray--32047",
     "sqlalchemy--sqlalchemy--7283",
     "grpc--grpc-go--9573",
-    "reactor--reactor-core--4488",
+    "reactor--reactor-core--1356",
     "sgl-project--sglang--8335",
     "sidorares--node-mysql2--495",
     "tikv--tikv--20136",
@@ -46159,11 +46154,11 @@
     "vllm-project--vllm--63640",
     "stackexchange--stackexchange.redis--2486",
     "netty--netty--6073",
-    "tokio-rs--tokio--3475",
-    "ray-project--ray--32047",
+    "tokio-rs--tokio--3570",
+    "ray-project--ray--32617",
     "sqlalchemy--sqlalchemy--7656",
     "grpc--grpc-go--9588",
-    "reactor--reactor-core--1014",
+    "reactor--reactor-core--1009",
     "sgl-project--sglang--9280",
     "sidorares--node-mysql2--506",
     "tikv--tikv--20182",
@@ -46180,11 +46175,11 @@
     "vllm-project--vllm--50602",
     "stackexchange--stackexchange.redis--2698",
     "netty--netty--6207",
-    "tokio-rs--tokio--3570",
-    "ray-project--ray--32617",
+    "tokio-rs--tokio--3805",
+    "ray-project--ray--47449",
     "sqlalchemy--sqlalchemy--8340",
     "tikv--tikv--20228",
-    "reactor--reactor-core--1316",
+    "reactor--reactor-core--1025",
     "sgl-project--sglang--9682",
     "sidorares--node-mysql2--543",
     "apache--datafusion-ballista--2596",
@@ -46200,11 +46195,11 @@
     "vllm-project--vllm--51639",
     "stackexchange--stackexchange.redis--2785",
     "netty--netty--6419",
-    "tokio-rs--tokio--3805",
-    "ray-project--ray--47449",
+    "tokio-rs--tokio--3830",
+    "ray-project--ray--62682",
     "sqlalchemy--sqlalchemy--8998",
     "tikv--tikv--20403",
-    "reactor--reactor-core--1356",
+    "reactor--reactor-core--1031",
     "sgl-project--sglang--9765",
     "sidorares--node-mysql2--807",
     "apache--datafusion-ballista--2881",
@@ -46220,10 +46215,10 @@
     "vllm-project--vllm--69267",
     "stackexchange--stackexchange.redis--3309",
     "netty--netty--6522",
-    "tokio-rs--tokio--3830",
-    "ray-project--ray--62682",
+    "tokio-rs--tokio--4111",
+    "ray-project--ray--67446",
     "sqlalchemy--sqlalchemy--9705",
-    "reactor--reactor-core--1009",
+    "reactor--reactor-core--1072",
     "sgl-project--sglang--9872",
     "sidorares--node-mysql2--835",
     "dotnet--runtime--138274",
@@ -46237,10 +46232,10 @@
     "vllm-project--vllm--51376",
     "sqlalchemy--sqlalchemy--9836",
     "netty--netty--6671",
-    "tokio-rs--tokio--4111",
-    "ray-project--ray--67446",
+    "tokio-rs--tokio--4181",
+    "ray-project--ray--68080",
     "stackexchange--stackexchange.redis--2701",
-    "reactor--reactor-core--1025",
+    "reactor--reactor-core--1095",
     "sgl-project--sglang--41148",
     "sidorares--node-mysql2--891",
     "dotnet--runtime--134018",
@@ -46254,10 +46249,10 @@
     "vllm-project--vllm--66570",
     "stackexchange--stackexchange.redis--1302",
     "netty--netty--6782",
-    "tokio-rs--tokio--4181",
-    "ray-project--ray--68080",
+    "tokio-rs--tokio--4602",
+    "ray-project--ray--68249",
     "sqlalchemy--sqlalchemy--13637",
-    "reactor--reactor-core--1031",
+    "reactor--reactor-core--1102",
     "sgl-project--sglang--53151",
     "sidorares--node-mysql2--1138",
     "ai-dynamo--dynamo--19121",
@@ -46268,10 +46263,10 @@
     "vllm-project--vllm--67054",
     "stackexchange--stackexchange.redis--2932",
     "netty--netty--816",
-    "tokio-rs--tokio--4602",
-    "ray-project--ray--68249",
+    "tokio-rs--tokio--4756",
+    "ray-project--ray--66815",
     "sqlalchemy--sqlalchemy--13667",
-    "reactor--reactor-core--1072",
+    "reactor--reactor-core--1123",
     "sgl-project--sglang--52618",
     "sidorares--node-mysql2--1840",
     "ai-dynamo--dynamo--19221",
@@ -46282,10 +46277,10 @@
     "vllm-project--vllm--68678",
     "stackexchange--stackexchange.redis--1972",
     "netty--netty--2352",
-    "tokio-rs--tokio--4756",
-    "ray-project--ray--66815",
+    "tokio-rs--tokio--4868",
+    "ray-project--ray--68266",
     "sqlalchemy--sqlalchemy--13673",
-    "reactor--reactor-core--1095",
+    "reactor--reactor-core--1151",
     "sgl-project--sglang--52619",
     "sidorares--node-mysql2--3749",
     "ai-dynamo--dynamo--19349",
@@ -46295,10 +46290,10 @@
     "vllm-project--vllm--69568",
     "sqlalchemy--sqlalchemy--13640",
     "netty--netty--3702",
-    "tokio-rs--tokio--4868",
-    "ray-project--ray--68266",
+    "tokio-rs--tokio--4912",
+    "ray-project--ray--68297",
     "stackexchange--stackexchange.redis--2736",
-    "reactor--reactor-core--1102",
+    "reactor--reactor-core--1166",
     "sgl-project--sglang--53177",
     "sidorares--node-mysql2--963",
     "ai-dynamo--dynamo--19357",
@@ -46307,10 +46302,10 @@
     "vllm-project--vllm--53836",
     "sqlalchemy--sqlalchemy--13657",
     "netty--netty--7833",
-    "tokio-rs--tokio--4912",
-    "ray-project--ray--68297",
+    "tokio-rs--tokio--5214",
+    "ray-project--ray--68300",
     "stackexchange--stackexchange.redis--3260",
-    "reactor--reactor-core--1123",
+    "reactor--reactor-core--1167",
     "sgl-project--sglang--53179",
     "sidorares--node-mysql2--4562",
     "ai-dynamo--dynamo--19524",
@@ -46319,57 +46314,52 @@
     "vllm-project--vllm--53968",
     "sqlalchemy--sqlalchemy--13772",
     "netty--netty--8517",
-    "tokio-rs--tokio--5214",
-    "ray-project--ray--68300",
+    "tokio-rs--tokio--5340",
     "stackexchange--stackexchange.redis--3318",
-    "reactor--reactor-core--1151",
+    "reactor--reactor-core--1193",
     "magicstack--asyncpg--861",
     "sidorares--node-mysql2--4497",
     "npgsql--npgsql--5852",
     "vllm-project--vllm--69844",
     "sqlalchemy--sqlalchemy--12803",
     "netty--netty--8514",
-    "tokio-rs--tokio--5340",
+    "reactor--reactor-core--1269",
     "stackexchange--stackexchange.redis--3348",
-    "reactor--reactor-core--1166",
+    "tokio-rs--tokio--8073",
     "magicstack--asyncpg--946",
     "sidorares--node-mysql2--4521",
     "npgsql--npgsql--5873",
     "vllm-project--vllm--69928",
     "sqlalchemy--sqlalchemy--13622",
     "netty--netty--8506",
-    "reactor--reactor-core--1167",
+    "reactor--reactor-core--1313",
     "stackexchange--stackexchange.redis--3240",
-    "tokio-rs--tokio--8073",
+    "tokio-rs--tokio--8788",
     "sidorares--node-mysql2--4651",
     "npgsql--npgsql--6237",
     "vllm-project--vllm--67962",
     "sqlalchemy--sqlalchemy--13678",
     "netty--netty--8507",
-    "reactor--reactor-core--1193",
+    "reactor--reactor-core--1374",
     "stackexchange--stackexchange.redis--3282",
-    "tokio-rs--tokio--8788",
+    "tokio-rs--tokio--4289",
     "npgsql--npgsql--6705",
     "vllm-project--vllm--69924",
     "sqlalchemy--sqlalchemy--13694",
     "netty--netty--8513",
-    "reactor--reactor-core--1269",
+    "reactor--reactor-core--1388",
     "stackexchange--stackexchange.redis--3283",
-    "tokio-rs--tokio--4289",
+    "tokio-rs--tokio--8740",
     "npgsql--npgsql--6767",
     "stackexchange--stackexchange.redis--3362",
     "netty--netty--8512",
-    "reactor--reactor-core--1313",
+    "reactor--reactor-core--810",
     "npgsql--npgsql--6770",
-    "tokio-rs--tokio--8740",
     "stackexchange--stackexchange.redis--3367",
     "netty--netty--18558",
-    "reactor--reactor-core--1374",
+    "reactor--reactor-core--941",
     "npgsql--npgsql--728",
     "stackexchange--stackexchange.redis--3369",
-    "reactor--reactor-core--1388",
-    "reactor--reactor-core--810",
-    "reactor--reactor-core--941",
     "reactor--reactor-core--3373",
     "reactor--reactor-core--4441",
     "reactor--reactor-core--4483",
@@ -48484,6 +48474,56 @@
         "ray-project--ray--24682",
         "ray-project--ray--10324"
       ]
+    },
+    "reactor--reactor-core--3068": {
+      "status": "verified_case",
+      "reason": "One bounded check of Reactor 3.8.8 confirms that forceful bounded-elastic dispose interrupts a running SchedulerTask. The native InterruptedException stack identifies the blocking operation but omits the earlier submitOrderSynchronization entry. Standard JDI observes the actual SchedulerTask constructor receiver and the receiver on the interrupted worker stack. Both have object ID 431. A separate read of the application returnedTask field confirms the same object. CoroPerf joins the saved creation and interruption events and recovers the historical submission entry. Collector shutdown failure is recorded separately; no replay.",
+      "reason_zh": "Reactor 3.8.8 的一次有界检查确认：强制关闭 bounded-elastic 调度器会中断正在运行的 SchedulerTask。原生 InterruptedException 栈能定位阻塞操作，但没有之前已返回的 submitOrderSynchronization 提交入口。标准 JDI 记录真实 SchedulerTask 的构造接收对象和中断工作线程栈中的接收对象，两者的对象 ID 都是 431。另行读取应用 returnedTask 字段，确认它也是同一对象。CoroPerf 将保存的创建和中断事件接起来，恢复历史提交入口。采集器收尾失败单独记录，没有重跑。",
+      "sources": [
+        "https://github.com/reactor/reactor-core/issues/3068"
+      ],
+      "reviewed_at": "2026-11-26T06:10:18.844357+00:00",
+      "successful_component_runs": 1,
+      "native_process_exit_code_verified": false
+    },
+    "ray-project--ray--63261": {
+      "status": "external_environment_required",
+      "reason": "First-check preparation deferred: resolving the venv interpreter symlink bypassed its site-packages, and grpc import failed before Ray or the framework workload. One process attempt, zero native reproductions and zero captures. Preserve the venv path for a later batch; do not retry in this pass.",
+      "reason_zh": "首检准备暂缓：启动器解析虚拟环境解释器符号链接后旁路了 site-packages，grpc 在 Ray 和框架工作负载开始前导入失败。一次进程尝试，原生复现和采集均为 0。后续批次需保留虚拟环境解释器路径，本批不重试。",
+      "sources": [
+        "https://github.com/ray-project/ray/issues/63261"
+      ],
+      "reviewed_at": "2026-11-26T06:10:51.563707+00:00",
+      "prior_local_execution": false,
+      "native_reproductions": 0,
+      "process_attempts": 1
+    },
+    "tokio-rs--tokio--3709": {
+      "status": "excluded_after_review",
+      "reason": "The maintainer closed this as intended behavior: advancing paused time does not guarantee ordering against execution of another runnable task. Source-only applicability review; no new caller recovery result or workload.",
+      "reason_zh": "维护者按预期行为关闭：推进暂停时间并不保证与另一就绪任务的运行顺序。仅审阅来源，没有新增归属结果或运行工作负载。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/3709"
+      ],
+      "reviewed_at": "2026-11-26T06:11:21.768306+00:00"
+    },
+    "reactor--reactor-core--3695": {
+      "status": "excluded_after_review",
+      "reason": "Maintainers classify this as invalid in Reactor core: asyncCancel derives cleanup from an emitted resource; a value not emitted cannot be handed to that callback. The linked pool problem is separate. Source-only review, no workload.",
+      "reason_zh": "维护者认定 Reactor core 中该条目无效：asyncCancel 需要已发出的资源值才能派生清理操作，未发出的资源无法交给该回调。关联池问题另计；仅来源审阅，没有执行。",
+      "sources": [
+        "https://github.com/reactor/reactor-core/issues/3695"
+      ],
+      "reviewed_at": "2026-11-26T06:11:21.768306+00:00"
+    },
+    "reactor--reactor-core--1099": {
+      "status": "excluded_after_review",
+      "reason": "Source review identifies an operator backpressure-policy problem and subsequent alternative implementation discussion. No missing creator identity or CoroPerf diagnosis is demonstrated by this review; excluded from this caller-recovery batch, not a claim that the reported symptom is absent. No workload ran.",
+      "reason_zh": "来源指向算子背压策略及替代实现讨论；本次没有建立创建者身份缺口或 CoroPerf 归因结果，排除本批调用者恢复适用性，不代表否认所报症状。没有执行工作负载。",
+      "sources": [
+        "https://github.com/reactor/reactor-core/issues/1099"
+      ],
+      "reviewed_at": "2026-11-26T06:11:21.768306+00:00"
     }
   },
   "supplemental_records": [
@@ -48945,6 +48985,15 @@
       "summary_zh": "用户要求停止当前条目。保留 #24682 及主报告 #10324 的来源审阅，没有执行 actor 工作负载或采集。",
       "path": "data/ray-async-identity-user-skip.json",
       "checked_at": "2026-11-26T05:59:24.879920+00:00"
+    },
+    {
+      "id": "reactor-3068-selected-result-20261126",
+      "title": "New Reactor Task creation case: scheduler shutdown interruption",
+      "title_zh": "新增 Reactor 任务创建案例：调度器关闭中断",
+      "summary": "One real SchedulerTask constructor-to-interruption identity join recovers its historical submitter. Native behavior is confirmed; collector shutdown exit 1 and unverified native exit status are disclosed. No replay.",
+      "summary_zh": "一次真实 SchedulerTask 构造到中断的对象身份关联恢复了历史提交入口。原生行为已确认；采集器收尾退出 1、原生退出码未验证均明确注明，没有重跑。",
+      "path": "data/reactor-3068-verification.json",
+      "checked_at": "2026-11-26T06:10:18.844357+00:00"
     }
   ],
   "deferred_registry": [
@@ -59428,7 +59477,7 @@
     "previous_observed_at": "2026-11-26T02:13:08+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T05:59:57+00:00",
+  "ledger_refreshed_at": "2026-11-26T06:12:05+00:00",
   "progress_summary": {
     "source": "scheduled_search",
     "assembled_at": "2026-11-26T04:11:26+00:00",

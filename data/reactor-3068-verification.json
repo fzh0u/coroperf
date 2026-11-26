@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-26T06:10:18.844357+00:00",
+  "case": {
+    "id": "reactor--reactor-core--3068",
+    "repo": "reactor/reactor-core",
+    "issue": 3068,
+    "url": "https://github.com/reactor/reactor-core/issues/3068",
+    "upstream_reference": "https://github.com/reactor/reactor-core/issues/3068",
+    "title": "Which submitted task was interrupted by Reactor scheduler shutdown?",
+    "title_zh": "Reactor 调度器关闭时，被中断的任务是谁提交的？",
+    "verified_on": "2026-11-26",
+    "reproduction": "Component reproduced",
+    "diagnosis": "Direct",
+    "graph": "perf-out/github-issue-discovery/automatic/reactor-3068-first-check-20261126/analysis/graph.json",
+    "findings": {
+      "observation": "One bounded check of Reactor 3.8.8 confirms that forceful bounded-elastic dispose interrupts a running SchedulerTask. The native InterruptedException stack identifies the blocking operation but omits the earlier submitOrderSynchronization entry.",
+      "interpretation": "Standard JDI observes the actual SchedulerTask constructor receiver and the receiver on the interrupted worker stack. Both have object ID 431. A separate read of the application returnedTask field confirms the same object. CoroPerf joins the saved creation and interruption events and recovers the historical submission entry.",
+      "limits": "This is a one-task component adaptation: Thread.sleep replaces the reported blocking HTTP wait. Forceful interruption agrees with dispose semantics; the case demonstrates creator attribution, not an incorrect API contract. Only one workload ran. The collector exits 1 during child shutdown after saving the evidence, so native process exit status is unverified. Capture ends at interruption; the missing terminal event does not imply a live or leaked task. No graceful variant, fix, alternate version, production traffic or overhead measurement ran."
+    },
+    "symptom_zh": "Reactor 3.8.8 的一次有界检查确认：强制关闭 bounded-elastic 调度器会中断正在运行的 SchedulerTask。原生 InterruptedException 栈能定位阻塞操作，但没有之前已返回的 submitOrderSynchronization 提交入口。",
+    "reasoning_zh": "标准 JDI 记录真实 SchedulerTask 的构造接收对象和中断工作线程栈中的接收对象，两者的对象 ID 都是 431。另行读取应用 returnedTask 字段，确认它也是同一对象。CoroPerf 将保存的创建和中断事件接起来，恢复历史提交入口。",
+    "limits_zh": "这是单任务组件改编：用 Thread.sleep 代替报告中的阻塞 HTTP 等待。中断符合 dispose 的强制关闭语义，本案例验证创建入口归因，不声称 API 契约错误。工作负载只执行一次。采集器保存证据后在子进程退出收尾中以 1 退出，原生进程退出码未验证。采集止于中断，没有终止事件不代表任务仍存活或泄漏。未运行优雅关闭变体、修复、多版本、生产流量或开销测试。"
+  },
+  "verification": {
+    "issue_url": "https://github.com/reactor/reactor-core/issues/3068",
+    "successful_component_runs": 1,
+    "selected_creation_join_catalogue": true,
+    "reactor": "3.8.8",
+    "jdk": "21.0.1",
+    "first_check_seconds": 156.98075032234192,
+    "native_interruption_confirmed": true,
+    "historical_creator_absent_from_native_stack": true,
+    "actual_task_object_id": "431",
+    "application_returned_task_matches": true,
+    "recovered_creator": "InterruptionReplay.submitOrderSynchronization",
+    "constructor_observed": true,
+    "coroperf_analysis_pending": false,
+    "collector_exit_code": 1,
+    "native_process_exit_code": null,
+    "scope": "One real bounded-elastic SchedulerTask interrupted by dispose; a bounded Thread.sleep replaces the reported blocking HTTP wait.",
+    "limitations": [
+      "Interruption is consistent with forceful dispose; this is a debugging case, not proof of an incorrect API contract.",
+      "Cached Reactor 3.8.8 and JDK 21 replace the original 2022 environment.",
+      "Collector exit 1 arose while checking child process liveness during shutdown. Constructor/exception/identity evidence and native output were saved; native process exit code is unverified.",
+      "No production traffic, hundreds of HTTP calls, graceful variant, fix, alternate version or replay was executed.",
+      "One task proves this creator join; concurrent-submitter discrimination and production overhead were not measured."
+    ],
+    "artifact_sha256": {
+      "first-check.json": "6d392e6743dacd2aa03c80ae5c57d2711e59049ac59e9708179f443553f49c58",
+      "events.tsv": "10de73c74b463ebe18d561b6ee44da8fc0fd6001587a79fab4b68d6e60c53df7",
+      "stdout.log": "2aebdc0dbb7658ba57c7dcce12c2ec0154a5253b41c50dafec0c2f7e7d01f164",
+      "stderr.log": "7b60a879f94c9d8b75c884a8fa273174cb3f99b53ebfd64913c38a118bec815b",
+      "collector.stderr.log": "b1bbd85a43c2a2d4a7b998aa5ffd6c01193ed9ab6759950842aee98ea6ca56ac",
+      "InterruptionReplay.java": "986f8c85b3f26bd8a6c2959402cb26ee6224c44fb2be8604ae1630863dba4c28",
+      "Capture.java": "8a103c43703991d8fb1d6e1b83344e862bf12147ee4a9317c8909b08d68557c6",
+      "run_once.py": "5ae1aebc19678551e4c3298ba497695c4dbd3c79d4aee9947a71b6d9518a7f8a"
+    },
+    "coroperf_causal_creator_recovered": true,
+    "capture_ends_at_interruption": true,
+    "terminal_task_event_observed": false,
+    "jar_sha256": "0a4987b728de02b097ca4707493b12771a3b126013c7e25353be32383ede8f12"
+  },
+  "native_stdout": "NATIVE interrupted=true taskClass=reactor.core.scheduler.SchedulerTask\n",
+  "native_stderr": "java.lang.InterruptedException: sleep interrupted\n\tat java.base/java.lang.Thread.sleep0(Native Method)\n\tat java.base/java.lang.Thread.sleep(Thread.java:509)\n\tat InterruptionReplay$BlockingCall.run(InterruptionReplay.java:15)\n\tat reactor.core.scheduler.SchedulerTask.call(SchedulerTask.java:72)\n\tat reactor.core.scheduler.SchedulerTask.call(SchedulerTask.java:28)\n\tat java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)\n\tat java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)\n\tat java.base/java.lang.Thread.run(Thread.java:1583)\n",
+  "capture": {
+    "schema_version": 1,
+    "language": "java",
+    "runtime": "JDK 21.0.1 / Reactor 3.8.8",
+    "frame_order": "leaf_to_root",
+    "producer": {
+      "name": "JDI-SchedulerTask-constructor-and-exception-receiver",
+      "identity_kind": "native-jdi-task-object",
+      "frame_order": "leaf_to_root"
+    },
+    "source_metadata": {
+      "identity_evidence": "Actual constructor receiver and exception-frame receiver, independently matched to the application returnedTask reference by JDI uniqueID.",
+      "clock": "Ordered saved events; no durations inferred.",
+      "sample_scope": "Two JDI observations during one interruption unwind, not two workload runs.",
+      "library_modified": false
+    },
+    "segments": [
+      {
+        "id": "0",
+        "coroutine_id": "jdi:SchedulerTask:431",
+        "capture_reason": "create",
+        "frames": [
+          {
+            "function": "reactor.core.scheduler.SchedulerTask.<init>",
+            "file": "SchedulerTask.java",
+            "line": 55
+          },
+          {
+            "function": "reactor.core.scheduler.Schedulers.directSchedule",
+            "file": "Schedulers.java",
+            "line": 1389
+          },
+          {
+            "function": "reactor.core.scheduler.BoundedElasticScheduler.schedule",
+            "file": "BoundedElasticScheduler.java",
+            "line": 307
+          },
+          {
+            "function": "InterruptionReplay.submitOrderSynchronization",
+            "file": "InterruptionReplay.java",
+            "line": 26
+          },
+          {
+            "function": "InterruptionReplay.main",
+            "file": "InterruptionReplay.java",
+            "line": 31
+          }
+        ]
+      },
+      {
+        "id": "1",
+        "coroutine_id": "jdi:SchedulerTask:431",
+        "capture_reason": "sample",
+        "sample_kind": "diagnostic_stacktrace",
+        "frames": [
+          {
+            "function": "java.lang.Thread.sleep0",
+            "file": "Thread.java",
+            "line": null
+          },
+          {
+            "function": "java.lang.Thread.sleep",
+            "file": "Thread.java",
+            "line": 509
+          },
+          {
+            "function": "InterruptionReplay$BlockingCall.run",
+            "file": "InterruptionReplay.java",
+            "line": 15
+          },
+          {
+            "function": "reactor.core.scheduler.SchedulerTask.call",
+            "file": "SchedulerTask.java",
+            "line": 72
+          },
+          {
+            "function": "reactor.core.scheduler.SchedulerTask.call",
+            "file": "SchedulerTask.java",
+            "line": 28
+          },
+          {
+            "function": "java.util.concurrent.FutureTask.run",
+            "file": "FutureTask.java",
+            "line": 317
+          },
+          {
+            "function": "java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run",
+            "file": "ScheduledThreadPoolExecutor.java",
+            "line": 304
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1144
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+            "file": "ThreadPoolExecutor.java",
+            "line": 642
+          },
+          {
+            "function": "java.lang.Thread.runWith",
+            "file": "Thread.java",
+            "line": 1596
+          },
+          {
+            "function": "java.lang.Thread.run",
+            "file": "Thread.java",
+            "line": 1583
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "coroutine_id": "jdi:SchedulerTask:431",
+        "capture_reason": "sample",
+        "sample_kind": "diagnostic_stacktrace",
+        "frames": [
+          {
+            "function": "java.lang.Thread.sleep",
+            "file": "Thread.java",
+            "line": 513
+          },
+          {
+            "function": "InterruptionReplay$BlockingCall.run",
+            "file": "InterruptionReplay.java",
+            "line": 15
+          },
+          {
+            "function": "reactor.core.scheduler.SchedulerTask.call",
+            "file": "SchedulerTask.java",
+            "line": 72
+          },
+          {
+            "function": "reactor.core.scheduler.SchedulerTask.call",
+            "file": "SchedulerTask.java",
+            "line": 28
+          },
+          {
+            "function": "java.util.concurrent.FutureTask.run",
+            "file": "FutureTask.java",
+            "line": 317
+          },
+          {
+            "function": "java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run",
+            "file": "ScheduledThreadPoolExecutor.java",
+            "line": 304
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1144
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+            "file": "ThreadPoolExecutor.java",
+            "line": 642
+          },
+          {
+            "function": "java.lang.Thread.runWith",
+            "file": "Thread.java",
+            "line": 1596
+          },
+          {
+            "function": "java.lang.Thread.run",
+            "file": "Thread.java",
+            "line": 1583
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from_segment_id": "0",
+        "to_segment_id": "1",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "jdi:SchedulerTask:431"
+      },
+      {
+        "from_segment_id": "0",
+        "to_segment_id": "2",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "jdi:SchedulerTask:431"
+      }
+    ]
+  }
+}

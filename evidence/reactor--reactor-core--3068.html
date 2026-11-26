@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which submitted task was interrupted by Reactor scheduler shutdown?">
+  <title>reactor/reactor-core #3068 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/reactor--reactor-core--3068.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="reactor--reactor-core--3068.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/reactor--reactor-core--3068.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">reactor/reactor-core #3068</p>
+        <h1>Which submitted task was interrupted by Reactor scheduler shutdown?</h1>
+        <div class="case-links"><a href="https://github.com/reactor/reactor-core/issues/3068">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Caller recovery</dd></div>
+          <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
+          <div><dt>Upstream status</dt><dd>Closed</dd></div>
+          <div><dt>Fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>Java</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Join the actual interrupted SchedulerTask receiver to its observed constructor, recovering the historical submission entry missing from the native exception stack.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 1</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original physical stack</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · diagnostic_stacktrace</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.lang.Thread.runWith</code><span>Thread.java:1596</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run</code><span>ScheduledThreadPoolExecutor.java:304</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:28</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:72</span></li><li><code>InterruptionReplay$BlockingCall.run</code><span>InterruptionReplay.java:15</span></li><li><code>java.lang.Thread.sleep</code><span>Thread.java:509</span></li><li><code>java.lang.Thread.sleep0</code><span>Thread.java</span></li></ol></section>
+          <p class="small trace-note">Frames from record 1 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>Observed execution stack</h4><span>Record 1 · diagnostic_stacktrace</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.lang.Thread.runWith</code><span>Thread.java:1596</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run</code><span>ScheduledThreadPoolExecutor.java:304</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:28</span></li><li><code>reactor.core.scheduler.SchedulerTask.call</code><span>SchedulerTask.java:72</span></li><li><code>InterruptionReplay$BlockingCall.run</code><span>InterruptionReplay.java:15</span></li><li><code>java.lang.Thread.sleep</code><span>Thread.java:509</span></li><li><code>java.lang.Thread.sleep0</code><span>Thread.java</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">Record 1</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>InterruptionReplay.main</code><span>InterruptionReplay.java:31</span></li><li><code>InterruptionReplay.submitOrderSynchronization</code><span>InterruptionReplay.java:26</span></li><li><code>reactor.core.scheduler.BoundedElasticScheduler.schedule</code><span>BoundedElasticScheduler.java:307</span></li><li><code>reactor.core.scheduler.Schedulers.directSchedule</code><span>Schedulers.java:1389</span></li><li><code>reactor.core.scheduler.SchedulerTask.&lt;init&gt;</code><span>SchedulerTask.java:55</span></li></ol></section>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>One bounded check of Reactor 3.8.8 confirms that forceful bounded-elastic dispose interrupts a running SchedulerTask. The native InterruptedException stack identifies the blocking operation but omits the earlier submitOrderSynchronization entry.</dd></div><div><dt>What CoroPerf showed</dt><dd>Standard JDI observes the actual SchedulerTask constructor receiver and the receiver on the interrupted worker stack. Both have object ID 431. A separate read of the application returnedTask field confirms the same object. CoroPerf joins the saved creation and interruption events and recovers the historical submission entry.</dd></div><div><dt>Scope and limits</dt><dd>This is a one-task component adaptation: Thread.sleep replaces the reported blocking HTTP wait. Forceful interruption agrees with dispose semantics; the case demonstrates creator attribution, not an incorrect API contract. Only one workload ran. The collector exits 1 during child shutdown after saving the evidence, so native process exit status is unverified. Capture ends at interruption; the missing terminal event does not imply a live or leaked task. No graceful variant, fix, alternate version, production traffic or overhead measurement ran.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

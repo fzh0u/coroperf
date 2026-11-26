@@ -630,7 +630,8 @@ def build(snapshot, language, notes):
         path = evidence / f'{case["id"]}.html'
         path.write_text(case_page(case, language), encoding="utf-8")
         generated.add(path)
-    for stale in set(evidence.glob("*.html")) - generated:
+    # Canonical case pages contain '--'; standalone research reports share this directory.
+    for stale in set(evidence.glob("*--*.html")) - generated:
         stale.unlink()
     (destination / "index.html").write_text(index_page(snapshot, language), encoding="utf-8")
     research = research_page(snapshot["cases"], notes, language, snapshot.get("deferred_followups", []))
