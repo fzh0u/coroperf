@@ -1,13 +1,13 @@
 {
   "id": "lmcache--lmcache--1034",
-  "checked_at": "2026-11-26T07:27:03.134424+00:00",
+  "checked_at": "2026-11-26T07:46:18.812153+00:00",
   "status": "preparation_deferred",
   "source_base_sha": "2b8c260f8fa71e6d9d13aea31e6b921d2d5e121a",
-  "source_files_checked": 4,
+  "source_files_checked": 5,
   "target_workload_executions": 0,
   "coroperf_captures": 0,
   "first_check_stopped_after_seconds": 158.28,
-  "blocker": "The affected LMCache package is not installed. The original LocalCPUBackend constructor creates torch.cuda.Stream, and cache_engine imports GPU connectors. A cached Torch/vLLM environment exists but compatibility and a faithful CPU execution path are unverified. Stop before attempting dependency installation or framework workloads.",
+  "blocker": "Import-only probe in cached Torch 2.1.2+cu121/vLLM environment failed at sortedcontainers before any LMCache operation. Affected package compatibility and native extensions remain unverified; timebox reached, no dependency install or workload attempted.",
   "security_assessment": "No security conclusion; this is a normal resource-lifecycle debugging candidate.",
   "next_prerequisites": "Affected LMCache revision with compatible Torch/vLLM and CUDA, or a demonstrably faithful CPU component path preserving real lookup/skip-retrieve/pin/unpin logic.",
   "source_sha256": {
@@ -21,5 +21,20 @@
     "gpu_model": "NVIDIA A100-SXM4-80GB",
     "assessment": "Hardware exists; the blocker is affected-revision package compatibility, not absent GPUs."
   },
-  "source_chain_gap": "CacheEngine.lookup defaults pin=False; LookupClient/LookupServer propagation of pin=True has not been independently checked in this batch. The whole end-to-end pin sequence is not proven by the four inspected files alone."
+  "source_chain_gap": "Closed in the later source-only batch: LMCacheLookupServer.process_request explicitly calls engine.lookup(token_ids, pin=True), line 110. Runtime behavior and request-to-memory-object attribution remain unverified.",
+  "followup": {
+    "id": "lmcache--lmcache--1034",
+    "status": "preparation_deferred",
+    "stopped_at": "2026-11-26T07:42:23.462374+00:00",
+    "elapsed_seconds": 179.93,
+    "target_workloads": 0,
+    "coroperf_captures": 0,
+    "source_base_sha": "2b8c260f8fa71e6d9d13aea31e6b921d2d5e121a",
+    "new_source_finding": "LMCacheLookupServer.process_request explicitly calls self.lmcache_engine.lookup(token_ids, pin=True), line 110. Adapter returns at need_to_allocate <= 0 before creating load_specs. This closes the previously missing lookup pin propagation link in source, but does not establish runtime reproduction.",
+    "source_sha256": {
+      "research/github-issue-discovery/lmcache-1034-followup-20261126/upstream/lmcache/v1/lookup_client/lmcache_lookup_client.py": "7942679d0fc887b0cffcfc29681bd2cea9da37ec48c377d83408c57d928306fa"
+    },
+    "blocker": "Import-only probe in cached Torch 2.1.2+cu121/vLLM environment failed at sortedcontainers before any LMCache operation. Affected package compatibility and native extensions remain unverified; timebox reached, no dependency install or workload attempted.",
+    "next_action": "Continue another eligible KV-cache candidate; no more setup in this pass."
+  }
 }

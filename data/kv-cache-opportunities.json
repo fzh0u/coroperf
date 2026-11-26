@@ -95,15 +95,16 @@
       "repository": "kvcache-ai/Mooncake",
       "number": 4209,
       "url": "https://github.com/kvcache-ai/Mooncake/issues/4209",
-      "title": "Idle-retired TCP group rejects transfer; decode keeps waiting",
-      "title_zh": "空闲 TCP 连接组退役后拒绝传输，decode 仍等待",
+      "title": "Dropped TCP pump and missing receive-failure notification",
+      "title_zh": "TCP pump 漏投后传输不推进；接收失败未发布请求完成",
       "observed_upstream_state": "open",
       "priority": "priority_async_wait_lead",
-      "coroperf_assessment_zh": "关联 producer 传输失败与 consumer 的 WAITING_FOR_REMOTE_KVS：哪批 transfer 属于哪个请求，完成或失败是否传到等待它的 Future。原报告需要双 GPU/vLLM 环境，CPU 组件检查不能代替完整复现。",
-      "required_observations": "request_id / transfer batch and lane-group identity / completion Future / error propagation",
+      "coroperf_assessment_zh": "旧版源码和修复提交支持拒绝分支漏投 pump；不再将最初的 CLOSED 组解释当作定论。vLLM 0.29.0 的失败响应只记日志，成功响应才递减接收计数并发布完成。需将请求、receiver Task、transfer/batch 和完成状态关联，不能把 Task 已结束等同于请求已完成。未运行原始 PD 场景。",
+      "required_observations": "request_id / receiver Task / transfer_id and batch / pull counter / terminal notification / native group and pump epoch",
       "source_review_only": true,
       "workload_executed": false,
-      "coroperf_validated": false
+      "coroperf_validated": false,
+      "followup_evidence": "data/mooncake-4209-source-check.json"
     },
     {
       "id": "kvcache-ai--mooncake--1033",
@@ -143,5 +144,6 @@
   "native_workloads": 0,
   "new_verified_cases": 0,
   "selected_catalogue_entries_unchanged": 130,
-  "caution": "Closed because of inactivity does not establish a fix. CoroPerf contributions are proposals requiring stable task/resource identity observations, not already verified capabilities."
+  "caution": "Closed because of inactivity does not establish a fix. CoroPerf contributions are proposals requiring stable task/resource identity observations, not already verified capabilities.",
+  "followup_checked_at": "2026-11-26T07:46:18.812153+00:00"
 }

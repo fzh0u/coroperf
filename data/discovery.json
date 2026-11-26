@@ -43967,13 +43967,25 @@
     },
     "lmcache--lmcache--1034": {
       "status": "external_environment_required",
-      "reason": "Affected source fragments confirm conditional pin state, early scheduler return and retrieval-based unpin, but the pin=True lookup transport link and compatible installed LMCache revision remain unverified. Eight A100 GPUs exist; no cache operation, inference workload or CoroPerf capture ran. Stop after 158s preparation rather than substitute a mock.",
-      "reason_zh": "已核对条件 pin、调度器提前返回及 retrieve 中 unpin 的源码片段；lookup 传输是否传入 pin=True 和受影响版本的安装兼容性尚未验证。机器有八张 A100，缺口是软件版本准备。约 158 秒停止准备，没有缓存操作、推理工作负载或 CoroPerf 采集。",
+      "reason": "Later source-only batch confirms lookup server passes pin=True at the exact affected base. Cached Torch/vLLM import probe fails at missing sortedcontainers before any cache operation; native compatibility remains unverified. Stopped after 179.93s with zero target workloads/captures. Eight A100 GPUs exist.",
+      "reason_zh": "后续源码批次确认 lookup 服务在受影响 base 明确传入 pin=True。缓存 Torch/vLLM 环境在导入 sortedcontainers 时失败，尚未执行缓存操作或验证原生扩展兼容性；179.93 秒停止，工作负载和采集均为零。机器有八张 A100。",
       "sources": [
         "https://github.com/LMCache/LMCache/issues/1034",
         "https://github.com/LMCache/LMCache/pull/1046"
       ],
-      "reviewed_at": "2026-11-26T07:29:19.041427+00:00",
+      "reviewed_at": "2026-11-26T07:46:18.812153+00:00",
+      "prior_local_execution": false
+    },
+    "kvcache-ai--mooncake--4209": {
+      "status": "external_environment_required",
+      "reason": "Source review corrects the original stale-CLOSED-group hypothesis: affected release can drop a requested TCP pump on rejection, matching fix 74d26b56. vLLM 0.29.0 logs err_reqs without decrementing request pull counters or publishing finished receive in that path. Full scheduler/idle/self-recovery behavior is unverified. Three cached environments have no Mooncake engine and no matching vLLM stack; 117.73s source/prerequisite check, zero target workloads/captures.",
+      "reason_zh": "来源核对修正了最初的 CLOSED 组解释：受影响版本在拒绝分支漏投已请求的 TCP pump，对应修复 74d26b56。vLLM 0.29.0 在该路径对 err_reqs 只记日志，不递减请求接收计数或发布完成。完整调度器等待、空闲触发及自恢复均未运行验证。三个已有环境未安装 Mooncake，也没有匹配的 vLLM；117.73 秒停止，未运行工作负载或采集。",
+      "sources": [
+        "https://github.com/kvcache-ai/Mooncake/issues/4209",
+        "https://github.com/kvcache-ai/Mooncake/commit/74d26b56e535b02427e94c3a6087c31a4cfc4963",
+        "https://github.com/vllm-project/vllm/blob/98dff2a81d747d1dba01a47f939f48c3526d4206/vllm/distributed/kv_transfer/kv_connector/v1/mooncake/mooncake_connector.py#L1859"
+      ],
+      "reviewed_at": "2026-11-26T07:46:18.812153+00:00",
       "prior_local_execution": false
     }
   },
@@ -44504,10 +44516,19 @@
       "id": "lmcache-1034-source-check-20261126",
       "title": "LMCache pin lifecycle: source path and execution prerequisites",
       "title_zh": "LMCache pin 生命周期：源码路径与执行前置条件",
-      "summary": "Four affected source files checked; end-to-end pin transport binding is still unverified. Existing A100 hardware is sufficient for follow-up, but compatible affected LMCache is not installed. No workload or capture. LMCache and Mooncake join the next regular scan, increasing configured coverage from 31 to 33; the saved 31-repository snapshot is unchanged.",
-      "summary_zh": "已核对四份受影响源码，端到端 pin 传输绑定仍未验证。现有 A100 硬件可用于后续验证，但受影响 LMCache 软件版本尚未匹配安装。未运行工作负载或采集。LMCache 与 Mooncake 纳入下一轮定时扫描，配置覆盖从 31 增至 33；已有 31 仓库快照不变。",
+      "summary": "Later source-only batch confirms lookup server pin=True propagation. Import probe fails at sortedcontainers before cache execution; affected package compatibility remains unresolved. No workload or capture.",
+      "summary_zh": "后续源码批次确认 lookup 服务传递 pin=True。导入检查在 sortedcontainers 处失败，尚未执行缓存操作或解决受影响软件兼容性；未运行负载或采集。",
       "path": "data/lmcache-1034-source-check.json",
-      "checked_at": "2026-11-26T07:29:19.041427+00:00"
+      "checked_at": "2026-11-26T07:46:18.812153+00:00"
+    },
+    {
+      "id": "kv-cache-followup-20261126",
+      "title": "KV cache follow-up: pin transport and receive terminal-notification gap",
+      "title_zh": "KV cache 后续排查：pin 传递与接收终态通知缺口",
+      "summary": "LMCache pin=True transport confirmed in source. Mooncake affected-tag/fix audit corrects the stale-group explanation; vLLM source reveals receive-failure notification gap. Zero workloads/captures; selected count unchanged.",
+      "summary_zh": "源码确认 LMCache pin=True 传递；核对 Mooncake 受影响 tag 和修复，修正旧连接组解释，并定位 vLLM 接收失败的终态通知缺口。未运行负载或采集，不新增已验证案例。",
+      "path": "evidence/kv-cache-followup.html",
+      "checked_at": "2026-11-26T07:46:18.812153+00:00"
     }
   ],
   "deferred_registry": [
@@ -55589,23 +55610,17 @@
     "previous_observed_at": "2026-11-26T04:11:26+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T07:29:20+00:00",
+  "ledger_refreshed_at": "2026-11-26T07:46:27+00:00",
   "progress_summary": {
     "source": "report_update",
-    "assembled_at": "2026-11-26T06:50:10+00:00",
-    "comparison_reported_at": "2026-11-26T06:23:17.478156+00:00",
+    "assembled_at": "2026-11-26T07:46:27+00:00",
+    "comparison_reported_at": "2026-11-26T06:53:10.483958+00:00",
     "verified_catalogue_entries": 130,
-    "new_verified_ids": [
-      "golang--go--58628"
-    ],
-    "review_decisions": 207,
+    "new_verified_ids": [],
+    "review_decisions": 209,
     "new_review_decision_ids": [
-      "etcd-io--etcd--20716",
-      "golang--go--58628",
-      "grpc--grpc-go--1936",
-      "grpc--grpc-go--4632",
-      "mysql-net--mysqlconnector--1428",
-      "npgsql--npgsql--6755"
+      "kvcache-ai--mooncake--4209",
+      "lmcache--lmcache--1034"
     ],
     "manual_holds": 84,
     "automatic_signal_holds": 845,

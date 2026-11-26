@@ -1,0 +1,32 @@
+{
+  "id": "kvcache-ai--mooncake--4209",
+  "status": "source_reviewed_environment_deferred",
+  "checked_at": "2026-11-26T07:44:34.558601+00:00",
+  "elapsed_seconds": 117.73,
+  "target_workloads": 0,
+  "coroperf_captures": 0,
+  "affected_mooncake_sha": "719735896c86b56fabec6cf3e825fb2ea640597a",
+  "fix_sha": "74d26b56e535b02427e94c3a6087c31a4cfc4963",
+  "findings": [
+    {
+      "kind": "source_confirmed",
+      "description": "In the affected tag, requestGroupPumpLocked sets pump_scheduled and increments pump_epoch, including on the admission rejection path. enqueuePooledTransfer posts the pump only in the else branch after if(rejected). The fix makes posting independent of rejection."
+    },
+    {
+      "kind": "source_correction",
+      "description": "The affected tag erases an old connection group from state->groups before marking it retiring. The original stale CLOSED-group explanation should not be repeated as established root cause. Later comments identify the dropped pump; their full runtime claims are upstream observations, not our reproduction."
+    },
+    {
+      "kind": "vllm_source_gap",
+      "description": "vLLM v0.29.0 receive_kv creates per-worker Tasks and tracks pull_tasks_count per request. process_pulling_result only decrements counts and inserts finished_recving_reqs for ok_reqs; err_reqs is only logged. ERROR and exception paths in receive_kv_from_single_worker record failed_recv and return. This is a source-level terminal-notification gap, not a proof of the full scheduler hang or idle/90-second behavior."
+    }
+  ],
+  "coroperf_opportunity": "Observe the exact receiver Task and request/transfer IDs, each expected worker completion, response error, pull counter transition and finished-receive publication; bridge producer transfer/batch and C++ group/pump epoch to these IDs. A Task may finish normally while the request remains unacknowledged; Task stack/birth alone cannot establish request completion.",
+  "environment": "Three existing Python environments inspected via package metadata only: vLLM 0.3.3, 0.28.0+cpu, 0.27.0. None includes Mooncake transfer-engine. No affected 0.29.0 full PD stack verified. Eight A100 GPUs exist; software prerequisites are the blocker.",
+  "source_sha256": {
+    "affected-tcp.h": "76ca90f18d387a9c77db573602a0abf66fa27cb91fc5880d6f05644c19ef3a7e",
+    "fixed-tcp.h": "631e1b73925286a49ecd4092e576b6c9df0d98f9724d6efff5e4938eb152ae6d",
+    "vllm-0.29.0-mooncake_connector.py": "5db6ee23bef5e58ca739c1a18457cf2ef93351fb1600a29fa697a1ef04c18c23"
+  },
+  "vllm_sha": "98dff2a81d747d1dba01a47f939f48c3526d4206"
+}
