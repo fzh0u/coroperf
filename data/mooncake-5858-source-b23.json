@@ -1,0 +1,88 @@
+{
+  "id": "kvcache-ai--mooncake--5858",
+  "checked_at": "2026-11-26T15:00:24.685428+00:00",
+  "status": "source_reviewed_environment_deferred",
+  "first_check_seconds": 140.53830862045288,
+  "source_commit": "57491f572bd16d5a167aaee4f5ed60402bd434d0",
+  "target_workloads": 0,
+  "build_attempts": 0,
+  "coroperf_captures": 0,
+  "native_reproduction_verified": false,
+  "coroperf_caller_recovery_verified": false,
+  "source_facts": [
+    {
+      "file": "mooncake-store/src/real_client.cpp",
+      "lines": [
+        7311,
+        7360
+      ],
+      "fact": "The LOCAL_DISK path groups objects by transport_endpoint and synchronously invokes local_disk_reader once per endpoint in an unordered_map loop. It is not a parallel collect-all of owner requests; the vector API returns after the loop. Actual endpoint visitation order and measured latency remain unverified."
+    },
+    {
+      "file": "mooncake-store/src/real_client.cpp",
+      "lines": [
+        10108,
+        10144
+      ],
+      "fact": "ClientRequester configures connect_retry_count3, reconnect_wait_time1000ms, disables host-alive background reconnect and applies timeout overrides. These values alone do not establish actual per-batch duration."
+    },
+    {
+      "file": "mooncake-store/src/real_client.cpp",
+      "lines": [
+        10227,
+        10258
+      ],
+      "fact": "invoke_rpc crosses syncAwait into an async_simple Lazy and two co_await stages. Per-owner endpoint is explicit; native logs already expose endpoints, errors and some batch IDs."
+    },
+    {
+      "file": "mooncake-store/src/real_client.cpp",
+      "lines": [
+        6518,
+        6539
+      ],
+      "fact": "Reported batch_get_into is a synchronous vector API. The separate SHM dummy_helper posts work to a thread pool but is not established as the original report entry path."
+    }
+  ],
+  "reason": "No matching native Mooncake Store package/master/client was found in the inspected PATH, standard install prefixes or cached Python environments. The reported six-client, three-etcd, P2PHANDSHAKE setup with real LOCAL_DISK replicas is not prepared. Source review establishes a useful per-batch/per-owner sync-to-async join candidate, but does not reproduce stale routes, retries or mixed-batch timings. No cluster or source build was launched this pass.",
+  "reason_zh": "所检查PATH、常见安装前缀和缓存Python环境未找到匹配的Mooncake Store包、master或client。报告中的六客户端、三etcd、P2PHANDSHAKE及真实LOCAL_DISK环境尚未准备。源码显示可研究批次/owner的同步到异步关联，但未复现stale路由、重试或混合批次时延；本轮未启动集群或构建。",
+  "proposed_identity_join": [
+    "actual batch_get_into invocation and original key/result indices",
+    "selected LOCAL_DISK owner endpoint and its visit position",
+    "actual invoke_rpc Lazy coroutine identity and client pool",
+    "send_request/connect/retry completion or error",
+    "per-owner result availability and whole-vector return"
+  ],
+  "native_baseline": "Existing endpoint/error logs and response batch_id are baseline facts. CoroPerf must demonstrate extra original batch/key-to-owner-to-coroutine context; generic ancestry cannot infer master route TTL, ownership or request completion.",
+  "required_prerequisites": [
+    "Exact source57491f57 plus matching Store master/client and dependencies (YLT/async_simple/transfer engine/etcd HA wrapper).",
+    "Owned isolated three-member etcd HA and six Store clients with loopback P2PHANDSHAKE, real bucket files and16x64KiB objects per A/B; preserve reported120s active/suspected and10s lease timing.",
+    "Capture installed before native coroutine creation, plus explicit actual batch/owner/key identities and native diagnostics. No hand-written sleep/socket/mock or reduced alternate topology as reported-case evidence."
+  ],
+  "limitations": [
+    "No native throughput, P95,4.3s delay,120.97s route retention or failure count is locally measured. All such issue figures remain upstream observations.",
+    "The owner loop is sequential in source, not a proven concurrent completion barrier. Do not claim which owner is visited first without observing that run.",
+    "Do not infer production metadata cleanup, master offboarding queue causality or decode TTFT from generic Task ancestry."
+  ],
+  "environment_probe": {
+    "elapsed_seconds": 61.67475175857544,
+    "PATH_binaries": {
+      "mooncake_master": null,
+      "mooncake_client": null,
+      "etcd": null,
+      "cmake": null,
+      "g++": "/usr/bin/g++"
+    },
+    "cached_mooncake_python_packages": [],
+    "known_native_install_prefixes": []
+  },
+  "source_hashes": {
+    "real_client.cpp": "654373af3d9228d1669a0c2e794225c76b078db47ebe3f6d5a89faa927c78ad7",
+    "real_client.h": "fcc5e3406ef55b8a5504ae8b079f1fe315593649e27f35dfca588e5374f7397f",
+    "client_service.h": "1764a4da343a2efc2c8c53eb3addb24e26220a9cc61d36a18bd6422037470940",
+    "store-CMakeLists.txt": "dd4cb98f53900bfbb749a5737cbd87ba8aa3b9b59d876baf113d38f94ad90a0d"
+  },
+  "sources": [
+    "https://github.com/kvcache-ai/Mooncake/issues/5858",
+    "https://github.com/kvcache-ai/Mooncake/blob/57491f572bd16d5a167aaee4f5ed60402bd434d0/mooncake-store/src/real_client.cpp"
+  ]
+}

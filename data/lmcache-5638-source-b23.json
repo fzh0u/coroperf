@@ -1,0 +1,36 @@
+{
+  "id": "lmcache--lmcache--5638",
+  "checked_at": "2026-11-26T14:57:48.675893+00:00",
+  "status": "excluded_after_source_review",
+  "source_commit": "1fde7bec33cd629277da9b2291049fa706584ab0",
+  "first_check_seconds": 56.511534690856934,
+  "target_workloads": 0,
+  "coroperf_captures": 0,
+  "native_reproduction_verified": false,
+  "coroperf_caller_recovery_verified": false,
+  "source_facts": {
+    "BenchResult_constructor_keywords": [
+      "operation",
+      "in_flight",
+      "num_keys",
+      "data_size_bytes",
+      "round_durations",
+      "success_counts",
+      "expected_max_hit_rate",
+      "expected_hit_count"
+    ],
+    "timed_out_rounds_omitted_and_default_zero": true,
+    "durations_sliced_by_attempt_count": true,
+    "runner_success_counts_include_timed_out_attempts": true
+  },
+  "reason": "The reported defect is deterministic post-run aggregation: attempts/successes and completed-duration lists use different cardinalities, and reconstruction loses timeout counts. Native adapter task IDs and eventfd completion helpers already exist. No missing async caller or cross-request ownership gap is established by this report; generic ancestry does not fix the arithmetic. Source supports the diagnosis; no native timeout/hit-rate output was measured.",
+  "reason_zh": "报告缺陷位于运行后的确定性结果汇总：尝试/成功列表与完成耗时列表长度定义不同，重建结果时还丢失超时计数。已有adapter任务ID和eventfd完成辅助函数；本报告未建立异步caller缺失或跨请求归属缺口。通用祖先关系不能修正算术。源码支持该诊断，但未实际运行超时或测量命中率。",
+  "sources": [
+    "https://github.com/LMCache/LMCache/issues/5638"
+  ],
+  "source_hashes": {
+    "command.py": "6eccd3f41a1fba72da547261c9ca03f413ce272582c2b7506b18585748933db3",
+    "runner.py": "1ed521bbb01b38fae8e61d0b605b74ffe93cf339c23bd0233ef74858ba0d87a5",
+    "result.py": "4c8315bd876b82f1540ac2e6cdf3f62eb84bf7e1d6103baf41d1f258d57afc18"
+  }
+}
