@@ -1,0 +1,54 @@
+{
+  "checked_at": "2026-11-26T09:28:03.166098+00:00",
+  "source_reviews": {
+    "checked_at": "2026-11-26T08:57:42.586444+00:00",
+    "elapsed_seconds": 78.89,
+    "target_workloads": 0,
+    "coroperf_captures": 0,
+    "decisions": [
+      {
+        "id": "tokio-rs--tokio--8073",
+        "status": "excluded_after_review",
+        "reason": "Documentation/contract request about polling Sleep after completion; no present failing timer program or missing coroutine origin is reported.",
+        "reason_zh": "Sleep 完成后能否继续 poll 的文档契约请求，没有报告正在失败的计时器程序或协程来源缺失。"
+      },
+      {
+        "id": "tokio-rs--tokio--5307",
+        "status": "excluded_after_review",
+        "reason": "Windows named-pipe read_buf returns an8192-byte message as two4096-byte reads; the report does not claim bytes lost. Short-read semantics/buffering are distinct from missing Task provenance; no Linux substitute is run.",
+        "reason_zh": "Windows named pipe 的8192字节输入分成两次4096字节读取，未报告字节丢失。关注点是短读取语义与系统缓冲，尚未建立 Task 来源缺口；未用 Linux 管道替代。"
+      },
+      {
+        "id": "tokio-rs--tokio--8470",
+        "status": "external_environment_required",
+        "reason": "The source is a hypothesis about VecDeque contention during60k-100k spawn_blocking RocksDB multi-get operations on100-core hardware, not a pinned reproducer. Actual workload, dataset and lock evidence are missing; no sleep-based or smaller-task substitute is run.",
+        "reason_zh": "报告提出60k–100k个 spawn_blocking/RocksDB multi-get 与队列锁竞争的性能假设，没有固定复现程序。实际工作负载、数据集和锁证据未提供，未用 sleep 或更小任务量替代。"
+      }
+    ]
+  },
+  "database_preparation": {
+    "id": "npgsql--npgsql--6665",
+    "status": "preparation_deferred",
+    "checked_at": "2026-11-26T09:26:53.262351+00:00",
+    "elapsed_seconds": 1750.68,
+    "budget_seconds": 180,
+    "budget_overrun": true,
+    "target_workloads": 0,
+    "coroperf_captures": 0,
+    "findings": "Maintainer confirms a pool-of-one can return the same disposed transaction object, and another Dispose through an old reference can roll back the next transaction. Maintainers describe object recycling as intentional; no security conclusion follows from managed disposal exceptions.",
+    "prepared_environment": {
+      "sdk": "8.0.428",
+      "npgsql_package": "10.0.3",
+      "cached_assembly": ".tools/dotnet-cli-home/.nuget/packages/npgsql/10.0.3/lib/net8.0/Npgsql.dll",
+      "downloaded_package_bytes": 1847911
+    },
+    "blocker": "Source/capture design and broad cache discovery exceeded the first-check wall budget before any project build or database workload. Stop now; package availability is a prerequisite observation, not a reproduction.",
+    "required_observations": "Exact transaction ReferenceEquals/object identity, logical lease/owner generation, and old-reference Dispose origin. Task ancestry alone cannot distinguish recycled-object ownership.",
+    "next_action": "No more setup in this pass. A later batch may use the located SDK/cache for one faithful pool-of-one component; no pool-exhaustion or wrong-connection claim without native evidence."
+  },
+  "target_workloads": 0,
+  "coroperf_captures": 0,
+  "new_selected_cases": 0,
+  "selected_catalogue_entries": 133,
+  "classification_clarification": "No new automatic-review rejection or security finding in this batch. Managed disposal exceptions, stream errors and performance hypotheses are debugging evidence, not vulnerability conclusions."
+}
