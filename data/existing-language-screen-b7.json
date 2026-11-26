@@ -1,0 +1,34 @@
+{
+  "checked_at": "2026-11-26T08:33:37.017226+00:00",
+  "elapsed_seconds": 195.57,
+  "target_workloads": 0,
+  "coroperf_captures": 0,
+  "findings": [
+    {
+      "id": "chriskohlhoff--asio--278",
+      "canonical_related": "boostorg--asio--79",
+      "status": "excluded_after_review",
+      "finding": "The canonical example erases bind_executor via std::function; the associated executor is lost and invoking executor_binder does not itself dispatch to its stored executor. Native strand.running_in_this_thread is the meaningful oracle. This is not proof of a library serialization defect.",
+      "prerequisites": "g++ and gdb exist; cached Boost1.83 headers found under .tools/seastar3380/boost_1_83_0. No compile/run.",
+      "coroperf_requirement": "Observe actual Asio executor_op construction and completion identities to recover the post submission. Executor intent or strand membership cannot be inferred from the creation stack alone.",
+      "decision": "The source already demonstrates strand bypass and explains associated-executor type erasure. A creation stack cannot reconstruct erased executor intent. No independently established CoroPerf caller gap is provided; do not count a native strand counter check alone as tool validation.",
+      "decision_zh": "来源已演示 strand 被绕过，并解释 associated executor 信息被类型擦除。创建栈不能还原被擦除的 executor 意图；尚未建立独立 CoroPerf caller 缺口，不能把 strand 计数检查单独算作工具验证。"
+    },
+    {
+      "id": "tokio-rs--tokio--4206",
+      "status": "excluded_after_review",
+      "finding": "Maintainer final comment identifies console setup after tokio::main task birth: timers awaited directly in main have no console-known parent task. The console fix is referenced as tokio-rs/console#186. This is instrumentation-order loss, not evidence of a failing timer or socket operation. CoroPerf also cannot invent an unobserved pre-install task birth. No Windows/old-Tokio substitute workload.",
+      "decision_zh": "维护者最终解释为 console 在 tokio::main Task 创建后才初始化，main 中直接等待的计时器因而没有 console 已知的父 Task。这是初始化顺序造成的观察缺口，不是计时器或 socket 操作故障；CoroPerf 同样不能凭空恢复安装前未观察到的 Task 创建。"
+    },
+    {
+      "id": "pgjdbc--pgjdbc--4328",
+      "status": "source_reviewed_environment_deferred",
+      "finding": "Report identifies finite idle socket timeout, readFromCopy unlock and subsequent inactive-COPY write; the native trace already has processRecords. Potential increment is tying the same real CopyDual/stream and asynchronous owner to earlier timeout and later state failure, not locating the already-known root cause.",
+      "prerequisites": "JDK21 and PostgreSQL14 test_decoding plugin found in cache. Matching reported driver versions and faithful logical-replication fixture not prepared in this check. No database startup, compilation or workload.",
+      "decision_zh": "来源已明确定位正常空闲超时导致 COPY unlock、下一次状态更新报失活，原生栈也已有 processRecords。潜在工具增量是把同一个 CopyDual/stream、异步所属任务、早先超时与稍后失败关联起来；不是重新宣称发现已知根因。匹配驱动和忠实逻辑复制环境尚未准备，未运行。"
+    }
+  ],
+  "finalized_at": "2026-11-26T08:37:06.444393+00:00",
+  "new_selected_cases": 0,
+  "selected_catalogue_entries": 132
+}
