@@ -1,0 +1,110 @@
+{
+  "checked_at": "2026-11-26T12:44:05.586595+00:00",
+  "source_rows": [
+    {
+      "id": "dotnet--runtime--36617",
+      "title": "API to provide the current system time",
+      "url": "https://github.com/dotnet/runtime/issues/36617",
+      "status": "excluded_after_review",
+      "reason": "Time abstraction API proposal for clocks/timestamps and timer-based Task operations; no concrete missing-caller runtime incident is established.",
+      "reason_zh": "时钟、时间戳与 Task 计时操作的时间抽象 API 提案，未建立具体的运行时 caller 缺失故障。",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "dotnet--runtime--28633",
+      "title": "New System.Data.Common batching API",
+      "url": "https://github.com/dotnet/runtime/issues/28633",
+      "status": "excluded_after_review",
+      "reason": "ADO.NET batching API design for provider roundtrips and command composition. No isolated coroutine attribution failure is supplied.",
+      "reason_zh": "面向数据库 provider 往返与命令组合的 ADO.NET batching API 设计，未提供独立协程归因故障。",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "dotnet--runtime--14535",
+      "title": "An simple way to mock an httpClient.GetAsync(..) method for unit tests?",
+      "url": "https://github.com/dotnet/runtime/issues/14535",
+      "status": "excluded_after_review",
+      "reason": "Question about mocking HttpClient for unit tests and introducing a testable interface, not a lost asynchronous runtime origin.",
+      "reason_zh": "讨论如何在单元测试中 mock HttpClient 与提供可测试接口，不是异步运行来源丢失。",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "dotnet--runtime--15288",
+      "title": "Make interfaces as the official ADO.NET Provider API instead of classes",
+      "url": "https://github.com/dotnet/runtime/issues/15288",
+      "status": "excluded_after_review",
+      "reason": "ADO.NET interface/abstract-class API and mocking discussion. Task ancestry cannot supply the requested API shape.",
+      "reason_zh": "ADO.NET 接口、抽象类及 mock 的 API 讨论，Task 祖先关系不能提供所请求的接口形态。",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "dotnet--runtime--20016",
+      "title": "Need for a generic IAwaitable and library of combinators",
+      "url": "https://github.com/dotnet/runtime/issues/20016",
+      "status": "excluded_after_review",
+      "reason": "Generic IAwaitable/awaiter-combinator API request; no present failing coroutine program is provided.",
+      "reason_zh": "通用 IAwaitable 与 awaiter 组合 API 请求，未提供当前失败的协程程序。",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "dotnet--runtime--27593",
+      "title": "Proposal: Add IAsyncEnumerable<T> support to System.Threading.Channels",
+      "url": "https://github.com/dotnet/runtime/issues/27593",
+      "status": "excluded_after_review",
+      "reason": "Proposal to expose Channels through IAsyncEnumerable and decide consuming enumeration semantics; no observed attribution failure.",
+      "reason_zh": "通过 IAsyncEnumerable 暴露 Channels 并讨论消费式枚举语义的提案，未报告归因故障。",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "npgsql--npgsql--121",
+      "title": "Implement async",
+      "url": "https://github.com/npgsql/npgsql/issues/121",
+      "status": "excluded_after_review",
+      "reason": "Implement-async tracking title with empty issue body. It supplies no concrete failure/reproducer or independent CoroPerf diagnostic claim.",
+      "reason_zh": "Implement async 跟踪标题且正文为空，没有具体故障、复现或独立 CoroPerf 诊断依据。",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "ray-project--ray--15247",
+      "title": "[release/microbenchmarks] Please take a look at the results (and possibly sign off)",
+      "url": "https://github.com/ray-project/ray/issues/15247",
+      "status": "excluded_after_review",
+      "reason": "Release microbenchmark sign-off with comparative throughput numbers; does not isolate a missing coroutine caller/task-owner incident. No benchmark rerun.",
+      "reason_zh": "发布微基准结果签署，含吞吐对比数字，但未隔离协程 caller 或任务归属缺失；未重跑基准。",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    },
+    {
+      "id": "vllm-project--vllm--19854",
+      "title": "[RFC]: KV cache offloading",
+      "url": "https://github.com/vllm-project/vllm/issues/19854",
+      "status": "excluded_after_review",
+      "reason": "KV offloading architecture RFC, with explicit job_id/completion routing and metadata directions. Keep as an integration reference; no specific failing program or validated CoroPerf result.",
+      "reason_zh": "KV offloading 架构 RFC，提出明确 job_id、完成路由与元数据方向。保留为集成参考，没有具体失败程序或已验证 CoroPerf 结果。",
+      "target_workloads": 0,
+      "coroperf_captures": 0
+    }
+  ],
+  "primary_source_reviews": 9,
+  "target_workloads": 0,
+  "coroperf_captures": 0,
+  "new_selected_cases": 0,
+  "selected_catalogue_entries": 133,
+  "vllm_integration_reference": {
+    "status": "proposed_design_only_not_validated",
+    "source": "https://github.com/vllm-project/vllm/issues/19854",
+    "possible_observations": [
+      "Real submitted transfer job_id to scheduler request and KV-block ownership",
+      "Worker transfer Task/operation identity to completion response",
+      "Completion response back to scheduler admission and safe-to-free decision"
+    ],
+    "limit": "Task birth alone cannot establish GPU data residency, transfer completion or memory lifetime. Do not rerun existing successful offloading workloads through this RFC."
+  }
+}
