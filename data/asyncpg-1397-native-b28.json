@@ -1,0 +1,542 @@
+{
+  "checked_at": "2026-11-26T16:01:03.467600+00:00",
+  "id": "magicstack--asyncpg--1397",
+  "native_issue_reproduced": true,
+  "full_warning_attribution_verified": false,
+  "selected_case_added": false,
+  "summary": "One exact asyncpg0.32.0/CPython3.13.1 original silent TCP cancellation sweep stops on the first matching unretrieved Future ConnectionError atstep4, after3cleantrials. Targetexit0, listener/writer/serverTask cleanup verified; preparation/run134.06s. Future warning ID0x770a639f8320 is native. Generic capture separately recovers launch_ssl_connect for cancelled Taskg12 via creation71→cancellation77;6focused observations are attributed. The Task address was reused from step1/g3 and correctly separated. Future allocations=[]: the observer tested its direct caller, but TLSUpgradeProto creates on_data through _create_future. No actual Future→Task allocation bridge was captured. Full warning attribution remains unverified; no selected case or replay.",
+  "summary_zh": "准确asyncpg0.32.0/CPython3.13.1的原始静默TCP取消扫描一次，在第4步首次出现未取回Future ConnectionError后停止，前3步无该告警。目标退出0，监听器/写端/服务Task清理确认，含准备运行134.06秒。原生告警Future ID为0x770a639f8320。通用采集另外通过创建71→取消77恢复被取消Taskg12的launch_ssl_connect，聚焦6个观察均归因。Task地址曾被step1/g3使用，分析正确区分。Future分配记录为空：探针仅检查直接调用者，但TLSUpgradeProto经_create_future创建on_data，因此没有捕获真实Future→Task分配关联。完整告警归因仍未验证，不新增案例、不重放。",
+  "verification": {
+    "id": "magicstack--asyncpg--1397",
+    "checked_at": "2026-11-26T15:59:56.521801+00:00",
+    "native_issue_reproduced": true,
+    "successful_upstream_batches": 1,
+    "trials_before_first_matching_warning": 4,
+    "workload_replays_after_success": 0,
+    "first_check_seconds": 134.05592322349548,
+    "process_exit_code": 0,
+    "cleanup_verified": true,
+    "native_warning": {
+      "steps": 4,
+      "message": "Future exception was never retrieved",
+      "future_object_id_hex": "0x770a639f8320",
+      "exception_type": "ConnectionError",
+      "exception_message": "unexpected connection_lost() call",
+      "future_done": true,
+      "future_cancelled": false
+    },
+    "matching_cancelled_Task_identity": "python-asyncio-task-0x770a63819e90-g12",
+    "connect_Task_creator_recovery_verified": true,
+    "partial_connect_creation_cancel_pairs": [
+      [
+        "71",
+        "77"
+      ]
+    ],
+    "recovered_connect_submission_helper": "launch_ssl_connect",
+    "warning_Future_to_actual_Task_identity_verified": false,
+    "full_warning_caller_attribution_verified": false,
+    "Future_allocation_records": 0,
+    "selected_case_added": false,
+    "address_reuse_note": "Steps1 and4 use the same Task object address with different runtime generations; ordered native API submissions map them to g3/g12, and only the fourth creation is analyzed.",
+    "probe_failure": "observe_future checked only its direct caller. Actual direct caller is asyncpg.connect_utils._create_future, which is called by TLSUpgradeProto.__init__ at the on_data assignment. The filter never matched; no Future identity allocation event exists.",
+    "limits": [
+      "This is the original silent local TCP/asyncpg-only component, not a real PostgreSQL server, SSL handshake completion, pool replacement task, uvloop, Windows or production outage.",
+      "One original steps1..5 sweep stopped at first matching warning(step4); no step5, alternate version/loop/pool/fix or replay.",
+      "Native handler supplies the actual warning Future ID. Generic Task capture independently recovers the connect submitter, but does not establish ownership of that Future.",
+      "The Future observer stored IDs only, but the direct-caller filter missed the actual wrapper. Do not create a synthetic ownership edge or rerun the successful workload to repair missing capture.",
+      "Scoped FileNotFoundError from default SSL configuration probing is a separate handled observation, not the reported unretrieved ConnectionError.",
+      "Named helper only labels the existing create_task expression; standard native traceback still contains normal connect call frames."
+    ]
+  },
+  "native_observation": {
+    "asyncpg_version": "0.32.0",
+    "python": "3.13.1 (main, Jan 14 2025, 22:47:38) [Clang 19.1.6 ]",
+    "trials": [
+      {
+        "steps": 1,
+        "connect_task_object_id_hex": "0x770a63819e90",
+        "cancel_returned": true,
+        "task_outcome": "CancelledError",
+        "native_cancel_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py\", line 52, in main\n    try:await task;row['task_outcome']='returned'\n        ^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connection.py\", line 2498, in connect\n    return await connect_utils._connect(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<22 lines>...\n    )\n    ^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1278, in _connect\n    conn = await _connect_addr(\n           ^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n    )\n    ^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1092, in _connect_addr\n    return await __connect_addr(params, True, *args)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1162, in __connect_addr\n    tr, pr = await connector\n             ^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 996, in _create_ssl_connection\n    tr, pr = await loop.create_connection(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<2 lines>...\n        host, port)\n        ^^^^^^^^^^^\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py\", line 1136, in create_connection\n    sock = await self._connect_sock(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n        exceptions, addrinfo, laddr_infos)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py\", line 1039, in _connect_sock\n    await self.sock_connect(sock, address)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/selector_events.py\", line 641, in sock_connect\n    return await fut\n           ^^^^^^^^^\nasyncio.exceptions.CancelledError\n",
+        "warnings": [],
+        "task_done": true,
+        "task_cancelled": true
+      },
+      {
+        "steps": 2,
+        "connect_task_object_id_hex": "0x770a63a8d2e0",
+        "cancel_returned": true,
+        "task_outcome": "CancelledError",
+        "native_cancel_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py\", line 52, in main\n    try:await task;row['task_outcome']='returned'\n        ^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connection.py\", line 2498, in connect\n    return await connect_utils._connect(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<22 lines>...\n    )\n    ^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1278, in _connect\n    conn = await _connect_addr(\n           ^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n    )\n    ^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1092, in _connect_addr\n    return await __connect_addr(params, True, *args)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1162, in __connect_addr\n    tr, pr = await connector\n             ^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 996, in _create_ssl_connection\n    tr, pr = await loop.create_connection(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<2 lines>...\n        host, port)\n        ^^^^^^^^^^^\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py\", line 1136, in create_connection\n    sock = await self._connect_sock(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n        exceptions, addrinfo, laddr_infos)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py\", line 1039, in _connect_sock\n    await self.sock_connect(sock, address)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/selector_events.py\", line 641, in sock_connect\n    return await fut\n           ^^^^^^^^^\nasyncio.exceptions.CancelledError\n",
+        "warnings": [],
+        "task_done": true,
+        "task_cancelled": true
+      },
+      {
+        "steps": 3,
+        "connect_task_object_id_hex": "0x770a63a25de0",
+        "cancel_returned": true,
+        "task_outcome": "CancelledError",
+        "native_cancel_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py\", line 52, in main\n    try:await task;row['task_outcome']='returned'\n        ^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connection.py\", line 2498, in connect\n    return await connect_utils._connect(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<22 lines>...\n    )\n    ^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1278, in _connect\n    conn = await _connect_addr(\n           ^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n    )\n    ^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1092, in _connect_addr\n    return await __connect_addr(params, True, *args)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1162, in __connect_addr\n    tr, pr = await connector\n             ^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 996, in _create_ssl_connection\n    tr, pr = await loop.create_connection(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<2 lines>...\n        host, port)\n        ^^^^^^^^^^^\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py\", line 1136, in create_connection\n    sock = await self._connect_sock(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n        exceptions, addrinfo, laddr_infos)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py\", line 1039, in _connect_sock\n    await self.sock_connect(sock, address)\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/selector_events.py\", line 641, in sock_connect\n    return await fut\n           ^^^^^^^^^\nasyncio.exceptions.CancelledError\n",
+        "warnings": [],
+        "task_done": true,
+        "task_cancelled": true
+      },
+      {
+        "steps": 4,
+        "connect_task_object_id_hex": "0x770a63819e90",
+        "cancel_returned": true,
+        "task_outcome": "CancelledError",
+        "native_cancel_traceback": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py\", line 52, in main\n    try:await task;row['task_outcome']='returned'\n        ^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connection.py\", line 2498, in connect\n    return await connect_utils._connect(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<22 lines>...\n    )\n    ^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1278, in _connect\n    conn = await _connect_addr(\n           ^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n    )\n    ^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1092, in _connect_addr\n    return await __connect_addr(params, True, *args)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 1162, in __connect_addr\n    tr, pr = await connector\n             ^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py\", line 996, in _create_ssl_connection\n    tr, pr = await loop.create_connection(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<2 lines>...\n        host, port)\n        ^^^^^^^^^^^\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py\", line 1188, in create_connection\n    transport, protocol = await self._create_connection_transport(\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<2 lines>...\n        ssl_shutdown_timeout=ssl_shutdown_timeout)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py\", line 1221, in _create_connection_transport\n    await waiter\nasyncio.exceptions.CancelledError\n",
+        "warnings": [
+          {
+            "steps": 4,
+            "message": "Future exception was never retrieved",
+            "future_object_id_hex": "0x770a639f8320",
+            "exception_type": "ConnectionError",
+            "exception_message": "unexpected connection_lost() call",
+            "future_done": true,
+            "future_cancelled": false
+          }
+        ],
+        "task_done": true,
+        "task_cancelled": true
+      }
+    ],
+    "trial_count": 4,
+    "allocations": [],
+    "warnings": [
+      {
+        "steps": 4,
+        "message": "Future exception was never retrieved",
+        "future_object_id_hex": "0x770a639f8320",
+        "exception_type": "ConnectionError",
+        "exception_message": "unexpected connection_lost() call",
+        "future_done": true,
+        "future_cancelled": false
+      }
+    ],
+    "scope": "Original steps1..5 selector-loop sweep; stop at first matching warning. Native silent TCP server, no PostgreSQL, SSL option/default loop unchanged. Task helper names existing create_task expression. Future API observer stores only IDs until native warning context is delivered."
+  },
+  "analysis": {
+    "instances": 1,
+    "observations": 6,
+    "attributed_observations": 6,
+    "creator_links": 1,
+    "recorded_parent_links": 1,
+    "open_at_trace_end": 0,
+    "completed_storage_observed": 0,
+    "observation_kinds": [
+      "scoped_exception",
+      "task_snapshot"
+    ],
+    "diagnostics": 0,
+    "capture_loss": null,
+    "analysis_ms": 3.54429,
+    "input": "perf-out/github-issue-discovery/automatic/asyncpg-1397-first-check-20261126-b28/matching-connect-task.json",
+    "query_matches": 1,
+    "schema": "corostitch.evidence/v1"
+  },
+  "partial_connect_task_capture": {
+    "schema_version": 1,
+    "language": "python",
+    "runtime": "asyncio-sitecustomize",
+    "frame_order": "root_to_leaf",
+    "producer": {
+      "name": "asyncio-frame-inspection",
+      "identity_kind": "runtime-token-generation",
+      "continuation_storage": "stackless-state",
+      "frame_order": "root_to_leaf",
+      "clock": "monotonic-ns",
+      "observation_kind": "task_snapshot"
+    },
+    "segments": [
+      {
+        "id": 71,
+        "coroutine_id": "python-asyncio-task-0x770a63819e90-g12",
+        "capture_reason": "create",
+        "thread_id": 3936482,
+        "timestamp_ns": 1917228668534777,
+        "frames": [
+          "<module>:75:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py",
+          "run:194:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run:118:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run_until_complete:707:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "run_forever:678:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run_once:2033:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run:89:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/events.py",
+          "main:48:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py",
+          "launch_ssl_connect:9:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py",
+          "create_task:410:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/tasks.py"
+        ],
+        "function_name": "connect",
+        "coroutine_object_id": "130886502766912",
+        "parent_coroutine_id": "python-asyncio-task-0x770a63818ec0-g1"
+      },
+      {
+        "id": 72,
+        "coroutine_id": "python-asyncio-task-0x770a63819e90-g12",
+        "capture_reason": "sample",
+        "thread_id": 3936482,
+        "timestamp_ns": 1917228669374088,
+        "frames": [
+          "<module>:75:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py",
+          "run:194:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run:118:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run_until_complete:707:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "run_forever:678:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run_once:2033:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run:89:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/events.py",
+          "connect:2498:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connection.py",
+          "_connect:1269:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "_parse_connect_arguments:910:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "_parse_connect_dsn_and_args:787:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py"
+        ],
+        "label": "exception:FileNotFoundError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "FileNotFoundError"
+      },
+      {
+        "id": 73,
+        "coroutine_id": "python-asyncio-task-0x770a63819e90-g12",
+        "capture_reason": "sample",
+        "thread_id": 3936482,
+        "timestamp_ns": 1917228669756265,
+        "frames": [
+          "connect:2498:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connection.py",
+          "_connect:1278:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "_connect_addr:1092:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "__connect_addr:1162:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "_create_ssl_connection:996:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "create_connection:1136:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_connect_sock:1039:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "sock_connect:641:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/selector_events.py"
+        ],
+        "label": "periodic-task-stack",
+        "sample_kind": "task_snapshot"
+      },
+      {
+        "id": 77,
+        "coroutine_id": "python-asyncio-task-0x770a63819e90-g12",
+        "capture_reason": "sample",
+        "thread_id": 3936482,
+        "timestamp_ns": 1917228670334113,
+        "frames": [
+          "<module>:75:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py",
+          "run:194:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run:118:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run_until_complete:707:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "run_forever:678:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run_once:2033:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run:89:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/events.py",
+          "connect:2498:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connection.py",
+          "_connect:1278:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "_connect_addr:1092:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "__connect_addr:1162:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "_create_ssl_connection:996:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py"
+        ],
+        "label": "exception:CancelledError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "CancelledError"
+      },
+      {
+        "id": 78,
+        "coroutine_id": "python-asyncio-task-0x770a63819e90-g12",
+        "capture_reason": "sample",
+        "thread_id": 3936482,
+        "timestamp_ns": 1917228670350615,
+        "frames": [
+          "<module>:75:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py",
+          "run:194:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run:118:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run_until_complete:707:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "run_forever:678:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run_once:2033:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run:89:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/events.py",
+          "connect:2498:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connection.py",
+          "_connect:1278:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "_connect_addr:1092:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "__connect_addr:1162:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py"
+        ],
+        "label": "exception:CancelledError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "CancelledError"
+      },
+      {
+        "id": 79,
+        "coroutine_id": "python-asyncio-task-0x770a63819e90-g12",
+        "capture_reason": "sample",
+        "thread_id": 3936482,
+        "timestamp_ns": 1917228670364786,
+        "frames": [
+          "<module>:75:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py",
+          "run:194:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run:118:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run_until_complete:707:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "run_forever:678:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run_once:2033:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run:89:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/events.py",
+          "connect:2498:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connection.py",
+          "_connect:1278:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py",
+          "_connect_addr:1092:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py"
+        ],
+        "label": "exception:CancelledError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "CancelledError"
+      },
+      {
+        "id": 80,
+        "coroutine_id": "python-asyncio-task-0x770a63819e90-g12",
+        "capture_reason": "sample",
+        "thread_id": 3936482,
+        "timestamp_ns": 1917228670377812,
+        "frames": [
+          "<module>:75:/data1/fzhou/coro/research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py",
+          "run:194:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run:118:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py",
+          "run_until_complete:707:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "run_forever:678:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run_once:2033:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py",
+          "_run:89:/home/fzhou/.local/share/uv/python/cpython-3.13.1-linux-x86_64-gnu/lib/python3.13/asyncio/events.py",
+          "connect:2498:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connection.py",
+          "_connect:1278:/data1/fzhou/coro/.tools/asyncpg-1397-b28/lib/python3.13/site-packages/asyncpg/connect_utils.py"
+        ],
+        "label": "exception:CancelledError",
+        "sample_kind": "scoped_exception",
+        "exception_type": "CancelledError"
+      },
+      {
+        "id": 81,
+        "coroutine_id": "python-asyncio-task-0x770a63819e90-g12",
+        "capture_reason": "exit",
+        "thread_id": 3936482,
+        "timestamp_ns": 1917228670448364,
+        "frames": [],
+        "exit_reason": "cancel"
+      }
+    ],
+    "edges": [
+      {
+        "from": 71,
+        "to": 72,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 71,
+        "to": 72,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 71,
+        "to": 73,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 72,
+        "to": 73,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 71,
+        "to": 77,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 73,
+        "to": 77,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 71,
+        "to": 78,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 77,
+        "to": 78,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 71,
+        "to": 79,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 78,
+        "to": 79,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 71,
+        "to": 80,
+        "kind": "base_to_sample"
+      },
+      {
+        "from": 79,
+        "to": 80,
+        "kind": "same_task_next_sample"
+      },
+      {
+        "from": 80,
+        "to": 81,
+        "kind": "same_task_exit"
+      }
+    ],
+    "active_coroutines": 0,
+    "agent": {
+      "python": "3.13.1",
+      "process_id": 3936482,
+      "parent_process_id": 3936479,
+      "output_owner_process_id": 3936482,
+      "sample_interval_seconds": 0.005,
+      "stack_limit": 32,
+      "transparent_launch": true,
+      "remote_attach": false,
+      "seeded_tasks": 0,
+      "interpreter_id": 0,
+      "interpreter_count": 1,
+      "main_interpreter": true,
+      "coverage_unit": "one-interpreter"
+    }
+  },
+  "source_integrity": {
+    "version": "0.32.0",
+    "wheel_filename": "asyncpg-0.32.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+    "wheel_url": "https://files.pythonhosted.org/packages/1f/64/b00ef3fc0d861c28a1937f08d2c7f6e6119c152b414d50fa800c3aee83b5/asyncpg-0.32.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+    "wheel_sha256": "4cec40b66a36b14921c155db78631cd96ed00e225fdf38dd5532e9aef350a498",
+    "wheel_SHA256_matches_PyPI": true,
+    "all_installed_py_and_so_match_official_wheel": true,
+    "modules": {
+      "asyncpg/__init__.py": {
+        "sha256": "6f30f7d5a31e91b291f7068c5ee03121815b9ab43e4b532db639abbbfb128e8f",
+        "matches_official_wheel": true
+      },
+      "asyncpg/_asyncio_compat.py": {
+        "sha256": "38548a3b730d4fd200a44e5c065e17582b68325190210f73aa0e3b38ed139153",
+        "matches_official_wheel": true
+      },
+      "asyncpg/_version.py": {
+        "sha256": "b3db9b010a0f51b876304c8230e342e5d898a546d3e6c162b0f85e22ec2c0d40",
+        "matches_official_wheel": true
+      },
+      "asyncpg/cluster.py": {
+        "sha256": "b3f1e6b6210626a27a19059aebfce67ded757d9dbd3a93ad313e947dcbbe8348",
+        "matches_official_wheel": true
+      },
+      "asyncpg/compat.py": {
+        "sha256": "79bb3621e270f36ad8f66d190a639852aaf2ff69c5df3a938b7b6c58fe454f6a",
+        "matches_official_wheel": true
+      },
+      "asyncpg/connect_utils.py": {
+        "sha256": "e7a447a4ceec3dc4c709135a7aa8099ee01c95f82c6fa0fd0a5154dd48daad76",
+        "matches_official_wheel": true
+      },
+      "asyncpg/connection.py": {
+        "sha256": "155747e55e0fdfc69ee749f231f77825ac25eb71b57f086a5704ac9c0508b0d6",
+        "matches_official_wheel": true
+      },
+      "asyncpg/connresource.py": {
+        "sha256": "b4102274da4485b0efacc38a41bc27dd936021502db15c404714e7c23e5f93e4",
+        "matches_official_wheel": true
+      },
+      "asyncpg/cursor.py": {
+        "sha256": "4fa53baec965b082a38b7962af5209bff6c44a09159a2b29984bf1b512d04e4d",
+        "matches_official_wheel": true
+      },
+      "asyncpg/introspection.py": {
+        "sha256": "d1e450b6dd2628f1aff15d9f9d34a2cc2fef2ee93c8db3b5570a2243948071de",
+        "matches_official_wheel": true
+      },
+      "asyncpg/pool.py": {
+        "sha256": "3300f545aedb85eed22fc1360efca47e91284767cf1fb209a739e1544117ed4d",
+        "matches_official_wheel": true
+      },
+      "asyncpg/prepared_stmt.py": {
+        "sha256": "3afde89f7434f055bf40b31945e64c84ae4ddfebe9aa80b1516eda205bec1713",
+        "matches_official_wheel": true
+      },
+      "asyncpg/serverversion.py": {
+        "sha256": "5b096a049917647bef9c596eb9b0a33e8697ffb3aa8d1f1082239ef74c3a0bd1",
+        "matches_official_wheel": true
+      },
+      "asyncpg/transaction.py": {
+        "sha256": "b8026893a4a1c7bf8a76de65e0d5fe189b4bc552523d74ce254af219d6c8546f",
+        "matches_official_wheel": true
+      },
+      "asyncpg/types.py": {
+        "sha256": "aef5834edf99179e87ac08ed0e539eedaa1d95d126b534c20e8de5d77e151d53",
+        "matches_official_wheel": true
+      },
+      "asyncpg/utils.py": {
+        "sha256": "634bc04dec68207164a5651196a9e551951a71ce05d62649f6b589dfae783a73",
+        "matches_official_wheel": true
+      },
+      "asyncpg/_testbase/__init__.py": {
+        "sha256": "9b3cfce01b03f8075501c7888404978a9ceaf94267b67d77b5b6c736e7e7fa82",
+        "matches_official_wheel": true
+      },
+      "asyncpg/_testbase/fuzzer.py": {
+        "sha256": "a58f04422181696fc434972238436d063e61442fc0aaed887b621c8641d299c6",
+        "matches_official_wheel": true
+      },
+      "asyncpg/exceptions/__init__.py": {
+        "sha256": "1575180c5430f60c44de6573f7d166b25758c62bcb50cb532215f3bb9b59ecf9",
+        "matches_official_wheel": true
+      },
+      "asyncpg/exceptions/_base.py": {
+        "sha256": "bbadb1bfaf67e001ced71af7e458dd819858bea75e6ff9a440aca9fa2a7f0324",
+        "matches_official_wheel": true
+      },
+      "asyncpg/pgproto/__init__.py": {
+        "sha256": "b942242ae23a2069d0e6d657b6b8ce0bfd77aa3a7d3193b07b02a5af1285ccf6",
+        "matches_official_wheel": true
+      },
+      "asyncpg/pgproto/pgproto.cpython-313-x86_64-linux-gnu.so": {
+        "sha256": "45b997bb585f37b779330a279fb8ce6ebc2fbe6f16f4cef80e612f76a8ad4edc",
+        "matches_official_wheel": true
+      },
+      "asyncpg/pgproto/types.py": {
+        "sha256": "ece9ead9dee2d353cb8d1d7df5376b699141eba09d80811762e1e84024f78ca5",
+        "matches_official_wheel": true
+      },
+      "asyncpg/protocol/__init__.py": {
+        "sha256": "7c35946a78a07df218cd171c41e0f69e14177a49746cd1af79f24370c88e13c2",
+        "matches_official_wheel": true
+      },
+      "asyncpg/protocol/protocol.cpython-313-x86_64-linux-gnu.so": {
+        "sha256": "68d42fc3d35b91cfb7ee0a4d9088efcca6459194c97d204bf0adfd467e53dee9",
+        "matches_official_wheel": true
+      },
+      "asyncpg/protocol/record.cpython-313-x86_64-linux-gnu.so": {
+        "sha256": "f597e7ab460eb318d713a1c1c0d6ccae2fbf9a8e360a259988d33367f9c6e84b",
+        "matches_official_wheel": true
+      },
+      "asyncpg/protocol/codecs/__init__.py": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "matches_official_wheel": true
+      }
+    }
+  },
+  "execution": {
+    "workload_attempts": 1,
+    "exit_code": 0,
+    "elapsed_seconds": 134.05592322349548
+  },
+  "raw_manifest": {
+    "perf-out/github-issue-discovery/automatic/asyncpg-1397-first-check-20261126-b28/graph.json": "4a68a743ae62398c3d4186711cea724fd0ff48e110f9bde81684b47b4a1d9f70",
+    "perf-out/github-issue-discovery/automatic/asyncpg-1397-first-check-20261126-b28/native-observation.json": "92c273822c4a7c7aee555813e2718a9d4540e76f724312ec732982bc2b47e9db",
+    "perf-out/github-issue-discovery/automatic/asyncpg-1397-first-check-20261126-b28/execution.json": "618bf33491435458fe74a873d095837af3e73e1141d4f299795558626ab548b5",
+    "perf-out/github-issue-discovery/automatic/asyncpg-1397-first-check-20261126-b28/run.log": "f2b04142b3d846b67eba842af682f6ba43c36b207cae96d33c460f2be87dbfd5",
+    "perf-out/github-issue-discovery/automatic/asyncpg-1397-first-check-20261126-b28/trial-progress.jsonl": "e8b176584e090a8486e5b564b55de64ef8c63fbea9a516acb5d46f07b8dfe592",
+    "perf-out/github-issue-discovery/automatic/asyncpg-1397-first-check-20261126-b28/cleanup.json": "74ac9caf2840d2051df23495338a0ce5da806d2a4e280718696aaa25d787c7e9",
+    "perf-out/github-issue-discovery/automatic/asyncpg-1397-first-check-20261126-b28/source-integrity.json": "09f5adfc90ebfed0da86a8763c2728653c939dcbdc6fa3ac3c11850f243fe3d1",
+    "research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/check_once.py": "1dc6053b05f7a48abfc7ac4bc99edfae9e2d926662d1da6a95a5023ee536f1fc",
+    "research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/run_once.py": "90cf41a62ef986289b98bcc9345a092e98016ba8fe2d7e17954b0e052f94646f",
+    "research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/started.json": "aa250c3f69a3b9a52c453843d9c7944121fc051cbee058d48fff6504abd3e0ce",
+    "research/github-issue-discovery/asyncpg-1397-first-check-20261126-b28/import-check.json": "0bbc139efeb3db1a5af94a26e1c13842dfc6e3465a89197e725a83c5a1fe8f83",
+    "agents/python/corostitch_agent.py": "91dda6510c613d27a13be1d71d8ce7595de7a648a5e4ba970a9ca098d2b96a9b"
+  },
+  "capture_scope": "Graph covers the cancelled connect Task only. There is no ownership edge from the warning Future to that Task.",
+  "source_probe_correction": "TLSUpgradeProto.__init__ assigns self.on_data = _create_future(loop), while _create_future calls loop.create_future(). Direct-caller matching misses this indirection. Historical capture is immutable; no corrected probe was run."
+}
