@@ -51534,15 +51534,15 @@
     },
     "ray-project--ray--59347": {
       "status": "external_environment_required",
-      "reviewed_at": "2026-11-26T14:24:36.757464+00:00",
-      "reason": "Ray rejected the overly long Unix-domain socket path before cluster startup completed: AF_UNIX107-byte limit. No Serve deployment/request ran. ray.shutdown cleanup returned and no target process remained. Prepared run_once.py uses /tmp/r59347-* for Ray sockets, keeps capture files at the original evidence path, validates socket length and tracks owned descendant PID/start-time for timeout cleanup. This corrected launcher has not been executed in b19.",
-      "reason_zh": "已确认准确导入Ray2.52.0。唯一一次初始化因Unix socket路径超过107字节被拒绝，尚未完成集群启动、未部署或请求；清理返回、无目标残留。短/tmp启动器已准备但未在b19执行；本轮停止。",
+      "reviewed_at": "2026-11-26T14:36:38.792938+00:00",
+      "reason": "Matching2.52.0 bootstraps with short socket root. Three deployment-preparation attempts expose ProxyLocation and protobuf compatibility failures. protobuf5.29.5 fails against google/rpc gencode6.33.5; no Pipeline result/snapshot. Stalled owned run ended with driver-6; process check is empty. Descriptor6.33.6 API probe passes, but the Ray env remains incompatible5.29.5. No further launch this pass.",
+      "reason_zh": "准确2.52.0在短socket目录可启动；三次部署准备暴露ProxyLocation与protobuf兼容失败。当前protobuf5.29.5不兼容google/rpc生成代码6.33.5，dashboard agent退出导致raylet失效。没有Pipeline结果或快照；监督器结束卡住进程，最终driver为-6，复核无残留。独立6.33.6探针有label接口，但Ray环境仍是5.29.5，本轮不再启动。",
       "sources": [
         "https://github.com/ray-project/ray/issues/59347"
       ],
       "successful_component_runs": 0,
       "coroperf_validated": false,
-      "evidence": "data/ray-59347-startup-b19.json"
+      "evidence": "data/ray-59347-deployment-b20.json"
     }
   },
   "supplemental_records": [
@@ -52301,6 +52301,15 @@
       "summary": "Fresh import resolves the isolated2.52.0 package. One initialization rejects an AF_UNIX socket path longer than107 bytes; no deployment/request runs. Cleanup returns, no target remains. A short/tmp launcher is prepared for a later batch, not executed here.",
       "summary_zh": "新进程准确导入隔离环境2.52.0。一次初始化因Unix socket路径超过107字节被拒绝，未部署或请求；清理返回、无目标残留。已准备短/tmp启动器供后续使用，本轮未执行。",
       "path": "data/ray-59347-startup-b19.json"
+    },
+    {
+      "id": "ray-59347-deployment-b20",
+      "checked_at": "2026-11-26T14:36:38.792938+00:00",
+      "title": "Ray Serve bootstrap: incompatible cached protobuf blocks deployment",
+      "title_zh": "Ray Serve启动：缓存protobuf不兼容阻止部署",
+      "summary": "Short socket roots work. ProxyLocation is corrected to Disabled, then protobuf7 descriptor API and protobuf5/generated6 mismatches block deployment. Dashboard agent failure brings down raylet; the supervised run ends and no owned process remains. No Pipeline result or CoroPerf attribution. A6.33.6 descriptor probe alone is not a Ray-env validation.",
+      "summary_zh": "短socket目录有效，ProxyLocation已修正为Disabled；随后protobuf7接口、protobuf5与生成代码6的冲突阻止部署。dashboard agent失败导致raylet退出，监督运行结束且无残留；没有Pipeline结果或Coroperf归因。6.33.6描述符探针尚不能算Ray环境验证。",
+      "path": "data/ray-59347-deployment-b20.json"
     }
   ],
   "deferred_registry": [
@@ -65501,10 +65510,10 @@
     "previous_observed_at": "2026-11-26T12:18:46+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T14:28:05+00:00",
+  "ledger_refreshed_at": "2026-11-26T14:37:34+00:00",
   "progress_summary": {
     "source": "manual_case_publication",
-    "assembled_at": "2026-11-26T14:28:05.872024+00:00",
+    "assembled_at": "2026-11-26T14:37:34.173679+00:00",
     "comparison_reported_at": "2026-11-26T14:19:22+00:00",
     "verified_catalogue_entries": 136,
     "new_verified_ids": [],
@@ -65512,6 +65521,6 @@
     "new_review_decision_ids": [],
     "manual_holds": 89,
     "automatic_signal_holds": 1017,
-    "scope": "Current case/review totals reconciled on the newly published scheduled source snapshot; no workload replay."
+    "scope": "Current case/review totals and preparation evidence, reconciled independently. No successful Ray request or new verified case is claimed."
   }
 }
