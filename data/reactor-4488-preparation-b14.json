@@ -1,0 +1,18 @@
+{
+  "id": "reactor--reactor-core--4488",
+  "checked_at": "2026-11-26T13:33:14.334497+00:00",
+  "status": "external_environment_required",
+  "elapsed_seconds": 179.2,
+  "target_workloads": 0,
+  "coroperf_captures": 0,
+  "reason": "The pinned downstream test installs its workaround scheduler and asserts fixed behavior; it is not an unmodified default-scheduler reproducer to execute directly. Matching Reactor3.8.7 binaries/sources are saved. Actual Java21+ task class is the MR-JAR BoundedElasticThreadPerTaskScheduler$SchedulerTask, with holder/carrier/task fields and holder tasksQueue/activeTask. The plain source jar contains the base stub, not this implementation. Faithful recursive Flux chains and native queued/running Task identity capture are not prepared within this first-check pass. Do not substitute direct schedule calls or exception-only interruption evidence for the reported cross-subscriber queue stall.",
+  "reason_zh": "固定的下游测试会安装绕行调度器并断言修复行为，不能直接当作原始默认调度器复现。已保存 Reactor3.8.7 二进制/源码；Java21+ 实际任务类位于 MR-JAR，包含 holder/carrier/task 和队列/activeTask 字段，普通 source jar 只有基础 stub。原始递归 Flux 链及排队/运行 Task 身份捕获尚未在首检时限内就绪；不能用直接 schedule 或仅有中断异常的例子替代跨订阅者排队故障。",
+  "sources": [
+    "https://github.com/reactor/reactor-core/issues/4488",
+    "https://github.com/qinhaiqinshui/everyagent/blob/81a5c896/every-agent-worker/src/test/java/dev/everyagent/worker/BoundedElasticStarvationTest.java"
+  ],
+  "artifact_sha256": {
+    "reactor-core-3.8.7.jar": "9a5f1bfc5ad0416a410ff63beaa279cc30c2da3ae9b111a678c83c99298a1551",
+    "reactor-core-3.8.7-sources.jar": "7547e61d9ebe6ffa34df02dc8f97d663edd69f91b58d295d7f008e1dddb30657"
+  }
+}
