@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Search coroutine evidence and explore creation ancestry alongside current execution.">
+  <title>coroPerf Explorer</title><style>:root{--ink:#1c292d;--muted:#697b80;--teal:#086f75;--teal-light:#e7f3f2;--line:#dfe7e8;--paper:#fff;--wash:#f5f8f8;--orange:#bd6535;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--wash)}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button,a,label.dropzone,select{touch-action:manipulation}button{cursor:pointer;transition:background .15s,border-color .15s}button:disabled{opacity:.4;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,label:focus-visible{outline:3px solid #70b4b8;outline-offset:3px}a{color:inherit}.masthead{height:76px;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 32px;gap:28px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-size:18px;font-weight:700;letter-spacing:-.4px}.brand b{font-weight:400;color:var(--muted);margin-left:7px}.brand-mark{display:flex;align-items:center;justify-content:center;border-radius:9px;background:var(--teal);color:white;width:37px;height:37px;font:700 19px var(--mono)}.local-note{margin-left:auto;color:var(--muted);font-size:12px;display:flex;align-items:center;gap:7px}.local-note i{width:6px;height:6px;border-radius:50%;background:#429789}.primary,.secondary,.small-button{border:1px solid var(--line);border-radius:6px;background:white;padding:8px 13px;color:var(--ink);white-space:nowrap}.primary{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:600;display:flex;gap:20px}.primary:hover{background:#075c61}.secondary:hover,.small-button:hover:not(:disabled){background:#eff4f4;border-color:#b9cfd0}.text-button{border:0;background:none;color:var(--teal);padding:0;font-size:12px;text-align:left}.layout{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:calc(100vh - 76px)}.sidebar{padding:30px 20px;border-right:1px solid var(--line);background:#fcfdfd;display:flex;flex-direction:column;gap:13px}.section-heading{font-size:10px;letter-spacing:1.6px;font-weight:700;color:var(--muted);display:flex;justify-content:space-between}.section-heading span{font:11px var(--mono)}.dataset-list{display:grid;gap:6px}.dataset-button,.example-button{width:100%;text-align:left;border:1px solid transparent;border-radius:7px;padding:10px 12px;background:none;font-size:12px;line-height:1.45;color:var(--ink);overflow-wrap:anywhere}.dataset-button small,.example-button small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.dataset-button.active{border-color:#bedbda;background:var(--teal-light);color:#075c62}.example-button{padding-left:0}.example-button:hover{background:#f0f5f5}.example-button strong{font-size:12px;font-weight:600}.example-button .example-tag{color:var(--orange);font-size:10px;letter-spacing:.4px}.examples-heading{margin-top:20px}.dropzone{border:1px dashed #b5cece;border-radius:7px;padding:18px 12px;text-align:center;display:grid;gap:5px;cursor:pointer;background:#f8fbfb}.dropzone strong{font-size:12px;font-weight:600;color:var(--teal)}.dropzone span{font-size:10px;color:var(--muted)}.dropzone.dragging{background:var(--teal-light);border-color:var(--teal)}.sidebar-foot{margin-top:25px;padding-top:20px;border-top:1px solid var(--line);font-size:12px}.sidebar-foot strong{font-weight:600}.sidebar-foot p{font-size:11px;line-height:1.7;color:var(--muted)}main{padding:34px 36px 22px;max-width:1800px;width:100%;margin:auto}.page-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:26px}.eyebrow{font-size:10px;color:var(--teal);letter-spacing:1.6px;font-weight:700;margin-bottom:5px}h1{font-size:28px;letter-spacing:-1px;line-height:1.3;margin:0 0 8px;font-weight:650}.page-heading p{margin:0;color:var(--muted);font-size:12px;max-width:700px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--line);margin-bottom:24px}.metrics>div{background:white;padding:17px 22px}.metrics span{display:block;color:var(--muted);font-size:11px}.metrics strong{display:block;font-size:27px;font-weight:600;letter-spacing:-.7px;margin-top:2px;font-variant-numeric:tabular-nums}.panel{border:1px solid var(--line);border-radius:8px;background:white;margin-bottom:22px;overflow:hidden}.panel-heading{display:flex;align-items:center;gap:12px;padding:19px 22px;border-bottom:1px solid var(--line)}.panel-heading>div:first-child{margin-right:auto;min-width:0}h2{margin:0;font-size:15px;font-weight:650;letter-spacing:-.2px}.panel-heading p{margin:4px 0 0;font-size:11px;color:var(--muted)}.segmented{display:flex;border-radius:5px;background:#eef3f3;padding:3px}.segmented button{border:0;background:none;border-radius:4px;padding:5px 11px;color:var(--muted);font-size:11px}.segmented button.active{background:white;box-shadow:0 1px 3px #00252b15;color:var(--teal);font-weight:600}.small-button{padding:5px 9px;font-size:11px}.flame-tools{display:flex;justify-content:space-between;padding:11px 22px;color:var(--muted);font-size:11px;min-height:38px;border-bottom:1px solid #f1f4f4}.flame-tools #breadcrumbs{display:flex;gap:6px;align-items:center;min-width:0;overflow:auto;white-space:nowrap}.flame-tools #breadcrumbs button{border:0;background:none;color:var(--teal);font-size:11px;padding:0}.flame-tools>button{margin-left:12px;white-space:nowrap}#flame-scroll{padding:12px 12px 4px;overflow:auto;max-height:420px;min-height:170px}#flame{min-height:150px}#flame svg{display:block;min-width:100%;font:10px var(--mono)}#flame svg g{cursor:pointer}#flame svg g:hover rect,#flame svg g:focus rect{stroke:#244b50;stroke-width:1.5}#flame-hover{padding:9px 22px 12px;font:10px/1.5 var(--mono);color:var(--muted);border-top:1px solid #f0f4f4;min-height:38px;overflow-wrap:anywhere}.chart-empty,.empty{padding:45px 20px;text-align:center;color:var(--muted);font-size:12px}.badge{display:inline-flex;padding:4px 8px;background:#f0f5f4;border-radius:4px;font-size:10px;color:#4b6b6e}.filters{display:flex;gap:12px;align-items:center;padding:17px 22px 10px}.search{display:flex;align-items:center;border:1px solid #cad9db;border-radius:5px;padding:7px 10px;gap:9px;max-width:550px;flex:1;min-width:120px}.search>span{font-size:20px;line-height:1;color:var(--muted)}.search input{border:0;outline:none;min-width:0;width:100%;font-size:12px;background:none;color:var(--ink)}.search kbd{font:11px var(--mono);padding:0 5px;border:1px solid var(--line);border-radius:3px;color:var(--muted)}select{border:1px solid #cad9db;border-radius:5px;background:white;padding:7px 9px;font-size:11px;color:var(--ink)}.checkbox{font-size:11px;display:flex;align-items:center;gap:5px;white-space:nowrap;color:var(--muted)}input[type=checkbox]{accent-color:var(--teal)}.results-count{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:10px;padding:2px 22px 12px}#capture-health.warning{color:#a06327}.table-scroll{overflow:auto}table{border-collapse:collapse;width:100%;text-align:left;font-size:11px}th{font-size:10px;color:var(--muted);font-weight:500;padding:10px 22px;background:#fafcfc;border-block:1px solid var(--line);white-space:nowrap}td{padding:12px 22px;border-bottom:1px solid #edf1f1;vertical-align:top}td:first-child{min-width:250px;max-width:450px}tr.selected td{background:#edf7f6}tbody tr:hover td{background:#f5fafa}.instance-link{font:11px var(--mono);color:var(--teal);border:0;background:none;padding:0;text-align:left;overflow-wrap:anywhere}.context-name{display:block;color:var(--muted);font-size:10px;margin-top:4px;max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.state{font-size:10px;white-space:nowrap;display:flex;align-items:center;gap:5px}.state:before{content:"";width:5px;height:5px;background:#9badb0;border-radius:50%;flex:none}.state.closed:before{background:#5b9e8e}.state.open-at-trace-end:before{background:#d29c50}.numeric{font-family:var(--mono);font-variant-numeric:tabular-nums}.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 22px;font-size:10px;color:var(--muted)}.pagination button+button{margin-left:6px}.detail-panel .panel-heading h2{font:12px var(--mono);overflow-wrap:anywhere}#ancestry{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:14px 22px;font:10px var(--mono);background:#f9fcfc;border-bottom:1px solid var(--line)}#ancestry button{font:10px var(--mono);background:var(--teal-light);color:var(--teal);border:1px solid #cde2e0;border-radius:4px;padding:4px 7px;overflow-wrap:anywhere;max-width:100%}#ancestry .stop{color:var(--muted);font:10px ui-sans-serif,system-ui}.context-grid{display:grid;grid-template-columns:1fr 1fr}.context-grid section{min-width:0;padding:19px 22px}.context-grid section+section{border-left:1px solid var(--line)}h3{font-size:12px;margin:0 0 6px}.context-note{font-size:10px;color:var(--muted);margin:0 0 14px}pre{font:11px/1.7 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;color:#3c565b;margin:10px 0 0}.context-grid select{width:100%;margin:0 0 4px}details{border-top:1px solid var(--line);padding:13px 22px;font-size:11px}summary{cursor:pointer;color:var(--teal)}#event-list{max-height:260px;overflow:auto;padding-top:10px}.event-row{display:grid;grid-template-columns:120px 170px 1fr;gap:12px;border-bottom:1px solid #eff3f3;padding:5px 0;font:10px var(--mono)}footer{font-size:10px;color:var(--muted);text-align:center;padding:7px 0 15px}#notice{font-size:12px;overflow-wrap:anywhere}#notice:not(:empty){padding:12px 16px;border:1px solid #dbc49d;background:#fff9ee;color:#855a20;margin-bottom:16px;border-radius:6px}dialog{max-width:640px;border:1px solid var(--line);border-radius:10px;padding:0;color:var(--ink)}dialog::backdrop{background:#152e3555}.dialog-content{padding:30px;font-size:13px;line-height:1.75}.dialog-content>.small-button{float:right;margin-left:15px}.dialog-content h2{font-size:23px;margin:12px 0 18px}code{font:11px var(--mono);background:#f0f5f5;padding:2px 4px;overflow-wrap:anywhere}@media(min-width:1600px){main{padding:40px 48px}}@media(max-width:1100px){.layout{grid-template-columns:210px minmax(0,1fr)}.sidebar{padding:25px 15px}main{padding:26px 22px}.filters{flex-wrap:wrap}.search{max-width:none}th,td{padding-left:14px;padding-right:14px}.panel-heading{flex-wrap:wrap}.flame-panel .panel-heading>div:first-child{min-width:45%}.local-note{display:none}}@media(max-width:760px){.masthead{padding:0 18px;height:65px;gap:14px}.brand{font-size:15px}.brand b{display:none}.masthead>.primary{margin-left:auto;padding:7px 10px;font-size:12px}.layout{display:block}.sidebar{border-right:0;border-bottom:1px solid var(--line);padding:18px;display:block}.sidebar .section-heading,.sidebar-foot,.dropzone{display:none}.dataset-list{display:flex;overflow:auto}.dataset-button{min-width:160px}.examples-heading{margin-top:12px!important}.sidebar #examples{display:flex;gap:10px;overflow:auto}.example-button{min-width:160px;padding:10px 6px}.example-button small{display:none}main{padding:22px 15px}.page-heading{align-items:flex-start}h1{font-size:23px}.eyebrow{font-size:9px}.page-heading>.secondary{display:none}.metrics{grid-template-columns:1fr 1fr;margin-bottom:18px}.metrics>div{padding:13px 16px}.metrics strong{font-size:25px}.panel-heading{padding:15px}.panel-heading p{max-width:280px}.panel-heading>.badge{display:none}.flame-panel .panel-heading>div:first-child{width:100%}.flame-tools{padding-inline:15px}.filters{padding:13px 15px;gap:9px}.search{flex-basis:100%}.results-count{padding-inline:15px}.checkbox{font-size:10px}.context-grid{grid-template-columns:1fr}.context-grid section+section{border-left:0;border-top:1px solid var(--line)}.context-grid section{padding:17px 15px}#ancestry{padding:12px 15px}.pagination{padding:12px 15px}#capture-health{max-width:55%;text-align:right}.event-row{grid-template-columns:90px 1fr}.event-row span:last-child{display:none}}
+
+.example-button .example-tag{display:block;margin-bottom:4px}.example-button strong{display:block}.flame-tools>.checkbox{margin-left:auto;margin-right:16px}
+</style>
+</head>
+<body>
+  <header class="masthead"><a class="brand" href="#"><span class="brand-mark">C↗</span><span>coroPerf <b>Explorer</b></span></a><span class="local-note"><i></i> Files stay in your browser</span><button id="import-top" class="primary">Import result <span>↥</span></button></header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="section-heading">WORKSPACE <span id="dataset-count">0</span></div>
+      <div id="datasets" class="dataset-list"></div>
+      <label class="dropzone" id="dropzone" tabindex="0"> <strong>＋ Import a capture</strong><span>Drop a graph or evidence JSON here</span><input id="file-input" type="file" accept=".json,application/json" multiple hidden></label>
+      <div class="section-heading examples-heading">REAL CASE STUDIES</div><div id="examples"></div>
+      <div class="sidebar-foot"><strong>Follow the instance.</strong><p>Connect its creation context to what it did later—even after the original caller is gone.</p><button id="help-open" class="text-button">Formats & evidence →</button></div>
+    </aside>
+    <main><section style="padding:20px;border:1px solid #888;margin:16px"><h1>Go #58628: real goroutine creator / 真实 goroutine 创建入口</h1><p><a href="../zh-cn/evidence/golang--go--58628.html">中文案例</a> · <a href="../data/go-58628-verification.json">Native trace identity and scope</a></p><p>One Go 1.23.0 check uses the original two io.Pipe objects and io.Copy. Closing the destination writer does not return the copy within an 80ms observation. Goroutine 161 remains in pipe read; its native dump shows the immediate startCopy creator but omits submitConsoleMirror. Closing the owned source during normal cleanup ends this same run, with process exit 0.</p><p>Go 1.23.0 的一次检查使用原报告的两个 io.Pipe 和 io.Copy。关闭目标写端后，复制在 80 毫秒观察窗口内未返回；goroutine 161 仍阻塞于 pipe read。原生 dump 只有直接创建者 startCopy，没有 submitConsoleMirror。正常清理时关闭自有源端，使这同一次运行结束，进程退出 0。</p><p>Standard runtime trace records the real goroutine birth with its full creator stack, a pipe-read waiting transition, and eventual exit. The native child-reported ID and independent all-goroutine snapshot both match trace goroutine 161. CoroPerf joins the creation to the blocked stack and exposes submitConsoleMirror. The measured native waiting interval is about 80.82ms. The source information already exists in runtime trace; CoroPerf supplies the normalized identity join and combined view.</p><p>标准 runtime trace 记录真实 goroutine 的诞生及完整创建栈、pipe read 等待转换和最终退出。子 goroutine 自报的原生 ID 与独立全 goroutine 快照都匹配 trace 中的 161。CoroPerf 将创建记录接到阻塞栈，恢复 submitConsoleMirror；原生等待区间约 80.82 毫秒。创建来源原本就存在于 runtime trace，CoroPerf 提供统一身份关联及合并视图。</p><p>This is the upstream in-memory pipe example with named submission helpers and one bounded observation. It does not prove infinite lifetime, socket or descriptor retention, Docker integration, or a runtime defect. Only one transfer ran. Source cleanup is part of ending that same run; no alternative implementation, repeated transfer, version matrix or fix validation ran.</p><p>这是加入具名提交辅助函数的原始进程内管道示例，只有一次有界观察；不证明无限存活、socket 或描述符泄漏、Docker 集成问题或 runtime 缺陷。只执行一次传输。关闭源端属于结束同一次运行的清理，没有替代实现、重复传输、多版本或修复验证。</p></section>
+      <div class="page-heading"><div><div class="eyebrow">COROUTINE DIAGNOSTICS</div><h1>Find where the work came from.</h1><p id="dataset-description">Import a capture or explore a reproduced public issue.</p></div><button id="export-json" class="secondary" disabled>Export result ↓</button></div>
+      <div id="notice" role="status" aria-live="polite"></div>
+      <section class="metrics" aria-label="Capture overview"><div><span>Observed instances</span><strong id="stat-instances">—</strong></div><div><span>Attributed observations</span><strong id="stat-attributed">—</strong></div><div><span>Recorded parent links</span><strong id="stat-links">—</strong></div><div><span>Open at capture end</span><strong id="stat-open">—</strong></div></section>
+      <section class="panel flame-panel">
+        <div class="panel-heading"><div><h2>Follow the stack</h2><p id="flame-description">Width counts observations; creation records add no weight.</p></div><div class="segmented" aria-label="Flamegraph mode"><button id="mode-causal" class="active" aria-pressed="true">Causal</button><button id="mode-current" aria-pressed="false">Current</button></div><button id="export-folded" class="small-button" disabled>Folded ↓</button><button id="export-svg" class="small-button" disabled>SVG ↓</button></div>
+        <div class="flame-tools"><div id="breadcrumbs">All matching observations</div><label class="checkbox"><input id="hide-runtime" type="checkbox" checked> Hide runtime frames</label><button id="reset-zoom" class="text-button">Reset zoom</button></div>
+        <div id="flame-scroll"><div id="flame" class="chart-empty">Load a capture to explore its flamegraph.</div></div><div id="flame-hover" role="status">Click a frame to zoom. Hover or focus to inspect its weight.</div>
+      </section>
+      <section class="panel instances-panel"><div class="panel-heading"><div><h2>Every observed instance</h2><p>Search a function, origin, file, or instance ID. Unknown evidence remains visible.</p></div><span id="representation" class="badge">No capture</span></div>
+        <div class="filters"><label class="search"><span>⌕</span><input id="query" type="search" placeholder="Search source, callee, or instance…" aria-label="Search coroutine instances"><kbd>/</kbd></label><select id="status-filter" aria-label="Filter state"><option value="">All states</option><option value="open-at-trace-end">Open at capture end</option><option value="completed-storage-observed">Completed · storage observed</option><option value="closed">Closed</option><option value="observed">Partial observation</option></select><label class="checkbox"><input id="sampled-only" type="checkbox"> Has observations</label></div>
+        <div class="results-count"><span id="result-count">0 instances</span><span id="capture-health"></span></div>
+        <div class="table-scroll"><table><thead><tr><th>Instance / captured context</th><th>State</th><th>Observations</th><th>Threads</th><th>Creator evidence</th></tr></thead><tbody id="instance-rows"></tbody></table><div id="table-empty" class="empty">Your capture will appear here.</div></div>
+        <div class="pagination"><span id="page-label">—</span><div><button id="page-prev" class="small-button" disabled>← Previous</button><button id="page-next" class="small-button" disabled>Next →</button></div></div>
+      </section>
+      <section class="panel detail-panel" id="detail" hidden><div class="panel-heading"><div><div class="eyebrow">INSTANCE INSPECTOR</div><h2 id="detail-title"></h2><p id="detail-subtitle"></p></div><button id="detail-close" class="small-button" aria-label="Close inspector">×</button></div><div id="ancestry"></div><div class="context-grid"><section><h3>Creation context</h3><p class="context-note">Recorded at creation; retained after the creator exits.</p><pre id="creation-stack"></pre></section><section><h3>Selected observation</h3><select id="observation-select" aria-label="Select observation"></select><pre id="current-stack"></pre></section></div><details><summary id="events-summary">Lifecycle evidence</summary><div id="event-list"></div></details></section>
+      <footer>Creation ancestry describes origin. It does not imply an awaiting dependency or additional CPU work.</footer>
+    </main>
+  </div>
+  <dialog id="help"><div class="dialog-content"><button id="help-close" class="small-button">Close ×</button><div class="eyebrow">EVIDENCE, IN ONE PLACE</div><h2>Import the result. Keep the evidence.</h2><p>Accepts coroPerf graph JSON (<code>segments</code> and <code>edges</code>) and the shared <code>corostitch.events/v1</code> event contract. Native, runtime, executor, and managed producers share the same analysis core.</p><p>Use <code>coroPerf analyze --input CAPTURE --out-dir RESULT</code> to produce a portable graph. Import <code>RESULT/graph.json</code> here.</p><p>Each imported file is a separate capture. Instance IDs, lifetime generations, and unknown boundaries are preserved. Missing data does not become a guessed caller.</p><p>Diagnostic snapshots and task inspections count observations. They are not periodic CPU measurements. The view shows their recorded provenance and never assigns extra weight to creation stacks.</p><p>All imported data is parsed locally. Importing a file makes no upload request.</p></div></dialog>
+  <script type="module">/** Shared evidence reconstruction and queries. No language dispatch or app names. */
+export const SCHEMA = 'corostitch.evidence/v1';
+const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+const field = (o, ...keys) => { for (const k of keys) if (own(o, k) && o[k] != null) return o[k]; };
+const text = v => v == null ? null : String(v);
+const known = v => v != null && !['', 'unknown', '?'].includes(String(v));
+const creates = new Set(['create', 'creation', 'synthetic_create']);
+const terminals = new Set(['exit', 'destroy', 'cleanup', 'cancel', 'exception']);
+const samples = new Set(['sample', 'cpu_sample', 'diagnostic_stacktrace', 'task_snapshot']);
+const baseEdges = new Set(['base_to_sample', 'create_base_to_sample_stack', 'base_to_sample_stack']);
+
+/** Preserve 64-bit IDs/timestamps before JSON.parse can round them. */
+export function parseJSON(source) {
+  let out = '', i = 0;
+  while (i < source.length) {
+    if (source[i] === '"') {
+      const start = i++;
+      while (i < source.length) { if (source[i++] === '\\') i++; else if (source[i - 1] === '"') break; }
+      out += source.slice(start, i); continue;
+    }
+    if (source[i] === '-' || /[0-9]/.test(source[i])) {
+      const match = source.slice(i).match(/^-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/);
+      if (match) {
+        const value = match[0];
+        out += /^-?\d+$/.test(value) && !Number.isSafeInteger(Number(value)) ? JSON.stringify(value) : value;
+        i += value.length; continue;
+      }
+    }
+    out += source[i++];
+  }
+  return JSON.parse(out);
+}
+
+export function frame(value) {
+  if (value && typeof value === 'object') return {...value,
+    function: text(field(value, 'function', 'Function', 'name', 'Name', 'symbol', 'pc')) || '<unknown>'};
+  const raw = String(value ?? '<unknown>').trim();
+  const js = raw.match(/^at\s+(?:async\s+)?(?:(.*?)\s+\()?(.+?):(\d+)(?::(\d+))?\)?$/);
+  if (js) return {function: js[1] || '<anonymous>', file: js[2], line: Number(js[3]),
+    column: js[4] ? Number(js[4]) : null, display: raw};
+  const located = raw.match(/^(.*?):(\d+):(\/.*)$/);
+  if (located) return {function: located[1], line: Number(located[2]), file: located[3], display: raw};
+  return {function: raw.replace(/^at\s+/, ''), display: raw};
+}
+function frames(values, order) {
+  const rows = (values || []).map(frame);
+  return order === 'root_to_leaf' ? rows.reverse() : rows;
+}
+function ns(row) {
+  const raw = field(row, 'timestamp_ns', 'TimestampNs', 'time_ns');
+  if (raw != null) {
+    if (!/^-?\d+$/.test(String(raw))) throw new Error('timestamp_ns must be an integer or decimal integer string');
+    return BigInt(raw).toString();
+  }
+  const seconds = field(row, 'timestamp', 'Timestamp');
+  return seconds == null ? null : String(Math.round(Number(seconds) * 1e9));
+}
+const edge = (from, to, kind, extra = {}) => ({from: String(from), to: String(to), kind, ...extra});
+const key = (pid, domain, raw, generation) => [pid, domain, raw, generation].map(encodeURIComponent).join(':');
+
+export function buildGraph(input) {
+  if (input.schema !== 'corostitch.events/v1' || !Array.isArray(input.events)) throw new Error('Expected corostitch.events/v1');
+  const producer = input.producer || {};
+  const graph = {schema: SCHEMA, producer, frame_order: 'leaf_to_root',
+    clock: {domain: producer.clock || 'unspecified', unit: 'ns'}, segments: [], edges: [],
+    diagnostics: [], capture_loss: producer.dropped ?? null};
+  const live = new Map(), generations = new Map(), bindings = new Map(), base = new Map(), quarantined = new Set();
+  const scope = e => `${e.process_id ?? producer.process_id ?? 'unknown'}|${e.identity_domain ?? producer.identity_domain ?? 'default'}`;
+  const rawKey = (e, raw = e.raw_id) => `${scope(e)}|${raw}`;
+  const thread = e => `${scope(e)}|${e.thread_id ?? 'unknown'}`;
+  let previous = null;
+  function report(kind, e) { graph.diagnostics.push({kind, sequence: e.sequence, raw_id: text(e.raw_id)}); }
+  function segment(e, instance, reason = e.kind) {
+    const row = {...e, id: String(graph.segments.length), coroutine_id: instance, capture_reason: reason,
+      process_id: text(e.process_id ?? producer.process_id), thread_id: text(e.thread_id),
+      timestamp_ns: ns(e), frames: frames(e.frames, producer.frame_order),
+      sample_kind: e.sample_kind || (reason === 'sample' ? 'unknown' : null),
+      label: e.label || '', resource_type: e.resource_type || '',
+      ownership_evidence: e.ownership_evidence || null, weight: Number(e.weight ?? 1)};
+    graph.segments.push(row); return row;
+  }
+  for (const e of input.events) {
+    if (!e || !e.kind) throw new Error('Every event needs kind');
+    const timestamp = ns(e);
+    if (timestamp != null && previous != null && BigInt(timestamp) < previous) {
+      throw new Error('Event timestamps must be ordered in one declared clock domain');
+    }
+    if (timestamp != null) previous = BigInt(timestamp);
+    const raw = rawKey(e), tid = thread(e), stack = bindings.get(tid) || [];
+    if (e.kind === 'create') {
+      if (!known(e.raw_id)) { report('missing-create-identity', e); continue; }
+      if (live.has(raw) || quarantined.has(raw)) {
+        const invalid = live.get(raw); live.delete(raw); quarantined.add(raw);
+        for (const [threadKey, active] of bindings) bindings.set(threadKey, active.map(row =>
+          row.instance === invalid ? {...row, instance: null} : row));
+        report('duplicate-live-create', e); continue;
+      }
+      const generation = (generations.get(raw) || 0) + 1; generations.set(raw, generation);
+      const instance = key(e.process_id ?? producer.process_id ?? 'unknown', e.identity_domain ?? producer.identity_domain ?? 'default', e.raw_id, generation);
+      const row = segment(e, instance); row.raw_coroutine_id = String(e.raw_id); row.generation = generation;
+      row.creator_status = e.parent_status === 'root' && !known(e.parent_raw_id) ? 'root' : 'unknown';
+      if (known(e.parent_raw_id) && ['recovered', 'linked'].includes(e.parent_status)) {
+        const parent = live.get(rawKey(e, e.parent_raw_id));
+        if (parent && parent !== instance && base.has(parent)) {
+          row.parent_coroutine_id = parent; row.creator_status = 'linked';
+          graph.edges.push(edge(row.id, base.get(parent), 'coroutine_created_by', {evidence: e.creator_evidence || 'producer-parent'}));
+        } else row.creator_status = 'unobserved-parent';
+      }
+      live.set(raw, instance); base.set(instance, row.id);
+      continue;
+    }
+    if (e.kind === 'enter') {
+      const instance = live.get(raw);
+      stack.push({instance: instance || null, raw}); bindings.set(tid, stack);
+      if (instance) segment(e, instance);
+      else report('unobserved-enter', e);
+      continue;
+    }
+    if (e.kind === 'leave') {
+      const instance = live.get(raw);
+      if (stack.at(-1)?.raw === raw) { stack.pop(); if (instance) segment(e, instance); }
+      else { report('unmatched-leave', e); bindings.set(tid, []); }
+      continue;
+    }
+    if (e.kind === 'sample') {
+      const explicit = known(e.raw_id) ? live.get(raw) : null;
+      const interval = stack.at(-1)?.instance || null;
+      let owner = explicit || (!known(e.raw_id) ? interval : null);
+      if (explicit && interval && explicit !== interval) { owner = null; report('conflicting-sample-ownership', e); }
+      const row = segment(e, owner || null);
+      if (owner) {
+        row.ownership_evidence ||= explicit ? 'producer-identity' : 'execution-interval';
+        graph.edges.push(edge(base.get(owner), row.id, 'create_base_to_sample_stack'));
+      } else row.ownership_evidence = 'unknown';
+      continue;
+    }
+    const instance = live.get(raw);
+    if (e.kind === 'complete') { if (instance) segment(e, instance); continue; }
+    if (terminals.has(e.kind)) {
+      if (quarantined.has(raw)) { quarantined.delete(raw); continue; }
+      if (instance) {
+        segment(e, instance); live.delete(raw);
+        for (const [threadKey, active] of bindings) bindings.set(threadKey, active.filter(row => row.instance !== instance));
+      } else report('unobserved-terminal', e);
+      continue;
+    }
+  }
+  graph.active_coroutines = [...live.values()];
+  return normalizeGraph(graph);
+}
+
+export function normalizeGraph(raw, options = {}) {
+  if (raw.schema === 'corostitch.events/v1') return buildGraph(raw);
+  if (!Array.isArray(raw.segments) || !Array.isArray(raw.edges)) throw new Error('Input needs segments and edges arrays');
+  const declared = options.frameOrder || raw.frame_order || raw.producer?.frame_order;
+  const order = declared || 'leaf_to_root';
+  const segments = raw.segments.map((s, index) => ({...s,
+    id: text(field(s, 'id', 'Id', 'segment_id') ?? index),
+    coroutine_id: text(field(s, 'coroutine_id', 'CoroutineId', 'CoroutineID', 'goroutine_id', 'task_id', 'routine_id')),
+    capture_reason: text(field(s, 'capture_reason', 'CaptureReason', 'reason', 'kind') || 'unknown'),
+    process_id: text(field(s, 'process_id', 'pid', 'ProcessId')),
+    thread_id: text(field(s, 'thread_id', 'ThreadId', 'tid')),
+    timestamp_ns: ns(s), frames: frames(field(s, 'frames', 'Frames'), order),
+    sample_kind: s.sample_kind || 'unknown', weight: Number(s.weight ?? 1)}));
+  const ids = new Set(segments.map(s => s.id));
+  if (ids.size !== segments.length) throw new Error('Duplicate segment IDs');
+  const diagnostics = [...(raw.diagnostics || [])];
+  if (!declared) diagnostics.push({kind: 'legacy-frame-order-assumed', order});
+  const edges = [];
+  for (const e of raw.edges) {
+    const from = field(e, 'from', 'from_segment_id', 'FromSegmentId');
+    const to = field(e, 'to', 'to_segment_id', 'ToSegmentId');
+    const kind = field(e, 'kind', 'edge_kind', 'EdgeKind') || 'unknown';
+    if (!ids.has(text(from)) || !ids.has(text(to))) { diagnostics.push({kind: 'dangling-edge', from, to}); continue; }
+    edges.push({...e, from: text(from), to: text(to), kind});
+  }
+  const byId = new Map(segments.map(s => [s.id, s]));
+  const observationBases = new Map();
+  for (const e of edges) {
+    if (!baseEdges.has(e.kind)) continue;
+    const base = byId.get(e.from), observation = byId.get(e.to);
+    if (!creates.has(base.capture_reason) || !samples.has(observation.capture_reason) ||
+        (known(base.coroutine_id) && known(observation.coroutine_id) && base.coroutine_id !== observation.coroutine_id)) {
+      throw new Error('Creation-to-observation edge contradicts its endpoint identities or roles');
+    }
+    if (observationBases.has(e.to) && observationBases.get(e.to) !== e.from) {
+      throw new Error('Conflicting creation bases for one observation');
+    }
+    observationBases.set(e.to, e.from);
+  }
+  return {schema: SCHEMA, frame_order: 'leaf_to_root', producer: raw.producer || {},
+    clock: raw.clock || {domain: 'legacy-unspecified', unit: 'ns'},
+    segments, edges, diagnostics, capture_loss: raw.capture_loss ?? raw.producer?.dropped ?? null,
+    source_metadata: {...raw.source_metadata, ...Object.fromEntries(['language','runtime','backend'].filter(k=>raw[k]!=null).map(k=>[k,raw[k]]))},
+    active_coroutines: raw.active_coroutines ?? null,
+    // A stopped native snapshot is an explicit additional input, with its
+    // own scope. Keep it for offline cause analysis without assigning its
+    // native threads to the last observed Python coroutine.
+    ...(raw.native_wait_graph ? {native_wait_graph: raw.native_wait_graph,
+      native_snapshot_scope: raw.native_snapshot_scope ?? null} : {}),
+    ...(raw.source_facts ? {source_facts: raw.source_facts} : {})};
+}
+
+export function createIndex(graph) {
+  const segments = new Map(graph.segments.map(s => [s.id, s]));
+  const instances = new Map(), bases = new Map(), parent = new Map(), parentKinds = new Map(), sampleBase = new Map();
+  for (const s of graph.segments) {
+    if (!known(s.coroutine_id)) continue;
+    let item = instances.get(s.coroutine_id);
+    if (!item) {
+      item = {id: s.coroutine_id, segments: [], samples: [], threads: new Set(), status: 'observed',
+        base_id: null, creator_id: null, creator_status: 'unknown', resource_type: s.resource_type || '',
+        first_ns: s.timestamp_ns, last_ns: s.timestamp_ns}; instances.set(item.id, item);
+    }
+    item.segments.push(s.id);
+    if (s.thread_id != null) item.threads.add(s.thread_id);
+    if (s.timestamp_ns != null) {
+      if (item.first_ns == null || BigInt(s.timestamp_ns) < BigInt(item.first_ns)) item.first_ns = s.timestamp_ns;
+      if (item.last_ns == null || BigInt(s.timestamp_ns) > BigInt(item.last_ns)) item.last_ns = s.timestamp_ns;
+    }
+    if (creates.has(s.capture_reason)) {
+      if (item.base_id != null && item.base_id !== s.id) throw new Error('Multiple creations share an instance ID; provide generation IDs or raw lifecycle events');
+      item.base_id = s.id; bases.set(item.id, s.id); item.status = 'open-at-trace-end';
+      item.creator_status = s.creator_status || 'unknown';
+      if (s.parent_coroutine_id) { parent.set(item.id, s.parent_coroutine_id); parentKinds.set(item.id,'created_by'); }
+    }
+    if (s.capture_reason === 'task_discovered' && item.status === 'observed') item.status = 'open-at-trace-end';
+    if (samples.has(s.capture_reason)) item.samples.push(s.id);
+    if (s.capture_reason === 'complete') item.status = 'completed-storage-observed';
+    if (terminals.has(s.capture_reason)) item.status = 'closed';
+  }
+  const setParent = (child, ancestor, relation='created_by') => {
+    if (!child?.coroutine_id || !ancestor?.coroutine_id) return;
+    const id = child.coroutine_id, old = parent.get(id);
+    if (old && old !== ancestor.coroutine_id) { parent.set(id, null); instances.get(id).creator_status = 'conflict'; }
+    else if (instances.get(id).creator_status !== 'conflict') {
+      parent.set(id, ancestor.coroutine_id);
+      if (!parentKinds.has(id) || relation==='created_by') parentKinds.set(id, relation);
+    }
+  };
+  for (const e of graph.edges) {
+    const left = segments.get(e.from), right = segments.get(e.to);
+    if (['coroutine_created_by', 'goroutine_created_by', 'created_by'].includes(e.kind)) setParent(left, right);
+    if (e.kind === 'parent_to_create') setParent(right, left,'recorded_async_parent');
+    if (baseEdges.has(e.kind)) {
+      const old = sampleBase.get(e.to);
+      sampleBase.set(e.to, old && old !== e.from ? null : e.from);
+    }
+  }
+  for (const item of instances.values()) {
+    item.creator_id = parent.get(item.id) || null;
+    item.parent_relation = parentKinds.get(item.id) || null;
+    if (item.creator_id) item.creator_status = 'linked';
+    item.search = [item.id, item.resource_type, ...item.segments.flatMap(id => segments.get(id).frames.map(f => `${f.function} ${f.file || ''}`))].join(' ').toLowerCase();
+  }
+  return {graph, segments, instances, bases, parent, parentKinds, sampleBase};
+}
+
+export function ancestry(index, id) {
+  const ids = [], base_ids = [], seen = new Set(); let current = id;
+  while (current != null) {
+    if (seen.has(current)) return {ids, base_ids, stop: 'cycle', complete: false};
+    seen.add(current);
+    const item = index.instances.get(current);
+    if (!item) return {ids, base_ids, stop: 'unobserved-parent', complete: false};
+    ids.push(current);
+    if (item.base_id != null) base_ids.push(item.base_id);
+    else return {ids, base_ids, stop: 'missing-creation', complete: false};
+    if (!item.creator_id) return {ids, base_ids, stop: item.creator_status, complete: item.creator_status === 'root'};
+    current = item.creator_id;
+  }
+  return {ids, base_ids, stop: 'unknown', complete: false};
+}
+
+export function query(index, {search = '', status = '', resourceType = '', thread = ''} = {}) {
+  const tokens = search.toLowerCase().split(/\s+/).filter(Boolean);
+  index.searchCache ||= new Map();
+  function searchable(item) {
+    if (!index.searchCache.has(item.id)) {
+      const inherited = ancestry(index, item.id).base_ids.flatMap(id => index.segments.get(id).frames
+        .map(f => `${f.function} ${f.file || ''}`)).join(' ');
+      index.searchCache.set(item.id, item.search + ' ' + inherited.toLowerCase());
+    }
+    return index.searchCache.get(item.id);
+  }
+  return [...index.instances.values()].filter(item => tokens.every(t => searchable(item).includes(t)) &&
+    (!status || item.status === status) && (!resourceType || item.resource_type === resourceType) &&
+    (!thread || item.threads.has(thread))).sort((a, b) => b.samples.length - a.samples.length || a.id.localeCompare(b.id));
+}
+
+export function foldedStacks(index, {mode = 'causal', routineIds = null, sampleKind = ''} = {}) {
+  const counts = new Map(), allowed = routineIds && new Set(routineIds);
+  for (const s of index.graph.segments) {
+    if (!samples.has(s.capture_reason) || (allowed && !allowed.has(s.coroutine_id)) ||
+        (sampleKind && s.sample_kind !== sampleKind)) continue;
+    let stack = [];
+    const path = ancestry(index, s.coroutine_id);
+    if (mode === 'causal' && path.base_ids.length) {
+      for (const base of [...path.base_ids].reverse()) {
+        const names = [...index.segments.get(base).frames].reverse().map(f => f.function);
+        if (stack.length && names.length) stack.push(index.parentKinds.get(index.segments.get(base).coroutine_id)==='recorded_async_parent'?'[recorded async parent]':'[created-by]');
+        stack.push(...names);
+      }
+      if (stack.length) stack.push('[creation -> observation]');
+    }
+    stack.push(...[...s.frames].reverse().map(f => f.function));
+    if (!s.coroutine_id && mode === 'causal') stack.unshift('[unattributed]');
+    if (!stack.length) continue;
+    const weight = s.weight ?? 1;
+    if (!Number.isFinite(weight) || weight < 0) throw new Error('Invalid sample weight');
+    const k = JSON.stringify(stack); counts.set(k, (counts.get(k) || 0) + weight);
+  }
+  return [...counts].map(([key, value]) => ({stack: JSON.parse(key), value}));
+}
+export function summary(index) {
+  const observed = index.graph.segments.filter(s => samples.has(s.capture_reason));
+  return {instances: index.instances.size, observations: observed.length,
+    attributed_observations: observed.filter(s => known(s.coroutine_id)).length,
+    creator_links: [...index.instances.values()].filter(s => s.creator_id && s.parent_relation==='created_by').length,
+    recorded_parent_links: [...index.instances.values()].filter(s => s.creator_id).length,
+    open_at_trace_end: [...index.instances.values()].filter(s => s.status === 'open-at-trace-end').length,
+    completed_storage_observed: [...index.instances.values()].filter(s => s.status === 'completed-storage-observed').length,
+    observation_kinds: [...new Set(observed.map(s => s.sample_kind))],
+    diagnostics: index.graph.diagnostics.length, capture_loss: index.graph.capture_loss};
+}
+
+globalThis.COROSTITCH_EMBEDDED_DATA=[{name:"graph.json",data:parseJSON("{\"schema\":\"corostitch.evidence/v1\",\"frame_order\":\"leaf_to_root\",\"producer\":{\"name\":\"standard-runtime-trace-GoCreate-and-state-transitions\",\"identity_kind\":\"native-runtime-goroutine-id\",\"frame_order\":\"leaf_to_root\"},\"clock\":{\"domain\":\"Go-runtime-trace-monotonic\",\"unit\":\"ns\"},\"segments\":[{\"id\":\"0\",\"coroutine_id\":\"go:161\",\"capture_reason\":\"create\",\"timestamp_ns\":\"1884088715740352\",\"frames\":[{\"function\":\"main.startCopy\",\"file\":\"/data1/fzhou/coro/research/github-issue-discovery/go-58628/main.go\",\"line\":29,\"ip\":\"0x4c54f5\"},{\"function\":\"main.submitConsoleMirror\",\"file\":\"/data1/fzhou/coro/research/github-issue-discovery/go-58628/main.go\",\"line\":39,\"ip\":\"0x4c5626\"},{\"function\":\"main.main\",\"file\":\"/data1/fzhou/coro/research/github-issue-discovery/go-58628/main.go\",\"line\":49,\"ip\":\"0x4c58b3\"}],\"process_id\":null,\"thread_id\":null,\"sample_kind\":\"unknown\",\"weight\":1},{\"id\":\"1\",\"coroutine_id\":\"go:161\",\"capture_reason\":\"sample\",\"sample_kind\":\"task_snapshot\",\"timestamp_ns\":\"1884088715852032\",\"wait_duration_ns\":80816448,\"frames\":[{\"function\":\"runtime.selectgo\",\"file\":\"/data1/fzhou/coro/.tools/go1.23.0/go/src/runtime/select.go\",\"line\":335,\"ip\":\"0x4477a4\"},{\"function\":\"io.(*pipe).read\",\"file\":\"/data1/fzhou/coro/.tools/go1.23.0/go/src/io/pipe.go\",\"line\":57,\"ip\":\"0x477f44\"},{\"function\":\"io.(*PipeReader).Read\",\"file\":\"/data1/fzhou/coro/.tools/go1.23.0/go/src/io/pipe.go\",\"line\":134,\"ip\":\"0x478659\"},{\"function\":\"io.copyBuffer\",\"file\":\"/data1/fzhou/coro/.tools/go1.23.0/go/src/io/io.go\",\"line\":429,\"ip\":\"0x477990\"},{\"function\":\"io.Copy\",\"file\":\"/data1/fzhou/coro/.tools/go1.23.0/go/src/io/io.go\",\"line\":388,\"ip\":\"0x4c55cd\"},{\"function\":\"main.startCopy.func1\",\"file\":\"/data1/fzhou/coro/research/github-issue-discovery/go-58628/main.go\",\"line\":31,\"ip\":\"0x4c55a6\"}],\"semantic\":{\"state\":\"Waiting\",\"native_reason\":\"select\",\"block_operation\":\"io.(*pipe).read\"},\"process_id\":null,\"thread_id\":null,\"weight\":1},{\"id\":\"2\",\"coroutine_id\":\"go:161\",\"capture_reason\":\"exit\",\"timestamp_ns\":\"1884088796773888\",\"frames\":[],\"process_id\":null,\"thread_id\":null,\"sample_kind\":\"unknown\",\"weight\":1}],\"edges\":[{\"from_segment_id\":\"0\",\"to_segment_id\":\"1\",\"edge_kind\":\"create_base_to_sample_stack\",\"coroutine_id\":\"go:161\",\"from\":\"0\",\"to\":\"1\",\"kind\":\"create_base_to_sample_stack\"},{\"from_segment_id\":\"1\",\"to_segment_id\":\"2\",\"edge_kind\":\"same_coroutine_exit\",\"coroutine_id\":\"go:161\",\"from\":\"1\",\"to\":\"2\",\"kind\":\"same_coroutine_exit\"}],\"diagnostics\":[],\"capture_loss\":null,\"source_metadata\":{\"scope\":\"One original in-memory pipe copy. No custom Task IDs, patched runtime, sockets or file descriptor measurements.\",\"goroutine_id_evidence\":\"Child reports runtime.Stack goroutine ID; independent all-goroutine snapshot and runtime trace match that ID.\",\"unbounded_lifetime_verified\":false,\"language\":\"go\",\"runtime\":\"go1.23.0\"},\"active_coroutines\":null}")}];
+
+const $=id=>document.getElementById(id);
+const el=(tag,cls='',text='')=>{const node=document.createElement(tag);node.className=cls;node.textContent=text;return node;};
+const datasets=[];let active=null,mode='causal',page=0,matches=[],selected=null,zoom=[],lastFolded=[];
+const pageSize=30;
+const statuses={'open-at-trace-end':'Open at capture end','completed-storage-observed':'Completed · storage observed',closed:'Closed',observed:'Partial observation'};
+const number=value=>Number(value).toLocaleString();
+function notice(value=''){$('notice').textContent=value;}
+function download(name,content,type='text/plain'){
+  const url=URL.createObjectURL(new Blob([content],{type})),a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function friendlyFrame(frame){return frame.display||`${frame.function}${frame.file?` (${frame.file}${frame.line?':'+frame.line:''})`:''}`;}
+function stackText(frames){return frames?.length?[...frames].reverse().map(friendlyFrame).join('\n  ↓\n'):'No stack was recorded at this boundary.';}
+function relative(timestamp){
+  if(timestamp==null||active?.start==null)return 'time not recorded';
+  return `${(Number(BigInt(timestamp)-active.start)/1e6).toFixed(3)} ms`;
+}
+function contextName(item){
+  const seg=active.index.segments.get(item.samples.at(-1)||item.base_id);
+  const frames=seg?.frames||[];
+  return (frames.find(f=>!/^System\.|^node:|^Module\.|^Object\.<anonymous>|^internal\//.test(f.function))||frames[0])?.function||'No captured stack';
+}
+async function importText(text,name,meta={}){
+  const graph=normalizeGraph(parseJSON(text));const index=createIndex(graph);
+  const times=graph.segments.filter(s=>s.timestamp_ns!=null).map(s=>BigInt(s.timestamp_ns));
+  const dataset={id:`capture-${datasets.length+1}`,name,graph,index,meta,start:times.length?times.reduce((a,b)=>a<b?a:b):null};
+  datasets.push(dataset);activate(dataset.id);notice();return dataset;
+}
+function activate(id){
+  active=datasets.find(d=>d.id===id);page=0;selected=null;zoom=[];$('detail').hidden=true;
+  $('query').value='';$('status-filter').value='';$('sampled-only').checked=false;
+  renderDatasets();renderOverview();renderResults();
+}
+function renderDatasets(){
+  $('dataset-count').textContent=String(datasets.length);$('datasets').replaceChildren();
+  for(const dataset of datasets){
+    const button=el('button','dataset-button'+(dataset===active?' active':''),dataset.name);
+    button.append(el('small','',`${number(dataset.index.instances.size)} instances · ${number(summary(dataset.index).observations)} observations`));
+    button.addEventListener('click',()=>activate(dataset.id));$('datasets').append(button);
+  }
+}
+function renderOverview(){
+  if(!active)return;const stats=summary(active.index);
+  $('stat-instances').textContent=number(stats.instances);$('stat-attributed').textContent=`${number(stats.attributed_observations)} / ${number(stats.observations)}`;
+  $('stat-links').textContent=number(stats.recorded_parent_links);$('stat-open').textContent=number(stats.open_at_trace_end);
+  $('dataset-description').textContent=active.meta.description||`${active.name} · ${active.graph.producer.name||active.graph.source_metadata?.backend||'Imported evidence'}`;
+  const storage=active.graph.producer.continuation_storage;
+  $('representation').textContent=storage==='retained-stack'?'Retained logical stack':storage==='stackless-state'?'Stackless continuation':'Storage not declared';
+  const health=$('capture-health');const notes=[];
+  if(stats.capture_loss==null)notes.push('Loss not declared');else if(Number(stats.capture_loss))notes.push(`${number(stats.capture_loss)} dropped records`);else notes.push('No reported loss');
+  if(stats.diagnostics)notes.push(`${number(stats.diagnostics)} evidence notes`);
+  health.textContent=notes.join(' · ');health.className=(stats.diagnostics||stats.capture_loss==null||Number(stats.capture_loss))?'warning':'';
+  health.title=active.graph.diagnostics.slice(0,10).map(d=>JSON.stringify(d)).join('\n');
+  $('flame-description').textContent=`Width counts ${stats.observation_kinds.join(' / ')} observations; creation records add no weight.`;
+  for(const id of ['export-json','export-folded','export-svg'])$(id).disabled=false;
+}
+function renderResults(){
+  if(!active)return;
+  matches=query(active.index,{search:$('query').value,status:$('status-filter').value});
+  if($('sampled-only').checked)matches=matches.filter(item=>item.samples.length);
+  page=Math.min(page,Math.max(0,Math.ceil(matches.length/pageSize)-1));
+  $('result-count').textContent=`${number(matches.length)} / ${number(active.index.instances.size)} instances`;
+  $('instance-rows').replaceChildren();
+  for(const item of matches.slice(page*pageSize,(page+1)*pageSize)){
+    const row=el('tr',selected===item.id?'selected':'');row.dataset.instanceId=item.id;
+    const identity=el('td'),button=el('button','instance-link',item.id);button.addEventListener('click',()=>inspect(item.id));
+    identity.append(button,el('span','context-name',contextName(item)));row.append(identity);
+    const state=el('td');state.append(el('span',`state ${item.status}`,statuses[item.status]||item.status));row.append(state);
+    row.append(el('td','numeric',number(item.samples.length)),el('td','numeric',String(item.threads.size)));
+    row.append(el('td','',item.creator_id?(item.parent_relation==='created_by'?'Recorded creator':'Recorded async parent'):item.creator_status==='root'?'Certified root':`Boundary: ${item.creator_status}`));
+    $('instance-rows').append(row);
+  }
+  $('table-empty').hidden=matches.length>0;$('table-empty').textContent='No instances match this query. Try a function, file, or instance ID.';
+  $('page-label').textContent=matches.length?`${page*pageSize+1}–${Math.min((page+1)*pageSize,matches.length)} of ${number(matches.length)}`:'0 results';
+  $('page-prev').disabled=page===0;$('page-next').disabled=(page+1)*pageSize>=matches.length;
+  zoom=[];renderFlame();
+}
+function inspect(id){
+  const item=active.index.instances.get(id);if(!item)return;selected=id;
+  for(const row of $('instance-rows').children)row.classList.toggle('selected',row.dataset.instanceId===id);
+  $('detail').hidden=false;$('detail-title').textContent=id;
+  $('detail-subtitle').textContent=`${statuses[item.status]||item.status} · ${item.resource_type||'Type not declared'} · ${item.threads.size} observed thread keys · ${item.samples.length} observations`;
+  const path=ancestry(active.index,id);$('ancestry').replaceChildren();
+  for(const ancestor of [...path.ids].reverse()){
+    if($('ancestry').childNodes.length)$('ancestry').append(el('span','','→'));
+    const button=el('button','',ancestor);button.addEventListener('click',()=>inspect(ancestor));$('ancestry').append(button);
+  }
+  $('ancestry').append(el('span','stop',path.complete?'· certified root':`· stops at ${path.stop}`));
+  $('creation-stack').textContent=stackText(active.index.segments.get(item.base_id)?.frames);
+  $('observation-select').replaceChildren();
+  for(const sid of item.samples){
+    const sample=active.index.segments.get(sid),option=el('option','',`${sample.label||sample.sample_kind||'Observation'} · ${relative(sample.timestamp_ns)}`);
+    option.value=sid;$('observation-select').append(option);
+  }
+  $('observation-select').disabled=!item.samples.length;
+  if(item.samples.length)$('observation-select').value=item.samples.at(-1);
+  renderObservation();
+  $('events-summary').textContent=`Lifecycle evidence · ${item.segments.length} records`;$('event-list').replaceChildren();
+  for(const sid of item.segments){
+    const event=active.index.segments.get(sid),row=el('div','event-row');
+    row.append(el('span','',event.capture_reason),el('span','',relative(event.timestamp_ns)),el('span','',`thread ${event.thread_id||'unknown'} · ${event.ownership_evidence||event.label||'recorded boundary'}`));
+    $('event-list').append(row);
+  }
+}
+function renderObservation(){const s=active?.index.segments.get($('observation-select').value);$('current-stack').textContent=stackText(s?.frames);}
+const svgEl=(tag,attrs={})=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));return node;};
+function tree(folded){
+  const root={name:'All matching observations',value:0,children:new Map(),path:[]};
+  for(const row of folded){root.value+=row.value;let at=root;for(const name of row.stack){
+    if(!at.children.has(name))at.children.set(name,{name,value:0,children:new Map(),path:[...at.path,name]});
+    at=at.children.get(name);at.value+=row.value;
+  }}return root;
+}
+function color(name){
+  if(name.startsWith('['))return '#c4dedb';let hash=0;for(const c of name)hash=(hash*31+c.charCodeAt(0))>>>0;
+  return `hsl(${23+hash%25} ${62+hash%14}% ${70+hash%12}%)`;
+}
+function renderFlame(){
+  if(!active)return;
+  const ids=matches.map(item=>item.id);
+  // Preserve thread-only evidence when displaying the complete capture.
+  const all=matches.length===active.index.instances.size&&!$('query').value&&!$('status-filter').value&&!$('sampled-only').checked;
+  lastFolded=foldedStacks(active.index,{mode,routineIds:all?null:ids});
+  if($('hide-runtime').checked)lastFolded=lastFolded.map(row=>{const stack=row.stack.filter(name=>!(/^(?:System\.|runtime\.|node:|internal[/.]|Module\.|Object\.(?:<anonymous>|\.js)|Function\.Module|process\.processTicks|wrapModuleLoad|__libc|_start$)/.test(name)));return {...row,stack:stack.length?stack:['[runtime-only observation]']};});
+  const root=tree(lastFolded);
+  let focus=root;for(const name of zoom){if(!focus.children.has(name)){zoom=[];focus=root;break;}focus=focus.children.get(name);}
+  $('breadcrumbs').replaceChildren();
+  const home=el('button','','All matching observations');home.addEventListener('click',()=>{zoom=[];renderFlame();});$('breadcrumbs').append(home);
+  for(let i=0;i<zoom.length;i++){
+    $('breadcrumbs').append(el('span','','/'));const button=el('button','',zoom[i]);
+    button.addEventListener('click',()=>{zoom=zoom.slice(0,i+1);renderFlame();});$('breadcrumbs').append(button);
+  }
+  $('flame').replaceChildren();$('flame').className='';
+  if(!focus.value){$('flame').className='chart-empty';$('flame').textContent='No stack observations in this selection. Creation and lifecycle records remain available below.';return;}
+  function depth(node){return node.children.size?1+Math.max(...[...node.children.values()].map(depth)):1;}
+  const height=depth(focus)*21+8,width=Math.max(600,$('flame-scroll').clientWidth-24),svg=svgEl('svg',{width,height,viewBox:`0 0 ${width} ${height}`,role:'img','aria-label':`${mode} flamegraph, ${focus.value} observations`});
+  const draw=(node,x,level)=>{
+    const w=node.value/focus.value*width;if(w<.8)return;
+    const y=height-(level+1)*21,group=svgEl('g',{tabindex:'0',role:'button','aria-label':`${node.name}: ${node.value} observations. Zoom.`});
+    const title=svgEl('title');title.textContent=`${node.name}\n${node.value} observations · ${(100*node.value/focus.value).toFixed(1)}% of selection`;
+    group.append(title,svgEl('rect',{x:x+.3,y,width:Math.max(0,w-.6),height:19,rx:1.5,fill:color(node.name)}));
+    if(w>24){const label=svgEl('text',{x:x+5,y:y+13,fill:'#3d352b'}),length=Math.max(0,Math.floor((w-10)/6));label.textContent=node.name.length>length?node.name.slice(0,Math.max(0,length-1))+'…':node.name;group.append(label);}
+    const hint=()=>{$('flame-hover').textContent=`${node.name} · ${node.value} observations · ${(100*node.value/focus.value).toFixed(1)}%`;};
+    const open=()=>{zoom=node.path;renderFlame();};group.addEventListener('mouseenter',hint);group.addEventListener('focus',hint);group.addEventListener('click',open);
+    group.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();open();}});svg.append(group);
+    let childX=x;for(const child of [...node.children.values()].sort((a,b)=>b.value-a.value||a.name.localeCompare(b.name))){draw(child,childX,level+1);childX+=child.value/focus.value*width;}
+  };
+  draw(focus,0,0);$('flame').append(svg);$('flame-scroll').scrollTop=Math.max(0,height-400);
+}
+let debounce;
+$('query').addEventListener('input',()=>{clearTimeout(debounce);debounce=setTimeout(()=>{page=0;renderResults();},100);});
+for(const id of ['status-filter','sampled-only'])$(id).addEventListener('change',()=>{page=0;renderResults();});
+$('page-prev').addEventListener('click',()=>{page--;renderResults();});$('page-next').addEventListener('click',()=>{page++;renderResults();});
+$('observation-select').addEventListener('change',renderObservation);$('detail-close').addEventListener('click',()=>{$('detail').hidden=true;selected=null;});
+for(const kind of ['current','causal'])$('mode-'+kind).addEventListener('click',()=>{
+  mode=kind;zoom=[];for(const value of ['current','causal']){$('mode-'+value).classList.toggle('active',value===mode);$('mode-'+value).setAttribute('aria-pressed',String(value===mode));}renderFlame();
+});
+$('hide-runtime').addEventListener('change',()=>{zoom=[];renderFlame();});
+$('reset-zoom').addEventListener('click',()=>{zoom=[];renderFlame();});
+$('export-json').addEventListener('click',()=>active&&download('coroPerf-graph.json',JSON.stringify(active.graph,null,2),'application/json'));
+$('export-folded').addEventListener('click',()=>download(`coroPerf-${mode}.folded`,lastFolded.map(row=>row.stack.map(s=>s.replaceAll(';',':')).join(';')+' '+row.value).join('\n')+'\n'));
+$('export-svg').addEventListener('click',()=>{const svg=$('flame').querySelector('svg');if(svg)download(`coroPerf-${mode}.svg`,new XMLSerializer().serializeToString(svg),'image/svg+xml');});
+const chooseFiles=()=>$('file-input').click();$('import-top').addEventListener('click',chooseFiles);
+$('dropzone').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();chooseFiles();}});
+async function importFiles(files){for(const file of files)try{await importText(await file.text(),file.name);}catch(error){notice(`Could not import ${file.name}: ${error.message}`);}}
+$('file-input').addEventListener('change',async event=>{await importFiles(event.target.files);event.target.value='';});
+for(const name of ['dragenter','dragover'])$('dropzone').addEventListener(name,event=>{event.preventDefault();$('dropzone').classList.add('dragging');});
+for(const name of ['dragleave','drop'])$('dropzone').addEventListener(name,event=>{event.preventDefault();$('dropzone').classList.remove('dragging');});
+$('dropzone').addEventListener('drop',event=>importFiles(event.dataTransfer.files));
+$('help-open').addEventListener('click',()=>$('help').showModal());$('help-close').addEventListener('click',()=>$('help').close());
+document.addEventListener('keydown',event=>{if(event.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){event.preventDefault();$('query').focus();}});
+let resize;window.addEventListener('resize',()=>{clearTimeout(resize);resize=setTimeout(renderFlame,120);});
+async function loadExample(example){
+  const existing=datasets.find(d=>d.meta.example_id===example.id);if(existing){activate(existing.id);return;}
+  try{const response=await fetch(example.file);if(!response.ok)throw new Error('Example data unavailable');await importText(await response.text(),example.title,{...example,example_id:example.id});}
+  catch(error){notice(error.message);}
+}
+if(globalThis.COROSTITCH_EMBEDDED_DATA){
+  for(const dataset of globalThis.COROSTITCH_EMBEDDED_DATA)try{await importText(JSON.stringify(dataset.data),dataset.name,dataset.meta||{});}catch(error){notice(error.message);}
+}else try{
+  const response=await fetch('demos.json');if(!response.ok)throw new Error('Examples could not be loaded');
+  const examples=await response.json();
+  for(const example of examples){const button=el('button','example-button');button.append(el('span','example-tag',example.tag),el('strong','',example.title),el('small','',example.subtitle));button.addEventListener('click',()=>loadExample(example));$('examples').append(button);}
+  if(examples.length)await loadExample(examples[0]);
+}catch(error){notice(`${error.message}. You can still import a local result.`);}
+</script>
+</body></html>

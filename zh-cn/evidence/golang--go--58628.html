@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="目标关闭后仍在等待读取的 io.Copy goroutine，由谁提交？">
+  <title>golang/go #58628 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/golang--go--58628.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/golang--go--58628.html" lang="en" hreflang="en">English</a><a href="golang--go--58628.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">golang/go #58628</p>
+        <h1>目标关闭后仍在等待读取的 io.Copy goroutine，由谁提交？</h1>
+        <div class="case-links"><a href="https://github.com/golang/go/issues/58628">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>补回调用来源</dd></div>
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Go</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>以原生 goroutine ID 连接标准 runtime 的创建与阻塞读取事件，恢复 goroutine dump 缺少的历史提交入口。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 1 · 挂起 80.8 毫秒</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 1 · task_snapshot</span></div><ol class="frames"><li><code>main.startCopy.func1</code><span>main.go:31</span></li><li><code>io.Copy</code><span>io.go:388</span></li><li><code>io.copyBuffer</code><span>io.go:429</span></li><li><code>io.(*PipeReader).Read</code><span>pipe.go:134</span></li><li><code>io.(*pipe).read</code><span>pipe.go:57</span></li><li><code>runtime.selectgo</code><span>select.go:335</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 1 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 1 · task_snapshot</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>main.startCopy.func1</code><span>main.go:31</span></li><li><code>io.Copy</code><span>io.go:388</span></li><li><code>io.copyBuffer</code><span>io.go:429</span></li><li><code>io.(*PipeReader).Read</code><span>pipe.go:134</span></li><li><code>io.(*pipe).read</code><span>pipe.go:57</span></li><li><code>runtime.selectgo</code><span>select.go:335</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">记录 1</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>main.main</code><span>main.go:49</span></li><li><code>main.submitConsoleMirror</code><span>main.go:39</span></li><li><code>main.startCopy</code><span>main.go:29</span></li></ol></section>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>Go 1.23.0 的一次检查使用原报告的两个 io.Pipe 和 io.Copy。关闭目标写端后，复制在 80 毫秒观察窗口内未返回；goroutine 161 仍阻塞于 pipe read。原生 dump 只有直接创建者 startCopy，没有 submitConsoleMirror。正常清理时关闭自有源端，使这同一次运行结束，进程退出 0。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>标准 runtime trace 记录真实 goroutine 的诞生及完整创建栈、pipe read 等待转换和最终退出。子 goroutine 自报的原生 ID 与独立全 goroutine 快照都匹配 trace 中的 161。CoroPerf 将创建记录接到阻塞栈，恢复 submitConsoleMirror；原生等待区间约 80.82 毫秒。创建来源原本就存在于 runtime trace，CoroPerf 提供统一身份关联及合并视图。</dd></div><div><dt>适用范围与局限</dt><dd>这是加入具名提交辅助函数的原始进程内管道示例，只有一次有界观察；不证明无限存活、socket 或描述符泄漏、Docker 集成问题或 runtime 缺陷。只执行一次传输。关闭源端属于结束同一次运行的清理，没有替代实现、重复传输、多版本或修复验证。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

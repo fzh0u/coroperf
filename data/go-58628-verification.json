@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-26T06:50:09.606446+00:00",
+  "case": {
+    "id": "golang--go--58628",
+    "repo": "golang/go",
+    "issue": 58628,
+    "url": "https://github.com/golang/go/issues/58628",
+    "upstream_reference": "https://github.com/golang/go/issues/58628",
+    "title": "Who submitted the io.Copy goroutine still waiting after destination close?",
+    "title_zh": "目标关闭后仍在等待读取的 io.Copy goroutine，由谁提交？",
+    "verified_on": "2026-11-26",
+    "reproduction": "Component reproduced",
+    "diagnosis": "Direct",
+    "graph": "perf-out/github-issue-discovery/automatic/go-58628-first-check-20261126/analysis/graph.json",
+    "findings": {
+      "observation": "One Go 1.23.0 check uses the original two io.Pipe objects and io.Copy. Closing the destination writer does not return the copy within an 80ms observation. Goroutine 161 remains in pipe read; its native dump shows the immediate startCopy creator but omits submitConsoleMirror. Closing the owned source during normal cleanup ends this same run, with process exit 0.",
+      "interpretation": "Standard runtime trace records the real goroutine birth with its full creator stack, a pipe-read waiting transition, and eventual exit. The native child-reported ID and independent all-goroutine snapshot both match trace goroutine 161. CoroPerf joins the creation to the blocked stack and exposes submitConsoleMirror. The measured native waiting interval is about 80.82ms. The source information already exists in runtime trace; CoroPerf supplies the normalized identity join and combined view.",
+      "limits": "This is the upstream in-memory pipe example with named submission helpers and one bounded observation. It does not prove infinite lifetime, socket or descriptor retention, Docker integration, or a runtime defect. Only one transfer ran. Source cleanup is part of ending that same run; no alternative implementation, repeated transfer, version matrix or fix validation ran."
+    },
+    "symptom_zh": "Go 1.23.0 的一次检查使用原报告的两个 io.Pipe 和 io.Copy。关闭目标写端后，复制在 80 毫秒观察窗口内未返回；goroutine 161 仍阻塞于 pipe read。原生 dump 只有直接创建者 startCopy，没有 submitConsoleMirror。正常清理时关闭自有源端，使这同一次运行结束，进程退出 0。",
+    "reasoning_zh": "标准 runtime trace 记录真实 goroutine 的诞生及完整创建栈、pipe read 等待转换和最终退出。子 goroutine 自报的原生 ID 与独立全 goroutine 快照都匹配 trace 中的 161。CoroPerf 将创建记录接到阻塞栈，恢复 submitConsoleMirror；原生等待区间约 80.82 毫秒。创建来源原本就存在于 runtime trace，CoroPerf 提供统一身份关联及合并视图。",
+    "limits_zh": "这是加入具名提交辅助函数的原始进程内管道示例，只有一次有界观察；不证明无限存活、socket 或描述符泄漏、Docker 集成问题或 runtime 缺陷。只执行一次传输。关闭源端属于结束同一次运行的清理，没有替代实现、重复传输、多版本或修复验证。"
+  },
+  "verification": {
+    "issue_url": "https://github.com/golang/go/issues/58628",
+    "successful_component_runs": 1,
+    "go": "go1.23.0",
+    "exit_code": 0,
+    "first_check_seconds": 60.00663638114929,
+    "goroutine_id": 161,
+    "observation_ms": 80,
+    "native_wait_duration_ns": 80816448,
+    "copy_returned_after_destination_close": false,
+    "cleanup_completed": true,
+    "runtime_creation_observed": true,
+    "independent_snapshot_matches": true,
+    "historical_creator_absent_from_native_snapshot": true,
+    "recovered_creator": "main.submitConsoleMirror",
+    "native_snapshot": "goroutine 161 [select]:\nio.(*pipe).read(0xc0001cc1e0, {0xc000680000, 0x8000, 0x1?})\n\t/data1/fzhou/coro/.tools/go1.23.0/go/src/io/pipe.go:57 +0xa5\nio.(*PipeReader).Read(0x5b7560?, {0xc000680000?, 0x60?, 0xc0001da680?})\n\t/data1/fzhou/coro/.tools/go1.23.0/go/src/io/pipe.go:134 +0x1a\nio.copyBuffer({0x519388, 0xc0001cc240}, {0x5193a8, 0xc0001cc1e0}, {0x0, 0x0, 0x0})\n\t/data1/fzhou/coro/.tools/go1.23.0/go/src/io/io.go:429 +0x191\nio.Copy(...)\n\t/data1/fzhou/coro/.tools/go1.23.0/go/src/io/io.go:388\nmain.startCopy.func1()\n\t/data1/fzhou/coro/research/github-issue-discovery/go-58628/main.go:31 +0x8e\ncreated by main.startCopy in goroutine 1\n\t/data1/fzhou/coro/research/github-issue-discovery/go-58628/main.go:29 +0xd6\n",
+    "limitations": [
+      "The finite 80ms observation confirms a blocked copy, not an infinite lifetime.",
+      "In-memory io.Pipe example only; no network client, container integration or FD lifetime was measured.",
+      "Normal source-reader cleanup ends this same run; no alternative implementation, repeated transfer or runtime fix was tested."
+    ],
+    "artifact_sha256": {
+      "main.go": "6f55caded61faad9c83836f497fd2dc2631cf04e3d9f4f9ce0f7c3356c89d1e8",
+      "runtime.trace": "43e7d0cae21d1e1f9149a6d4d57fbcc3777b94c228d8a0b100491f165325fe73",
+      "trace.txt": "5ff93713b215c9a73b4922bc11043e707144f07d16d255bf5a959e395c0cc024",
+      "blocked-goroutines.txt": "a8fae1d3f4eeb453fb3e7f29418d1d9af5d21e9141db8de659465c33c3eec11a",
+      "stdout.json": "a4a18301532f90e86bada3dfbc859dd3c0838cd36315f5ecd5f6c153354dff67",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "first-check.json": "64abc149b20976a8b05aebdef81dfd4a46d6066974a32463ef6579960370cb94"
+    },
+    "coroperf_creator_recovered": true
+  },
+  "native_result": {
+    "cleanup_completed": true,
+    "copy_returned_after_destination_close": false,
+    "destination_closed": true,
+    "go": "go1.23.0",
+    "goroutine_id": 161,
+    "observation_ms": 80,
+    "scope": "One in-memory pipe Copy from the upstream example; no sockets or file-descriptor lifetime claim.",
+    "workload_runs": 1
+  },
+  "capture": {
+    "schema_version": 1,
+    "language": "go",
+    "runtime": "go1.23.0",
+    "frame_order": "leaf_to_root",
+    "producer": {
+      "name": "standard-runtime-trace-GoCreate-and-state-transitions",
+      "identity_kind": "native-runtime-goroutine-id",
+      "frame_order": "leaf_to_root"
+    },
+    "clock": {
+      "domain": "Go-runtime-trace-monotonic",
+      "unit": "ns"
+    },
+    "source_metadata": {
+      "scope": "One original in-memory pipe copy. No custom Task IDs, patched runtime, sockets or file descriptor measurements.",
+      "goroutine_id_evidence": "Child reports runtime.Stack goroutine ID; independent all-goroutine snapshot and runtime trace match that ID.",
+      "unbounded_lifetime_verified": false
+    },
+    "segments": [
+      {
+        "id": "0",
+        "coroutine_id": "go:161",
+        "capture_reason": "create",
+        "timestamp_ns": "1884088715740352",
+        "frames": [
+          {
+            "function": "main.startCopy",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/go-58628/main.go",
+            "line": 29,
+            "ip": "0x4c54f5"
+          },
+          {
+            "function": "main.submitConsoleMirror",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/go-58628/main.go",
+            "line": 39,
+            "ip": "0x4c5626"
+          },
+          {
+            "function": "main.main",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/go-58628/main.go",
+            "line": 49,
+            "ip": "0x4c58b3"
+          }
+        ]
+      },
+      {
+        "id": "1",
+        "coroutine_id": "go:161",
+        "capture_reason": "sample",
+        "sample_kind": "task_snapshot",
+        "timestamp_ns": "1884088715852032",
+        "wait_duration_ns": 80816448,
+        "frames": [
+          {
+            "function": "runtime.selectgo",
+            "file": "/data1/fzhou/coro/.tools/go1.23.0/go/src/runtime/select.go",
+            "line": 335,
+            "ip": "0x4477a4"
+          },
+          {
+            "function": "io.(*pipe).read",
+            "file": "/data1/fzhou/coro/.tools/go1.23.0/go/src/io/pipe.go",
+            "line": 57,
+            "ip": "0x477f44"
+          },
+          {
+            "function": "io.(*PipeReader).Read",
+            "file": "/data1/fzhou/coro/.tools/go1.23.0/go/src/io/pipe.go",
+            "line": 134,
+            "ip": "0x478659"
+          },
+          {
+            "function": "io.copyBuffer",
+            "file": "/data1/fzhou/coro/.tools/go1.23.0/go/src/io/io.go",
+            "line": 429,
+            "ip": "0x477990"
+          },
+          {
+            "function": "io.Copy",
+            "file": "/data1/fzhou/coro/.tools/go1.23.0/go/src/io/io.go",
+            "line": 388,
+            "ip": "0x4c55cd"
+          },
+          {
+            "function": "main.startCopy.func1",
+            "file": "/data1/fzhou/coro/research/github-issue-discovery/go-58628/main.go",
+            "line": 31,
+            "ip": "0x4c55a6"
+          }
+        ],
+        "semantic": {
+          "state": "Waiting",
+          "native_reason": "select",
+          "block_operation": "io.(*pipe).read"
+        }
+      },
+      {
+        "id": "2",
+        "coroutine_id": "go:161",
+        "capture_reason": "exit",
+        "timestamp_ns": "1884088796773888",
+        "frames": []
+      }
+    ],
+    "edges": [
+      {
+        "from_segment_id": "0",
+        "to_segment_id": "1",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "go:161"
+      },
+      {
+        "from_segment_id": "1",
+        "to_segment_id": "2",
+        "edge_kind": "same_coroutine_exit",
+        "coroutine_id": "go:161"
+      }
+    ]
+  }
+}

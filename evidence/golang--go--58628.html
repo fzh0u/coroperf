@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Who submitted the io.Copy goroutine still waiting after destination close?">
+  <title>golang/go #58628 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/golang--go--58628.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="golang--go--58628.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/golang--go--58628.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">golang/go #58628</p>
+        <h1>Who submitted the io.Copy goroutine still waiting after destination close?</h1>
+        <div class="case-links"><a href="https://github.com/golang/go/issues/58628">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Caller recovery</dd></div>
+          <div><dt>Issue type</dt><dd>Debugging and missing stacks</dd></div>
+          <div><dt>Upstream status</dt><dd>Open</dd></div>
+          <div><dt>Fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>Go</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Join standard runtime goroutine birth and blocked-read events using the native goroutine ID, recovering the historical submission entry missing from the goroutine dump.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 1 · Suspended for 80.8 ms</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 1 · task_snapshot</span></div><ol class="frames"><li><code>main.startCopy.func1</code><span>main.go:31</span></li><li><code>io.Copy</code><span>io.go:388</span></li><li><code>io.copyBuffer</code><span>io.go:429</span></li><li><code>io.(*PipeReader).Read</code><span>pipe.go:134</span></li><li><code>io.(*pipe).read</code><span>pipe.go:57</span></li><li><code>runtime.selectgo</code><span>select.go:335</span></li></ol></section>
+          <p class="small trace-note">Frames from record 1 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-1">Join point 1 <code>1 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-1"><div class="stack-head"><h4>Observed task stack</h4><span>Record 1 · task_snapshot</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>main.startCopy.func1</code><span>main.go:31</span></li><li><code>io.Copy</code><span>io.go:388</span></li><li><code>io.copyBuffer</code><span>io.go:429</span></li><li><code>io.(*PipeReader).Read</code><span>pipe.go:134</span></li><li><code>io.(*pipe).read</code><span>pipe.go:57</span></li><li><code>runtime.selectgo</code><span>select.go:335</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-1">Record 1</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+
+          <p class="join-verification">Graph edge <code>create_base_to_sample_stack · 0 → 1</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>main.main</code><span>main.go:49</span></li><li><code>main.submitConsoleMirror</code><span>main.go:39</span></li><li><code>main.startCopy</code><span>main.go:29</span></li></ol></section>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>One Go 1.23.0 check uses the original two io.Pipe objects and io.Copy. Closing the destination writer does not return the copy within an 80ms observation. Goroutine 161 remains in pipe read; its native dump shows the immediate startCopy creator but omits submitConsoleMirror. Closing the owned source during normal cleanup ends this same run, with process exit 0.</dd></div><div><dt>What CoroPerf showed</dt><dd>Standard runtime trace records the real goroutine birth with its full creator stack, a pipe-read waiting transition, and eventual exit. The native child-reported ID and independent all-goroutine snapshot both match trace goroutine 161. CoroPerf joins the creation to the blocked stack and exposes submitConsoleMirror. The measured native waiting interval is about 80.82ms. The source information already exists in runtime trace; CoroPerf supplies the normalized identity join and combined view.</dd></div><div><dt>Scope and limits</dt><dd>This is the upstream in-memory pipe example with named submission helpers and one bounded observation. It does not prove infinite lifetime, socket or descriptor retention, Docker integration, or a runtime defect. Only one transfer ran. Source cleanup is part of ending that same run; no alternative implementation, repeated transfer, version matrix or fix validation ran.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
