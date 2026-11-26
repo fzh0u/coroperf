@@ -17,10 +17,10 @@
     "excluded_after_review": 41,
     "needs_review": 840,
     "skipped_review": 185,
-    "external_environment_required": 11,
+    "external_environment_required": 10,
     "already_catalogued": 8,
     "component_reproduced": 3,
-    "verified_case": 6
+    "verified_case": 7
   },
   "coverage": [
     {
@@ -31215,8 +31215,8 @@
       "async_signal": true,
       "observed_at": "2026-11-26T08:08:44+00:00",
       "heat": 10.1712,
-      "status": "external_environment_required",
-      "reason": "Report identifies finite idle socket timeout, readFromCopy unlock and subsequent inactive-COPY write; the native trace already has processRecords. Potential increment is tying the same real CopyDual/stream and asynchronous owner to earlier timeout and later state failure, not locating the already-known root cause.",
+      "status": "verified_case",
+      "reason": "One PgJDBC42.7.13/JDK21.0.1 idle logical-replication read on private PostgreSQL17.1/test_decoding throws PSQLException55000: Tried to write to an inactive copy operation. The status interval is configured to3000ms and the stream reports closed. Target and JDI collector exit0; server shutdown is logged. Source review, artifact preparation, build and execution take166.89s. CoroPerf joins the actual FutureTask constructor object1133 to four later diagnostic observations, recovering startChangefeed absent from the native/current exception stack. An explicit JDI resource observer binds that Task to stream1183 and CopyDual1184, independently checked against application-held Task/stream references. The same operation appears in the SocketTimeoutException, unlock entry, wrapped read failure and subsequent inactive-COPY failure. Seven timeout records are rethrows of one exception object1196, not seven timeouts. The source already documents the root cause; the additional evidence is historical ownership and the same-operation event sequence. The logical output plugin is test_decoding rather than wal2json, within the report explicitly described as plugin-agnostic. A real idle logical stream and unmodified42.7.13 driver are used, not physical replication or a thrown-error stand-in. A single controlled FutureTask supplies the component submission context; startChangefeed is its helper, not an original application registration. Resource identity requires the explicitly added observer and is not inferred from Task ancestry. Event-record order is captured, not physical timestamps; unlock is observed at entry, not exit. No duration, uninstrumented timing, alternate driver/plugin/interval or fix validation is claimed. Only one successful read workload ran.",
       "query_kinds": [
         "recent"
       ]
@@ -51308,15 +51308,14 @@
       "coroperf_captures": 0
     },
     "pgjdbc--pgjdbc--4328": {
-      "status": "external_environment_required",
-      "reason": "Report identifies finite idle socket timeout, readFromCopy unlock and subsequent inactive-COPY write; the native trace already has processRecords. Potential increment is tying the same real CopyDual/stream and asynchronous owner to earlier timeout and later state failure, not locating the already-known root cause.",
-      "reason_zh": "来源已明确定位正常空闲超时导致 COPY unlock、下一次状态更新报失活，原生栈也已有 processRecords。潜在工具增量是把同一个 CopyDual/stream、异步所属任务、早先超时与稍后失败关联起来；不是重新宣称发现已知根因。匹配驱动和忠实逻辑复制环境尚未准备，未运行。",
+      "status": "verified_case",
+      "reason": "One PgJDBC42.7.13/JDK21.0.1 idle logical-replication read on private PostgreSQL17.1/test_decoding throws PSQLException55000: Tried to write to an inactive copy operation. The status interval is configured to3000ms and the stream reports closed. Target and JDI collector exit0; server shutdown is logged. Source review, artifact preparation, build and execution take166.89s. CoroPerf joins the actual FutureTask constructor object1133 to four later diagnostic observations, recovering startChangefeed absent from the native/current exception stack. An explicit JDI resource observer binds that Task to stream1183 and CopyDual1184, independently checked against application-held Task/stream references. The same operation appears in the SocketTimeoutException, unlock entry, wrapped read failure and subsequent inactive-COPY failure. Seven timeout records are rethrows of one exception object1196, not seven timeouts. The source already documents the root cause; the additional evidence is historical ownership and the same-operation event sequence. The logical output plugin is test_decoding rather than wal2json, within the report explicitly described as plugin-agnostic. A real idle logical stream and unmodified42.7.13 driver are used, not physical replication or a thrown-error stand-in. A single controlled FutureTask supplies the component submission context; startChangefeed is its helper, not an original application registration. Resource identity requires the explicitly added observer and is not inferred from Task ancestry. Event-record order is captured, not physical timestamps; unlock is observed at entry, not exit. No duration, uninstrumented timing, alternate driver/plugin/interval or fix validation is claimed. Only one successful read workload ran.",
+      "reason_zh": "PgJDBC42.7.13/JDK21.0.1 对私有 PostgreSQL17.1/test_decoding 的一次真实空闲逻辑复制读取，抛出 SQLSTATE55000 的 PSQLException：Tried to write to an inactive copy operation。状态间隔配置为3000毫秒，复制流报告已关闭。目标和 JDI 采集器均退出0，数据库日志确认关闭；源码、制品、构建与运行共166.89秒。CoroPerf 将真实 FutureTask 构造对象1133 接到四个后续诊断观察，恢复原生异常栈缺少的 startChangefeed 提交入口。明确增加的 JDI 资源观察把该任务绑定到 stream1183 与 CopyDual1184，并用应用实际持有的 Task/stream 引用独立核对。同一 COPY 出现在 SocketTimeoutException、unlock 入口、包装后的读取错误和随后失活错误中。七条超时记录是异常对象1196 的重抛，并非七次超时。来源已说明根因，新增证据是历史所属任务及同一操作的事件顺序。使用 test_decoding 替代 wal2json，仍在报告明确声明插件无关的逻辑复制场景内。真实空闲逻辑流与未修改的42.7.13驱动运行，没有物理复制或手工抛错替代。一个真实 FutureTask 提供组件提交上下文，startChangefeed 是辅助入口，不是原始应用注册点。资源身份依赖额外观察，不能从 Task 祖先关系推断。仅有记录顺序，无物理事件时间戳；unlock 观察在入口而非出口。不声称耗时、无采集器时序、多版本、插件、间隔或修复验证。成功读取工作负载只有一次。",
       "sources": [
         "https://github.com/pgjdbc/pgjdbc/issues/4328"
       ],
-      "reviewed_at": "2026-11-26T08:37:06.444393+00:00",
-      "target_workloads": 0,
-      "coroperf_captures": 0
+      "reviewed_at": "2026-11-26T08:47:37.487537+00:00",
+      "successful_component_runs": 1
     },
     "boostorg--asio--79": {
       "status": "excluded_after_review",
@@ -51916,6 +51915,15 @@
       "summary_zh": "Asio278/boost79 是同一已说明的 executor 擦除问题，未建立独立 caller 恢复增量。Tokio4206 是 console 晚于 main Task 创建导致父上下文缺失。PgJDBC4328 保留为条件性操作生命周期线索：需关联同一 COPY 的超时与后续失败，匹配逻辑复制环境未准备。仅来源审阅，未运行负载，不新增精选案例。",
       "path": "evidence/existing-language-screen-b7.html",
       "checked_at": "2026-11-26T08:37:06.444393+00:00"
+    },
+    {
+      "id": "pgjdbc-4328-verified-b8-20261126",
+      "title": "PgJDBC idle logical replication: verified Task/COPY error history",
+      "title_zh": "PgJDBC 空闲逻辑复制：已验证 Task/COPY 错误历史",
+      "summary": "One unmodified42.7.13 logical read produces native inactive-COPY failure. Actual FutureTask1133, stream1183 and CopyDual1184 connect timeout, unlock entry and final failure; application identities independently match. CoroPerf restores startChangefeed. Exit0,166.89s total,no replay; rethrows deduplicated and physical event timing unavailable.",
+      "summary_zh": "未修改42.7.13的一次真实逻辑读取得到原生 COPY 失活错误。实际 FutureTask1133、stream1183、CopyDual1184 关联超时、unlock 入口与最终失败，应用引用身份独立匹配。CoroPerf 恢复 startChangefeed；退出0、总166.89秒、无重跑，异常重抛已去重，无物理事件时刻。",
+      "path": "evidence/pgjdbc-4328-report.html",
+      "checked_at": "2026-11-26T08:47:37.487537+00:00"
     }
   ],
   "deferred_registry": [
@@ -63787,13 +63795,15 @@
     "previous_observed_at": "2026-11-26T06:13:13+00:00",
     "comparable_window": false
   },
-  "ledger_refreshed_at": "2026-11-26T08:37:40+00:00",
+  "ledger_refreshed_at": "2026-11-26T08:49:00+00:00",
   "progress_summary": {
     "source": "report_update",
-    "assembled_at": "2026-11-26T08:37:40+00:00",
+    "assembled_at": "2026-11-26T08:49:00+00:00",
     "comparison_reported_at": "2026-11-26T08:24:08+00:00",
-    "verified_catalogue_entries": 132,
-    "new_verified_ids": [],
+    "verified_catalogue_entries": 133,
+    "new_verified_ids": [
+      "pgjdbc--pgjdbc--4328"
+    ],
     "review_decisions": 231,
     "new_review_decision_ids": [
       "boostorg--asio--79",

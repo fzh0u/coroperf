@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="空闲超时后失活的 COPY，属于哪个复制提交任务？">
+  <title>pgjdbc/pgjdbc #4328 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/pgjdbc--pgjdbc--4328.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/pgjdbc--pgjdbc--4328.html" lang="en" hreflang="en">English</a><a href="pgjdbc--pgjdbc--4328.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">pgjdbc/pgjdbc #4328</p>
+        <h1>空闲超时后失活的 COPY，属于哪个复制提交任务？</h1>
+        <div class="case-links"><a href="https://github.com/pgjdbc/pgjdbc/issues/4328">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>补回调用来源</dd></div>
+          <div><dt>问题类型</dt><dd>调试与调用栈缺失</dd></div>
+          <div><dt>上游状态</dt><dd>开放</dd></div>
+          <div><dt>修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Java</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>恢复真实 FutureTask 提交入口，并结合明确增加的同一 COPY 身份观察，连接早先超时与后续操作失活。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 2</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2 · exception_traceback</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.lang.Thread.runWith</code><span>Thread.java:1596</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay.processRecords</code><span>ReplicationReplay.java:10</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.read</code><span>V3PGReplicationStream.java:78</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal</code><span>V3PGReplicationStream.java:130</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData</code><span>V3PGReplicationStream.java:165</span></li><li><code>org.postgresql.core.v3.CopyDualImpl.readFromCopy</code><span>CopyDualImpl.java:49</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.readFromCopy</code><span>QueryExecutorImpl.java:1361</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.processCopyResults</code><span>QueryExecutorImpl.java:1429</span></li><li><code>org.postgresql.core.PGStream.receiveChar</code><span>PGStream.java:480</span></li><li><code>org.postgresql.core.VisibleBufferedInputStream.read</code><span>VisibleBufferedInputStream.java:76</span></li><li><code>org.postgresql.core.VisibleBufferedInputStream.ensureBytes</code><span>VisibleBufferedInputStream.java:144</span></li><li><code>org.postgresql.core.VisibleBufferedInputStream.ensureBytes</code><span>VisibleBufferedInputStream.java:159</span></li><li><code>org.postgresql.core.VisibleBufferedInputStream.readMore</code><span>VisibleBufferedInputStream.java:192</span></li><li><code>java.net.Socket$SocketInputStream.read</code><span>Socket.java:1099</span></li><li><code>sun.nio.ch.NioSocketImpl$1.read</code><span>NioSocketImpl.java:796</span></li><li><code>sun.nio.ch.NioSocketImpl.read</code><span>NioSocketImpl.java:346</span></li><li><code>sun.nio.ch.NioSocketImpl.implRead</code><span>NioSocketImpl.java:304</span></li><li><code>sun.nio.ch.NioSocketImpl.timedRead</code><span>NioSocketImpl.java:278</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 2 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-1">拼接点 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-2"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 2 · exception_traceback</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.lang.Thread.runWith</code><span>Thread.java:1596</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay.processRecords</code><span>ReplicationReplay.java:10</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.read</code><span>V3PGReplicationStream.java:78</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal</code><span>V3PGReplicationStream.java:130</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData</code><span>V3PGReplicationStream.java:165</span></li><li><code>org.postgresql.core.v3.CopyDualImpl.readFromCopy</code><span>CopyDualImpl.java:49</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.readFromCopy</code><span>QueryExecutorImpl.java:1361</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.processCopyResults</code><span>QueryExecutorImpl.java:1429</span></li><li><code>org.postgresql.core.PGStream.receiveChar</code><span>PGStream.java:480</span></li><li><code>org.postgresql.core.VisibleBufferedInputStream.read</code><span>VisibleBufferedInputStream.java:76</span></li><li><code>org.postgresql.core.VisibleBufferedInputStream.ensureBytes</code><span>VisibleBufferedInputStream.java:144</span></li><li><code>org.postgresql.core.VisibleBufferedInputStream.ensureBytes</code><span>VisibleBufferedInputStream.java:159</span></li><li><code>org.postgresql.core.VisibleBufferedInputStream.readMore</code><span>VisibleBufferedInputStream.java:192</span></li><li><code>java.net.Socket$SocketInputStream.read</code><span>Socket.java:1099</span></li><li><code>sun.nio.ch.NioSocketImpl$1.read</code><span>NioSocketImpl.java:796</span></li><li><code>sun.nio.ch.NioSocketImpl.read</code><span>NioSocketImpl.java:346</span></li><li><code>sun.nio.ch.NioSocketImpl.implRead</code><span>NioSocketImpl.java:304</span></li><li><code>sun.nio.ch.NioSocketImpl.timedRead</code><span>NioSocketImpl.java:278</span></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 2</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>ReplicationReplay.main</code><span>ReplicationReplay.java:15</span></li><li><code>ReplicationReplay.startChangefeed</code><span>ReplicationReplay.java:5</span></li><li><code>java.util.concurrent.FutureTask.&lt;init&gt;</code><span>FutureTask.java:137</span></li></ol></section>
+        </div>
+      </div><details class="extra more-trace"><summary>观测记录 3</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3 · unlock_entry</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.lang.Thread.runWith</code><span>Thread.java:1596</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay.processRecords</code><span>ReplicationReplay.java:10</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.read</code><span>V3PGReplicationStream.java:78</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal</code><span>V3PGReplicationStream.java:130</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData</code><span>V3PGReplicationStream.java:165</span></li><li><code>org.postgresql.core.v3.CopyDualImpl.readFromCopy</code><span>CopyDualImpl.java:49</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.readFromCopy</code><span>QueryExecutorImpl.java:1366</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.unlock</code><span>QueryExecutorImpl.java:296</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 3 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-2-point-1">拼接点 1 <code>3 → 0</code></a></nav>
+          <section class="stack observed" id="join-2-record-3"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 3 · unlock_entry</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.lang.Thread.runWith</code><span>Thread.java:1596</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay.processRecords</code><span>ReplicationReplay.java:10</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.read</code><span>V3PGReplicationStream.java:78</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal</code><span>V3PGReplicationStream.java:130</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData</code><span>V3PGReplicationStream.java:165</span></li><li><code>org.postgresql.core.v3.CopyDualImpl.readFromCopy</code><span>CopyDualImpl.java:49</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.readFromCopy</code><span>QueryExecutorImpl.java:1366</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.unlock</code><span>QueryExecutorImpl.java:296</span></li></ol></section>
+        <aside class="join-marker" id="join-2-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-2-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-2-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-2-record-3">记录 3</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 3</code></p>
+        </aside><section class="stack " id="join-2-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>ReplicationReplay.main</code><span>ReplicationReplay.java:15</span></li><li><code>ReplicationReplay.startChangefeed</code><span>ReplicationReplay.java:5</span></li><li><code>java.util.concurrent.FutureTask.&lt;init&gt;</code><span>FutureTask.java:137</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 4</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · exception_traceback</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.lang.Thread.runWith</code><span>Thread.java:1596</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay.processRecords</code><span>ReplicationReplay.java:10</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.read</code><span>V3PGReplicationStream.java:78</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal</code><span>V3PGReplicationStream.java:130</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData</code><span>V3PGReplicationStream.java:165</span></li><li><code>org.postgresql.core.v3.CopyDualImpl.readFromCopy</code><span>CopyDualImpl.java:49</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.readFromCopy</code><span>QueryExecutorImpl.java:1368</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-3-point-1">拼接点 1 <code>4 → 0</code></a></nav>
+          <section class="stack observed" id="join-3-record-4"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 4 · exception_traceback</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.lang.Thread.runWith</code><span>Thread.java:1596</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay.processRecords</code><span>ReplicationReplay.java:10</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.read</code><span>V3PGReplicationStream.java:78</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal</code><span>V3PGReplicationStream.java:130</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData</code><span>V3PGReplicationStream.java:165</span></li><li><code>org.postgresql.core.v3.CopyDualImpl.readFromCopy</code><span>CopyDualImpl.java:49</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.readFromCopy</code><span>QueryExecutorImpl.java:1368</span></li></ol></section>
+        <aside class="join-marker" id="join-3-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-3-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-3-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-3-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 4</code></p>
+        </aside><section class="stack " id="join-3-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>ReplicationReplay.main</code><span>ReplicationReplay.java:15</span></li><li><code>ReplicationReplay.startChangefeed</code><span>ReplicationReplay.java:5</span></li><li><code>java.util.concurrent.FutureTask.&lt;init&gt;</code><span>FutureTask.java:137</span></li></ol></section>
+        </div>
+      </div></details><details class="extra more-trace"><summary>观测记录 5</summary>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始物理调用栈</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5 · exception_traceback</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.lang.Thread.runWith</code><span>Thread.java:1596</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay.processRecords</code><span>ReplicationReplay.java:10</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.read</code><span>V3PGReplicationStream.java:78</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal</code><span>V3PGReplicationStream.java:133</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.timeUpdateStatus</code><span>V3PGReplicationStream.java:191</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.updateStatusInternal</code><span>V3PGReplicationStream.java:199</span></li><li><code>org.postgresql.core.v3.CopyDualImpl.writeToCopy</code><span>CopyDualImpl.java:23</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.writeToCopy</code><span>QueryExecutorImpl.java:1273</span></li></ol></section>
+          <p class="small trace-note">这里只显示记录 5 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-4-point-1">拼接点 1 <code>5 → 0</code></a></nav>
+          <section class="stack observed" id="join-4-record-5"><div class="stack-head"><h4>观测到的执行物理栈</h4><span>记录 5 · exception_traceback</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>java.lang.Thread.run</code><span>Thread.java:1583</span></li><li><code>java.lang.Thread.runWith</code><span>Thread.java:1596</span></li><li><code>java.util.concurrent.ThreadPoolExecutor$Worker.run</code><span>ThreadPoolExecutor.java:642</span></li><li><code>java.util.concurrent.ThreadPoolExecutor.runWorker</code><span>ThreadPoolExecutor.java:1144</span></li><li><code>java.util.concurrent.FutureTask.run</code><span>FutureTask.java:317</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay$Reader.call</code><span>ReplicationReplay.java:4</span></li><li><code>ReplicationReplay.processRecords</code><span>ReplicationReplay.java:10</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.read</code><span>V3PGReplicationStream.java:78</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal</code><span>V3PGReplicationStream.java:133</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.timeUpdateStatus</code><span>V3PGReplicationStream.java:191</span></li><li><code>org.postgresql.core.v3.replication.V3PGReplicationStream.updateStatusInternal</code><span>V3PGReplicationStream.java:199</span></li><li><code>org.postgresql.core.v3.CopyDualImpl.writeToCopy</code><span>CopyDualImpl.java:23</span></li><li><code>org.postgresql.core.v3.QueryExecutorImpl.writeToCopy</code><span>QueryExecutorImpl.java:1273</span></li></ol></section>
+        <aside class="join-marker" id="join-4-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-4-point-1">拼接点 1</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-4-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-4-record-5">记录 5</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+
+          <p class="join-verification">采集图边 <code>create_base_to_sample_stack · 0 → 5</code></p>
+        </aside><section class="stack " id="join-4-record-0"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>ReplicationReplay.main</code><span>ReplicationReplay.java:15</span></li><li><code>ReplicationReplay.startChangefeed</code><span>ReplicationReplay.java:5</span></li><li><code>java.util.concurrent.FutureTask.&lt;init&gt;</code><span>FutureTask.java:137</span></li></ol></section>
+        </div>
+      </div></details>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>PgJDBC42.7.13/JDK21.0.1 对私有 PostgreSQL17.1/test_decoding 的一次真实空闲逻辑复制读取，抛出 SQLSTATE55000 的 PSQLException：Tried to write to an inactive copy operation。状态间隔配置为3000毫秒，复制流报告已关闭。目标和 JDI 采集器均退出0，数据库日志确认关闭；源码、制品、构建与运行共166.89秒。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>CoroPerf 将真实 FutureTask 构造对象1133 接到四个后续诊断观察，恢复原生异常栈缺少的 startChangefeed 提交入口。明确增加的 JDI 资源观察把该任务绑定到 stream1183 与 CopyDual1184，并用应用实际持有的 Task/stream 引用独立核对。同一 COPY 出现在 SocketTimeoutException、unlock 入口、包装后的读取错误和随后失活错误中。七条超时记录是异常对象1196 的重抛，并非七次超时。来源已说明根因，新增证据是历史所属任务及同一操作的事件顺序。</dd></div><div><dt>适用范围与局限</dt><dd>使用 test_decoding 替代 wal2json，仍在报告明确声明插件无关的逻辑复制场景内。真实空闲逻辑流与未修改的42.7.13驱动运行，没有物理复制或手工抛错替代。一个真实 FutureTask 提供组件提交上下文，startChangefeed 是辅助入口，不是原始应用注册点。资源身份依赖额外观察，不能从 Task 祖先关系推断。仅有记录顺序，无物理事件时间戳；unlock 观察在入口而非出口。不声称耗时、无采集器时序、多版本、插件、间隔或修复验证。成功读取工作负载只有一次。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

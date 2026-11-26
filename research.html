@@ -43,7 +43,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(35)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(36)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -617,7 +617,7 @@
     </section>
 
     <section class="block" id="caller_recovery" aria-labelledby="caller_recovery-title">
-      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">35 issues</span></div>
+      <div class="section-head"><h2 id="caller_recovery-title">Caller recovery</h2><span class="case-kind">36 issues</span></div>
       <p class="section-copy">Recover an application entry or call path missing from a traceback, live snapshot, or native stack.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="caller_recovery-title">
@@ -797,6 +797,11 @@
         <th scope="row"><a href="evidence/grpc--grpc-go--9010.html#call-stack"><span>grpc/grpc-go #9010</span>Which completed gRPC method created the child goroutine still waiting?</a></th>
         <td><p>Join actual standard-runtime goroutine birth and waiting events by native ID, recovering the completed gRPC method from its historical creator stack.</p></td>
         <td class="row-status"><a class="state-pill state-closed" href="https://github.com/grpc/grpc-go/issues/9010">Closed</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/pgjdbc--pgjdbc--4328.html#call-stack"><span>pgjdbc/pgjdbc #4328</span>Which replication task owned the COPY that became inactive after an idle timeout?</a></th>
+        <td><p>Recover the actual FutureTask submission entry and combine explicit same-COPY identity observations across the earlier timeout and later inactive-operation failure.</p></td>
+        <td class="row-status"><a class="state-pill state-open" href="https://github.com/pgjdbc/pgjdbc/issues/4328">Open</a><span class="fix-label">Fix unconfirmed</span></td>
       </tr></tbody>
         </table>
       </div>

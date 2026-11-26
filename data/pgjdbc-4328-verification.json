@@ -1,0 +1,1086 @@
+{
+  "checked_at": "2026-11-26T08:47:37.487537+00:00",
+  "case": {
+    "id": "pgjdbc--pgjdbc--4328",
+    "repo": "pgjdbc/pgjdbc",
+    "issue": 4328,
+    "url": "https://github.com/pgjdbc/pgjdbc/issues/4328",
+    "upstream_reference": "https://github.com/pgjdbc/pgjdbc/issues/4328",
+    "title": "Which replication task owned the COPY that became inactive after an idle timeout?",
+    "title_zh": "空闲超时后失活的 COPY，属于哪个复制提交任务？",
+    "verified_on": "2026-11-26",
+    "reproduction": "Component reproduced",
+    "diagnosis": "Direct",
+    "graph": "perf-out/github-issue-discovery/automatic/pgjdbc-4328-first-check-20261126-b8/analysis/graph.json",
+    "findings": {
+      "observation": "One PgJDBC42.7.13/JDK21.0.1 idle logical-replication read on private PostgreSQL17.1/test_decoding throws PSQLException55000: Tried to write to an inactive copy operation. The status interval is configured to3000ms and the stream reports closed. Target and JDI collector exit0; server shutdown is logged. Source review, artifact preparation, build and execution take166.89s.",
+      "interpretation": "CoroPerf joins the actual FutureTask constructor object1133 to four later diagnostic observations, recovering startChangefeed absent from the native/current exception stack. An explicit JDI resource observer binds that Task to stream1183 and CopyDual1184, independently checked against application-held Task/stream references. The same operation appears in the SocketTimeoutException, unlock entry, wrapped read failure and subsequent inactive-COPY failure. Seven timeout records are rethrows of one exception object1196, not seven timeouts. The source already documents the root cause; the additional evidence is historical ownership and the same-operation event sequence.",
+      "limits": "The logical output plugin is test_decoding rather than wal2json, within the report explicitly described as plugin-agnostic. A real idle logical stream and unmodified42.7.13 driver are used, not physical replication or a thrown-error stand-in. A single controlled FutureTask supplies the component submission context; startChangefeed is its helper, not an original application registration. Resource identity requires the explicitly added observer and is not inferred from Task ancestry. Event-record order is captured, not physical timestamps; unlock is observed at entry, not exit. No duration, uninstrumented timing, alternate driver/plugin/interval or fix validation is claimed. Only one successful read workload ran."
+    },
+    "symptom_zh": "PgJDBC42.7.13/JDK21.0.1 对私有 PostgreSQL17.1/test_decoding 的一次真实空闲逻辑复制读取，抛出 SQLSTATE55000 的 PSQLException：Tried to write to an inactive copy operation。状态间隔配置为3000毫秒，复制流报告已关闭。目标和 JDI 采集器均退出0，数据库日志确认关闭；源码、制品、构建与运行共166.89秒。",
+    "reasoning_zh": "CoroPerf 将真实 FutureTask 构造对象1133 接到四个后续诊断观察，恢复原生异常栈缺少的 startChangefeed 提交入口。明确增加的 JDI 资源观察把该任务绑定到 stream1183 与 CopyDual1184，并用应用实际持有的 Task/stream 引用独立核对。同一 COPY 出现在 SocketTimeoutException、unlock 入口、包装后的读取错误和随后失活错误中。七条超时记录是异常对象1196 的重抛，并非七次超时。来源已说明根因，新增证据是历史所属任务及同一操作的事件顺序。",
+    "limits_zh": "使用 test_decoding 替代 wal2json，仍在报告明确声明插件无关的逻辑复制场景内。真实空闲逻辑流与未修改的42.7.13驱动运行，没有物理复制或手工抛错替代。一个真实 FutureTask 提供组件提交上下文，startChangefeed 是辅助入口，不是原始应用注册点。资源身份依赖额外观察，不能从 Task 祖先关系推断。仅有记录顺序，无物理事件时间戳；unlock 观察在入口而非出口。不声称耗时、无采集器时序、多版本、插件、间隔或修复验证。成功读取工作负载只有一次。"
+  },
+  "verification": {
+    "native_task_object_id": "1133",
+    "native_stream_object_id": "1183",
+    "native_copy_operation_object_id": "1184",
+    "independent_application_task_id": "1133",
+    "independent_application_stream_id": "1183",
+    "same_task_and_operation_across_timeout_unlock_failure": true,
+    "distinct_timeout_exception_objects": 1,
+    "raw_timeout_rethrow_records": 7,
+    "distinct_psql_exception_objects": 2,
+    "event_order": [
+      {
+        "kind": "timeout",
+        "record_line": 3
+      },
+      {
+        "kind": "unlock_entry",
+        "record_line": 10
+      },
+      {
+        "kind": "wrapped_read_failure",
+        "record_line": 11
+      },
+      {
+        "kind": "inactive_copy_failure",
+        "record_line": 13
+      }
+    ],
+    "native_sqlstate": "55000",
+    "native_stream_closed": true,
+    "native_child_exit_code": 0,
+    "collector_exit_code": 0,
+    "private_postgres_shutdown_logged": true,
+    "successful_workloads": 1,
+    "first_check_seconds": 166.89,
+    "native_stack_has_submission_entry": false,
+    "actual_creation_stack_has_submission_entry": true,
+    "replayed": false,
+    "limitations": [
+      "test_decoding replaces wal2json in a report explicitly described as plugin-agnostic; still real logical replication.",
+      "Caller entry startChangefeed is the component submission helper, not an original application registration.",
+      "Actual Task and resource identity captured; event order only, no physical event timestamps or unlock-return observation.",
+      "The report already documents the root cause; tool contribution is historical ownership and the operation-bound error sequence.",
+      "No alternate version, plugin, interval or fix validation."
+    ],
+    "checked_at": "2026-11-26T08:47:37.487537+00:00",
+    "coroperf_submitter_recovered": true,
+    "creation_to_observation_joins": 4,
+    "artifact_integrity": {
+      "postgresql-42.7.13.jar": {
+        "local_sha256": "6e0e4cc2d8cae902084f8a2b18728b073a6fd9d1f87c9d8bff8f298c18185b93",
+        "repository_checksum_algorithm": "SHA-1",
+        "repository_checksum": "a6e1bd21b412d6ffb3df23cd13d507bc2cc9e37d",
+        "matches_maven_central_checksum": true,
+        "checksum_url": "https://repo.maven.apache.org/maven2/org/postgresql/postgresql/42.7.13/postgresql-42.7.13.jar.sha1",
+        "sha512_endpoint": "HTTP404; no SHA512 verification asserted"
+      },
+      "postgresql-42.7.13-sources.jar": {
+        "local_sha256": "47914c21e0866a23de859041b2e6ecf921fdf68efbd9c7cb42c090ed5e944bab",
+        "repository_checksum_algorithm": "SHA-1",
+        "repository_checksum": "0d25b198ba70f049bd8823d613df0be4ef68d94f",
+        "matches_maven_central_checksum": true,
+        "checksum_url": "https://repo.maven.apache.org/maven2/org/postgresql/postgresql/42.7.13/postgresql-42.7.13-sources.jar.sha1",
+        "sha512_endpoint": "HTTP404; no SHA512 verification asserted"
+      }
+    }
+  },
+  "execution": {
+    "builds": 1,
+    "target_workloads": 1,
+    "collector_exit_code": 0,
+    "private_postgres_stopped": true,
+    "elapsed_seconds": 166.89,
+    "finished_at": "2026-11-26T08:41:44.584075+00:00"
+  },
+  "analysis": {
+    "instances": 1,
+    "observations": 4,
+    "attributed_observations": 4,
+    "creator_links": 0,
+    "recorded_parent_links": 0,
+    "open_at_trace_end": 0,
+    "completed_storage_observed": 0,
+    "observation_kinds": [
+      "exception_traceback",
+      "unlock_entry"
+    ],
+    "diagnostics": 0,
+    "capture_loss": null,
+    "analysis_ms": 4.699790999999998,
+    "input": "perf-out/github-issue-discovery/automatic/pgjdbc-4328-first-check-20261126-b8/capture.json",
+    "query_matches": 1,
+    "schema": "corostitch.evidence/v1"
+  },
+  "native_stdout": "NATIVE\torg.postgresql.util.PSQLException\t55000\tTried to write to an inactive copy operation\tclosed=true\nRESULT\tTried to write to an inactive copy operation\nEND\tok\n",
+  "native_stderr": "org.postgresql.util.PSQLException: Tried to write to an inactive copy operation\n\tat org.postgresql.core.v3.QueryExecutorImpl.writeToCopy(QueryExecutorImpl.java:1273)\n\tat org.postgresql.core.v3.CopyDualImpl.writeToCopy(CopyDualImpl.java:23)\n\tat org.postgresql.core.v3.replication.V3PGReplicationStream.updateStatusInternal(V3PGReplicationStream.java:199)\n\tat org.postgresql.core.v3.replication.V3PGReplicationStream.timeUpdateStatus(V3PGReplicationStream.java:191)\n\tat org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:133)\n\tat org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)\n\tat ReplicationReplay.processRecords(ReplicationReplay.java:10)\n\tat ReplicationReplay$Reader.call(ReplicationReplay.java:4)\n\tat ReplicationReplay$Reader.call(ReplicationReplay.java:4)\n\tat java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)\n\tat java.base/java.lang.Thread.run(Thread.java:1583)\n",
+  "decoded_events": [
+    {
+      "line": 1,
+      "kind": "CREATE",
+      "task": "1133",
+      "frames": [
+        "java.util.concurrent.FutureTask.<init>(FutureTask.java:137)",
+        "ReplicationReplay.startChangefeed(ReplicationReplay.java:5)",
+        "ReplicationReplay.main(ReplicationReplay.java:15)"
+      ]
+    },
+    {
+      "line": 2,
+      "kind": "STREAM",
+      "stream": "1183",
+      "operation": "1184",
+      "task": "1133",
+      "frames": [
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.<init>(V3PGReplicationStream.java:70)",
+        "org.postgresql.core.v3.replication.V3ReplicationProtocol.initializeReplication(V3ReplicationProtocol.java:68)",
+        "org.postgresql.core.v3.replication.V3ReplicationProtocol.startLogical(V3ReplicationProtocol.java:45)",
+        "org.postgresql.replication.fluent.ReplicationStreamBuilder$1.start(ReplicationStreamBuilder.java:38)",
+        "org.postgresql.replication.fluent.logical.LogicalStreamBuilder.start(LogicalStreamBuilder.java:41)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:9)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ]
+    },
+    {
+      "line": 3,
+      "kind": "EXCEPTION",
+      "type": "java.net.SocketTimeoutException",
+      "exception": "1196",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Read timed out\"",
+      "frames": [
+        "sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:278)",
+        "sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:304)",
+        "sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)",
+        "sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)",
+        "java.net.Socket$SocketInputStream.read(Socket.java:1099)",
+        "org.postgresql.core.VisibleBufferedInputStream.readMore(VisibleBufferedInputStream.java:192)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:159)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:144)",
+        "org.postgresql.core.VisibleBufferedInputStream.read(VisibleBufferedInputStream.java:76)",
+        "org.postgresql.core.PGStream.receiveChar(PGStream.java:480)",
+        "org.postgresql.core.v3.QueryExecutorImpl.processCopyResults(QueryExecutorImpl.java:1429)",
+        "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy(QueryExecutorImpl.java:1361)",
+        "org.postgresql.core.v3.CopyDualImpl.readFromCopy(CopyDualImpl.java:49)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData(V3PGReplicationStream.java:165)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:130)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 4,
+      "kind": "EXCEPTION",
+      "type": "java.net.SocketTimeoutException",
+      "exception": "1196",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Read timed out\"",
+      "frames": [
+        "sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:315)",
+        "sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)",
+        "sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)",
+        "java.net.Socket$SocketInputStream.read(Socket.java:1099)",
+        "org.postgresql.core.VisibleBufferedInputStream.readMore(VisibleBufferedInputStream.java:192)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:159)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:144)",
+        "org.postgresql.core.VisibleBufferedInputStream.read(VisibleBufferedInputStream.java:76)",
+        "org.postgresql.core.PGStream.receiveChar(PGStream.java:480)",
+        "org.postgresql.core.v3.QueryExecutorImpl.processCopyResults(QueryExecutorImpl.java:1429)",
+        "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy(QueryExecutorImpl.java:1361)",
+        "org.postgresql.core.v3.CopyDualImpl.readFromCopy(CopyDualImpl.java:49)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData(V3PGReplicationStream.java:165)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:130)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 5,
+      "kind": "EXCEPTION",
+      "type": "java.net.SocketTimeoutException",
+      "exception": "1196",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Read timed out\"",
+      "frames": [
+        "sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:324)",
+        "sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)",
+        "sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)",
+        "java.net.Socket$SocketInputStream.read(Socket.java:1099)",
+        "org.postgresql.core.VisibleBufferedInputStream.readMore(VisibleBufferedInputStream.java:192)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:159)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:144)",
+        "org.postgresql.core.VisibleBufferedInputStream.read(VisibleBufferedInputStream.java:76)",
+        "org.postgresql.core.PGStream.receiveChar(PGStream.java:480)",
+        "org.postgresql.core.v3.QueryExecutorImpl.processCopyResults(QueryExecutorImpl.java:1429)",
+        "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy(QueryExecutorImpl.java:1361)",
+        "org.postgresql.core.v3.CopyDualImpl.readFromCopy(CopyDualImpl.java:49)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData(V3PGReplicationStream.java:165)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:130)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 6,
+      "kind": "EXCEPTION",
+      "type": "java.net.SocketTimeoutException",
+      "exception": "1196",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Read timed out\"",
+      "frames": [
+        "sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:352)",
+        "sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)",
+        "java.net.Socket$SocketInputStream.read(Socket.java:1099)",
+        "org.postgresql.core.VisibleBufferedInputStream.readMore(VisibleBufferedInputStream.java:192)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:159)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:144)",
+        "org.postgresql.core.VisibleBufferedInputStream.read(VisibleBufferedInputStream.java:76)",
+        "org.postgresql.core.PGStream.receiveChar(PGStream.java:480)",
+        "org.postgresql.core.v3.QueryExecutorImpl.processCopyResults(QueryExecutorImpl.java:1429)",
+        "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy(QueryExecutorImpl.java:1361)",
+        "org.postgresql.core.v3.CopyDualImpl.readFromCopy(CopyDualImpl.java:49)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData(V3PGReplicationStream.java:165)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:130)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 7,
+      "kind": "EXCEPTION",
+      "type": "java.net.SocketTimeoutException",
+      "exception": "1196",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Read timed out\"",
+      "frames": [
+        "java.net.Socket$SocketInputStream.read(Socket.java:1101)",
+        "org.postgresql.core.VisibleBufferedInputStream.readMore(VisibleBufferedInputStream.java:192)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:159)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:144)",
+        "org.postgresql.core.VisibleBufferedInputStream.read(VisibleBufferedInputStream.java:76)",
+        "org.postgresql.core.PGStream.receiveChar(PGStream.java:480)",
+        "org.postgresql.core.v3.QueryExecutorImpl.processCopyResults(QueryExecutorImpl.java:1429)",
+        "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy(QueryExecutorImpl.java:1361)",
+        "org.postgresql.core.v3.CopyDualImpl.readFromCopy(CopyDualImpl.java:49)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData(V3PGReplicationStream.java:165)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:130)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 8,
+      "kind": "EXCEPTION",
+      "type": "java.net.SocketTimeoutException",
+      "exception": "1196",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Read timed out\"",
+      "frames": [
+        "org.postgresql.core.VisibleBufferedInputStream.readMore(VisibleBufferedInputStream.java:201)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:159)",
+        "org.postgresql.core.VisibleBufferedInputStream.ensureBytes(VisibleBufferedInputStream.java:144)",
+        "org.postgresql.core.VisibleBufferedInputStream.read(VisibleBufferedInputStream.java:76)",
+        "org.postgresql.core.PGStream.receiveChar(PGStream.java:480)",
+        "org.postgresql.core.v3.QueryExecutorImpl.processCopyResults(QueryExecutorImpl.java:1429)",
+        "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy(QueryExecutorImpl.java:1361)",
+        "org.postgresql.core.v3.CopyDualImpl.readFromCopy(CopyDualImpl.java:49)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData(V3PGReplicationStream.java:165)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:130)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 9,
+      "kind": "EXCEPTION",
+      "type": "java.net.SocketTimeoutException",
+      "exception": "1196",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Read timed out\"",
+      "frames": [
+        "org.postgresql.core.v3.QueryExecutorImpl.processCopyResults(QueryExecutorImpl.java:1611)",
+        "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy(QueryExecutorImpl.java:1361)",
+        "org.postgresql.core.v3.CopyDualImpl.readFromCopy(CopyDualImpl.java:49)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData(V3PGReplicationStream.java:165)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:130)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 10,
+      "kind": "UNLOCK",
+      "operation": "1184",
+      "task": "1133",
+      "frames": [
+        "org.postgresql.core.v3.QueryExecutorImpl.unlock(QueryExecutorImpl.java:296)",
+        "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy(QueryExecutorImpl.java:1366)",
+        "org.postgresql.core.v3.CopyDualImpl.readFromCopy(CopyDualImpl.java:49)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData(V3PGReplicationStream.java:165)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:130)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ]
+    },
+    {
+      "line": 11,
+      "kind": "EXCEPTION",
+      "type": "org.postgresql.util.PSQLException",
+      "exception": "1232",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Database connection failed when reading from copy\"",
+      "frames": [
+        "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy(QueryExecutorImpl.java:1368)",
+        "org.postgresql.core.v3.CopyDualImpl.readFromCopy(CopyDualImpl.java:49)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData(V3PGReplicationStream.java:165)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:130)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 12,
+      "kind": "EXCEPTION",
+      "type": "org.postgresql.util.PSQLException",
+      "exception": "1232",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Database connection failed when reading from copy\"",
+      "frames": [
+        "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy(QueryExecutorImpl.java:1354)",
+        "org.postgresql.core.v3.CopyDualImpl.readFromCopy(CopyDualImpl.java:49)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData(V3PGReplicationStream.java:165)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:130)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 13,
+      "kind": "EXCEPTION",
+      "type": "org.postgresql.util.PSQLException",
+      "exception": "1236",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Tried to write to an inactive copy operation\"",
+      "frames": [
+        "org.postgresql.core.v3.QueryExecutorImpl.writeToCopy(QueryExecutorImpl.java:1273)",
+        "org.postgresql.core.v3.CopyDualImpl.writeToCopy(CopyDualImpl.java:23)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.updateStatusInternal(V3PGReplicationStream.java:199)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.timeUpdateStatus(V3PGReplicationStream.java:191)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:133)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 14,
+      "kind": "EXCEPTION",
+      "type": "org.postgresql.util.PSQLException",
+      "exception": "1236",
+      "task": "1133",
+      "operation": "1184",
+      "message": "\"Tried to write to an inactive copy operation\"",
+      "frames": [
+        "org.postgresql.core.v3.QueryExecutorImpl.writeToCopy(QueryExecutorImpl.java:1271)",
+        "org.postgresql.core.v3.CopyDualImpl.writeToCopy(CopyDualImpl.java:23)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.updateStatusInternal(V3PGReplicationStream.java:199)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.timeUpdateStatus(V3PGReplicationStream.java:191)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal(V3PGReplicationStream.java:133)",
+        "org.postgresql.core.v3.replication.V3PGReplicationStream.read(V3PGReplicationStream.java:78)",
+        "ReplicationReplay.processRecords(ReplicationReplay.java:10)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "ReplicationReplay$Reader.call(ReplicationReplay.java:4)",
+        "java.util.concurrent.FutureTask.run(FutureTask.java:317)",
+        "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)",
+        "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)",
+        "java.lang.Thread.runWith(Thread.java:1596)",
+        "java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "oracle_task": "1133",
+      "oracle_stream": "1183"
+    },
+    {
+      "line": 15,
+      "kind": "COMPLETE",
+      "value": "1133"
+    },
+    {
+      "line": 16,
+      "kind": "EXIT",
+      "value": "0"
+    }
+  ],
+  "capture": {
+    "schema_version": 1,
+    "language": "java",
+    "runtime": "JDK21.0.1/JDI",
+    "frame_order": "leaf_to_root",
+    "producer": {
+      "name": "JDI actual FutureTask construction, exception frames and explicit replication-resource observer",
+      "frame_order": "leaf_to_root",
+      "identity_kind": "VM-local native JDI ObjectReference.uniqueID"
+    },
+    "clock": {
+      "domain": "not-recorded",
+      "unit": "ns",
+      "scope": "No physical timestamps captured; source_record_line preserves event-record ordering only."
+    },
+    "segments": [
+      {
+        "id": "0",
+        "coroutine_id": "java-futuretask:1133",
+        "capture_reason": "create",
+        "frames": [
+          {
+            "function": "java.util.concurrent.FutureTask.<init>",
+            "file": "FutureTask.java",
+            "line": 137
+          },
+          {
+            "function": "ReplicationReplay.startChangefeed",
+            "file": "ReplicationReplay.java",
+            "line": 5
+          },
+          {
+            "function": "ReplicationReplay.main",
+            "file": "ReplicationReplay.java",
+            "line": 15
+          }
+        ],
+        "native_task_id": "1133",
+        "source_record_line": 1
+      },
+      {
+        "id": "1",
+        "coroutine_id": "java-futuretask:1133",
+        "capture_reason": "resource_bind",
+        "frames": [
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.<init>",
+            "file": "V3PGReplicationStream.java",
+            "line": 70
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3ReplicationProtocol.initializeReplication",
+            "file": "V3ReplicationProtocol.java",
+            "line": 68
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3ReplicationProtocol.startLogical",
+            "file": "V3ReplicationProtocol.java",
+            "line": 45
+          },
+          {
+            "function": "org.postgresql.replication.fluent.ReplicationStreamBuilder$1.start",
+            "file": "ReplicationStreamBuilder.java",
+            "line": 38
+          },
+          {
+            "function": "org.postgresql.replication.fluent.logical.LogicalStreamBuilder.start",
+            "file": "LogicalStreamBuilder.java",
+            "line": 41
+          },
+          {
+            "function": "ReplicationReplay.processRecords",
+            "file": "ReplicationReplay.java",
+            "line": 9
+          },
+          {
+            "function": "ReplicationReplay$Reader.call",
+            "file": "ReplicationReplay.java",
+            "line": 4
+          },
+          {
+            "function": "ReplicationReplay$Reader.call",
+            "file": "ReplicationReplay.java",
+            "line": 4
+          },
+          {
+            "function": "java.util.concurrent.FutureTask.run",
+            "file": "FutureTask.java",
+            "line": 317
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1144
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+            "file": "ThreadPoolExecutor.java",
+            "line": 642
+          },
+          {
+            "function": "java.lang.Thread.runWith",
+            "file": "Thread.java",
+            "line": 1596
+          },
+          {
+            "function": "java.lang.Thread.run",
+            "file": "Thread.java",
+            "line": 1583
+          }
+        ],
+        "source_record_line": 2,
+        "semantic": {
+          "stream_object_id": "1183",
+          "copy_operation_object_id": "1184",
+          "binding_kind": "V3PGReplicationStream constructor actual CopyDual argument"
+        }
+      },
+      {
+        "id": "2",
+        "coroutine_id": "java-futuretask:1133",
+        "capture_reason": "diagnostic_stacktrace",
+        "sample_kind": "exception_traceback",
+        "frames": [
+          {
+            "function": "sun.nio.ch.NioSocketImpl.timedRead",
+            "file": "NioSocketImpl.java",
+            "line": 278
+          },
+          {
+            "function": "sun.nio.ch.NioSocketImpl.implRead",
+            "file": "NioSocketImpl.java",
+            "line": 304
+          },
+          {
+            "function": "sun.nio.ch.NioSocketImpl.read",
+            "file": "NioSocketImpl.java",
+            "line": 346
+          },
+          {
+            "function": "sun.nio.ch.NioSocketImpl$1.read",
+            "file": "NioSocketImpl.java",
+            "line": 796
+          },
+          {
+            "function": "java.net.Socket$SocketInputStream.read",
+            "file": "Socket.java",
+            "line": 1099
+          },
+          {
+            "function": "org.postgresql.core.VisibleBufferedInputStream.readMore",
+            "file": "VisibleBufferedInputStream.java",
+            "line": 192
+          },
+          {
+            "function": "org.postgresql.core.VisibleBufferedInputStream.ensureBytes",
+            "file": "VisibleBufferedInputStream.java",
+            "line": 159
+          },
+          {
+            "function": "org.postgresql.core.VisibleBufferedInputStream.ensureBytes",
+            "file": "VisibleBufferedInputStream.java",
+            "line": 144
+          },
+          {
+            "function": "org.postgresql.core.VisibleBufferedInputStream.read",
+            "file": "VisibleBufferedInputStream.java",
+            "line": 76
+          },
+          {
+            "function": "org.postgresql.core.PGStream.receiveChar",
+            "file": "PGStream.java",
+            "line": 480
+          },
+          {
+            "function": "org.postgresql.core.v3.QueryExecutorImpl.processCopyResults",
+            "file": "QueryExecutorImpl.java",
+            "line": 1429
+          },
+          {
+            "function": "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy",
+            "file": "QueryExecutorImpl.java",
+            "line": 1361
+          },
+          {
+            "function": "org.postgresql.core.v3.CopyDualImpl.readFromCopy",
+            "file": "CopyDualImpl.java",
+            "line": 49
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData",
+            "file": "V3PGReplicationStream.java",
+            "line": 165
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal",
+            "file": "V3PGReplicationStream.java",
+            "line": 130
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.read",
+            "file": "V3PGReplicationStream.java",
+            "line": 78
+          },
+          {
+            "function": "ReplicationReplay.processRecords",
+            "file": "ReplicationReplay.java",
+            "line": 10
+          },
+          {
+            "function": "ReplicationReplay$Reader.call",
+            "file": "ReplicationReplay.java",
+            "line": 4
+          },
+          {
+            "function": "ReplicationReplay$Reader.call",
+            "file": "ReplicationReplay.java",
+            "line": 4
+          },
+          {
+            "function": "java.util.concurrent.FutureTask.run",
+            "file": "FutureTask.java",
+            "line": 317
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1144
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+            "file": "ThreadPoolExecutor.java",
+            "line": 642
+          },
+          {
+            "function": "java.lang.Thread.runWith",
+            "file": "Thread.java",
+            "line": 1596
+          },
+          {
+            "function": "java.lang.Thread.run",
+            "file": "Thread.java",
+            "line": 1583
+          }
+        ],
+        "source_record_line": 3,
+        "semantic": {
+          "stream_object_id": "1183",
+          "copy_operation_object_id": "1184",
+          "native_record_line": 3,
+          "exception_object_id": "1196",
+          "exception_type": "java.net.SocketTimeoutException",
+          "exception_message": "\"Read timed out\"",
+          "same_exception_rethrow_record_count": 7
+        }
+      },
+      {
+        "id": "3",
+        "coroutine_id": "java-futuretask:1133",
+        "capture_reason": "task_snapshot",
+        "sample_kind": "unlock_entry",
+        "frames": [
+          {
+            "function": "org.postgresql.core.v3.QueryExecutorImpl.unlock",
+            "file": "QueryExecutorImpl.java",
+            "line": 296
+          },
+          {
+            "function": "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy",
+            "file": "QueryExecutorImpl.java",
+            "line": 1366
+          },
+          {
+            "function": "org.postgresql.core.v3.CopyDualImpl.readFromCopy",
+            "file": "CopyDualImpl.java",
+            "line": 49
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData",
+            "file": "V3PGReplicationStream.java",
+            "line": 165
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal",
+            "file": "V3PGReplicationStream.java",
+            "line": 130
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.read",
+            "file": "V3PGReplicationStream.java",
+            "line": 78
+          },
+          {
+            "function": "ReplicationReplay.processRecords",
+            "file": "ReplicationReplay.java",
+            "line": 10
+          },
+          {
+            "function": "ReplicationReplay$Reader.call",
+            "file": "ReplicationReplay.java",
+            "line": 4
+          },
+          {
+            "function": "ReplicationReplay$Reader.call",
+            "file": "ReplicationReplay.java",
+            "line": 4
+          },
+          {
+            "function": "java.util.concurrent.FutureTask.run",
+            "file": "FutureTask.java",
+            "line": 317
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1144
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+            "file": "ThreadPoolExecutor.java",
+            "line": 642
+          },
+          {
+            "function": "java.lang.Thread.runWith",
+            "file": "Thread.java",
+            "line": 1596
+          },
+          {
+            "function": "java.lang.Thread.run",
+            "file": "Thread.java",
+            "line": 1583
+          }
+        ],
+        "source_record_line": 10,
+        "semantic": {
+          "stream_object_id": "1183",
+          "copy_operation_object_id": "1184",
+          "native_record_line": 10
+        }
+      },
+      {
+        "id": "4",
+        "coroutine_id": "java-futuretask:1133",
+        "capture_reason": "diagnostic_stacktrace",
+        "sample_kind": "exception_traceback",
+        "frames": [
+          {
+            "function": "org.postgresql.core.v3.QueryExecutorImpl.readFromCopy",
+            "file": "QueryExecutorImpl.java",
+            "line": 1368
+          },
+          {
+            "function": "org.postgresql.core.v3.CopyDualImpl.readFromCopy",
+            "file": "CopyDualImpl.java",
+            "line": 49
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.receiveNextData",
+            "file": "V3PGReplicationStream.java",
+            "line": 165
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal",
+            "file": "V3PGReplicationStream.java",
+            "line": 130
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.read",
+            "file": "V3PGReplicationStream.java",
+            "line": 78
+          },
+          {
+            "function": "ReplicationReplay.processRecords",
+            "file": "ReplicationReplay.java",
+            "line": 10
+          },
+          {
+            "function": "ReplicationReplay$Reader.call",
+            "file": "ReplicationReplay.java",
+            "line": 4
+          },
+          {
+            "function": "ReplicationReplay$Reader.call",
+            "file": "ReplicationReplay.java",
+            "line": 4
+          },
+          {
+            "function": "java.util.concurrent.FutureTask.run",
+            "file": "FutureTask.java",
+            "line": 317
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1144
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+            "file": "ThreadPoolExecutor.java",
+            "line": 642
+          },
+          {
+            "function": "java.lang.Thread.runWith",
+            "file": "Thread.java",
+            "line": 1596
+          },
+          {
+            "function": "java.lang.Thread.run",
+            "file": "Thread.java",
+            "line": 1583
+          }
+        ],
+        "source_record_line": 11,
+        "semantic": {
+          "stream_object_id": "1183",
+          "copy_operation_object_id": "1184",
+          "native_record_line": 11,
+          "exception_object_id": "1232",
+          "exception_type": "org.postgresql.util.PSQLException",
+          "exception_message": "\"Database connection failed when reading from copy\"",
+          "same_exception_rethrow_record_count": 2
+        }
+      },
+      {
+        "id": "5",
+        "coroutine_id": "java-futuretask:1133",
+        "capture_reason": "diagnostic_stacktrace",
+        "sample_kind": "exception_traceback",
+        "frames": [
+          {
+            "function": "org.postgresql.core.v3.QueryExecutorImpl.writeToCopy",
+            "file": "QueryExecutorImpl.java",
+            "line": 1273
+          },
+          {
+            "function": "org.postgresql.core.v3.CopyDualImpl.writeToCopy",
+            "file": "CopyDualImpl.java",
+            "line": 23
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.updateStatusInternal",
+            "file": "V3PGReplicationStream.java",
+            "line": 199
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.timeUpdateStatus",
+            "file": "V3PGReplicationStream.java",
+            "line": 191
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.readInternal",
+            "file": "V3PGReplicationStream.java",
+            "line": 133
+          },
+          {
+            "function": "org.postgresql.core.v3.replication.V3PGReplicationStream.read",
+            "file": "V3PGReplicationStream.java",
+            "line": 78
+          },
+          {
+            "function": "ReplicationReplay.processRecords",
+            "file": "ReplicationReplay.java",
+            "line": 10
+          },
+          {
+            "function": "ReplicationReplay$Reader.call",
+            "file": "ReplicationReplay.java",
+            "line": 4
+          },
+          {
+            "function": "ReplicationReplay$Reader.call",
+            "file": "ReplicationReplay.java",
+            "line": 4
+          },
+          {
+            "function": "java.util.concurrent.FutureTask.run",
+            "file": "FutureTask.java",
+            "line": 317
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor.runWorker",
+            "file": "ThreadPoolExecutor.java",
+            "line": 1144
+          },
+          {
+            "function": "java.util.concurrent.ThreadPoolExecutor$Worker.run",
+            "file": "ThreadPoolExecutor.java",
+            "line": 642
+          },
+          {
+            "function": "java.lang.Thread.runWith",
+            "file": "Thread.java",
+            "line": 1596
+          },
+          {
+            "function": "java.lang.Thread.run",
+            "file": "Thread.java",
+            "line": 1583
+          }
+        ],
+        "source_record_line": 13,
+        "semantic": {
+          "stream_object_id": "1183",
+          "copy_operation_object_id": "1184",
+          "native_record_line": 13,
+          "exception_object_id": "1236",
+          "exception_type": "org.postgresql.util.PSQLException",
+          "exception_message": "\"Tried to write to an inactive copy operation\"",
+          "same_exception_rethrow_record_count": 2
+        }
+      },
+      {
+        "id": "6",
+        "coroutine_id": "java-futuretask:1133",
+        "capture_reason": "exit",
+        "frames": [],
+        "source_record_line": 15
+      }
+    ],
+    "edges": [
+      {
+        "from_segment_id": "0",
+        "to_segment_id": "2",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "java-futuretask:1133"
+      },
+      {
+        "from_segment_id": "0",
+        "to_segment_id": "3",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "java-futuretask:1133"
+      },
+      {
+        "from_segment_id": "0",
+        "to_segment_id": "4",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "java-futuretask:1133"
+      },
+      {
+        "from_segment_id": "0",
+        "to_segment_id": "5",
+        "edge_kind": "create_base_to_sample_stack",
+        "coroutine_id": "java-futuretask:1133"
+      },
+      {
+        "from_segment_id": "5",
+        "to_segment_id": "6",
+        "edge_kind": "same_coroutine_exit",
+        "coroutine_id": "java-futuretask:1133"
+      }
+    ],
+    "source_metadata": {
+      "scope": "One PgJDBC42.7.13 idle logical replication read on private PostgreSQL17.1/test_decoding, configured status interval3000ms. Driver and protocol code unmodified.",
+      "extra_resource_observer": "V3PGReplicationStream constructor CopyDual argument and QueryExecutorImpl read/write/unlock argument observed directly, with independent application FutureTask/stream field identities. Not inferred from Task ancestry.",
+      "deduplication": "Seven rethrow records carry the same SocketTimeoutException object1196; wrapper and inactive-operation exceptions each have two records. Normalize one observation per distinct exception object, retaining raw events unchanged.",
+      "ordering_limit": "UNLOCK captures method entry, not its exit or the exact instant of state assignment. No latency or uninstrumented timing claim."
+    }
+  }
+}
