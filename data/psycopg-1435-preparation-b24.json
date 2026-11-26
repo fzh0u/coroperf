@@ -1,0 +1,65 @@
+{
+  "id": "psycopg--psycopg--1435",
+  "checked_at": "2026-11-26T15:05:59.858384+00:00",
+  "status": "preparation_deferred",
+  "execution": {
+    "workload_attempts": 0,
+    "error": "CalledProcessError(1, ['/data1/fzhou/coro/.tools/postgresql-18-b24/usr/lib/postgresql/18/bin/initdb', '-D', '/tmp/coroperf-psycopg1435-g7t1rzcd/data', '-A', 'trust', '-U', 'coroperf', '--no-locale', '--encoding=UTF8'], '', '/data1/fzhou/coro/.tools/postgresql-18-b24/usr/lib/postgresql/18/bin/postgres: error while loading shared libraries: liburing.so.2: cannot open shared object file: No such file or directory\\nno data was returned by command \"\"/data1/fzhou/coro/.tools/postgresql-18-b24/usr/lib/postgresql/18/bin/postgres\" -V\"\\ncommand not found\\ninitdb: error: program \"postgres\" is needed by initdb but was not found in the same directory as \"/data1/fzhou/coro/.tools/postgresql-18-b24/usr/lib/postgresql/18/bin/initdb\"\\n')",
+    "elapsed_seconds": 153.36
+  },
+  "first_check_seconds": 153.36,
+  "psycopg_version_installed": "3.3.6",
+  "python_environment": ".tools/psycopg-1435-b24/bin/python (CPython3.13.5)",
+  "postgresql_major_reported": 18,
+  "postgresql_and_libpq_packages": [
+    {
+      "Package": "postgresql-18",
+      "Version": "18.7-1.pgdg22.04+5",
+      "Filename": "pool/main/p/postgresql-18/postgresql-18_18.7-1.pgdg22.04+5_amd64.deb",
+      "SHA256": "c600406fd455ba7ee165d5e1f34aa3ab6745b99b5d9fb224565e6d5e6979dacd",
+      "Depends": "locales | locales-all, postgresql-client-18 (= 18.7-1.pgdg22.04+5), postgresql-common (>= 275~), ssl-cert, tzdata, debconf (>= 0.5) | debconf-2.0, libc6 (>= 2.34), libgssapi-krb5-2 (>= 1.14+dfsg), libicu70 (>= 70.1-1~), libldap-2.5-0 (>= 2.5.4), liblz4-1 (>= 0.0~r130), libnuma1 (>= 2.0.11), libpam0g (>= 0.99.7.1), libpq5 (>= 17~~), libselinux1 (>= 3.1~), libssl3 (>= 3.0.0~~alpha1), libsystemd0, liburing2 (>= 2.0), libuuid1 (>= 2.16), libxml2 (>= 2.7.4), libxslt1.1 (>= 1.1.25), libzstd1 (>= 1.4.0), zlib1g (>= 1:1.1.4)"
+    },
+    {
+      "Package": "libpq5",
+      "Version": "18.7-1.pgdg22.04+2",
+      "Filename": "pool/main/p/postgresql-18/libpq5_18.7-1.pgdg22.04+2_amd64.deb",
+      "SHA256": "0536b277256d7e8c3e30d063769e287ec459065d917e26f56f45294cfc06252e",
+      "Depends": "libc6 (>= 2.34), libgssapi-krb5-2 (>= 1.17), libldap-2.5-0 (>= 2.5.4), libssl3 (>= 3.0.0~~alpha1)"
+    }
+  ],
+  "official_package_SHA256_matches_HTTPS_Packages_index": true,
+  "package_signature_validation_performed": false,
+  "target_workloads": 0,
+  "successful_issue_workloads": 0,
+  "coroperf_captures": 0,
+  "native_reproduction_verified": false,
+  "coroperf_caller_recovery_verified": false,
+  "import_probe": {
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data1/fzhou/coro/.tools/psycopg-1435-b24/lib/python3.13/site-packages/psycopg/pq/__init__.py\", line 90, in import_from_libpq\n    from . import pq_ctypes as module  # type: ignore[assignment]\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/psycopg-1435-b24/lib/python3.13/site-packages/psycopg/pq/pq_ctypes.py\", line 25, in <module>\n    from . import _pq_ctypes as impl\n  File \"/data1/fzhou/coro/.tools/psycopg-1435-b24/lib/python3.13/site-packages/psycopg/pq/_pq_ctypes.py\", line 20, in <module>\n    raise ImportError(\"libpq library not found\")\nImportError: libpq library not found\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import psycopg;print(psycopg.__version__,psycopg.pq.version(),psycopg.pq.__impl__)\n    ^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/psycopg-1435-b24/lib/python3.13/site-packages/psycopg/__init__.py\", line 9, in <module>\n    from . import pq  # noqa: F401 import early to stabilize side effects\n    ^^^^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/psycopg-1435-b24/lib/python3.13/site-packages/psycopg/pq/__init__.py\", line 114, in <module>\n    import_from_libpq()\n    ~~~~~~~~~~~~~~~~~^^\n  File \"/data1/fzhou/coro/.tools/psycopg-1435-b24/lib/python3.13/site-packages/psycopg/pq/__init__.py\", line 92, in import_from_libpq\n    handle_error(\"python\", e)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^\n  File \"/data1/fzhou/coro/.tools/psycopg-1435-b24/lib/python3.13/site-packages/psycopg/pq/__init__.py\", line 71, in handle_error\n    raise ImportError(msg) from e\nImportError: couldn't import requested psycopg 'python' implementation: libpq library not found\n"
+  },
+  "initdb_log": "/data1/fzhou/coro/.tools/postgresql-18-b24/usr/lib/postgresql/18/bin/postgres: error while loading shared libraries: liburing.so.2: cannot open shared object file: No such file or directory\nno data was returned by command \"\"/data1/fzhou/coro/.tools/postgresql-18-b24/usr/lib/postgresql/18/bin/postgres\" -V\"\ncommand not found\ninitdb: error: program \"postgres\" is needed by initdb but was not found in the same directory as \"/data1/fzhou/coro/.tools/postgresql-18-b24/usr/lib/postgresql/18/bin/initdb\"\n",
+  "blockers": [
+    "PostgreSQL18 postgres cannot load liburing.so.2; initdb fails before creating/running the private cluster.",
+    "Plain psycopg3.3.6 import cannot discover libpq under the extracted package prefix. No target was launched."
+  ],
+  "prepared_fixture": "Original repeated-cancel executemany example, existing victim Task and two UPDATE parameters retained. Planned one original timing sweep, stopping at the first matching OperationalError; not executed. The helper only names the existing create_task expression.",
+  "remaining_work": "Locate/provide compatible liburing privately and make ctypes discover the exact extracted libpq18; verify fresh psycopg3.3.6/Python3.13/libpq18 and postgres18 initdb dependencies before any target. Use a new later-batch clock/output, preserve b24 evidence. No PostgreSQL17 or different psycopg substitute.",
+  "reason": "Matching Python/client/server-major packages are prepared, but native loader prerequisites prevent startup. Stop after153.36s; no cancellation/pipeline error was reproduced or attributed.",
+  "reason_zh": "已准备匹配Python、客户端及服务端主版本包，但本地动态库缺口阻止启动。153.36秒停止；尚未复现取消或pipeline错误，也未验证CoroPerf归因。",
+  "sources": [
+    "https://github.com/psycopg/psycopg/issues/1435",
+    "https://apt.postgresql.org/pub/repos/apt/dists/jammy-pgdg/main/binary-amd64/Packages.gz"
+  ],
+  "source_manifest": {
+    "research/github-issue-discovery/psycopg-1435-first-check-20261126-b24/issue.json": "e8d6b3f0b34c15e3f1a1b7fa88f12cf34f415fa8fac4d5ec6bba319fcbcd9fe3",
+    "research/github-issue-discovery/psycopg-1435-first-check-20261126-b24/check_once.py": "055c3dccc7dad7eeb44e6913281b83e5cccd5efbc92772e5937c9bb35291ab95",
+    "research/github-issue-discovery/psycopg-1435-first-check-20261126-b24/run_once.py": "4b67d68255b649744a4513d7ae3ce9cc299cf3dd307b6d6899f5e1eb81b8d22a",
+    "research/github-issue-discovery/psycopg-1435-first-check-20261126-b24/started.json": "94fc2a2e73c0d0882802b2471f1a119db056953439d7890b85d360023f13dcfd",
+    "research/github-issue-discovery/psycopg-1435-first-check-20261126-b24/postgresql-18.deb": "c600406fd455ba7ee165d5e1f34aa3ab6745b99b5d9fb224565e6d5e6979dacd",
+    "research/github-issue-discovery/psycopg-1435-first-check-20261126-b24/libpq5.deb": "0536b277256d7e8c3e30d063769e287ec459065d917e26f56f45294cfc06252e",
+    "perf-out/github-issue-discovery/automatic/psycopg-1435-first-check-20261126-b24/execution.json": "e21cecea0acfcb4a2e92c5685bc8f0232e046d1c376f846ce2486e796bd76b3e",
+    "perf-out/github-issue-discovery/automatic/psycopg-1435-first-check-20261126-b24/initdb.log": "415f07065dda245a32794785645199855c76995ee728244b787961f302e9d1a0"
+  }
+}
