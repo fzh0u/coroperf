@@ -55,6 +55,8 @@ def render(data, language):
         evidence = row.get('diagnosis_result')
         if row.get('preparation_result'):
             details += f'<dt>{tr("Preparation and collector checks", "准备与采集检查")}</dt><dd>{e(row["preparation_result"][language])}</dd>'
+        if row.get('offline_review_result'):
+            details += f'<dt>{tr("Reporter profile analysis", "报告者轨迹分析")}</dt><dd>{e(row["offline_review_result"][language])}</dd>'
         if evidence:
             details += f'<dt>{tr("Measured diagnosis result", "定位实测结果")}</dt><dd>{e(evidence[language])}</dd>'
         else:
@@ -71,6 +73,14 @@ def render(data, language):
     diagnosed = sum(row['stage'] == 'diagnosed' for row in data['candidates'])
     description = tr(f'{diagnosed} locally verified causes; {len(rows) - pending - diagnosed - skipped} diagnosis candidates; {pending} awaiting status checks; {skipped} skipped at user request.', f'{diagnosed} 个本地已验证根因，{len(rows) - pending - diagnosed - skipped} 个定位候选，{pending} 个先核验状态，{skipped} 个按用户要求跳过。')
     prefix = '../' if zh else ''
+    screening = data.get('latest_screening')
+    screening_html = ''
+    if screening:
+        screened = screening['reports_checked']
+        repairs = screening['repair_or_solution_reported']
+        screening_html = (f'<p class="review-meta"><a href="{e(prefix + screening["path"])}">'
+                          f'{tr("Latest additional source screening", "最近增量来源筛查")}</a>：'
+                          f'{tr(f"{screened} vLLM reports checked; {repairs} already have repair/solution leads. No new verified cause.", f"核对 {screened} 条 vLLM 报告，其中 {repairs} 条已有修复／解决线索；未新增已验证根因。")}</p>')
     protocol = data['diagnosis_protocol']
     steps = ''.join(f'<li>{e(step[language])}</li>' for step in protocol['steps'])
     effects = ([protocol['effect_evidence']] if protocol.get('effect_evidence') else [])
@@ -91,6 +101,7 @@ def render(data, language):
       <h1>{title}</h1>
       <p class="review-meta">{description} <a href="{prefix}data/open-root-cause-review.json">{tr('Review records', '审阅记录')}</a></p>
       <p>{e(data['criteria'][language])}</p>
+      {screening_html}
       <p class="review-meta">{tr('Initial review snapshot', '初次审阅快照')}：{e(data['reviewed_at'])} · {tr('Per-entry source-check times are shown where recorded. Each entry retains its own evidence limits; tracker-state polling does not re-review the complete discussion or validate a repair.', '已记录的逐条来源检查时间见展开详情。各条目保留原审阅范围；tracker 状态轮询不等于重新审阅完整讨论或验证修复。')}</p>
       <div class="review-scroll" id="issues"><table>
         <thead><tr><th>Issue</th><th>{tr('Language / execution', '语言／执行机制')}</th><th>{tr('Question, CoroPerf contribution and evidence', '问题、coroperf 价值与证据')}</th><th>{tr('Status / next step', '状态／下一步')}</th></tr></thead>

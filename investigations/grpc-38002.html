@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Reporter CPU profiles analyzed; a cause and repair remain unverified.">
+  <title>gRPC #38002: reporter CPU profile review · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/investigations/grpc-38002.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+<link rel="stylesheet" href="../assets/open-issues.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../open-issues.html">Open investigations</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="grpc-38002.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/investigations/grpc-38002.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main"><article class="wrap research open-review">
+      <section class="block"><a href="../open-issues.html">Back to open investigations</a>
+        <h1>gRPC #38002: reporter CPU profile review</h1><p>Reporter CPU profiles analyzed; a cause and repair remain unverified.</p><p>The original 60-second C++ and Java recordings were analyzed offline. No local server workload was run.</p>
+        <p><a href="https://github.com/grpc/grpc/issues/38002">Upstream issue</a> · <a href="../data/investigations/grpc-38002.json">Case record</a></p>
+      </section>
+      <section class="block"><h2>Observed problem and existing evidence</h2><p class="section-copy">The reporter observes higher C++ server CPU use at a stated 60 TPS. The attachment contains binary perf data, text stacks and flame graphs for both implementations.</p></section>
+
+      <section class="block"><h2>Reporter profile analysis</h2><p>The text event headers match the binary perf records by thread ID, timestamp and period. Values below count recorded samples, not requests.</p><div class="review-scroll"><table><thead><tr><th>Observation</th><th>C++</th><th>Java</th></tr></thead><tbody><tr><td>Samples / 样本</td><td>3515</td><td>801</td></tr><tr><td>Contains unknown frame / 含 unknown 帧</td><td>2203</td><td>429</td></tr><tr><td>C1/C2 compiler thread / 编译线程</td><td>0</td><td>341</td></tr><tr><td>Contains /debug/ DSO / 含 debug 目录共享库</td><td>2786</td><td>0</td></tr></tbody></table></div><p>C++ inclusive path counts: request handler 1,165; subscriber handler 388; response Finish 612; CompletionQueue 212. These groups overlap. This does not isolate one dominant cause.</p><p>The C++ libraries occur under debug paths, which motivates checking build flags; the paths do not prove an unoptimized build. Java records substantial compilation activity and lacks many JIT symbols. Sample totals are not a validated per-RPC CPU ratio.</p><p>The CoroPerf perf-script reader was corrected to retain thread names containing spaces. Its regression passes; the resulting 3,515/801 event totals match an independent binary read. No creation edges were fabricated.</p><p><a href="../data/investigations/grpc-38002-evidence/profile-analysis.json">Computed results and source hashes</a> · <a href="../data/investigations/grpc-38002-evidence/analysis-code.zip">Analysis code</a></p></section>
+      <section class="block"><h2>Competing explanations</h2><div class="review-scroll"><table><thead><tr><th>Hypothesis</th><th>Discriminating evidence</th></tr></thead><tbody><tr><th scope="row">H1 · Build configuration contributes to the difference.</th><td>Obtain compiler flags and matched shared libraries; compare optimized and original C++ builds with the same application workload. A debug directory name alone is insufficient.</td></tr><tr><th scope="row">H2 · Application work and warmup differ.</th><td>Match payloads, completed RPC counts and handler behavior; collect both profiles after a documented warmup.</td></tr><tr><th scope="row">H3 · Runtime or completion-queue overhead remains after matching the controls.</th><td>Measure per-request CPU with queue/tag identities and isolate processing, completion and waiting without adding overlapping inclusive groups.</td></tr></tbody></table></div></section>
+      <section class="block"><h2>Function-stack comparison to collect</h2><p class="section-copy">Execution stacks are available in the reporter profiles. A comparison with recorded request creation and callback identities still requires a new capture.</p>
+        <div class="review-scroll"><table><thead><tr><th>Ordinary diagnostics</th><th>With CoroPerf</th></tr></thead><tbody><tr><td>The original stacks identify execution paths, including CallData::processRequest and response Finish. Many stacks are incomplete or unresolved.</td><td>A new capture would need request/tag generations and callback creation/execution records. They are absent from this attachment and cannot be filled in retrospectively.</td></tr></tbody></table></div>
+      </section>
+      <section class="block"><h2>Identity and event chain</h2><ul><li>The shown C++ code uses thread-driven CompletionQueue callbacks; coroutine use is not established.</li><li>A future attribution needs call/tag lifetime, queue, executing thread and callback generation, not just matching addresses.</li></ul><p>No coroutine or request ancestry is claimed for this offline profile review.</p></section>
+      <section class="block"><h2>Reproduction and controls</h2><ol><li>Recover exact build flags, ELFs, Java JIT maps, server sources and the submitted load configuration.</li><li>Compare the same implementation with a cause-specific change under matched warmup and observed completed RPC counts.</li></ol></section>
+      <section class="block"><h2>Next action and limits</h2><p class="section-copy">Verify the actual C++ optimization flags and reproduce the original application comparison before choosing a repair.</p><p>No local incident run or validated repair. Missing ELFs, JIT maps, completed RPC counts and callback identities prevent a root-cause conclusion or a coroutine-debugging success claim.</p></section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,159 @@
+{
+  "id": "grpc--grpc--38002",
+  "slug": "grpc-38002",
+  "reference": "gRPC #38002",
+  "url": "https://github.com/grpc/grpc/issues/38002",
+  "title": {
+    "en": "gRPC #38002: reporter CPU profile review",
+    "zh-CN": "gRPC #38002：报告者 CPU 轨迹复核"
+  },
+  "status": "profile_analyzed",
+  "verified_case": false,
+  "local_execution": "offline_only",
+  "root_cause_confirmed": false,
+  "repair": null,
+  "results": null,
+  "source_scope": {
+    "en": "The original 60-second C++ and Java recordings were analyzed offline. No local server workload was run.",
+    "zh-CN": "离线分析原报告的 C++／Java 两份 60 秒 CPU 记录；未在本地运行原服务器负载。"
+  },
+  "known": {
+    "en": "The reporter observes higher C++ server CPU use at a stated 60 TPS. The attachment contains binary perf data, text stacks and flame graphs for both implementations.",
+    "zh-CN": "报告者在其所述 60 TPS 负载下观察到 C++ 服务器 CPU 更高；附件含两种实现的 perf 二进制数据、文本栈和火焰图。"
+  },
+  "hypotheses": [
+    {
+      "id": "H1",
+      "claim": {
+        "en": "Build configuration contributes to the difference.",
+        "zh-CN": "构建配置影响比较结果。"
+      },
+      "distinguish": {
+        "en": "Obtain compiler flags and matched shared libraries; compare optimized and original C++ builds with the same application workload. A debug directory name alone is insufficient.",
+        "zh-CN": "取得编译选项及匹配共享库；用同一应用负载比较原构建与优化构建。debug 目录名本身不能证明未优化。"
+      }
+    },
+    {
+      "id": "H2",
+      "claim": {
+        "en": "Application work and warmup differ.",
+        "zh-CN": "应用工作量及预热状态不同。"
+      },
+      "distinguish": {
+        "en": "Match payloads, completed RPC counts and handler behavior; collect both profiles after a documented warmup.",
+        "zh-CN": "对齐 payload、实际完成 RPC 数和 handler 行为，并在记录预热过程后重新采集。"
+      }
+    },
+    {
+      "id": "H3",
+      "claim": {
+        "en": "Runtime or completion-queue overhead remains after matching the controls.",
+        "zh-CN": "在对齐条件后仍有 runtime／CompletionQueue 开销。"
+      },
+      "distinguish": {
+        "en": "Measure per-request CPU with queue/tag identities and isolate processing, completion and waiting without adding overlapping inclusive groups.",
+        "zh-CN": "按 queue／tag 身份测量逐请求 CPU，区分处理、完成及等待，不累加重叠的 inclusive 分组。"
+      }
+    }
+  ],
+  "evidence_comparison": {
+    "ordinary": {
+      "en": "The original stacks identify execution paths, including CallData::processRequest and response Finish. Many stacks are incomplete or unresolved.",
+      "zh-CN": "原栈可辨识 CallData::processRequest、响应 Finish 等执行路径，但许多栈有缺帧或未解析符号。"
+    },
+    "with_coroperf": {
+      "en": "A new capture would need request/tag generations and callback creation/execution records. They are absent from this attachment and cannot be filled in retrospectively.",
+      "zh-CN": "新采集需要请求／tag 代次及回调创建、执行记录；旧附件没有这些数据，无法事后补写。"
+    }
+  },
+  "required_relations": [
+    {
+      "en": "The shown C++ code uses thread-driven CompletionQueue callbacks; coroutine use is not established.",
+      "zh-CN": "已展示的 C++ 代码使用线程驱动的 CompletionQueue 回调，尚未证实使用协程。"
+    },
+    {
+      "en": "A future attribution needs call/tag lifetime, queue, executing thread and callback generation, not just matching addresses.",
+      "zh-CN": "进一步归属需要 call／tag 寿命、queue、执行线程及回调代次，不能只匹配地址。"
+    }
+  ],
+  "comparisons": [
+    {
+      "en": "Recover exact build flags, ELFs, Java JIT maps, server sources and the submitted load configuration.",
+      "zh-CN": "补齐精确编译选项、ELF、Java JIT map、服务器源码和原负载配置。"
+    },
+    {
+      "en": "Compare the same implementation with a cause-specific change under matched warmup and observed completed RPC counts.",
+      "zh-CN": "保持预热和实际完成 RPC 数可比，在同一实现上验证针对原因的改动。"
+    }
+  ],
+  "proposed_addition": {
+    "en": "No coroutine or request ancestry is claimed for this offline profile review.",
+    "zh-CN": "本次离线复核不声称已恢复协程或请求祖先。"
+  },
+  "next_action": {
+    "en": "Verify the actual C++ optimization flags and reproduce the original application comparison before choosing a repair.",
+    "zh-CN": "先核实 C++ 实际优化选项、复现原应用比较，再选择修复。"
+  },
+  "limits": {
+    "en": "No local incident run or validated repair. Missing ELFs, JIT maps, completed RPC counts and callback identities prevent a root-cause conclusion or a coroutine-debugging success claim.",
+    "zh-CN": "未本地运行原故障或验证修复；缺 ELF、JIT map、实际完成 RPC 数及回调身份，尚不能确认根因，也不能列为协程调试成功案例。"
+  },
+  "offline_review": {
+    "path": "data/investigations/grpc-38002-evidence/profile-analysis.json",
+    "kit": "data/investigations/grpc-38002-evidence/analysis-code.zip",
+    "scope": {
+      "en": "The text event headers match the binary perf records by thread ID, timestamp and period. Values below count recorded samples, not requests.",
+      "zh-CN": "已按线程 ID、时间戳及 period 对齐文本事件头与 perf 二进制记录；下表计数是记录中的样本数，不是请求数。"
+    },
+    "columns": [
+      {
+        "en": "Observation",
+        "zh-CN": "观察项"
+      },
+      {
+        "en": "C++",
+        "zh-CN": "C++"
+      },
+      {
+        "en": "Java",
+        "zh-CN": "Java"
+      }
+    ],
+    "rows": [
+      [
+        "Samples / 样本",
+        3515,
+        801
+      ],
+      [
+        "Contains unknown frame / 含 unknown 帧",
+        2203,
+        429
+      ],
+      [
+        "C1/C2 compiler thread / 编译线程",
+        0,
+        341
+      ],
+      [
+        "Contains /debug/ DSO / 含 debug 目录共享库",
+        2786,
+        0
+      ]
+    ],
+    "notes": [
+      {
+        "en": "C++ inclusive path counts: request handler 1,165; subscriber handler 388; response Finish 612; CompletionQueue 212. These groups overlap. This does not isolate one dominant cause.",
+        "zh-CN": "C++ inclusive 路径计数：请求处理 1,165、subscriber handler 388、响应 Finish 612、CompletionQueue 212。这些分组重叠，尚未分离出单一主导原因。"
+      },
+      {
+        "en": "The C++ libraries occur under debug paths, which motivates checking build flags; the paths do not prove an unoptimized build. Java records substantial compilation activity and lacks many JIT symbols. Sample totals are not a validated per-RPC CPU ratio.",
+        "zh-CN": "C++ 库路径包含 debug，值得核对构建选项，但路径不能证明未优化。Java 有明显编译活动，并缺少许多 JIT 符号；样本总量之比不是已验证的逐 RPC CPU 比值。"
+      },
+      {
+        "en": "The CoroPerf perf-script reader was corrected to retain thread names containing spaces. Its regression passes; the resulting 3,515/801 event totals match an independent binary read. No creation edges were fabricated.",
+        "zh-CN": "已修复 CoroPerf perf-script 读取器对含空格线程名的识别，回归检查通过；3,515／801 条事件数与独立二进制读取一致，未虚构创建边。"
+      }
+    ]
+  }
+}

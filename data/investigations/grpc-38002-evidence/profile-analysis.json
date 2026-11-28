@@ -1,0 +1,366 @@
+{
+  "issue": "https://github.com/grpc/grpc/issues/38002",
+  "source_archive": "https://github.com/user-attachments/files/17569042/GRPC_CPU_38002.tar.gz",
+  "archive_sha256": "0041f5ca5be75f7af0de3cc349d29b37be3757cb116a651fbe48126798d94df3",
+  "analysis_kind": "offline reporter-profile analysis",
+  "original_workload_local_runs": 0,
+  "root_cause_confirmed": false,
+  "repair_validated": false,
+  "profiles": {
+    "C++": {
+      "sample_count": 3515,
+      "binary_event_count": 3515,
+      "binary_headers_match_text": true,
+      "first_sample_s": 87080.369494,
+      "last_sample_s": 87140.249026,
+      "observed_span_s": 59.87953200000629,
+      "period_histogram_ns": {
+        "10101010": 3515
+      },
+      "sampled_period_sum_ns": 35505050150,
+      "thread_names": {
+        "PluginContainer": 2610,
+        "event_engine": 899,
+        "grpc_global_tim": 6
+      },
+      "sampled_thread_ids": 13,
+      "samples_with_unknown_frame": 2203,
+      "empty_stacks": 1,
+      "samples_with_debug_directory_dso": 2786,
+      "stacks_at_127_frames": 7,
+      "inclusive_groups": {
+        "request_handler": 1165,
+        "response_finish": 612,
+        "timer_manager": 10,
+        "subscriber_handler": 388,
+        "completion_queue": 212,
+        "protobuf": 51
+      },
+      "top_leaf_samples": [
+        [
+          "_raw_spin_unlock_irqrestore",
+          148
+        ],
+        [
+          "__raw_spin_unlock_irq",
+          68
+        ],
+        [
+          "malloc",
+          39
+        ],
+        [
+          "__strftime_internal",
+          22
+        ],
+        [
+          "__memmove_avx_unaligned_erms",
+          20
+        ],
+        [
+          "std::atomic<bool>::load",
+          19
+        ],
+        [
+          "futex_wake",
+          19
+        ],
+        [
+          "cfree@GLIBC_2.2.5",
+          19
+        ],
+        [
+          "_int_free",
+          18
+        ],
+        [
+          "_int_malloc",
+          18
+        ],
+        [
+          "vmxnet3_tq_xmit.isra.66",
+          17
+        ],
+        [
+          "malloc_consolidate",
+          16
+        ],
+        [
+          "__pthread_mutex_unlock_usercnt",
+          16
+        ],
+        [
+          "__pthread_mutex_lock",
+          15
+        ],
+        [
+          "FDS::StreamAsyncBuffer::mainThreadMethod",
+          14
+        ]
+      ],
+      "top_inclusive_samples": [
+        [
+          "[unknown]",
+          2203
+        ],
+        [
+          "grpc_core::ExecCtx::~ExecCtx",
+          1411
+        ],
+        [
+          "grpc_core::ExecCtx::Flush",
+          1404
+        ],
+        [
+          "std::thread::_Invoker<std::tuple<void (AccountAdminServiceImpl::*)(), AccountAdminServiceImpl*> >::_M_invoke<0ul, 1ul>",
+          1385
+        ],
+        [
+          "std::thread::_Invoker<std::tuple<void (AccountAdminServiceImpl::*)(), AccountAdminServiceImpl*> >::operator()",
+          1385
+        ],
+        [
+          "std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (AccountAdminServiceImpl::*)(), AccountAdminServiceImpl*> > >::_M_run",
+          1385
+        ],
+        [
+          "std::__invoke<void (AccountAdminServiceImpl::*)(), AccountAdminServiceImpl*>",
+          1385
+        ],
+        [
+          "std::__invoke_impl<void, void (AccountAdminServiceImpl::*)(), AccountAdminServiceImpl*>",
+          1385
+        ],
+        [
+          "AccountAdminServiceImpl::handleGrpcs",
+          1382
+        ],
+        [
+          "AccountAdminServiceImpl::CallData::processRequest",
+          1165
+        ],
+        [
+          "start_thread",
+          1006
+        ],
+        [
+          "grpc_core::(anonymous namespace)::ThreadInternalsPosix::ThreadInternalsPosix(char const*, void (*)(void*), void*, bool*, grpc_core::Thread::Options const&)::{lambda(void*)#1}::_FUN",
+          874
+        ],
+        [
+          "grpc_core::(anonymous namespace)::ThreadInternalsPosix::ThreadInternalsPosix(char const*, void (*)(void*), void*, bool*, grpc_core::Thread::Options const&)::{lambda(void*)#1}::operator()",
+          874
+        ],
+        [
+          "grpc_event_engine::experimental::WorkStealingThreadPool::WorkStealingThreadPoolImpl::StartThread()::{lambda(void*)#1}::_FUN",
+          868
+        ],
+        [
+          "grpc_event_engine::experimental::WorkStealingThreadPool::ThreadState::ThreadBody",
+          868
+        ]
+      ],
+      "files": [
+        {
+          "name": "out.perf",
+          "sha256": "d38c8e84130e0285bdad4a0e16fa28631233dedcd6c828cc45b0b8f0119bd108"
+        },
+        {
+          "name": "perf.data",
+          "sha256": "af13bbdcb17a18b577e7d2b13083d00ac4e6a7d811531b4b90a8e4eac390823f"
+        },
+        {
+          "name": "flamegraph.svg",
+          "sha256": "ad781f567bd009564d80a302fb968976763a95c3f7d17aaed758b9a63049f276"
+        }
+      ],
+      "binary_reader_warnings": [
+        "No kallsyms or vmlinux with build-id db8d96d044abaf1b181d02e540655d0a044cdd69 was found"
+      ]
+    },
+    "Java": {
+      "sample_count": 801,
+      "binary_event_count": 801,
+      "binary_headers_match_text": true,
+      "first_sample_s": 87680.494805,
+      "last_sample_s": 87740.09244,
+      "observed_span_s": 59.59763499999826,
+      "period_histogram_ns": {
+        "10101010": 801
+      },
+      "sampled_period_sum_ns": 8090909010,
+      "thread_names": {
+        "grpc-nio-worker": 421,
+        "C1 CompilerThre": 34,
+        "C2 CompilerThre": 307,
+        "GC task thread#": 4,
+        "VM Thread": 3,
+        "Thread-0": 1,
+        "VM Periodic Tas": 3,
+        "pool-1-thread-1": 14,
+        "pool-1-thread-6": 1,
+        "pool-1-thread-2": 3,
+        "pool-1-thread-9": 2,
+        "pool-1-thread-4": 3,
+        "pool-1-thread-3": 3,
+        "pool-1-thread-5": 1,
+        "pool-1-thread-7": 1
+      },
+      "sampled_thread_ids": 39,
+      "samples_with_unknown_frame": 429,
+      "empty_stacks": 0,
+      "samples_with_debug_directory_dso": 0,
+      "stacks_at_127_frames": 0,
+      "inclusive_groups": {},
+      "top_leaf_samples": [
+        [
+          "[unknown]",
+          328
+        ],
+        [
+          "_raw_spin_unlock_irqrestore",
+          29
+        ],
+        [
+          "__raw_spin_unlock_irq",
+          14
+        ],
+        [
+          "IndexSetIterator::advance_and_next",
+          14
+        ],
+        [
+          "vmxnet3_tq_xmit.isra.66",
+          11
+        ],
+        [
+          "PhaseChaitin::build_ifg_physical",
+          9
+        ],
+        [
+          "PhaseChaitin::Split",
+          7
+        ],
+        [
+          "PhaseIdealLoop::Dominators",
+          6
+        ],
+        [
+          "__pthread_getspecific",
+          6
+        ],
+        [
+          "PhaseLive::compute",
+          5
+        ],
+        [
+          "RegMask::Size",
+          5
+        ],
+        [
+          "PhaseChaitin::gather_lrg_masks",
+          5
+        ],
+        [
+          "Type::cmp",
+          4
+        ],
+        [
+          "IndexSetIterator::IndexSetIterator",
+          4
+        ],
+        [
+          "PhaseChaitin::post_allocate_copy_removal",
+          4
+        ]
+      ],
+      "top_inclusive_samples": [
+        [
+          "start_thread",
+          487
+        ],
+        [
+          "java_start",
+          487
+        ],
+        [
+          "JavaThread::run",
+          480
+        ],
+        [
+          "JavaThread::thread_main_inner",
+          480
+        ],
+        [
+          "[unknown]",
+          429
+        ],
+        [
+          "CompileBroker::compiler_thread_loop",
+          335
+        ],
+        [
+          "CompileBroker::invoke_compiler_on_method",
+          328
+        ],
+        [
+          "C2Compiler::compile_method",
+          296
+        ],
+        [
+          "Compile::Compile",
+          295
+        ],
+        [
+          "thread_entry",
+          145
+        ],
+        [
+          "JavaCalls::call_helper",
+          145
+        ],
+        [
+          "JavaCalls::call_virtual",
+          145
+        ],
+        [
+          "Compile::Code_Gen",
+          137
+        ],
+        [
+          "PhaseChaitin::Register_Allocate",
+          97
+        ],
+        [
+          "do_syscall_64",
+          94
+        ]
+      ],
+      "files": [
+        {
+          "name": "out.perf",
+          "sha256": "571c3be1ebc9baa331011664efe8715f893e3365b332873f228e215723f0b4b7"
+        },
+        {
+          "name": "perf.data",
+          "sha256": "2242b6715271b1d193af25d2cee4b4cab21b3c2bf6b2181854f320d612c201c8"
+        },
+        {
+          "name": "flamegraph.svg",
+          "sha256": "ed525553525383e4993970a52f4c027b465b80c08bd092fc713fd6686e9da7a2"
+        }
+      ],
+      "binary_reader_warnings": [
+        "No kallsyms or vmlinux with build-id db8d96d044abaf1b181d02e540655d0a044cdd69 was found"
+      ]
+    }
+  },
+  "collector_scope": "CoroPerf perf-script reader only. No request, coroutine creation or activation records were present; no ancestry was reconstructed.",
+  "limits": [
+    "Directory names do not establish compiler optimization flags.",
+    "Java JIT symbols and many native call-chain frames are unresolved.",
+    "Inclusive groups overlap and must not be added.",
+    "Sample totals are not request latency, per-RPC cost, a matched throughput ratio or a validated repair effect.",
+    "The reporter describes 60 TPS for 60 seconds per arm; actual completed RPC counts, payloads, startup/warmup and binaries are absent."
+  ]
+}

@@ -45,6 +45,7 @@
       </section>
       <section class="block"><h2>问题与已有证据</h2><p class="section-copy">11 月 26 日报告记录 decode 侧多个 DP rank 同时失去进展，随后设备事件同步超时，而 prefill 侧仍正常。</p><p class="section-copy">所读主页面仍为 Backlog，可见活动未出现修复方案或关联开发改动；定向 PR 搜索未发现匹配修复，不代表已穷尽整个仓库。</p></section>
 
+
       <section class="block"><h2>待区分的解释</h2><div class="review-scroll"><table><thead><tr><th>假设</th><th>区分证据</th></tr></thead><tbody><tr><th scope="row">H1 · 较早的传输没有发布完成事件。</th><td>在首个停顿的 decode step 之前，关联传输代次、接收 rank 与完成观察。</td></tr><tr><th scope="row">H2 · 设备或 collective 先停止进展，主机侧等待随后出现。</th><td>对齐设备事件与 rank 时间线；较晚的同步超时不能证明最初原因。</td></tr><tr><th scope="row">H3 · 主机派发或完成处理先停止。</th><td>用逐 rank 派发／完成事件及原生栈，对比正常时段与此前可恢复的停顿。</td></tr></tbody></table></div></section>
       <section class="block"><h2>待采集的函数栈对比</h2><p class="section-copy">尚无原始故障的采集栈或火焰图，以下是待验证的采集目标。</p>
         <div class="review-scroll"><table><thead><tr><th>普通诊断</th><th>增加 CoroPerf</th></tr></thead><tbody><tr><td>报告有聚合 engine 计数与较晚的同步 traceback，尚无按身份核对的首因链。</td><td>将请求／传输历史接到 worker 与 rank 代次和设备完成事件，区分最初阻塞的操作与后续连锁等待。</td></tr></tbody></table></div>

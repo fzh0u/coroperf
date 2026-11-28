@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="已分析报告者的 CPU 轨迹；根因和修复仍未验证。">
+  <title>gRPC #38002：报告者 CPU 轨迹复核 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../investigations/grpc-38002.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+<link rel="stylesheet" href="../../assets/open-issues.css">
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../open-issues.html">待分析 Issue</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../investigations/grpc-38002.html" lang="en" hreflang="en">English</a><a href="grpc-38002.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main"><article class="wrap research open-review">
+      <section class="block"><a href="../open-issues.html">返回待分析 Issue</a>
+        <h1>gRPC #38002：报告者 CPU 轨迹复核</h1><p>已分析报告者的 CPU 轨迹；根因和修复仍未验证。</p><p>离线分析原报告的 C++／Java 两份 60 秒 CPU 记录；未在本地运行原服务器负载。</p>
+        <p><a href="https://github.com/grpc/grpc/issues/38002">上游 issue</a> · <a href="../../data/investigations/grpc-38002.json">案例记录</a></p>
+      </section>
+      <section class="block"><h2>问题与已有证据</h2><p class="section-copy">报告者在其所述 60 TPS 负载下观察到 C++ 服务器 CPU 更高；附件含两种实现的 perf 二进制数据、文本栈和火焰图。</p></section>
+
+      <section class="block"><h2>报告者轨迹分析</h2><p>已按线程 ID、时间戳及 period 对齐文本事件头与 perf 二进制记录；下表计数是记录中的样本数，不是请求数。</p><div class="review-scroll"><table><thead><tr><th>观察项</th><th>C++</th><th>Java</th></tr></thead><tbody><tr><td>Samples / 样本</td><td>3515</td><td>801</td></tr><tr><td>Contains unknown frame / 含 unknown 帧</td><td>2203</td><td>429</td></tr><tr><td>C1/C2 compiler thread / 编译线程</td><td>0</td><td>341</td></tr><tr><td>Contains /debug/ DSO / 含 debug 目录共享库</td><td>2786</td><td>0</td></tr></tbody></table></div><p>C++ inclusive 路径计数：请求处理 1,165、subscriber handler 388、响应 Finish 612、CompletionQueue 212。这些分组重叠，尚未分离出单一主导原因。</p><p>C++ 库路径包含 debug，值得核对构建选项，但路径不能证明未优化。Java 有明显编译活动，并缺少许多 JIT 符号；样本总量之比不是已验证的逐 RPC CPU 比值。</p><p>已修复 CoroPerf perf-script 读取器对含空格线程名的识别，回归检查通过；3,515／801 条事件数与独立二进制读取一致，未虚构创建边。</p><p><a href="../../data/investigations/grpc-38002-evidence/profile-analysis.json">计算结果与来源哈希</a> · <a href="../../data/investigations/grpc-38002-evidence/analysis-code.zip">分析代码</a></p></section>
+      <section class="block"><h2>待区分的解释</h2><div class="review-scroll"><table><thead><tr><th>假设</th><th>区分证据</th></tr></thead><tbody><tr><th scope="row">H1 · 构建配置影响比较结果。</th><td>取得编译选项及匹配共享库；用同一应用负载比较原构建与优化构建。debug 目录名本身不能证明未优化。</td></tr><tr><th scope="row">H2 · 应用工作量及预热状态不同。</th><td>对齐 payload、实际完成 RPC 数和 handler 行为，并在记录预热过程后重新采集。</td></tr><tr><th scope="row">H3 · 在对齐条件后仍有 runtime／CompletionQueue 开销。</th><td>按 queue／tag 身份测量逐请求 CPU，区分处理、完成及等待，不累加重叠的 inclusive 分组。</td></tr></tbody></table></div></section>
+      <section class="block"><h2>待采集的函数栈对比</h2><p class="section-copy">报告者轨迹中已有执行栈；带请求创建与回调身份的对照仍需重新采集。</p>
+        <div class="review-scroll"><table><thead><tr><th>普通诊断</th><th>增加 CoroPerf</th></tr></thead><tbody><tr><td>原栈可辨识 CallData::processRequest、响应 Finish 等执行路径，但许多栈有缺帧或未解析符号。</td><td>新采集需要请求／tag 代次及回调创建、执行记录；旧附件没有这些数据，无法事后补写。</td></tr></tbody></table></div>
+      </section>
+      <section class="block"><h2>身份与事件链</h2><ul><li>已展示的 C++ 代码使用线程驱动的 CompletionQueue 回调，尚未证实使用协程。</li><li>进一步归属需要 call／tag 寿命、queue、执行线程及回调代次，不能只匹配地址。</li></ul><p>本次离线复核不声称已恢复协程或请求祖先。</p></section>
+      <section class="block"><h2>复现与对照</h2><ol><li>补齐精确编译选项、ELF、Java JIT map、服务器源码和原负载配置。</li><li>保持预热和实际完成 RPC 数可比，在同一实现上验证针对原因的改动。</li></ol></section>
+      <section class="block"><h2>下一步与当前边界</h2><p class="section-copy">先核实 C++ 实际优化选项、复现原应用比较，再选择修复。</p><p>未本地运行原故障或验证修复；缺 ELF、JIT map、实际完成 RPC 数及回调身份，尚不能确认根因，也不能列为协程调试成功案例。</p></section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

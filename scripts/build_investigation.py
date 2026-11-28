@@ -78,6 +78,8 @@ def render(case, language):
         description = tr('Skipped at the user’s request; retained for reference. No local cause or repair is verified.', '按用户要求跳过，保留资料；未验证本地根因或修复。')
     elif case.get('status') == 'collector_prepared':
         description = tr('Source-matched collector prepared; the incident and its cause remain unverified.', '已准备匹配源码的采集器；原故障与根因仍未验证。')
+    elif case.get('status') == 'profile_analyzed':
+        description = tr('Reporter CPU profiles analyzed; a cause and repair remain unverified.', '已分析报告者的 CPU 轨迹；根因和修复仍未验证。')
     hypotheses = ''.join(f'<tr><th scope="row">{e(h["id"])} · {text(h["claim"])}</th><td>{text(h["distinguish"])}</td></tr>' for h in case['hypotheses'])
     relations = ''.join(f'<li>{text(row)}</li>' for row in case['required_relations'])
     comparisons = ''.join(f'<li>{text(row)}</li>' for row in case['comparisons'])
@@ -92,6 +94,21 @@ def render(case, language):
         preparation = (f'<section class="block"><h2>{tr("Preparation and source analysis", "采集准备与源码分析")}</h2>{notes}'
                        f'<p><a href="{e(prefix + case["preparation"]["path"])}">{tr("Source selection and check results", "源码选择点与检查结果")}</a> · '
                        f'<a href="{e(prefix + case["preparation"]["collector"])}">{tr("Collector bundle", "采集器包")}</a>{component}</p></section>')
+    offline_review = ''
+    stack_status = tr('Stacks and flame graphs from the original failure remain unavailable. These are collection targets.', '尚无原始故障的采集栈或火焰图，以下是待验证的采集目标。')
+    if case.get('offline_review'):
+        stack_status = tr('Execution stacks are available in the reporter profiles. A comparison with recorded request creation and callback identities still requires a new capture.', '报告者轨迹中已有执行栈；带请求创建与回调身份的对照仍需重新采集。')
+        review = case['offline_review']
+        prefix = '../../' if zh else '../'
+        headings = ''.join(f'<th>{text(column)}</th>' for column in review['columns'])
+        rows = ''.join('<tr>' + ''.join(f'<td>{e(str(cell))}</td>' for cell in row) + '</tr>'
+                       for row in review['rows'])
+        notes = ''.join(f'<p>{text(note)}</p>' for note in review['notes'])
+        offline_review = (f'<section class="block"><h2>{tr("Reporter profile analysis", "报告者轨迹分析")}</h2>'
+                          f'<p>{text(review["scope"])}</p><div class="review-scroll"><table><thead><tr>{headings}</tr></thead>'
+                          f'<tbody>{rows}</tbody></table></div>{notes}'
+                          f'<p><a href="{e(prefix + review["path"])}">{tr("Computed results and source hashes", "计算结果与来源哈希")}</a> · '
+                          f'<a href="{e(prefix + review["kit"])}">{tr("Analysis code", "分析代码")}</a></p></section>')
     body = f'''<article class="wrap research open-review">
       <section class="block"><a href="../open-issues.html">{tr('Back to open investigations', '返回待分析 Issue')}</a>
         <h1>{title}</h1><p>{description}</p><p>{text(case['source_scope'])}</p>
@@ -99,8 +116,9 @@ def render(case, language):
       </section>
       <section class="block"><h2>{tr('Observed problem and existing evidence', '问题与已有证据')}</h2><p class="section-copy">{text(case['known'])}</p>{repair_status}</section>
       {preparation}
+      {offline_review}
       <section class="block"><h2>{tr('Competing explanations', '待区分的解释')}</h2><div class="review-scroll"><table><thead><tr><th>{tr('Hypothesis', '假设')}</th><th>{tr('Discriminating evidence', '区分证据')}</th></tr></thead><tbody>{hypotheses}</tbody></table></div></section>
-      <section class="block"><h2>{tr('Function-stack comparison to collect', '待采集的函数栈对比')}</h2><p class="section-copy">{tr('Stacks and flame graphs from the original failure remain unavailable. These are collection targets.', '尚无原始故障的采集栈或火焰图，以下是待验证的采集目标。')}</p>
+      <section class="block"><h2>{tr('Function-stack comparison to collect', '待采集的函数栈对比')}</h2><p class="section-copy">{stack_status}</p>
         <div class="review-scroll"><table><thead><tr><th>{tr('Ordinary diagnostics', '普通诊断')}</th><th>{tr('With CoroPerf', '增加 CoroPerf')}</th></tr></thead><tbody><tr><td>{text(case['evidence_comparison']['ordinary'])}</td><td>{text(case['evidence_comparison']['with_coroperf'])}</td></tr></tbody></table></div>
       </section>
       <section class="block"><h2>{tr('Identity and event chain', '身份与事件链')}</h2><ul>{relations}</ul><p>{text(case['proposed_addition'])}</p></section>
