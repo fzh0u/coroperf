@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T10:39:01+00:00",
+  "updated_at": "2026-11-28T10:45:13+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -6020,6 +6020,52 @@
         "search": "research/github-issue-discovery/dotnet-wave56-20261127/search-response.json",
         "gates": "research/github-issue-discovery/dotnet-wave56-20261127/gates.json",
         "execution": "research/github-issue-discovery/dotnet-wave56-20261127/execution.json"
+      }
+    },
+    "dotnet--runtime--137417": {
+      "id": "dotnet--runtime--137417",
+      "repo": "dotnet/runtime",
+      "number": 137417,
+      "url": "https://github.com/dotnet/runtime/issues/137417",
+      "title": "[ci-scan] Test failure: AsyncProfilerTests.RuntimeAsync_NoEventsWhenDisabled observes concurrent runtime-async events",
+      "sources": [
+        "https://github.com/dotnet/runtime/issues/137417"
+      ],
+      "status": "external_environment_required",
+      "reason": "A genuine async-profiler CI assertion is reported: an empty scenario sees two events amid parallel tests. The primary already explains process-wide collection and replayed dispatcher state. The complete original xUnit fixture and matching macOS-arm64 Debug build are unprepared; the reported Windows trimmed probe is not the CI original. No target or readiness was started.",
+      "reason_zh": "真实async-profiler CI断言报告：并行测试中的空场景收到两个事件。正文已有进程全局采集与dispatcher状态回放解释。完整原xUnit fixture及匹配macOS-arm64 Debug构建未准备；报告中的Windows裁剪探针不能替代CI原例。未启动目标或就绪检查。",
+      "source_completeness": {
+        "body": "315-line rendered primary archived; description135–222, CI event dump and source-run limitations read. Full xUnit test sources/harness not supplied in body.",
+        "comments": "Visible activity through policy-bot comment275 read; API completeness unknown.",
+        "version": "Original net12.0-osx-Debug-arm64-coreclr_release-OSX.26.Arm64.Open build1676781; separate Windows x64 probe12.0.0-alpha.1.26480.102 explicitly not the original CI runtime.",
+        "scope": "Only public GitHub issue read. PR136983, implementation, Azure logs and portal not opened; source claims are not independently verified."
+      },
+      "upstream_evidence": {
+        "observation": "CI expects zero but sees2; event dump includes Resume for dispatcher375/376/377 then Suspend377. Source reports8 parallel test threads.",
+        "counterevidence": "Resume without Create can follow intentional SyncPoint replay for pre-existing dispatchers. The source probe reports1000 isolated iterations without failure and85 concurrent events/zero Create on first iteration; it is a trimmed Windows probe, not the original assembly or macOS reproduction.",
+        "unknown": "No complete original test/build/log artifacts, local runtime event trace, collector coverage or overhead measurement. Primary search/no-PR statements are not an exhaustive independent fix screen.",
+        "resolution_scope": "Open and untriaged in the rendered primary, but a causal isolation explanation already exists. This cannot count as first root-cause discovery or as proof of a runtime instrumentation defect, new fix or released improvement."
+      },
+      "coroperf_applicability": {
+        "assessment": "Conditional evidence-integrity/attribution validation; existing causal explanation excludes first-root-cause admission. No performance regression measured here.",
+        "required_identity": "Process/listener session/configuration epochs; scenario/test IDs; dispatcher generations and parent links; Create/Resume/Suspend/Complete, SyncPoint replay and native thread identity. An active dispatcher can predate listener attachment.",
+        "native_baseline": "Preserve original EventListener/event CSV and parallel test configuration; distinguish scenario-owned events from unrelated process-wide activity before cross-coroutine attribution.",
+        "limits": "Do not erase events, disable parallelism, weaken assertions, invent a yielding-loop probe or substitute Windows/Linux for the macOS CI original. Matching complete test/build remains unprepared; event counts are not CPU or latency.",
+        "assessment_zh": "有条件用于证据完整性／归属验证；已有因果解释，不计首次根因候选，本例无性能回归实测。",
+        "required_identity_zh": "进程／listener会话／配置epoch、场景／test ID、dispatcher代次及父子关系、Create／Resume／Suspend／Complete、SyncPoint回放及原生线程；活跃dispatcher可早于listener接入。",
+        "native_baseline_zh": "保留原EventListener／CSV与并行配置，先分清场景所属事件和进程内其他工作，再判断跨协程归属。",
+        "limits_zh": "不删事件、关闭并行、放宽断言、另造yield-loop探针或以Windows／Linux替代macOS CI；完整匹配测试／构建未准备；事件数不是CPU或延迟。"
+      },
+      "open_issues_advice": {
+        "disposition": "not_primary",
+        "reason": "The primary already explains the process-wide zero-event assumption and replay; no new unresolved causal question was established.",
+        "reason_zh": "正文已解释全局零事件断言与回放，不计新的未解因果问题。"
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "315-line rendered primary archived; description135–222, CI event dump and source-run limitations read. Full xUnit test sources/harness not supplied in body. Visible activity through policy-bot comment275 read; API completeness unknown. Original net12.0-osx-Debug-arm64-coreclr_release-OSX.26.Arm64.Open build1676781; separate Windows x64 probe12.0.0-alpha.1.26480.102 explicitly not the original CI runtime. Only public GitHub issue read. PR136983, implementation, Azure logs and portal not opened; source claims are not independently verified.",
+        "boundaries": "真实CI事件断言0对2，正文已指出进程级listener收进并发任务事件及SyncPoint回放早已创建dispatcher状态；Resume无Create不自动等于丢事件或runtime缺陷。原macOS-arm64 Debug/net12 build1676781及完整xUnit原例未准备，另Windows12.0.0-alpha.1.26480.102裁剪probe不是原CI；1000隔离／1st concurrent85事件等只是来源报告，未独立重现，不换平台、裁剪测试、弱化断言或造yield-loop。此为追踪证据归属／隔离缺陷已有因果解释，不当新性能回归或首次root cause。需进程/listener配置epoch、场景test、dispatcher代次与父关系、SyncPoint replay及Create/Resume/Suspend/Complete到TID，listener开始前就活跃的实例不能要求重新Create。保留原EventListener/CSV和并行配置、先普通归属基线，再检验coroperf增量；事件数非CPU/延迟。315行135–222含限制及275bot已读、API未知；136983/代码/Azure/portal未开，来源“无fix搜索”非独立穷尽筛查。",
+        "time_budget": "原dispatch10:41:27.325601Z/source即时归档21.695115/facts-postwrite58.894250/final72.817973，source60/90/facts120/records150/total180/reserve35全满足；所有研究phase0/handles[]/SLOT1unused。"
       }
     },
     "dotnet--runtime--25905": {
@@ -19784,6 +19830,54 @@
         "time_budget": "Later source observation59s; readiness69.070338s; final115.249510s. Readiness1 exited0 with matching predicatefalse; all other execution phases0. Slot2 released unused."
       }
     },
+    "reactor--reactor-core--2352": {
+      "id": "reactor--reactor-core--2352",
+      "repo": "reactor/reactor-core",
+      "number": 2352,
+      "url": "https://github.com/reactor/reactor-core/issues/2352",
+      "title": "FluxGroupBy silently drops onNext signals",
+      "sources": [
+        "https://github.com/reactor/reactor-core/issues/2352"
+      ],
+      "status": "external_environment_required",
+      "reason": "Reported groupBy item loss and later hangs have complete supplied local test methods, including a30s random/delayed workload and1ms computational processing; they are genuine original candidates. One platform readiness check found Linux/x86_64 versus specified Catalina10.15.6/Darwin19.6.0/JVM1.8.0_172/Reactor3.3.9.RELEASE. Matching original fixture was not established; no platform/runtime/workload substitution or target run.",
+      "reason_zh": "作者报告groupBy丢项及后续挂起，并提供完整本地测试方法，包括30秒随机/延迟工作负载及1毫秒计算处理，属于真实原例候选。一次平台readiness检查得到Linux/x86_64，与原Catalina10.15.6/Darwin19.6.0/JVM1.8.0_172/Reactor3.3.9.RELEASE不匹配；未建立匹配原环境，未替换平台/运行时/负载或执行目标。",
+      "source_completeness": {
+        "body": "Full returned original description145–206 and methods165–196 read.",
+        "comments": "Visible2020 discussion and supplied CPU variants read through594;20 activity items collapsed at595;2024 visible closure discussion599–645 read. Returned text ends at651 in next2024 comment header, so its content and later history unavailable.",
+        "version": "Original3.3.9.RELEASE/JVM1.8.0_172/Catalina10.15.6/Darwin19.6.0x86_64. Later variants not independently version-pinned.",
+        "scope": "One primary retrieved; no implementation links, references2138/3872/4347, code or alternate original opened. Primary headerOpen conflicts with visible2024 not-planned closure; later history unavailable."
+      },
+      "upstream_evidence": {
+        "observation": "High-cardinality timed groups lose counted elements. Author reports scheduler isolation changes failures; replacing sleep with CPU work still fails, adding a downstream publishOn produces hangs/flaky results. Maintainer supplies a smaller source test with expected0 versus actual44 difference.",
+        "counterevidence": "Maintainer initially attributes behavior to blocking work and requests publishOn; author disputes this and supplies CPU-only/no-subscribeOn variants. Neither explanation is validated locally. Scheduler variants and the small test are distinct supplied protocols, not interchangeable controls.",
+        "unknown": "Race versus scheduling/backpressure/cancellation semantics, exact loss boundary, collapsed discussions, current status and linked patch identity/effect remain unresolved in available text.",
+        "resolution_scope": "2020 author proposes drain/cancel race; maintainers offer blocking explanation and then a smaller failing test.2024 closing-as-dated is not a demonstrated fix; header4347 relation was not opened or classified."
+      },
+      "coroperf_applicability": {
+        "assessment": "Concurrent subscription/group lifecycle and queue-loss incident; suitable identity/history question, original skipped on matching-environment prerequisite.",
+        "assessment_zh": "订阅/分组生命周期与队列丢项并发事件；有明确身份/历史判别问题，因匹配环境前提未满足而跳过原例。",
+        "required_identity": "Track actual subscription, group key plus generation, UnicastGroupedFlux queue generation, upstream item sequence, demand, worker/nativeTID and drain/cancel/termination ordering; bridge delayed emission/take timer task to the group it can cancel. Same key may create later group generations; creator is not execution owner.",
+        "required_identity_zh": "记录订阅、分组键及代次、UnicastGroupedFlux队列代次、上游元素序号、需求量、worker/原生TID及drain/cancel/终止顺序；桥接delay发射和take定时任务与被取消分组。同键可重建不同代次分组，创建者不是执行归属。",
+        "native_baseline": "Unchanged original equality/hang outcomes plus native thread/task timing and queue transition evidence before collector comparison; no native run or baseline result obtained.",
+        "native_baseline_zh": "应先保存未改原例的计数相等/挂起结果及原生线程任务时序、队列迁移证据，再比较collector；本轮无原生运行或基线结果。",
+        "limits": "Do not delete1ms work, reduce cardinality/concurrency/time, replace random input/timers, change scheduler or run smaller source test as the original. A changed scheduling configuration can mask the race and alter semantics. Wall delay and spin duration are not item ownership or lost-item proof. Existing collector support for Reactor group/demand/cancel queue events is unverified.",
+        "limits_zh": "不可删除1毫秒处理、减少基数/并发/时长、替换随机输入/定时器、改scheduler或以更小源码测试替代原例；调度变化可能掩盖竞争并改变语义；墙钟延迟或忙等时长不证明元素归属或丢失；collector对Reactor分组/需求/cancel队列事件的支持未核实。"
+      },
+      "open_issues_advice": {
+        "disposition": "status_check",
+        "reason": "Specific competing race and scheduling/backpressure explanations exist, but collapsed20 items and unverified4347 relation prevent a no-root-cause/no-fix verdict. HeaderOpen and visible2024 closure conflict.",
+        "reason_zh": "有具体竞争解释，但20项折叠历史及未核实4347关系使现有证据不足以称无根因/无修复；顶部Open与可见2024关闭记录冲突。",
+        "first_step": "Verify current discussion/4347 relationship through separately gated sources, then acquire matching original fixture.",
+        "validation": "No original run, cause/fix validation, collector capability test, diagnosis timing or speedup measured."
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Full returned original description145–206 and methods165–196 read. Visible2020 discussion and supplied CPU variants read through594;20 activity items collapsed at595;2024 visible closure discussion599–645 read. Returned text ends at651 in next2024 comment header, so its content and later history unavailable. Original3.3.9.RELEASE/JVM1.8.0_172/Catalina10.15.6/Darwin19.6.0x86_64. Later variants not independently version-pinned. One primary retrieved; no implementation links, references2138/3872/4347, code or alternate original opened. Primary headerOpen conflicts with visible2024 not-planned closure; later history unavailable.",
+        "boundaries": "真实高基数groupBy丢项、CPU处理变体及publishOn挂起报告承认，完整测试方法含30s随机delay及1ms计算，是原例候选而非缺main。一次platform readiness为Linux/x86_64，不匹配所报Catalina10.15.6/Darwin19.6/JVM1.8.0_172/Reactor3.3.9，skipped；不换版本/平台、削减基数/并发/时长、改随机/定时/scheduler、删1ms或把维护者较小测试当原例。阻塞解释与作者纯CPU反例、drain/cancel race建议和维护者expected0/actual44均保留，不统一成已证机制；调度变体不互作同协议control。需subscription、group key+代次、UnicastGroupedFlux队列、元素序号/demand、worker/TID、drain/cancel/termination及delay/take定时任务关联；同key可跨代次重建，creator非owner、spin墙钟不证丢项或CPU。原生未改计数/挂起、队列迁移时序是前提，collector对group/demand/cancel支持未验。描述145–206及可见讨论至594、2024闭合599–645读；20项折叠且返回止651下一commentheader，后文/API不全，头Open与2024notplanned关闭矛盾，2138/3872/4347关系未开不猜Issue/PR或修复，OpenIssues仅status_check。",
+        "time_budget": "原dispatch10:41:00.268957Z/source52.731043/readiness73.657033（source后20.92599）/facts119.775179/post119.775262/records133.589678/final134.731043–135.731043，source60/90/facts120/records150/total180/reserve35满足。readiness1/platform metadata1同pass，version/import/compiler/build/target/control/capture0，handles[]/SLOT2unused。"
+      }
+    },
     "reactor--reactor-core--2544": {
       "id": "reactor--reactor-core--2544",
       "repo": "reactor/reactor-core",
@@ -26759,13 +26853,13 @@
     }
   },
   "counts": {
-    "external_environment_required": 561,
+    "external_environment_required": 563,
     "excluded_after_review": 97,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 81,
-  "new_review_count": 674,
+  "new_review_count": 676,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",
