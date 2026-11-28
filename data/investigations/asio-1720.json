@@ -9,20 +9,20 @@
   "local_execution": "completed",
   "upstream_state_observed": "open",
   "source_scope": {
-    "en": "Primary issue and visible activity rechecked; repository-wide patch search and complete API history unavailable. Existing traces below are upstream reports, not new local runs.",
-    "zh-CN": "已重查主 issue 与可见活动；未取得仓库级补丁搜索和完整 API 历史。现有轨迹属于上游报告，不是本轮本地运行。"
+    "en": "The upstream issue and attached standalone reproducers establish the reported failure. The linked evidence records fresh local Boost1.88.0 executions, CoroPerf capture, reactor observations and a local patch. Original fixture/environment coverage remains limited as stated.",
+    "zh-CN": "上游 issue 和 standalone 附件定义所报失败。关联证据记录本轮 Boost1.88.0 本地执行、CoroPerf 采集、reactor 观测及本地修改；原 fixture／环境的覆盖限制单列说明。"
   },
   "question": {
     "en": "Which event stops the last socket-write operation from completing?",
     "zh-CN": "最后一次 socket write 为什么不再完成？"
   },
   "known": {
-    "en": "A closed-peer writer hangs. A later upstream comment reports the same failure with callbacks and improvement with epoll disabled; handler and frame-lifetime traces already exist. These are partial results, not a confirmed root cause.",
-    "zh-CN": "对端关闭后，写协程停住。上游评论报告回调版本也失败、禁用 epoll 后恢复，并已有 handler 与 frame 生命周期轨迹；这些是阶段性证据，尚未确证根因。"
+    "en": "The upstream coroutine and callback reproducers hang after peer closure on epoll. Fresh local runs reproduce that failure and confirm terminal-error exhaustion classification as its cause; detailed local evidence and controls are linked in results.",
+    "zh-CN": "上游协程版、回调版在对端关闭后于 epoll 路径挂起。本轮本地执行复现该失败，确认错误完成被判定为就绪耗尽所致；results 关联详细证据及对照。"
   },
   "first_step": {
-    "en": "Recover the original fixture and pin Boost 1.88.0 / GCC 13.3 / Ubuntu 24.04 before collecting anything.",
-    "zh-CN": "先取得原 fixture，固定 Boost 1.88.0／GCC 13.3／Ubuntu 24.04，再开始采集。"
+    "en": "Validate the patch on current upstream and broader send-path tests, then prepare a reviewable upstream report. No GitHub comment or pull request has been posted.",
+    "zh-CN": "继续在当前上游和更完整的 send 路径测试中验证补丁，再整理可供上游审阅的报告。尚未向 GitHub issue 发评论或提交 PR。"
   },
   "proposed_addition": {
     "en": "Join the writer and reused child-frame generations to the specific write operation, then locate the first missing registration, readiness, completion or resume event.",
@@ -42,7 +42,8 @@
       "distinguish": {
         "en": "Find operation generation still queued, with registration/readiness and no completion dispatch; establish the exact queue/error-state transition.",
         "zh-CN": "找到仍排队的操作代次，核对注册／就绪与缺少完成派发的证据，再定位队列／错误状态转换。"
-      }
+      },
+      "outcome": "Supported by queued operation, EPIPE exhaustion state and repair controls"
     },
     {
       "id": "H2",
@@ -53,7 +54,8 @@
       "distinguish": {
         "en": "Require a completion event for the same operation before an absent matching resume. No completion event does not establish this hypothesis.",
         "zh-CN": "必须先看到同一操作的完成事件，随后缺少匹配恢复；没有完成事件不能支持这一解释。"
-      }
+      },
+      "outcome": "Not the observed mechanism: the fifth write never reaches perform before cleanup"
     },
     {
       "id": "H3",
@@ -64,25 +66,22 @@
       "distinguish": {
         "en": "Track fresh frame and operation generations; separate timeout destruction from successful I/O completion.",
         "zh-CN": "对 frame 和操作分代，区分超时析构与 I/O 成功完成。"
-      }
+      },
+      "outcome": "Storage reuse is real but distinct generations prevent conflation; cleanup is not success"
     }
   ],
   "comparisons": [
     {
-      "en": "Reproduce the original pinned Boost 1.88.0 test before enabling CoroPerf. Obtain its TCPTest fixture and testTimeout; do not silently substitute later comments or a new timeout.",
-      "zh-CN": "先在固定 Boost 1.88.0 上复现原测试，再启用 CoroPerf；须取得 TCPTest fixture 与 testTimeout，不把后续评论或新超时静默替代原例。"
+      "en": "Unchanged November26 upstream standalone coroutine and callback attachments; Boost1.88.0 official source archive, Linux/GCC11.4. Original O2 builds and separate O0 debugger builds are recorded. Healthy and buffer-sequence controls are explicit adaptations; the original GoogleTest fixture and Ubuntu24.04/GCC13.3 environment were not reproduced.",
+      "zh-CN": "使用 11 月 26 日上游附件中未改动的 standalone 协程版和回调版；Boost1.88.0 官方源码、Linux/GCC11.4。记录原 O2 构建与独立 O0 调试构建。正常连接和 buffer sequence 对照是明确标记的适配；未复现原 GoogleTest fixture 及 Ubuntu24.04/GCC13.3 环境。"
     },
     {
-      "en": "Compare ordinary stacks plus Asio handler tracking against the same workload with CoroPerf frame-generation attribution and explicitly added operation/reactor observations.",
-      "zh-CN": "同一负载比较普通函数栈＋Asio handler tracking，与 CoroPerf frame 代次归属及明确增加的操作／reactor 观察。"
+      "en": "CoroPerf binary-selected probes and its existing instance graph separate repeated lifetimes at one coroutine-frame address and reconnect them to the writer. Optional activation intervals supply parent evidence missing from instruction-only creation unwinding. An extra Asio do_init frame-to-handle observer joins each write operation to the correct live generation; reactor events then distinguish a queued operation from a completed operation lacking a resume.",
+      "zh-CN": "CoroPerf 的二进制探针和既有实例图区分同一 frame 地址的多次寿命，并接回 writer。可选激活区间补足仅指令展开缺失的创建者证据；新增 Asio do_init 的 frame／handle 观察，把每次 write 接到正确的存活代次，再用 reactor 事件区分“操作仍排队”和“已完成却未恢复”。"
     },
     {
-      "en": "Treat callback and epoll-disabled variants as separate controls. Callback failure would locate the defect below coroutine-only behavior; a backend change alone does not identify the faulty transition.",
-      "zh-CN": "回调版和禁用 epoll 版单列对照；回调也失败说明问题不局限于协程，后端变化本身不能确定错误转换。"
-    },
-    {
-      "en": "After isolating a transition, test one cause-specific repair using the unchanged regression and normal/error-path controls. No repair or result exists in this case record yet.",
-      "zh-CN": "隔离转换后，用未改动的回归测试与正常／错误路径对照验证针对原因的修复。本记录尚无修复或结果。"
+      "en": "Local repair: require !o->ec_ before classifying either single-buffer or buffer-sequence sends as done_and_exhausted. Each repaired error-path variant finishes ten attempts in all three runs; healthy writes finish with and without the patch. Upstream acceptance and release integration are unverified.",
+      "zh-CN": "本地修改：single-buffer 和 buffer-sequence 两条路径判定 done_and_exhausted 前均要求 !o->ec_。修复后的各错误路径三次均完成十次尝试；正常连接在有／无补丁时均通过。尚未取得上游接受或发布集成结果。"
     }
   ],
   "required_relations": [
@@ -104,14 +103,14 @@
     }
   ],
   "evidence_comparison": {
-    "status": "planned_no_captured_stacks",
+    "status": "captured_scoped_observation",
     "ordinary": {
-      "en": "Handler tracking already narrows the pending write; a worker stack or function symbol cannot distinguish successive uses of one frame address.",
-      "zh-CN": "handler tracking 已缩小到未结束的 write；worker 栈或函数符号不能区分同一 frame 地址的多次使用。"
+      "en": "Physical initiation stacks and handler tracking identify a pending write but omit the writer launch and reuse generations. Reactor observations are needed to identify the erroneous transition.",
+      "zh-CN": "物理发起栈和 handler tracking 指出待完成 write，但缺少 writer 来源与复用代次；错误转换需 reactor 观察确认。"
     },
     "with_coroperf": {
-      "en": "The target is an operation-specific event chain rooted at the correct writer generation. Its added diagnostic value must be checked against handler tracking, not assumed.",
-      "zh-CN": "目标是接回正确 writer 代次的逐操作事件链；必须对照 handler tracking 核实新增诊断价值，不能预设。"
+      "en": "CoroPerf binary-selected probes and its existing instance graph separate repeated lifetimes at one coroutine-frame address and reconnect them to the writer. Optional activation intervals supply parent evidence missing from instruction-only creation unwinding. An extra Asio do_init frame-to-handle observer joins each write operation to the correct live generation; reactor events then distinguish a queued operation from a completed operation lacking a resume.",
+      "zh-CN": "CoroPerf 的二进制探针和既有实例图区分同一 frame 地址的多次寿命，并接回 writer。可选激活区间补足仅指令展开缺失的创建者证据；新增 Asio do_init 的 frame／handle 观察，把每次 write 接到正确的存活代次，再用 reactor 事件区分“操作仍排队”和“已完成却未恢复”。"
     }
   },
   "next_action": {
