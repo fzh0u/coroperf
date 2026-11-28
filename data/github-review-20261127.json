@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T11:05:52+00:00",
+  "updated_at": "2026-11-28T11:17:02+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -9612,6 +9612,53 @@
           "label_zh": "冻结原生观察与函数一致性边界"
         }
       ]
+    },
+    "golang--go--72765": {
+      "id": "golang--go--72765",
+      "repo": "golang/go",
+      "number": 72765,
+      "url": "https://github.com/golang/go/issues/72765",
+      "title": "sync: higher mutex wait durations in 1.24",
+      "sources": [
+        "https://github.com/golang/go/issues/72765"
+      ],
+      "status": "external_environment_required",
+      "reason": "Reported I/O-bound gRPC service mutex-wait regression is concrete, but the extracted body supplies no complete original application/fixture/request workload/run window. Reported Go1.23.3 versus 1.24.0/1.24.1 is not the preferred Go1.23.0 original. No setup, version probe, target or substitute benchmark attempted.",
+      "reason_zh": "报告给出gRPC服务升级后互斥锁等待增加的实际现象，但正文未提供完整应用、请求负载、运行窗口或原始环境；版本为1.23.3对1.24.0/1.24.1。未准备环境、探测版本、启动原例或替代基准。",
+      "source_completeness": {
+        "body": "Full returned primary page, lines0–265, inspected; body available.",
+        "comments": "No comments returned; discussion history and linked-fix screen incomplete.",
+        "version": "Go1.23.3 ->1.24.0/1.24.1; go env says Linux amd64/go1.24.0.",
+        "scope": "One guarded primary issue only; release-note link, code, images, external services and related issues unopened."
+      },
+      "upstream_evidence": {
+        "observation": "Reporter says go_sync_mutex_wait_total_seconds_total doubled after upgrading an I/O-bound gRPC service; points to context.(*cancelCtx).propagateCancel unlock in profiles. This is upstream measurement, not local reproduction.",
+        "counterevidence": "Cumulative mutex-wait metric does not itself establish CPU cost, per-request latency, runnable delay, throughput loss or contention root cause. Runtime-internal mutex changes are the reporter speculation.",
+        "unknown": "Exact application, workload/rates/concurrency, duration, profile denominators, goroutine count, cancellation topology, full comments and any unlinked fix.",
+        "resolution_scope": "Primary page says closed as not planned, WaitingForInfo and no linked branches/PRs. These do not prove cause, absence of a fix or a released fix."
+      },
+      "coroperf_applicability": {
+        "assessment": "Potential cancellation-tree/contended-mutex investigation; no demonstrated coroperf localization or speedup. Open Issues advice: status_check until discussion/fix screen is complete.",
+        "required_identity": "Stable request/RPC, context and cancel-node generation, goroutine, mutex lifetime/address generation, lock attempt/acquire/release and cancellation parent/child edges. Creation ancestry does not establish lock ownership or cause.",
+        "native_baseline": "Matched original versions and load with completed RPC counts/latency, Go mutex/block/CPU profiles and runtime trace; distinguish cumulative waiter-seconds, acquisition delay, runnable scheduling delay and CPU.",
+        "limits": "No complete original or trace. A metric attributed near unlock is not proof that unlock itself consumes the reported wait. Extra observations may require collector instrumentation; current creation labels do not supply mutex ownership.",
+        "assessment_zh": "可能用于取消树与锁争用定位；尚无coroperf定位或提速结果。Open Issues仅建议status_check，先补全讨论与修复核验。",
+        "required_identity_zh": "需要请求/RPC、context和取消节点代次、goroutine、锁生命周期/地址代次及申请、获得、释放和取消父子事件；创建关系不等于锁所有权或原因。",
+        "native_baseline_zh": "以原版本和原负载采集完成RPC数、时延、mutex/block/CPU profile及runtime trace，区分累计等待秒数、锁获取等待、可运行调度延迟和CPU。",
+        "limits_zh": "无完整原例或trace。unlock附近归因不证明unlock耗费该等待；现有创建标签不提供锁所有权，可能需新增观察点。"
+      },
+      "open_issues": {
+        "disposition": "status_check",
+        "reason": "Concrete reported observation, but comment/fix evidence incomplete; no no-fix or first-root-cause assertion.",
+        "candidate_admitted": false
+      },
+      "identity_aliases": [],
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Full returned primary page, lines0–265, inspected; body available. No comments returned; discussion history and linked-fix screen incomplete. Go1.23.3 ->1.24.0/1.24.1; go env says Linux amd64/go1.24.0. One guarded primary issue only; release-note link, code, images, external services and related issues unopened.",
+        "boundaries": "真实I/O-bound gRPC服务升级1.23.3到1.24.0/.1后go_sync_mutex_wait_total_seconds_total倍增，profile指context.(*cancelCtx).propagateCancel unlock，保留为来源观察；未给完整原应用/请求率并发/窗口/取消拓扑/profile分母，skipped，不probeSDK/改版本/造mutexbench。累计waiter-seconds不等CPU或每RPC时延/吞吐退化，unlock采样归因不证明unlock在耗费等待；可能工作量/取消数量改变、持锁等待变长或计量语义不同，runtimeinternalmutex仅作者猜测。需RPC/request、context/cancel-node、goroutine及mutex地址/生命周期代次、attempt/acquire/release、取消父子/holder及TID/GPM事件；creator非锁owner，现有creation标签不提供owner，需额外collector观察。先以原版本原负载、完成RPC/latency/CPU与mutex/block/runtime-trace归一化，拆wait/runnable/CPU，再谈coroperf价值和对照定位耗时。265行完整返回但无comments/fullhistory/API，Closednotplanned/WaitingForInfo且无linkedPR不证根因、无fix或release修复，OpenIssues仅status_check。Release-notes/代码/images/服务未开；postsource工作负载门禁碰旧C++grpc23231属不同runtime上下文非alias，未重开旧源。",
+        "time_budget": "实际dispatch11:10:02.464094Z/source72.535906–73.535906秒（secondprecision，source60超12.536–13.536、90内）/facts94.471404/records144.234068内150；独立final11:12:32秒=149.535906–150.535906，final150边界unknown、总180满足，reserve35不足4.536–5.536。首次finalclock工具dispatch前中止1，只重试clock不重试source/target；所有研究phase0/handles[]/SLOT2released。"
+      }
     },
     "golang--go--72932": {
       "reviewed_at": "2026-11-26T17:53:56.829750+00:00",
@@ -27090,13 +27137,13 @@
     }
   },
   "counts": {
-    "external_environment_required": 567,
+    "external_environment_required": 568,
     "excluded_after_review": 98,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 81,
-  "new_review_count": 681,
+  "new_review_count": 682,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",

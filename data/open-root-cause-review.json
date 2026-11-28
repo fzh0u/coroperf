@@ -8,17 +8,17 @@
   "corpus": {
     "discovery_entries": 1544,
     "open_in_saved_discovery": 519,
-    "review_decisions": 937,
+    "review_decisions": 947,
     "verified_cases": 140,
-    "discovery_ledger_refreshed_at": "2026-11-28T10:22:28+00:00",
+    "discovery_ledger_refreshed_at": "2026-11-28T11:17:01+00:00",
     "inputs": [
       {
         "path": "web/coroperf-github-pages/data/discovery.json",
-        "sha256": "d4a969bc813a0c103ea06bb5bc3073d6962c157cdf0cdcf29444d41f6083cee6"
+        "sha256": "afbe80ba5424f79af864120f194850413b1bc75dedb7453cfcfb83a02f40eb3c"
       },
       {
         "path": "research/github-issue-discovery/automation/reviews.json",
-        "sha256": "f6a752e3cabcf53785d01fbc6f5d93367874af2856563224a5330367cc184364"
+        "sha256": "8cfaed02154553063912a7d516047f3558a2c49ad260dc19686e5559786031f7"
       },
       {
         "path": "web/coroperf-github-pages/data/cases.json",
@@ -424,6 +424,57 @@
         "en": "Verify the missing history and #4347 relationship, then recover one matching original fixture. Keep this as status-check until unresolved cause and repair status are established.",
         "zh-CN": "先核实缺失历史与#4347关系，再取得一套匹配原例；明确未解因果问题和修复状态前保持状态待核验。"
       }
+    },
+    {
+      "id": "golang--go--72765",
+      "reference": "Go #72765",
+      "url": "https://github.com/golang/go/issues/72765",
+      "language": "Go / goroutines / context cancellation / mutex profiling",
+      "stage": "status_check",
+      "upstream_state": "closed_not_planned_waiting_for_info_in_inspected_page",
+      "local_status": "skipped",
+      "last_source_check": "2026-11-28T11:11:15+00:00",
+      "sources": [
+        "https://github.com/golang/go/issues/72765"
+      ],
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "question": {
+        "en": "Why does the reported cumulative mutex-wait metric double after Go1.23.3 →1.24.0/1.24.1 in an I/O-bound gRPC service?",
+        "zh-CN": "I/O密集gRPC服务从Go1.23.3升级至1.24.0／1.24.1后，累计mutex等待指标为何翻倍？"
+      },
+      "known": {
+        "en": "The reporter points to context.(*cancelCtx).propagateCancel unlock in profiles. Request rate, concurrency, time window and profile denominators are unavailable. This is a reported metric change, without a local CPU or per-request latency result.",
+        "zh-CN": "报告者指向profile中的context.(*cancelCtx).propagateCancel unlock；请求率、并发度、运行窗口和profile分母缺失。这是来源指标变化，没有本地CPU或每请求时延结果。"
+      },
+      "patch": {
+        "en": "The inspected primary is closed as not planned with WaitingForInfo and no linked branches/PRs. Comments and repair history were not returned; cause and fix status remain unverified.",
+        "zh-CN": "所读主页面为Closed/not planned、WaitingForInfo，未列关联branch／PR；评论和修复历史未取得，根因与修复状态仍未核实。"
+      },
+      "coroperf_addition": {
+        "en": "Conditionally attribute waiting goroutines to RPC/context cancellation histories and correlate them with specific contended lock generations. Mutex-owner and context-resource observations require additional verified collector support.",
+        "zh-CN": "有条件地将等待goroutine接回RPC／context取消历史，关联到具体争用锁代次；锁持有者和context资源观察仍需额外collector支持及验证。"
+      },
+      "required_evidence": {
+        "en": "RPC/request, context/cancel-node, goroutine and mutex lifetime/address generations; lock attempt/acquire/release; cancellation parent/child edges and owner. Distinguish mutex wait from runnable delay and CPU.",
+        "zh-CN": "RPC／request、context／cancel-node、goroutine、mutex生命周期／地址代次；申请／获得／释放、取消父子边及owner；分清锁等待、可运行延迟与CPU。"
+      },
+      "diagnosis_plan": {
+        "en": "Distinguish more requests/cancellations, longer lock holds or acquisition waits, changed wait accounting, and scheduling delay after release. Normalize cumulative waiter-seconds to the same window and completed RPC count before comparing versions.",
+        "zh-CN": "区分请求／取消次数增加、持锁或获取等待变长、等待计量变化，以及释放后的调度延迟；先按相同窗口和完成RPC数归一化累计waiter-seconds，再比较版本。"
+      },
+      "validation": {
+        "en": "Recover the original application and fixed workload/window, compare the exact reported versions using mutex/block/CPU profiles and runtime trace, then test competing explanations with lock/context events. Validate an eventual cause-specific repair on the unchanged regression before timing diagnosis gains.",
+        "zh-CN": "取得原应用及固定负载／窗口，在原版本间采mutex／block／CPU profile及runtime trace，再用锁／context事件区分解释；先用未改回归验证针对原因的修复，再测定位收益。"
+      },
+      "limits": {
+        "en": "Skipped: original service, request workload and run window are absent; no setup or target run. An unlock-attributed profile does not show that unlock consumes the waiting time. Creation labels do not establish mutex ownership; no collector coverage or timing result exists.",
+        "zh-CN": "skipped：缺原服务、请求负载和运行窗口，未准备或运行目标。归因到unlock的profile不代表unlock消耗该等待；创建标签不证明mutex所有权，没有collector覆盖或定位耗时结果。"
+      },
+      "first_step": {
+        "en": "Check the missing discussion/fix history and obtain the original workload/profile denominators. Keep status-check until a scoped unresolved cause and repair status can be established.",
+        "zh-CN": "先补齐讨论／修复历史，取得原负载与profile分母；明确有范围的未解原因和修复状态前保持状态待核验。"
+      }
     }
   ],
   "not_primary": [
@@ -591,7 +642,7 @@
   "publication": {
     "status": "pending",
     "target": "https://fzh0u.github.io/coroperf/zh-cn/open-issues.html",
-    "note": "Wave273 known-cause/fix exclusions saved locally;8 existing candidates unchanged. No new runtime or diagnosis-speed result. Git push/Pages unverified."
+    "note": "Wave274 Go contention status-check saved locally; no first-root-cause admission or local runtime/diagnosis-speed result. Git push/Pages unverified."
   },
   "synchronized_at": "2026-11-28T10:17:59.175034+00:00",
   "synchronization": {
@@ -604,7 +655,7 @@
     "en": "The list is ordered by investigation priority. Status labels distinguish priority investigations, pending investigations and entries requiring a status check. No new verified case or execution is claimed.",
     "zh-CN": "列表按调查优先顺序排列，用状态区分优先调查、待调查和先核验状态的条目。本次未增加验证案例或执行结果。"
   },
-  "presentation_updated_at": "2026-11-28T11:05:23.136171+00:00",
+  "presentation_updated_at": "2026-11-28T11:16:17.797827+00:00",
   "diagnosis_protocol": {
     "status": "planned_unmeasured",
     "claim": {
