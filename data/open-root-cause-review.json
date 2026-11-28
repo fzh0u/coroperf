@@ -8,17 +8,17 @@
   "corpus": {
     "discovery_entries": 1544,
     "open_in_saved_discovery": 519,
-    "review_decisions": 950,
+    "review_decisions": 952,
     "verified_cases": 140,
-    "discovery_ledger_refreshed_at": "2026-11-28T12:15:25+00:00",
+    "discovery_ledger_refreshed_at": "2026-11-28T12:24:47+00:00",
     "inputs": [
       {
         "path": "web/coroperf-github-pages/data/discovery.json",
-        "sha256": "e8327418f127b675d8de3b705ac3ff01012ac86c0389aba3d885f8b7c170979c"
+        "sha256": "4ff92af89903d09689c41df4f581b61fad4791b31ad642c6acb7f11f9bda8beb"
       },
       {
         "path": "research/github-issue-discovery/automation/reviews.json",
-        "sha256": "cb71ae12370e47f3eef550c377ab66f44003385815b90940702fe79a23e16be5"
+        "sha256": "1d546ea218648253e097baa721a284351e52054dff943d6c483f5448d7c469e6"
       },
       {
         "path": "web/coroperf-github-pages/data/cases.json",
@@ -526,6 +526,57 @@
         "en": "Inspect the missing discussion and repair history and recover the original inputs. Keep status-check until a scoped unresolved cause and repair status are established; do not claim an unpatched bug from an empty Development panel.",
         "zh-CN": "先核实缺失讨论与修复历史，取得原始输入；明确有范围的未解原因与修复状态前，保持状态待核验，不能凭空的Development栏声称缺陷无补丁。"
       }
+    },
+    {
+      "id": "tokio-rs--tokio--4659",
+      "reference": "Tokio #4659",
+      "url": "https://github.com/tokio-rs/tokio/issues/4659",
+      "language": "Rust / Tokio / Handle::block_on / mutex / I/O driver",
+      "stage": "status_check",
+      "upstream_state": "closed_in_inspected_page_discussion_not_returned",
+      "local_status": "skipped",
+      "last_source_check": "2026-11-28T12:21:15.046710+00:00",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/4659"
+      ],
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "question": {
+        "en": "Why does the reported network read stall when a blocking caller holds a mutex across Handle::block_on on a one-worker runtime?",
+        "zh-CN": "单worker运行时中，阻塞调用者持mutex执行Handle::block_on时，报告中的网络读取为何停滞？"
+      },
+      "known": {
+        "en": "The reporter describes the worker waiting for the same mutex while the caller waits for I/O. Two workers reportedly avoid reproduction, with possible application dependence. There is no runnable original or pinned Tokio/Rust/platform/transport fixture.",
+        "zh-CN": "作者描述worker等待同一mutex，调用者则等待I/O；双worker据称未复现，但可能依赖应用。缺原始可运行代码、固定Tokio／Rust／平台和传输环境。"
+      },
+      "patch": {
+        "en": "The inspected page is Closed; discussion and repair history were not returned. The report suggests a wait relation, without an independently verified cause or fix. A worker-count change is not a demonstrated causal repair.",
+        "zh-CN": "所读页面为Closed，未取得讨论与修复历史。报告提示一种等待关系，尚无独立核实的根因或修复；增加worker数不算已验证的因果修复。"
+      },
+      "coroperf_addition": {
+        "en": "Conditionally connect the blocking caller and root future to the worker, mutex owner/wait intervals and I/O driver progress. Distinguish a directly polled block_on root future from spawned Tasks; required ownership/driver observations remain unverified.",
+        "zh-CN": "有条件地关联阻塞调用者、root future、worker、mutex持有／等待区间及I/O驱动进展；区分block_on直接轮询的root future与spawn Task，所需锁归属和驱动观察尚未验证。"
+      },
+      "required_evidence": {
+        "en": "Runtime/thread generations, caller root-future poll spans, mutex acquire/release/owner, worker execution/wait spans, I/O request registration/readiness and driver poll/wakeup. Preserve native owner stacks and wall/CPU/runnable/wait timelines.",
+        "zh-CN": "运行时／线程代次、调用者root future轮询区间、mutex获取／释放／owner、worker运行／等待、I/O注册／就绪及驱动轮询／唤醒；保留原生持锁栈和wall／CPU／runnable／wait时间线。"
+      },
+      "diagnosis_plan": {
+        "en": "Distinguish a caller→I/O-driver→worker→mutex→caller wait cycle, I/O not becoming ready, and runnable work delayed after wakeup. Establish who holds the lock and who can poll the driver at the first loss of progress; compare the reported two-worker behavior only as supporting evidence.",
+        "zh-CN": "区分调用者→I/O驱动→worker→mutex→调用者的等待环、I/O未就绪，以及唤醒后可运行工作延迟。查清最早停滞时谁持锁、谁能轮询驱动；双worker表现仅作辅助证据。"
+      },
+      "validation": {
+        "en": "Recover the original program, exact runtime and network fixture; establish the same one-worker failure with ordinary diagnostics before adding verified lock/driver events. Validate a cause-specific change with the unchanged regression and healthy paths, then compare time to validated diagnosis and tracing overhead.",
+        "zh-CN": "取得原程序、精确运行时与网络环境，先用常规诊断建立同一单worker失败，再补已验证的锁／驱动事件。用未改回归和正常路径验证针对原因的改动后，再比较定位耗时与采集开销。"
+      },
+      "limits": {
+        "en": "Skipped because the source narrative lacks the original executable, dependencies and I/O fixture; no setup, probes, target or capture. Creation ancestry cannot establish lock ownership, a wait cycle or driver responsibility. No root cause, repair or diagnosis speedup measured.",
+        "zh-CN": "skipped：来源叙述缺原始程序、依赖及I/O环境；未准备、探测、运行或采集。创建关系不能证明持锁者、等待环或驱动职责，未测得根因、修复或定位提速。"
+      },
+      "first_step": {
+        "en": "Inspect missing discussion/repair history and obtain the original program and runtime configuration. Keep status-check until unresolved causal scope and repair status can be established.",
+        "zh-CN": "先核实缺失讨论／修复历史，取得原程序与运行时配置；明确未解因果范围和修复状态前保持先核验状态。"
+      }
     }
   ],
   "not_primary": [
@@ -708,25 +759,50 @@
         "en": "Closed with linked repair lead #3477; patch content, effect and release inclusion were not inspected. Keep outside the first-root-cause queue pending repair verification, without claiming a successful fix. Complete finite original function retained, but readiness decision missed the30s window; no SDK probe or execution.",
         "zh-CN": "Closed且关联修复线索#3477，尚未检查补丁内容、效果与发布版本；核验前置于首次根因队列外，不声称已成功修复。完整有限原函数保留，但就绪判断超过30秒时窗，未探测SDK或执行。"
       }
+    },
+    {
+      "id": "tikv--tikv--20182",
+      "reference": "TiKV #20182",
+      "url": "https://github.com/tikv/tikv/issues/20182",
+      "last_source_check": "2026-11-28T12:21:34.680231+00:00",
+      "source_check_time_precision": "Archive checkpoint; exact tool return unavailable.",
+      "reason": {
+        "en": "Source already explains that setting priority on the startup caller after poller creation misses pollers and affects later inherited threads, with linked completed repair20183. Outside first-root-cause discovery. Privileged original deployment not prepared; patch implementation/release coverage and performance effect unverified.",
+        "zh-CN": "来源已解释poller创建后在启动调用线程设置优先级，导致poller未继承而后续线程继承，并关联完成修复20183。退出首次根因发现队列；未准备原特权部署，补丁实现、发布覆盖和性能效果未核实。"
+      }
     }
   ],
   "publication": {
     "status": "pending",
     "target": "https://fzh0u.github.io/coroperf/zh-cn/open-issues.html",
-    "note": "Wave279 source reviews and Netty6221 status-check saved locally; existing9 rows preserved. No execution, confirmed cause/repair or diagnosis speedup. Git push/Pages unverified."
+    "note": "Independent publisher records a688a9b with950 reviewed IDs; supplemental268–279 records remain pending. One canonical public-data probe for this new commit returned tool Internal Error, so manual Open Issues content and Pages deployment remain unverified. Wave280 source additions saved locally: Tokio4659 status-check and TiKV20182 known-cause repair-validation exclusion; no target execution or diagnosis speedup."
   },
-  "synchronized_at": "2026-11-28T10:17:59.175034+00:00",
+  "synchronized_at": "2026-11-28T12:20:57.662578+00:00",
   "synchronization": {
-    "remote_base_commit": "52eac351b330048a8800c8cbebf02f2f84a1c162",
-    "search_finished_at": "2026-11-28T10:15:41+00:00",
-    "local_review_refresh": "2026-11-28T10:17:59.175034+00:00",
-    "remote_fetch": "Verified origin/main through local HTTP proxy and GitHub SSH port443."
+    "remote_base_commit": "a688a9b9ff3cfea2f8bf9d4f4621d8a4b441deb0",
+    "search_finished_at": "2026-11-28T12:17:16+00:00",
+    "local_review_refresh": "2026-11-28T12:20:57.662578+00:00",
+    "remote_fetch": "No Git fetch this wave; independent publisher receipt records a push with950 review IDs. Manual Open Issues/supplemental updates and Pages deployment remain unverified.",
+    "receipt_source": "perf-out/github-issue-discovery/scope-20261127/manual/state-audit-wave280.json",
+    "collection_errors": 2,
+    "coverage_gaps": [
+      {
+        "repository": "vllm-project/vllm",
+        "phase": "recent",
+        "error": "IncompleteRead: IncompleteRead(350174 bytes read, 25541 more expected)"
+      },
+      {
+        "repository": "sgl-project/sglang",
+        "phase": "discussion-depth",
+        "error": "IncompleteRead: IncompleteRead(454571 bytes read, 41260 more expected)"
+      }
+    ]
   },
   "priority_note": {
     "en": "The list is ordered by investigation priority. Status labels distinguish priority investigations, pending investigations and entries requiring a status check. No new verified case or execution is claimed.",
     "zh-CN": "列表按调查优先顺序排列，用状态区分优先调查、待调查和先核验状态的条目。本次未增加验证案例或执行结果。"
   },
-  "presentation_updated_at": "2026-11-28T12:15:18.477043+00:00",
+  "presentation_updated_at": "2026-11-28T12:24:37.063811+00:00",
   "diagnosis_protocol": {
     "status": "planned_unmeasured",
     "claim": {
