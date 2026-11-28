@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T10:02:37+00:00",
+  "updated_at": "2026-11-28T10:32:14+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -535,6 +535,46 @@
       "sources": [
         "https://github.com/agronholm/anyio/issues/398"
       ]
+    },
+    "agronholm--anyio--685": {
+      "id": "agronholm--anyio--685",
+      "repo": "agronholm/anyio",
+      "number": 685,
+      "url": "https://github.com/agronholm/anyio/issues/685",
+      "title": "Cancelling a TaskGroup in which a task is starting also cancels the TaskGroup in which it is due to run",
+      "status": "excluded_after_review",
+      "reason": "Maintainer explicitly identifies sameissue as existing710, whose frozenreview alreadymentions685 asalias/notnewrun opportunity. Duplicate source record only, no independentincident/runcredit. Shorthandalias wasmissed byexactID/URL/title gates; discoveredafterprimary andone metadatareadiness. Existing710unchanged, no oldoriginal replay.",
+      "reason_zh": "维护者明确与已评710为同一问题，旧710已将685记作相关别名且非新运行入口。仅记录重复来源排除，不给独立事件/运行credit。精确ID/URL/title门禁漏掉旧评审中的简称别名，正文及一次元数据就绪后才识别；710不改，未重跑旧原例。",
+      "source_completeness": {
+        "body": "Returned365lines; completefunctions168–202/output203–209read. Routineimports/entryscaffold valid, notmissingcode.",
+        "comments": "Author229scope caveat/maintainer240same710/251–262simplertest/273–304closure read; API/historyunknown.",
+        "version": "AnyIO4.2/Python3.10.13; one selectedPython3.10.12 hasnoAnyIOdistributionmetadata, scopeonlynotglobalabsence.",
+        "scope": "Canonical685initialURLguard/tenexactgate0, separateclearancebeforebody.710oldURLalreadyblocked; old710metadata shorthandRelated685onlylaterinspected. No710/517/717body/code/fixopened."
+      },
+      "upstream_evidence": {
+        "observation": "Sourcecancellinginnerstartscope propagates toouterrungroup beforetask_status.started reparenting; distinctfunctions butsameknown710issue.",
+        "counterevidence": "Authoronlysyntheticcompleteness,notproduction; doesnotwithdrawoutput. Maintainerattributesdonecallback tooutercancel scope afterstartcancel andofferssimplertest.",
+        "unknown": "Nativecurrentbehavior, newindependentincident,collectorcoverage/overhead unknown. No fabricateddiagnostic fromshimfunctions.",
+        "resolution_scope": "Closed717/commits4.4bumpmetadata notlocal/releasedvalidation. Knownaliasblocks anyfurther setup."
+      },
+      "sources": [
+        "https://github.com/agronholm/anyio/issues/685"
+      ],
+      "coroperf_applicability": {
+        "assessment": "Source-only assessment; detailed first-import assessment follows saved evidence.",
+        "assessment_zh": "仅来源评估，详细首次导入分析依据已保存证据。",
+        "required_identity": "Native work/resource generations and any actual Task/Future ownership need evidence; creator differs from owner.",
+        "required_identity_zh": "需原生工作资源代次及实际Task/Future归属证据，创建者不等于owner。",
+        "native_baseline": "No original run; preserve the reported code/build/inputs and observation protocol.",
+        "native_baseline_zh": "原例未运行，须保留原代码构建输入与观测协议。",
+        "limits": "No runtime trace or optimization validation; wall time, native CPU and runnable delay differ.",
+        "limits_zh": "未运行时采集或验证优化，wall、原生CPU与runnable延迟不同。"
+      },
+      "assessment": {
+        "source_scope": "Returned365lines; completefunctions168–202/output203–209read. Routineimports/entryscaffold valid, notmissingcode. Author229scope caveat/maintainer240same710/251–262simplertest/273–304closure read; API/historyunknown. AnyIO4.2/Python3.10.13; one selectedPython3.10.12 hasnoAnyIOdistributionmetadata, scopeonlynotglobalabsence. Canonical685initialURLguard/tenexactgate0, separateclearancebeforebody.710oldURLalreadyblocked; old710metadata shorthandRelated685onlylaterinspected. No710/517/717body/code/fixopened.",
+        "boundaries": "按重复来源排除，不认作新的独立案例。维护者明确指向已评#710为同一问题，旧710评审也早已写明Related685只作别名、非新运行入口。本次精确ID/URL/title检查没有识别这种简称，正文读取及一次就绪元数据检查后才确认；记录为已知相关来源重读1，不伪称门禁预先拦住。710原评审及原例保持，不读取或重跑它的body/code/fix/target。685完整函数、依赖定义与输出承认，普通import/入口属上下文，不以缺main否定原例。源码现象是内层start任务在started()前取消导致外层run组也取消；done callback在归属变化后看到外层cancel scope是维护者解释，未本地验证。作者说只作完整性测试、不用于生产，不等于撤回已展示输出；不将同一bug的两种代码写成独立实测事件。就绪检查仅选中/usr/bin/python3：3.10.12、无AnyIO distribution元数据，不满足所报3.10.13/AnyIO4.2；非全局缺包，也没有导入AnyIO或原例运行。识别旧别名后停止准备，不缩0.5/1/100秒等待、不换版本/backend或造benchmark。coroperf需start调用者Task、被启动Task/started-Future、start/run组与CancelScope代次及取消/重归属/done-callback时序；创建者不等于当前scope owner，Task数量/取消异常不等于CPU自旋或资源泄漏。创建栈可辅助归属，不能证明取消传播机制或工具收益。365行返回，body168–209与229–304讨论已读，API/history未知；517/710/717body及修复代码未开，closure/4.4升级元数据不作发行或本地验证。",
+        "time_budget": "原dispatch10:10:14.738655Z/source54.197928内60/readiness在86.719747、source后32.521819超30/facts218.3721超120/post218.398193超150/180/final218.403076；超时保留，不重置。readiness1、selected-interpreter版本元数据1/distribution metadata1/PATHlookup1同检查，其余研究phase0、handles[]、SLOT1unused。"
+      }
     },
     "agronholm--anyio--710": {
       "status": "external_environment_required",
@@ -7608,6 +7648,46 @@
         "source_scope": "Complete initial report in returned lines173–179. Three technical author comment blocks in returned page; full tool snapshot lines0–410/411 retained. API/edit history completeness unverified. No exact affected Dragonfly release/build stated in inspected issue. One primary issue, no linked code/PR/subissue opened; search excerpts automatically returned before gates. Search display initial11000characters only; trailing saved scope uninspected. AGENTS initial180-line command output truncated; operative current head read.",
         "boundaries": "Actual pipeline P99 incident despite lowCPU, reported connection-fiber yields/read-buffer/cross-shard batching interaction. Yield also permits AsyncFiber to drain queue, so removing yields need not improve latency. No original client/server/load/window/pinned build supplied. Need connection/AsyncFiber generations, request/batch and proactor/shard assignment with enqueue/yield/resume/dispatch clock. Fiber coverage requires adapter, C++ coroutine support alone not certification. NativeCPU/queue tracing may suffice; creator not current owner, P99/runnable/CPU/queue times distinct. PR4994/5005 metadata only, no local or released optimization proof.",
         "time_budget": "Fresh independent context dispatch15:23:11Z includes skills/gates/source; primary60s, post126.549843s and separate final15:25:23Z/132s within150/180. Explicit raw original_dispatch equals dispatch journal; alias support preserves raw and equality assertions. All current phases0/no handles; slot2 released unused."
+      }
+    },
+    "dragonflydb--dragonfly--5630": {
+      "id": "dragonflydb--dragonfly--5630",
+      "repo": "dragonflydb/dragonfly",
+      "number": 5630,
+      "url": "https://github.com/dragonflydb/dragonfly/issues/5630",
+      "title": "improve tooling for p99 latency investigation",
+      "sources": [
+        "https://github.com/dragonflydb/dragonfly/issues/5630"
+      ],
+      "status": "excluded_after_review",
+      "reason": "A tooling proposal for pipeline-tail-latency attribution, with no independently specified measured incident, dataset, benchmark values, or complete executable original. The visible body proposes selecting slow squashing hops and examining shard fan-out/wakeup correlation; it does not report a reproduced performance regression.",
+      "reason_zh": "这是流水线尾延迟归因工具改进提案；可见正文没有独立实测事件、数据、基准数值或完整可执行原例。它建议筛选慢 squashing hop 并观察分片扇出及唤醒相关性，未报告已复现性能退化。",
+      "source_completeness": {
+        "body": "Full returned body lines162–170 read; primary document211lines archived.",
+        "comments": "No comment or Activity content returned; actual comment history/API completeness unknown.",
+        "version": "Opened2025-08-06; visible closed state. No affected runtime/release/fixture specified.",
+        "scope": "Only Issue5630 primary opened; no related code, benchmark, implementation, PR or other body opened. Search expanded snippets are separately archived discovery exposure."
+      },
+      "upstream_evidence": {
+        "observation": "Existing pipeline_low_bound_stats filters requests by pipeline length. Author proposes filtering by squashing-hop latency, measuring fan-out, shard scheduling and wakeup correlations, and testing replies before all responses complete.",
+        "counterevidence": "No timing measurement, causal experiment, incident workload or complete reproduction appears in the returned body. Suggested causes remain questions.",
+        "unknown": "Actual latency distributions, scheduling versus wakeup contribution, implementation status, comments, affected version and exact runnable original are not established.",
+        "resolution_scope": "Closed marker alone establishes neither implemented tooling nor released performance improvement."
+      },
+      "coroperf_applicability": {
+        "assessment": "Useful attribution design question; excluded from observed-incident case admission.",
+        "assessment_zh": "可用于归因设计讨论；不按已有实测事件入库。",
+        "required_identity": "Bridge request/pipeline generation to squasher batch/hop, ordered reply index, shard transaction and coordinator/worker fiber generation plus native TID and runnable/wait/execute intervals. Creation site alone is not execution ownership; command may execute inline.",
+        "required_identity_zh": "需桥接请求/流水线代次、squasher批次及hop、回复顺序、分片事务、协调及工作fiber代次、原生TID和就绪/等待/执行区间；创建位置不等于执行归属，命令可能内联执行。",
+        "native_baseline": "First establish native per-hop latency, shard fan-out, wakeup and ordered response timing on the unchanged original before comparing attribution or overhead. No native baseline executed.",
+        "native_baseline_zh": "应先在未改原例上获取原生hop延迟、分片扇出、唤醒与回复时序，再比较归因或开销；本轮未运行原生基线。",
+        "limits": "Correlation between a slow shard and a wakeup does not identify cause. End-to-end and hop wall latency are not CPU time. Early replies change the protocol path and are a proposal, not a faithful original control. No local DB/load/target or readiness was started.",
+        "limits_zh": "慢分片与唤醒相关不等于因果；端到端及hop墙钟延迟不等于CPU时间；提前回复会改变协议路径，只是提案而非忠实原例对照；未启动本地DB、负载、目标或readiness。"
+      },
+      "assessment": {
+        "source_scope": "Full returned body lines162–170 read; primary document211lines archived. No comment or Activity content returned; actual comment history/API completeness unknown. Opened2025-08-06; visible closed state. No affected runtime/release/fixture specified. Only Issue5630 primary opened; no related code, benchmark, implementation, PR or other body opened. Search expanded snippets are separately archived discovery exposure.",
+        "boundaries": "这是p99尾延迟归因工具提案，没有独立实测事件、分布数值、数据或完整可执行原例，来源排除而非环境skipped。已有pipeline_low_bound_stats按pipeline长度预筛选；改按squashing-hop延迟筛选会改变样本总体，不能直接把筛选后P99变化当优化收益。扇出、跨shard调度和唤醒是否相关是待验证问题，不是已证根因。先返回已有顺序响应前缀的建议改变协议路径及队头等待，应作为新策略单独评估，不能冒充忠实原例的唯一变量对照。coroperf适用性需请求/pipeline、squasher批次/hop、ordered reply index、分片事务及实际coordinator/worker fiber代次连到nativeTID和runnable/wait/execute区间；命令可能内联，创建位置不等于执行owner。慢shard与唤醒的相关性不证明因果，端到端/hop wall延迟不是CPU。应先取得原生hop/队列/唤醒/有序响应时序，再判断额外creation-attribution价值与开销；本轮没有基准、readiness、DB、load或native target。211行返回、body162–170已读，未返回Activity/comments不等于0comments或API全历史；无版本/build/fixture。Closed不能证明工具已实现/发布或性能提升，未开任何相关code/PR/benchmark。8261既有canonicalURL被拦截，未重开其正文；本例actualURLguard和十authority门禁均在独立clearance后才primary。",
+        "time_budget": "原dispatch10:09:54.565004Z/source93.434996超60/90（请求在90前发出，完成越界，不记请求失败）/facts128.575582超120/post128.575698/seal-preparation140.745230/final142.434996–143.434996区间，records150/total180/reserve35满足。全部研究phase0/handles[]/SLOT2unused，无后续source或原例重跑。"
       }
     },
     "dragonflydb--dragonfly--5872": {
@@ -26590,12 +26670,12 @@
   },
   "counts": {
     "external_environment_required": 559,
-    "excluded_after_review": 95,
+    "excluded_after_review": 97,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 81,
-  "new_review_count": 670,
+  "new_review_count": 672,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",

@@ -8,17 +8,17 @@
   "corpus": {
     "discovery_entries": 1544,
     "open_in_saved_discovery": 519,
-    "review_decisions": 935,
+    "review_decisions": 937,
     "verified_cases": 140,
-    "discovery_ledger_refreshed_at": "2026-11-28T10:17:59.175034+00:00",
+    "discovery_ledger_refreshed_at": "2026-11-28T10:22:28+00:00",
     "inputs": [
       {
         "path": "web/coroperf-github-pages/data/discovery.json",
-        "sha256": "d53e42aa523b82d055ef34628b3c88fb1334bc287766c91b8fa3207fc4cb17ec"
+        "sha256": "d4a969bc813a0c103ea06bb5bc3073d6962c157cdf0cdcf29444d41f6083cee6"
       },
       {
         "path": "research/github-issue-discovery/automation/reviews.json",
-        "sha256": "e1a2a089ef4fae875a7dfa264784468be0e89a9c13f2cff513211d6a4facf35c"
+        "sha256": "f6a752e3cabcf53785d01fbc6f5d93367874af2856563224a5330367cc184364"
       },
       {
         "path": "web/coroperf-github-pages/data/cases.json",
@@ -80,7 +80,11 @@
       "sources": [
         "https://github.com/vllm-project/vllm/issues/41530"
       ],
-      "investigation_path": "investigations/vllm-41530.html"
+      "investigation_path": "investigations/vllm-41530.html",
+      "diagnosis_plan": {
+        "en": "Distinguish an RPC that was never dispatched, a live worker blocked in native/device work, and a completed response that was never delivered. Find the earliest missing event across one request and worker generation.",
+        "zh-CN": "区分 RPC 未派发、存活 worker 阻塞于原生／设备工作，以及响应已完成但未交付；沿同一请求与 worker 代次找到最早缺失事件。"
+      }
     },
     {
       "id": "vllm-project--vllm-ascend--23391",
@@ -127,7 +131,11 @@
       "sources": [
         "https://github.com/vllm-project/vllm-ascend/issues/23391"
       ],
-      "investigation_path": "investigations/vllm-ascend-23391.html"
+      "investigation_path": "investigations/vllm-ascend-23391.html",
+      "diagnosis_plan": {
+        "en": "Distinguish a missing KV-transfer completion, device synchronization stall, and a peer rank waiting on the first stalled rank. Ordering and rank identity must identify the initiator.",
+        "zh-CN": "区分 KV 传输缺失完成、设备同步停顿，以及其他 rank 对首个停顿 rank 的连锁等待；用事件顺序和 rank 身份确定起点。"
+      }
     },
     {
       "id": "chriskohlhoff--asio--1720",
@@ -171,7 +179,11 @@
       "new_execution": false,
       "root_cause_confirmed": false,
       "investigation_path": "investigations/asio-1720.html",
-      "last_source_check": "2026-11-28T03:04:27.851942+00:00"
+      "last_source_check": "2026-11-28T03:04:27.851942+00:00",
+      "diagnosis_plan": {
+        "en": "Distinguish an operation still awaiting reactor readiness, a lost completion, and a completion whose coroutine was not resumed. The callback control tests whether the gap also occurs without coroutine resumption.",
+        "zh-CN": "区分操作仍在等待 reactor 就绪、完成事件丢失，以及完成后协程未恢复；回调对照用来检验缺口是否也发生在协程恢复之外。"
+      }
     },
     {
       "id": "stackexchange--stackexchange.redis--3240",
@@ -213,7 +225,11 @@
       },
       "upstream_state": "open",
       "new_execution": false,
-      "root_cause_confirmed": false
+      "root_cause_confirmed": false,
+      "diagnosis_plan": {
+        "en": "Distinguish a fake-server dispatch/response gap from client response parsing or a continuation that never runs. Match the exact message and connection generation before assigning ownership.",
+        "zh-CN": "区分模拟服务端未派发／未响应、客户端未解析响应，以及 continuation 未运行；先匹配具体消息和连接代次，再判定责任。"
+      }
     },
     {
       "id": "sidorares--node-mysql2--695",
@@ -255,7 +271,11 @@
       },
       "upstream_state": "open",
       "new_execution": false,
-      "root_cause_confirmed": false
+      "root_cause_confirmed": false,
+      "diagnosis_plan": {
+        "en": "Distinguish a queued command never dispatched, a dispatched command awaiting the database, and a received response whose callback or Promise was never settled. Correlate database activity with socket and command history.",
+        "zh-CN": "区分命令未出队、命令已派发但数据库未完成，以及已收响应但回调／Promise 未结束；关联数据库活动、socket 与命令历史。"
+      }
     },
     {
       "id": "golang--go--54461",
@@ -288,8 +308,8 @@
         "zh-CN": "恢复精确失败的 regtest 与命令输入，不把 tracker 中所有偶发失败归成同一根因。"
       },
       "limits": {
-        "en": "Supplemental status check, outside the three primary candidates. No complete comment history or original runnable fixture is available in the reviewed record.",
-        "zh-CN": "仅作补充核验，不计入三个主要候选；现有记录没有完整评论历史和原始可运行 fixture。"
+        "en": "Supplemental status check, outside the primary diagnosis queue. No complete comment history or original runnable fixture is available in the reviewed record.",
+        "zh-CN": "仅作补充状态核验，不计入首要定位队列；现有记录没有完整评论历史和原始可运行 fixture。"
       },
       "first_step": {
         "en": "Read the missing discussion and locate an unresolved failing build first.",
@@ -297,7 +317,11 @@
       },
       "upstream_state": "open",
       "new_execution": false,
-      "root_cause_confirmed": false
+      "root_cause_confirmed": false,
+      "diagnosis_plan": {
+        "en": "After confirming an unresolved failure, distinguish a live descendant, an inherited pipe still held open, and shutdown bookkeeping. Coroutine lineage alone cannot identify the pipe holder.",
+        "zh-CN": "确认仍有未解决的失败后，区分后代进程仍存活、继承的 pipe 仍被持有，以及关闭记账未完成；仅 goroutine 祖先关系不能识别 pipe 持有者。"
+      }
     }
   ],
   "not_primary": [
@@ -407,5 +431,43 @@
   "priority_note": {
     "en": "The list is ordered by investigation priority. Status labels distinguish priority investigations, pending investigations and entries requiring a status check. No new verified case or execution is claimed.",
     "zh-CN": "列表按调查优先顺序排列，用状态区分优先调查、待调查和先核验状态的条目。本次未增加验证案例或执行结果。"
+  },
+  "presentation_updated_at": "2026-11-28T10:30:37.095885+00:00",
+  "diagnosis_protocol": {
+    "status": "planned_unmeasured",
+    "claim": {
+      "en": "Test whether CoroPerf supplies missing execution and resource history that reduces time to a validated cause. These candidates are opportunities to test that claim; no diagnosis speedup has been measured.",
+      "zh-CN": "验证 coroperf 提供的执行与资源历史，能否缩短找到已验证根因的时间。列表中的案例用于检验这一主张，目前没有定位提速实测。"
+    },
+    "steps": [
+      {
+        "en": "Admission: retain the original GitHub revision, inputs and failure signature; inspect discussion and repair links. Record source-review dates. Move cases with an established cause or repair out of the first-root-cause queue.",
+        "zh-CN": "准入：保留 GitHub 原 revision、输入与失败特征，检查讨论及修复链接并记录审阅日期；已有根因或修复的条目退出首次根因定位队列。"
+      },
+      {
+        "en": "Fixture: reproduce the same failure with ordinary runtime diagnostics. If the original environment is unavailable or conflicts, record skipped and its reason; keep the candidate visible with that blocker.",
+        "zh-CN": "原例：先用运行时常规诊断复现同一种失败；原环境不可用或配置冲突时标记 skipped 并注明原因，候选仍展示该障碍。"
+      },
+      {
+        "en": "Evidence: preserve native diagnostics as the baseline; add CoroPerf identities, generations and required resource events on the same pinned workload. Check event loss and observer coverage, plus tracing overhead, before interpreting a missing event.",
+        "zh-CN": "证据：以原生诊断为基线，在同一固定负载上补充 coroperf 身份、代次及所需资源事件；解释缺失事件前检查丢事件、观察点覆盖及采集开销。"
+      },
+      {
+        "en": "Diagnosis comparison: give independent analysts the same incident and information budget, with ordinary evidence versus ordinary evidence plus CoroPerf. Hide known answers; counterbalance analyst/order assignments across cases to limit learning effects. Preserve timestamps and hypothesis histories.",
+        "zh-CN": "定位比较：让独立分析者在相同故障与信息预算下，分别使用常规证据、常规证据加 coroperf；隐藏已知答案，跨案例平衡分析者与顺序以减少学习影响，保存时间戳及假设历程。"
+      },
+      {
+        "en": "Success: time to the first cause supported by discriminating evidence and an unchanged regression test, then validate a cause-specific repair and healthy/error paths. Record incorrect hypotheses, extra collection rounds and timeouts; report preparation and collection time separately.",
+        "zh-CN": "成功标准：计时至首个同时获判别证据和未改动回归测试支持的根因，再验证针对原因的修复及正常／错误路径；记录错误假设、额外采集轮次和超时，准备与采集耗时单列。"
+      },
+      {
+        "en": "Reporting: link raw artifacts, builds, workload and repair evidence. Report per-case times, unresolved trials and tracing overhead; calculate speedup only for comparable successful trials, alongside success rates.",
+        "zh-CN": "报告：链接原始产物、构建、负载及修复证据；逐例报告耗时、未解决试验和采集开销，仅在可比的成功试验间计算提速，同时报告成功率。"
+      }
+    ],
+    "measurement_status": {
+      "en": "Measurements pending: baseline diagnosis time —; diagnosis time with CoroPerf —; validated cause/repair —; tracing overhead —. No new target execution was performed for this page update.",
+      "zh-CN": "实测待补：常规诊断耗时 —；加入 coroperf 后耗时 —；已验证根因／修复 —；采集开销 —。本次页面更新未运行新的目标原例。"
+    }
   }
 }
