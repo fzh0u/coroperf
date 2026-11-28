@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T02:52:57+00:00",
+  "updated_at": "2026-11-28T10:02:37+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -9263,6 +9263,47 @@
       "new_verified_case": false,
       "evidence": "research/github-issue-discovery/fairness-wave6-20261127/source-web-response.json"
     },
+    "golang--go--68477": {
+      "id": "golang--go--68477",
+      "repo": "golang/go",
+      "number": 68477,
+      "url": "https://github.com/golang/go/issues/68477",
+      "title": "runtime/pprof: GOOS=darwin over-reports CPU usage in mutex-heavy workload",
+      "sources": [
+        "https://github.com/golang/go/issues/68477"
+      ],
+      "status": "external_environment_required",
+      "reason": "Complete finite CPU benchmark command acknowledged. Original go1.23rc2/Darwin-arm64/M1 platform mismatches actual Linux-x86_64/knownGo1.23.0; one prompt matching-readiness check failed, no compiler/original launched or substitute.",
+      "reason_zh": "承认完整有限CPU基准命令；原go1.23rc2/Darwin-arm64/M1与实际Linux-x86_64/已知Go1.23.0不匹配，一次及时就绪检查未通过，未编译/执行或替换原例。",
+      "source_completeness": {
+        "body": "Complete narrative142–226 and tables read; full396-line returned extraction saved.",
+        "comments": "Visible273–344 substantive discussion read; API/history unknown.",
+        "version": "go1.23rc2/darwin-arm64/M1/macOS14.4.1;reported also1.17.13 and macOS14.5.",
+        "scope": "Linked57722/35057/bot references and source modifications not opened/executed."
+      },
+      "upstream_evidence": {
+        "observation": "ChanContended source -cpu1,2,4,8 reports0.62,1.21,125.54,403.14 average profiled CPUthreads;929.99 sample-seconds/2.31s profile window on8-core M1. Combined trace/profile changes sample density nearGOMAXPROCS2→3.",
+        "counterevidence": "Overcounting not actual930CPU-seconds or403physicalthreads;profile-window differs go test elapsed. Hypothesized OS/syscall interaction; removing either osyield or semasleep alone persists,both removed looks believable,not proved rootcause/fix.",
+        "unknown": "Independent physicalCPU baseline,OSbug mechanism and C reproducer;no locally verified behavior/collector correctness.",
+        "resolution_scope": "Returned open/Backlog;C reproducer proposed,not supplied;no released/local optimizationproof."
+      },
+      "coroperf_applicability": {
+        "assessment": "Profiler measurement-integrity case before scheduler CPU attribution.",
+        "assessment_zh": "先核验采样测量完整性，再归属调度CPU。",
+        "required_identity": "G/P/M/nativeTID generations,SIGPROF delivery/sampleweight,mutex lock/spin/yield/sleep/wake and onCPU/offCPU intervals;creator not executor.",
+        "required_identity_zh": "需G/P/M/nativeTID代次、SIGPROF投递/权重、mutex自旋/yield/sleep/wake及CPU/offCPU区间；创建者非执行者。",
+        "native_baseline": "readiness1 filesystem/platform,VERSIONread1;no runtime/build/original.",
+        "native_baseline_zh": "一次文件系统/平台就绪检查及一次VERSION读取；未运行runtime/构建/原例。",
+        "limits": "NoLinux/Go1.23.0substitution,alteredCPUlist/duration/runtime/observer or syscallyieldpatch. Pprof samples not trusted as physicalCPUtime without independent validation.",
+        "limits_zh": "未替换Linux/Go1.23.0或改CPU列表/时长/runtime/观测器/系统调用；未独立核验不能把采样总量当物理CPU时间。"
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Complete narrative142–226 and tables read; full396-line returned extraction saved. Visible273–344 substantive discussion read; API/history unknown. go1.23rc2/darwin-arm64/M1/macOS14.4.1;reported also1.17.13 and macOS14.5. Linked57722/35057/bot references and source modifications not opened/executed.",
+        "boundaries": "完整有限CPU benchmark/命令承认，不是缺原例。原Go1.23rc2/darwin-arm64/M1/macOS14.4.1(后来14.5仍现)与单次平台+VERSION文件检查的Linux/x86_64/Go1.23.0不匹配；knownGo可用但不是原fixture，不全局SDKabsence，不换Linux/Go版本、M1/P-E cores、N/CPUlist/duration/observer，不build/replay或造Cprogram。来源pprof平均403.14个onCPU线程/929.99sample-seconds除2.31s窗口是采样过计数，不是403物理线程或实际930CPU秒；Go test全命令wall与profilewindow不同。逐CPU=1,2,4,8四次独立profile，与另cpu=1..8加trace联合观测是两个协议，2→3采样密度变化不是无observer影响的成对因果证明。锁路径syscall/SIGPROF投递解释为假设；单删osyield或semasleep仍现、同时删两者profile较可信为source改动观察，不证OS根因或生产修复，不能将改变等待策略当优化验证。coroperf若只将错误权重采样归属到creationstack仍可得精确错误结果；先需独立native-thread CPU计时、SIGPROF采样投递/权重、wallclock及observer校验，再连G/P/M/nativeTID代次、锁自旋/yield/sleep/wake/CPUoffCPU与creator/owner，G数/CPU%/runnable等待不同。真实original运行为0；创建栈不是采样器准确性证明。返回396行，narrative142–226/tables及visible273–344讨论已读，API/history未知，57722/35057/botrefs/code/C再现提议未开或执行；编号跨repo不混身份，Open/Backlog非releasedfix。ProperURLguard+十authority0+独立clearance先body，learnedaliaseszero后未开其他原例。",
+        "time_budget": "原dispatch02:54:20.983462Z/source76.378720超60内90/readiness+14.686779内30/facts127.212179超120/post127.212273/final150.017–151.017。Final仅whole-second区间，records150边界合规未知，reserve35未满足/total180满足；不抹超时或reset。readiness1与filesystem1同pass，VERSION-file-read1非runtimeversionprobe；其他研究phase0/nohandles/SLOT2unused。"
+      }
+    },
     "golang--go--69294": {
       "id": "golang--go--69294",
       "repo": "golang/go",
@@ -17377,6 +17418,47 @@
         "source_scope": "Full467-line rendered source archived, benchmarkclaim136–137 andassembly139–192 inspected. Returneddiscussion232–342 andcommitreferences344–432 inspected; API/edit/hiddenhistory unknown. Free-threading versus normal builds without benchmark/build/compiler/OpenSSL/revision pin; efc37ba codeexcerpt is not benchmarkbuildproof. Only canonicalissue opened twice forcontinuation; relatedPR/code/benchmarks/stress tests notfetched, noalias/releaseproof.",
         "boundaries": "The reported ~20% single-threaded asyncio_tcp_ssl regression is retained as upstream evidence. The original benchmark revision, exact parameters/window, compiler/OpenSSL configuration and matched free-threaded/GIL builds are unprepared; a benchmark name and assembly excerpt do not establish a complete runnable original. No SDK inventory, SSL import, socket/server, free-threaded replacement build, altered lock or stress-test experiment was attempted. The _ssl_RAND_status assembly comparison illustrates additional critical-section and thread-state fast-path work; instruction count and addresses do not measure its contribution to the full benchmark. Uncontended bookkeeping overhead is distinct from measured lock contention, runnable delay and coroutine suspension. A longer synchronous native call inside a poll can delay other Tasks without establishing a scheduler defect. Coroperf would need actual Task/poll/loop/worker generations associated with native TLS/SSL object lifetimes and CPU/wall intervals; creator differs from waiter or owner, and an await can complete inline. Later discussion corrects the claim that prior stress tests covered all socket operations: concurrent SSLContext tests have a narrower scope. Callback and locking correctness constraints remain; removing locks or replacing critical sections is not a validated optimization or a security finding. Linked fast-path/err/exc/thread-state PRs and commits show ongoing work, not verified local improvement or an established released fix. Full 467-line rendered source, body136–192, discussion232–342 and commit references344–432 were inspected across two saved views; API/edit/hidden history remains unknown. Related code/tests/PR bodies were not opened. Previously selected144337 and frozen asyncio cases were not reopened.",
         "time_budget": "Original dispatch21:39:23.871663Z; first source65.481030 exceeds60 by5.481030, last source80.827964 exceeds60 by20.827964 and is within90. Minimum facts96.345290, postwrite131.989449 and final132.014623 are within120/150/180 and leave more than35s total reserve. The first minimum-facts tool was aborted before dispatch on childFINAL: no actions ran, only that failed call was reissued without resetting the clock. No source after80.827964 or case/runtime replay. All readiness/import/compiler/build/target/controller/server/supervisor/capture phases0, handles[], SLOT1 released unused. Child coverage-only lastsearch28.231747/gatestop57.231747, min79.398076/post92.896150/final94.231747, whole-second source precision about1s, within targets."
+      }
+    },
+    "python--cpython--140947": {
+      "id": "python--cpython--140947",
+      "repo": "python/cpython",
+      "number": 140947,
+      "url": "https://github.com/python/cpython/issues/140947",
+      "title": "context variables can leak out of asyncio.Task",
+      "status": "external_environment_required",
+      "reason": "Complete original acknowledged, but it requires real fixed-loopback TCP Protocol pause/resume and reported3.14.0 Linux build, notCPU-only. Matchingbuild/socket fixture unestablished; no differentpatch/platform, fakecallback ortransport removal. No readiness/SDK/socket-policy retry/run.",
+      "reason_zh": "承认完整原例，但它需真实固定loopback TCP Protocol暂停/恢复及所报Linux3.14.0构建，非纯CPU。匹配构建/socket环境未确认，不换patch/platform或假造回调/移除transport，不探SDK或重试socket策略，未运行。",
+      "source_completeness": {
+        "body": "Returned481lines; completecode129–205/output207–218/mechanism220–226read.",
+        "comments": "Windowscounterexample284–312/mainfix-backportdiscussion323–364read. Lateractivity/API/history unknown.",
+        "version": "Reporter3.14.0 mainOct14,2025Clang20.1.4/Linux. LaterWindows3.15.0a2+ comparison isdifferentbuild/platform; branchlabelsnotbuildmatrix.",
+        "scope": "OnlycanonicalIssue; uvicorn2167/PR141158/code/commitsunopened. InitialURLguard/tenauthorityzero/separateclearance beforeprimary.152569oldURL/91887catalogblocked."
+      },
+      "upstream_evidence": {
+        "observation": "SourceASGITasksets3ContextVars; connection_lost hasno currentTask yetretains first2vars setbeforeresume_reading, thirdafterresume absent.",
+        "counterevidence": "Windows outputemptycontext andauthoragreesWindowsnotaffected. Sourcefixmainmerged claim waitsbackports3.13/3.14, notallcurrentversionsprovedfixed.",
+        "unknown": "Nativecurrentbehavior, matchingfixture, actualreaderHandle.contextcapture/ownership andlocalCoroPerfbenefit unknown. Contextleak ispropagation, notprovedmemoryleak/CPUregression.",
+        "resolution_scope": "Mainfix/closedmetadata notlocallyvalidated/releasedallplatformfix."
+      },
+      "sources": [
+        "https://github.com/python/cpython/issues/140947"
+      ],
+      "coroperf_applicability": {
+        "assessment": "Source-only assessment; detailed first-import assessment follows saved evidence.",
+        "assessment_zh": "仅来源评估，详细首次导入分析依据已保存证据。",
+        "required_identity": "Native work/resource generations and any actual Task/Future ownership need evidence; creator differs from owner.",
+        "required_identity_zh": "需原生工作资源代次及实际Task/Future归属证据，创建者不等于owner。",
+        "native_baseline": "No original run; preserve the reported code/build/inputs and observation protocol.",
+        "native_baseline_zh": "原例未运行，须保留原代码构建输入与观测协议。",
+        "limits": "No runtime trace or optimization validation; wall time, native CPU and runnable delay differ.",
+        "limits_zh": "未运行时采集或验证优化，wall、原生CPU与runnable延迟不同。"
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Returned481lines; completecode129–205/output207–218/mechanism220–226read. Windowscounterexample284–312/mainfix-backportdiscussion323–364read. Lateractivity/API/history unknown. Reporter3.14.0 mainOct14,2025Clang20.1.4/Linux. LaterWindows3.15.0a2+ comparison isdifferentbuild/platform; branchlabelsnotbuildmatrix. OnlycanonicalIssue; uvicorn2167/PR141158/code/commitsunopened. InitialURLguard/tenauthorityzero/separateclearance beforeprimary.152569oldURL/91887catalogblocked.",
+        "boundaries": "完整原例已取得，保留实际上下文传播异常，不因非CPU指标或存在主分支fix说法而排除。固定127.0.0.1:8888真实TCP Protocol/transport、pause_reading/resume_reading、原while等待及callback次序均为原协议；不是纯CPU原例，不以假回调、移除socket、换端口、删sleep、后续patch或Windows运行替代。报告Linux3.14.0 mainOct14,2025/Clang20.1.4，匹配原构建/loopback环境未建立；已知3.14.3/3.14.6不证明3.14.0ready，未做readiness或SDK/socket策略retry，不宣称compiler/socket失败或全局Python缺失。原输出Task结束后connection_lost无currentTask却有resume前设置的cvar1/cvar2，resume后cvar3不在其中。值传播不是已证内存泄漏、CPU回归、主线程全局Context损坏或所有请求共享；Windows另build输出空context且作者同意未受影响，不能合成同版本配对。源mainfix已merge但拟等候后续backport3.13/3.14，不能说所有当前release已修。coroperf需Task/frame/Context/Handle/Protocol/transport/connection代次，连接resume和callback排队执行事件及nativeTID/owner桥；Task名及ContextVar里的请求标签不能作可信身份，TaskNone不等无工作。resume时捕获Context是可检验假设，未读transport实现/Handle事件不能定根因；仅creationstack不足区分callbackContext传播与Task运行归属。未测工具兼容或优化。返回481行，完整code129–205/output207–218/机制220–226和Windows284–312/main-backport323–364读，后activity/API未知。uvicorn2167/PR141158/code/commits未开；parent仅postseal查learnedlabel metadata十authority零，未从label猜关联Issuekind。ProperURLguard+十authority0+独立clearance先primary，152569oldURL/91887catalog挡，其他crash/misuse/free-thread结果仅未选discovery。",
+        "time_budget": "原dispatch02:54:39.159755Z/source69.602739超60内90/facts142.157800超120/post142.182893/final142.187613内150/180/reserve35。readiness0/其余研究phase0/nohandles/SLOT1unused，未用预算之外的补跑确认版本或socket。"
       }
     },
     "python--cpython--141992": {
@@ -26507,13 +26589,13 @@
     }
   },
   "counts": {
-    "external_environment_required": 557,
+    "external_environment_required": 559,
     "excluded_after_review": 95,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 81,
-  "new_review_count": 668,
+  "new_review_count": 670,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",
