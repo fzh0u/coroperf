@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T13:44:16+00:00",
+  "updated_at": "2026-11-28T14:16:48+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -100,6 +100,53 @@
       "coroperf_capture": false,
       "new_verified_case": false,
       "evidence": "research/github-issue-discovery/fairness-wave6-20261127/source-web-response.json"
+    },
+    "agronholm--anyio--1011": {
+      "id": "agronholm--anyio--1011",
+      "repo": "agronholm/anyio",
+      "number": 1011,
+      "url": "https://github.com/agronholm/anyio/issues/1011",
+      "issue_url": "https://github.com/agronholm/anyio/issues/1011",
+      "title": "Cancelling a `Future` from `BlockingPortal.start_task_soon()` occasionally doesn't cancel the function",
+      "sources": [
+        "https://github.com/agronholm/anyio/issues/1011"
+      ],
+      "status": "external_environment_required",
+      "reason": "Original report prescribes an unbounded repeat-until-failure pytest loop against AnyIO14356be and CPython3.13.7/PyPy3.11.13; full linked test fixture and exact environment were not established. Do not change iterations or substitute runtime. Source already explains the cross-thread cancellation TOCTOU and closes via1012, so this is not a new first-root-cause opportunity. No target/capture ran.",
+      "reason_zh": "原报告要求在AnyIO14356be与CPython3.13.7／PyPy3.11.13上无限重复pytest直到失败；完整关联测试与匹配环境未建立，未缩改迭代或替换运行时。来源已解释跨线程取消TOCTOU，并以1012关闭，不计新的首次根因机会；未运行原例或采集。",
+      "source_completeness": {
+        "body": "Current public issue body and activity returned249lines, archived full raw.",
+        "comments": "Returnedpage has reporteranalysis andclosureactivity; complete review oflinked1012 patch andtest was notperformed.",
+        "version": "AnyIOmaster14356be; CPython3.13.7 andPyPy3.11.13(7.3.20) asreported. Exactlocalfixture unestablished, noSDKabsenceclaim.",
+        "scope": "Source-only currentpublicissue; unboundedracepytestloop notexecuted orreplaced; no newsource afterprimary."
+      },
+      "upstream_evidence": {
+        "observation": "Flaky TestBlockingPortal.test_start_task_soon_cancel_immediately reportedly affectsasyncio andTrio andCPython/PyPy; PyPy usuallyfailsafter5–60s.",
+        "counterevidence": "Reporter already identifies TOCTOU: future.cancelled returnsFalse, syncthread cancels, registrationexecutescallbackineventloopthread. Closedcompletedvia1012.",
+        "unknown": "No localoccurrence frequency, actualTask/Future/scopemapping, cancellationtimeline, patchbody orfixedreleasevalidated.",
+        "resolution_scope": "Knownsourcecause andexplicitrepairreference only; not a testedlocalfix or claim of universallyfixedreleasedversions."
+      },
+      "coroperf_applicability": {
+        "assessment": "Potential support for tracing cross-thread cancellation origin to actualportalTask/scope; no runtime/toolbenefitmeasured.",
+        "assessment_zh": "可能帮助把跨线程取消来源连接至实际portalTask及scope；尚无运行时或工具收益实测。",
+        "required_identity": "concurrent.futures.Future object identity andgeneration, actualportalasyncTask andCancelScope mapping, sync/event-loopthread IDs, cancellation/check/registration/callback events.",
+        "required_identity_zh": "需记录Future对象身份及generation、实际portal异步Task与CancelScope对应关系、同步／事件循环线程ID及取消／检查／注册／回调事件。",
+        "native_baseline": "Originaltest outcome plus actualnative thread/callback order andexceptionstatus; separatewalltime/CPU/cancellationlatency.",
+        "native_baseline_zh": "需原测试结果及真实线程／回调顺序、异常状态；区分墙钟、CPU与取消延迟。",
+        "limits": "Generic ancestry alone cannot prove future-to-scope ownership or TOCTOU; no target, capture, optimization ordiagnosticspeedupverified.",
+        "limits_zh": "仅创建祖先链不能证明Future／scope归属或TOCTOU；未验证原例、采集、优化或诊断提速。"
+      },
+      "open_issues_advice": {
+        "decision": "not_primary",
+        "reason": "Knownrootcause andexplicitclosurevia1012; no currentunfixedclaim, patch/releaseeffectnotvalidated.",
+        "reason_zh": "来源已有根因及1012关闭线索，不列首次定位候选；未验证补丁／发布效果，不声称当前未修复。"
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Current public issue body and activity returned249lines, archived full raw. Returnedpage has reporteranalysis andclosureactivity; complete review oflinked1012 patch andtest was notperformed. AnyIOmaster14356be; CPython3.13.7 andPyPy3.11.13(7.3.20) asreported. Exactlocalfixture unestablished, noSDKabsenceclaim. Source-only currentpublicissue; unboundedracepytestloop notexecuted orreplaced; no newsource afterprimary.",
+        "boundaries": "Sourcealreadyexplains cross-threadFuture cancellation TOCTOU andlinks1012 closure; patchbody/releaseeffect unverified, notfirstrootcause/nofixcandidate. Originalunboundedpytestloop/fulltestfixture/exactAnyIO14356be plus3.13.7orPyPy3.11.13 notestablished; no changediteration/version/SDKprobe/target. ToolrequiresactualFuture/portalTask/CancelScope identity bridge andnative cancellation/check/registration/callback threadorder, ancestryinsufficient.",
+        "time_budget": "Source82.987988 misses60target within90hard; readiness+20.339772/facts103.327760/records139.498928 within30/120/150. Final145.340269 within180 but35reserve misses0.340269. Initialrawsearchdisplay18500chars exceeds3000token cap byroughestimate; rawfirstarchived unchanged. Allresearchphases0/handles[]."
+      }
     },
     "agronholm--anyio--1091": {
       "status": "component_reproduced",
@@ -10403,6 +10450,52 @@
         "source_scope": "Full returned body144–240 read; main.go and bench_test.go/pairedcommands complete. Visible activity through538 read;4 items collapsed389–391; full API/history unknown. go1.27.1 linux/amd64 and go1.28-devel_2ca679b1f1;GOAMD64=v1;AMD Ryzen9 9950X3D. One primary583lines archived. Related code, CLs, commits, bot-related issues and external repos not opened.",
         "boundaries": "完整标量main.go／bench_test.go与count10配对命令承认，未导入simd包也报告GOEXPERIMENT=simd全程序退化；814.2对2838ns/op与关asyncpreempt888.5只是来源结果，不是本地或单次抢占CPU成本。原Go1.27.1及devel2ca679b1f1/Linuxamd64/GOAMD64v1/AMD9950X3D，与一次硬件检查IntelXeonPlatinum8368Q不同，matchingfixture未建立后skipped，未探SDK／CPUflags清单、build、benchmark、改特性mask或补保存恢复代码。asyncpreemptoff诊断对照改变调度，不能单独证明每个CPU／kernel／频率机制；原生抢占次数/单次cost/CPU counters在前，goroutine/G-P-M/TID及signal entry-return归属在后，creator栈不自动拥有runtime开销。需collector signal/register-state观察点，支持／开销未知。正文144–240及活动到538读、4项折叠/API未知；Nov18 closure203fdf2随后Nov22报告revert，Nov23新CL866014/866025及29d9d66已有patchhistory，非首次rootcause/no-fix候选，未验releasegain。不打开关联代码/CL/其他安全或GCcase、不执行第三方服务或故障。",
         "time_budget": "原dispatch10:47:26.238101Z；primary归档约41.762s，source54.761899/readiness55.254112（primary归档后13.492213）/facts100.495820/post100.495913/records115.952155/final117.761899–118.761899；source60/90/facts120/records150/total180/reserve35满足。readiness1/hardwaremetadata1同pass，其他研究phase0、handles[]、SLOT2unused。"
+      }
+    },
+    "golang--go--81996": {
+      "id": "golang--go--81996",
+      "repo": "golang/go",
+      "number": 81996,
+      "url": "https://github.com/golang/go/issues/81996",
+      "title": "net/http: HTTP/2 server re-arms a connection's idle timer after its serve loop ends, retaining the connection for IdleTimeout (and the client read loop never stops its health-check timer)",
+      "sources": [
+        "https://github.com/golang/go/issues/81996"
+      ],
+      "status": "external_environment_required",
+      "reason": "Complete bounded standard-library owned-loopback test supplied, but matching explicit Go1.27.0 fixture not established. No SDK probe/build/target, Go1.23 substitute or missing-SDK verdict.",
+      "reason_zh": "有完整、有限的标准库自有loopback测试，但未建立明确Go1.27.0环境；未探测SDK、构建或运行，不用Go1.23替代，也不声称缺SDK。",
+      "source_completeness": {
+        "body": "Full441-line primary archived; complete test180–287 and server/client timer mechanism143–179 read.",
+        "comments": "Visible comments include additional client timer fix376–393 and referenced backport/commit; linked implementation not opened, no repository-wide repair-status claim.",
+        "version": "Go1.27.0 linux/arm64,darwin/arm64; source says same on master2026-10-03",
+        "scope": "One cleared primary; saved raw technical code remainder inspected before seal without rerequest. Bot-related references not screened after metadata guard120.799 denied; no linked body or patch opened."
+      },
+      "upstream_evidence": {
+        "observation": "Source reports connection reachability tracking0/3s timer configurations; server remains reachable for IdleTimeout, client for SendPingTimeout despite relevant goroutines ending.",
+        "counterevidence": "Zero timers release promptly; reset streams and HTTP1.1 differ. AddCleanup/GC polling50ms and100ms rounding are observations of reachability, not exact leak duration or live goroutine proof.",
+        "unknown": "Local effect, matching compiler fixture, complete patch/release coverage and generic collector resource support.",
+        "resolution_scope": "Source already explains stop/reset teardown order and supplies inline tested repairs; later commenter supplies another client guard/stop repair with backport MetaCubeX/http2 and commit. Outside first-rootcause; no local fix validation."
+      },
+      "coroperf_applicability": {
+        "assessment": "Conditional Timer/callback-to-connection lifetime attribution, not proof from goroutine ancestry.",
+        "assessment_zh": "有条件分析Timer／callback到连接的生命周期归属，不能仅凭goroutine创建关系证明。",
+        "required_identity": "Connection/server/client/timer generations; actual callback receiver edges, AfterFunc registration, Reset/Stop/result and serve/read-loop exit; native AddCleanup oracle with no observer strong reference.",
+        "required_identity_zh": "需连接／server／client／timer代次，实际callback接收者边、AfterFunc注册、Reset／Stop／结果及serve／read-loop结束；用AddCleanup交叉验证且观察者不强持对象。",
+        "native_baseline": "Unchanged three0/3s configurations and cleanup flags/times; separate retained objects from live goroutines, RSS and CPU. Do not run iOS exhaustion scenario.",
+        "native_baseline_zh": "保留未改的三组0／3秒配置及cleanup标志／耗时，区分对象保留、活跃goroutine、RSS与CPU；不运行iOS耗尽场景。",
+        "limits": "Resource observer support unverified. Goroutines may be gone while timer retains callback receiver; no run/capture/repair or diagnosis speedup measured.",
+        "limits_zh": "资源观察支持未验证；goroutine结束后timer仍可保留callback接收者，未运行／采集／验证修复或测得定位提速。"
+      },
+      "open_issues_advice": {
+        "assessment": "not_primary",
+        "candidate": false,
+        "reason": "Known source cause and demonstrated inline/upstream-backport repairs; future type1 evidence validation only, not new rootcause or no-fix candidate."
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Full441-line primary archived; complete test180–287 and server/client timer mechanism143–179 read. Visible comments include additional client timer fix376–393 and referenced backport/commit; linked implementation not opened, no repository-wide repair-status claim. Go1.27.0 linux/arm64,darwin/arm64; source says same on master2026-10-03 One cleared primary; saved raw technical code remainder inspected before seal without rerequest. Bot-related references not screened after metadata guard120.799 denied; no linked body or patch opened.",
+        "boundaries": "Completefinite unchangedstandard-libraryownedloopback original, matchingGo1.27.0 fixture notestablished; noSDKprobe/build/target/alternate1.23 orglobalabsenceclaim. SourceknownTimerStop/Reset/teardowncause andinline/backportrepairleads, notfirstcause. ConnectionreachabilityafterGexit isnotGleak/RSS/CPU/permanentleak. Needactualtimer/callback/connection generations andnativeAddCleanup independentoracle; observermustnotstrongholdobjects.",
+        "time_budget": "Source47.481641/readiness+27.487572/facts74.969213 meet60/90/30/120; records167.302844 misses150, final~167.374 (reported) within180 but35reserve misses~22.374 (reported). Latermetadata120.799397 denied75 withoutnewgate/body; completeprimaryrawretained/remainderread withoutrefetch. Allresearchphases0/handles[]."
       }
     },
     "golang--go--82146": {
@@ -25544,6 +25637,52 @@
         "time_budget": "Source51.382004, static readiness+21.457613, facts72.839617 and records135.687350 meet60/90/30/120/150. Reported final145.331 meets180 but35s reserve misses0.331. Raw reserve flag records checkpoint only, not final guarantee. Initial metadata guard0 preceded gate without explicit exit_code branch; primary/later transitions branched. Learned-reference metadata guard91.652563 denied75, no later gate/source."
       }
     },
+    "tokio-rs--tokio--3190": {
+      "id": "tokio-rs--tokio--3190",
+      "repo": "tokio-rs/tokio",
+      "number": 3190,
+      "url": "https://github.com/tokio-rs/tokio/issues/3190",
+      "title": "New timer does not interrupt I/O wait in multi-threaded scheduler",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/3190"
+      ],
+      "status": "external_environment_required",
+      "reason": "Complete upstream program retained, but both loops are indefinite and matching Tokio0.3.4/macros0.3.1 fixture is not established. No rewritten finite loop, SDK probe, build or original run; no global missing-SDK verdict. Reported Linux version is context, not independently proven hard prerequisite.",
+      "reason_zh": "保留完整上游程序，但两个循环均无界，且未建立匹配Tokio0.3.4／macros0.3.1环境。未改为有限循环、探测SDK、构建或运行，不声称全局缺SDK；所报Linux版本是上下文，未证明为硬前提。",
+      "source_completeness": {
+        "body": "Returned231-line primary archived; full minimal Rust main178–190 and reported stalls/gdb observations191–193 inspected. No external application network or server in snippet.",
+        "comments": "No technical Activity/comments returned; complete repair history unknown.",
+        "version": "Tokio0.3.4, tokio-macros0.3.1; reported Linux4.9.0-13-amd64/Debian4.9.228 x86_64. Rust compiler/Cargo features/build not specified.",
+        "scope": "One cleared canonical primary. Split-from3168 learned reference checked against currentTEN metadata with zero hits; related source not opened. Kernel#1 is not issue alias."
+      },
+      "upstream_evidence": {
+        "observation": "Reporter says short-timer progress pauses up to10s; gdb shows idle parked workers and epoll_wait timeout near longtimer, with EINTR continuation resuming progress. Source-only; no localthreadtrace or CPU/latency measurement.",
+        "counterevidence": "gdb continuation/EINTR restores progress but changes execution; it does not isolate missing timer wakeup from a park/rescan race or an unpolled short-timer Task. No local reproduction.",
+        "unknown": "Exact fixture/compiler/features; timer registration/driver deadline/wakeup order, true native owner; full discussion, root cause, patch and release status.",
+        "resolution_scope": "Returned page Closed with no linked branches/PRs shown; split-from3168 is a reference, not established duplicate or fix. No repository-wide absence-of-fix conclusion."
+      },
+      "coroperf_applicability": {
+        "assessment": "Conditional reconstruction of short-timer Task versus parked driver/native worker progress, not proven root cause or diagnostic gain.",
+        "assessment_zh": "可考虑重建短timer Task与停驻driver／原生worker的进展关系，未证明根因或定位收益。",
+        "required_identity": "Runtime/Task/timer/driver and native-thread generations; timer registration/deadline, driver-selected timeout, actual epoll entry/return, wake destination, park/unpark, enqueue/dequeue and Task poll intervals.",
+        "required_identity_zh": "需运行时／Task／timer／driver及原生线程代次，timer注册／deadline、driver所选timeout、实际epoll进入／返回、唤醒目标、park／unpark、入出队及Task轮询区间。",
+        "native_baseline": "Unchanged1ms spawned timer and10s root timer program, original output and independent native wait/thread timeline; no application network service is required by this snippet.",
+        "native_baseline_zh": "基线保留未改的spawn内1ms timer、root内10s timer及原输出，用独立原生等待／线程时间线核验；该片段无需应用网络服务。",
+        "limits": "Distinguish timer not registered, stale poll timeout, lost/misdirected wakeup and queued Task not polled. Ancestry or parked stacks alone do not prove driver ownership/cause; required resource events and collector support unverified. No run/capture/fix or diagnosis-time measurement.",
+        "limits_zh": "区分timer未注册、旧poll timeout、唤醒丢失／错投，以及Task入队后未轮询。创建关系或停驻栈不能单独证明driver归属或原因；资源事件及collector支持未验证，无运行／采集／修复或定位耗时实测。"
+      },
+      "open_issues_advice": {
+        "assessment": "status_check",
+        "candidate": false,
+        "reason": "Actual stall report with plausible missing timer/driver/task relation, but full discussion/fix screen and faithful fixture unavailable. No unpatched or first-rootcause verdict."
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Returned231-line primary archived; full minimal Rust main178–190 and reported stalls/gdb observations191–193 inspected. No external application network or server in snippet. No technical Activity/comments returned; complete repair history unknown. Tokio0.3.4, tokio-macros0.3.1; reported Linux4.9.0-13-amd64/Debian4.9.228 x86_64. Rust compiler/Cargo features/build not specified. One cleared canonical primary. Split-from3168 learned reference checked against currentTEN metadata with zero hits; related source not opened. Kernel#1 is not issue alias.",
+        "boundaries": "Complete original contains two unbounded timer loops; matchedTokio0.3.4/macros0.3.1 fixture notestablished. Noexternalapplicationnetwork prerequisite asserted, SDKprobe/build/target0. Reported parkedworkers/epoll timeout is notfirstrootcause or toolgain. PrimaryClosed; fullcomments/fixscreen absent, local3168 metadataTENzero doesnotprove nofix. Preserve unknownrepair and inspectstatus before activeOpenIssuesadmission. Task/timer/driver/nativeowner generations and deadline/wakeup/park/poll timeline needindependentnativecorroboration.",
+        "time_budget": "Source43.968842/readiness+21.1011/facts65.069942/records133.974606/final144.230772 meet60/90/30/120/150/180/reserve35. Allresearchphases0/handles[]."
+      }
+    },
     "tokio-rs--tokio--3473": {
       "id": "tokio-rs--tokio--3473",
       "repo": "tokio-rs/tokio",
@@ -27556,13 +27695,13 @@
     }
   },
   "counts": {
-    "external_environment_required": 577,
+    "external_environment_required": 580,
     "excluded_after_review": 98,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 82,
-  "new_review_count": 691,
+  "new_review_count": 694,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",
