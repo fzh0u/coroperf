@@ -1,0 +1,337 @@
+{
+  "schema": "coroperf.developer-match-evidence/v1",
+  "checked_at": "2026-11-28T13:42:16.374884+00:00",
+  "case_id": "sqlalchemy--sqlalchemy--8145",
+  "upstream_url": "https://github.com/sqlalchemy/sqlalchemy/issues/8145",
+  "collection_track": "developer_report_matched_diagnostic_evidence",
+  "matchtype": "upstream_workload_preserved_developer_symptom_and_scoped_semantic_attribution_match",
+  "mode": "Offline recheck of existing saved originals and captures. No new source request, native target, capture or repair execution.",
+  "source_match": {
+    "only_workload_change": "private PostgreSQL coordinates; exact normalized code equality checked",
+    "fixture_sha256": "4df3f9f6f59e1937cb6281055bc9c577e50c465ad750c7a400f6d4c411f810d7",
+    "reported_result": "Cancellation of async context cleanup leaves a checked-out real connection and GC cleanup warning.",
+    "matched_native_result": "Affected uninstrumented and captured saved runs show the reported pool checkout/GC-warning pattern. Original one childTask, SQL,2.5s cancellation and cleanup retained.",
+    "environment_limits": "Reporter Python3.10.4/UbuntuWSL2/Postgres14; captured agentPython3.10.12/private localPostgres14. Saved runner/frame paths identify dependency directories, but historical dependency binary hashes/exact fixed release were not independently attested in this audit."
+  },
+  "tool_contribution": {
+    "added_evidence": "Raw pool callbacks identify one actual record_id, checkout belongs to the same runtime Task generation as CancelledError in __aexit__/close, and no same-record checkin follows in the saved affected window. Actual base_to_sample edges recover original main:21 start_soon callsite missing from cancellation observations.",
+    "resource_identity": "Explicit SQLAlchemy pool callback uses actual Connection/ConnectionRecord object IDs; not inferred from creation ancestry.",
+    "identity_limit": "Object/generation-backed collector plus SQLAlchemy callback relation; no separately held native Task-reference witness found.",
+    "scope": "Configured SQLAlchemy pool callbacks plus Task generation/history, not generic creator ancestry alone."
+  },
+  "saved_rows_recomputed": [
+    {
+      "saved_repeat": 0,
+      "affected_task_generation": "python-asyncio-task-0x7a00890d5a40-g2",
+      "creation_segment": 1,
+      "checkout_segment": 7,
+      "cleanup_cancel_segments": [
+        254,
+        257
+      ],
+      "record_id": "134142709961520",
+      "affected_same_record_checkins": 0,
+      "fixed_same_record_checkin_segments": [
+        258
+      ],
+      "fixed_checkout_task": "python-asyncio-task-0x78691c2cdd80-g2",
+      "fixed_checkin_tasks": [
+        "python-asyncio-task-0x78691c2cdf20-g4"
+      ],
+      "native_last_pool_counts": {
+        "baseline.stdout": 1,
+        "record.stdout": 1,
+        "control.stdout": 1,
+        "fixed-record/record.stdout": 1
+      },
+      "affected_gc_warning": true,
+      "control_gc_warning": false,
+      "semantic_findings_affected": 1,
+      "semantic_findings_fixed": 0,
+      "historical_original_callsite_restored": "main -> db_tasks.start_soon(sleep_in_db), issue.py:21",
+      "fixed_record_id": "132392831654480"
+    },
+    {
+      "saved_repeat": 1,
+      "affected_task_generation": "python-asyncio-task-0x7a15b57c5a40-g2",
+      "creation_segment": 1,
+      "checkout_segment": 7,
+      "cleanup_cancel_segments": [
+        254,
+        257
+      ],
+      "record_id": "134233646601008",
+      "affected_same_record_checkins": 0,
+      "fixed_same_record_checkin_segments": [
+        258
+      ],
+      "fixed_checkout_task": "python-asyncio-task-0x717ebdcb9d80-g2",
+      "fixed_checkin_tasks": [
+        "python-asyncio-task-0x717ebdcb9f20-g4"
+      ],
+      "native_last_pool_counts": {
+        "baseline.stdout": 1,
+        "record.stdout": 1,
+        "control.stdout": 1,
+        "fixed-record/record.stdout": 1
+      },
+      "affected_gc_warning": true,
+      "control_gc_warning": false,
+      "semantic_findings_affected": 1,
+      "semantic_findings_fixed": 0,
+      "historical_original_callsite_restored": "main -> db_tasks.start_soon(sleep_in_db), issue.py:21",
+      "fixed_record_id": "124789156108880"
+    },
+    {
+      "saved_repeat": 2,
+      "affected_task_generation": "python-asyncio-task-0x7247cd0c5a40-g2",
+      "creation_segment": 1,
+      "checkout_segment": 7,
+      "cleanup_cancel_segments": [
+        254,
+        257
+      ],
+      "record_id": "125652700402480",
+      "affected_same_record_checkins": 0,
+      "fixed_same_record_checkin_segments": [
+        258
+      ],
+      "fixed_checkout_task": "python-asyncio-task-0x70ff90acdd80-g2",
+      "fixed_checkin_tasks": [
+        "python-asyncio-task-0x70ff90acdf20-g4"
+      ],
+      "native_last_pool_counts": {
+        "baseline.stdout": 1,
+        "record.stdout": 1,
+        "control.stdout": 1,
+        "fixed-record/record.stdout": 1
+      },
+      "affected_gc_warning": true,
+      "control_gc_warning": false,
+      "semantic_findings_affected": 1,
+      "semantic_findings_fixed": 0,
+      "historical_original_callsite_restored": "main -> db_tasks.start_soon(sleep_in_db), issue.py:21",
+      "fixed_record_id": "124242938272336"
+    }
+  ],
+  "fixed_comparison_supported": "Fixed-arm capture contains a checkin of its own checkout record from a distinct shield-close Task; control emits no GC warning; semantic findings change1->0.",
+  "fixed_comparison_not_supported": "Immediate native printed pool count0: all affected/control/fixed outputs end at1. Initial0 is present in every output and is not an end-state comparison.",
+  "print_vs_checkin_timing": "The native stdout counter and monotonic trace have no saved common-clock print event. The saved evidence supports final printed counter1 plus a same-record checkin elsewhere in the fixed capture; exact ordering/delay of that checkin relative to the final print was not independently measured. Deferred cleanup is consistent with the source, not a measured timing claim.",
+  "verification_correction": {
+    "old_check": "Substring matched an initial zero, not the final printed state.",
+    "current_facts": {
+      "runs": 3,
+      "native_pool_count_comparison": {
+        "0": {
+          "last_printed_counts": {
+            "baseline": 1,
+            "record": 1,
+            "control": 1,
+            "fixed_record": 1
+          },
+          "fixed_final_zero_supported": false
+        },
+        "1": {
+          "last_printed_counts": {
+            "baseline": 1,
+            "record": 1,
+            "control": 1,
+            "fixed_record": 1
+          },
+          "fixed_final_zero_supported": false
+        },
+        "2": {
+          "last_printed_counts": {
+            "baseline": 1,
+            "record": 1,
+            "control": 1,
+            "fixed_record": 1
+          },
+          "fixed_final_zero_supported": false
+        }
+      },
+      "stdout_print_vs_checkin_order": null,
+      "stdout_print_vs_checkin_order_scope": "No common-clock print event was captured; do not infer timing from stdout and trace file order."
+    },
+    "checks": {
+      "three_repeats": true,
+      "only_database_url_changed": true,
+      "real_service_started": true,
+      "service_stopped": true,
+      "0_source_hash": true,
+      "0_owned_lossless": true,
+      "0_fixed_no_finding": true,
+      "0_one_finding": true,
+      "0_native_final_counts_available": true,
+      "0_symptom": true,
+      "0_affected_gc_warning": true,
+      "0_fixed_gc_warning_absent": true,
+      "0_cleanup_finding_comparison": true,
+      "0_checkout_cancelled_owner": true,
+      "0_same_record_not_checked_in": true,
+      "0_fixed_record_checked_in": true,
+      "1_source_hash": true,
+      "1_owned_lossless": true,
+      "1_fixed_no_finding": true,
+      "1_one_finding": true,
+      "1_native_final_counts_available": true,
+      "1_symptom": true,
+      "1_affected_gc_warning": true,
+      "1_fixed_gc_warning_absent": true,
+      "1_cleanup_finding_comparison": true,
+      "1_checkout_cancelled_owner": true,
+      "1_same_record_not_checked_in": true,
+      "1_fixed_record_checked_in": true,
+      "2_source_hash": true,
+      "2_owned_lossless": true,
+      "2_fixed_no_finding": true,
+      "2_one_finding": true,
+      "2_native_final_counts_available": true,
+      "2_symptom": true,
+      "2_affected_gc_warning": true,
+      "2_fixed_gc_warning_absent": true,
+      "2_cleanup_finding_comparison": true,
+      "2_checkout_cancelled_owner": true,
+      "2_same_record_not_checked_in": true,
+      "2_fixed_record_checked_in": true
+    },
+    "code_sha256": {
+      "scripts/verify_semantic_case_evidence.py": "470c6e705067f58f0422bdd069af37e69b5b804903cde421790a550d962fe159",
+      "tests/test_semantic_case_evidence.py": "a1479d3623418ae80aaf1f6ac039dcf05f03b82683a4f5efe14c399206074228"
+    },
+    "targeted_tests_passed": 7,
+    "audit_sha256": "aeba1f79414c7cc8b1a6fcda73e2c3d7359a25bf48a845476641f48d12714f6a"
+  },
+  "input_hashes_at_initial_audit": {
+    "perf-out/case-studies/production-survey/sqlalchemy--sqlalchemy--8145/issue.json": "ea2b804dc340fd510b23c8f89e491e5dcfe512a79abc256423bf7595e78a1218",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/issue.py": "4df3f9f6f59e1937cb6281055bc9c577e50c465ad750c7a400f6d4c411f810d7",
+    "scripts/run_production_issue_cases.py": "861f530fb15e2e435b5f0bb24646f9937eec73af81db403e12e711c4929a4889",
+    "scripts/verify_semantic_case_evidence.py": "107b16be0425e8f99a0c2ec3c9bdbcf395ca40767ebd09d7b4257199c7242996",
+    "agents/python/coroperf_semantic_probes.py": "a4083bc9a0af2ff9f060600aee2ac5e2872cc5f05866362d8d072496beec5e4e",
+    "web/coroperf-github-pages/data/cases.json": "7a69e4d63600a99258e932aa3dc7d630cd4505bfb1d6b714e57d4eca64389555",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/record.json": "394458f1795cab0b318f664c4e7b749a44b505e61f4ad75c73a75e5a5de34930",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/baseline.stdout": "31cbd36a15c830865a0011a4e824bb79d5e968503a003381b5e74e2b093c0796",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/baseline.stderr": "f33146270b990868ed7e689463d1b5f44d86b895136dbd76e6c4c0f8708b5ecd",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/record.stdout": "4200df20d5c4b8b40dd75248031c223e20727ffe8f06c2d3cb9e2284f0638525",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/record.stderr": "ff1cdd01e52726476c8d956c7026ab261cdec875b629df1cb9ca40b602ae2813",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/control.stdout": "e14c9c551c46cc49835274fd80e82be1e3bf36ef9da42fe534adbf8d06679d86",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/report/graph.json": "fa7187c8e4f25a08780715aad8b43e5f72c1ea02c4eff19adfd5d4484bea3573",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/report/semantic-findings.json": "dba40604c58ae699b5f985c6af223745a9538aa344ef2c85364131593567a9da",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/verification.json": "0ad7cbed1522174980602847af576580f0b4100e2dbb4d458620fd8ab1f76aaa",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/fixed-record/record.json": "eb83feca776608dc5257599e3e11e7475bd7527c559405a0e1a7d521d1b98b18",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/fixed-record/record.stdout": "5094482537628477f06b116ef517fb02a7f6b8838a7cfb34cac92112bc3bea15",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-0/fixed-record/report/semantic-findings.json": "603135b2092a1e4004eadc384f4baf07a9627cd903facb5bbb1ca72a7167c170",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/record.json": "87eaa138b875d3df8df47ddb9ec64e3027d493b25e02a911f747637ee9599f23",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/baseline.stdout": "46c06d8c68028581d96d3a98866133d20150aad0655990bff495ec12b56cd4ac",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/baseline.stderr": "dae6d738ce45c84c1ca6894740144e1a6454a14129e4c32725adeda734c4b188",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/record.stdout": "4b98c65b95517e1e2f6a39608f91e0db4714419a38b6bc9d505b517d22a6ae4a",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/record.stderr": "235666eec6e120846d7e3b7eb6ca168529deeffbec6a676e2433aec97bf20fad",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/control.stdout": "c26c8467edc6a39e3e81a7dfed9b7046f99be69d1011ececeab569642bce1248",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/report/graph.json": "a1dcab3ee893f97607da023ca57f87589751668e40a5d3a916929d1fd4724cdc",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/report/semantic-findings.json": "0d854d11e783f3cca0cd197a73599209a972029a4c12cd392d327fa3224b9cbf",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/verification.json": "fd8d7f3aac5c7d7ddc5e26e56bbf69c3d409317598005697a0943832fc2f7d9e",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/fixed-record/record.json": "1045c7a3b2fb49e7c81f9eff8d2c69fb4d4dca311af02350d0b6800683e62625",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/fixed-record/record.stdout": "6f5a4bf32cb238e38b556a52a2b166d1ab74c4fe44350b704ab699b798a9e149",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-1/fixed-record/report/semantic-findings.json": "603135b2092a1e4004eadc384f4baf07a9627cd903facb5bbb1ca72a7167c170",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/record.json": "c4acf40ab147764221dd681a7a88c15f00a8fcae81f85d33fa8c8c3c0562368d",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/baseline.stdout": "87a37bc81846090b53a47a6a723b87a001e46021fb8666862f75737e94ba7042",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/baseline.stderr": "dd42348c9d6ee1207a5d91ff0bc37af9de7556a72ae8e895c3762d66a8e7835a",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/record.stdout": "899337d793a860b728c100722bfce13d36c2b0e5b7dfd9206f3a28d927a80514",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/record.stderr": "80c27bf2fc7f928c01ed8d53ccf340f7186e7b6158d2a5881f9995091e2d2624",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/control.stdout": "ddad5989073606752eabbe9f572a7995cdaf5fdc2bb9fc47d4d0d93fea2648e3",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/control.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/report/graph.json": "975f6e412f4f58c804a4f4ca3a4ed2ea36e2847fd53a4b675767c1b24be1a928",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/report/semantic-findings.json": "efef17ebcf437d5067461c563dfb28e2f909c2cf67821e764270fe20f36b86ea",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/verification.json": "7ff5b591a11cd4091f2caf6e175b032a18cb98332e2ac728c556c9ad1d83876f",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/fixed-record/record.json": "42dbab03f9ec0b43aaf70986c7e3b9b0e64178353825cdfae094c190a4a8bae4",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/fixed-record/record.stdout": "576e696a8a16ae1a541437d0b73057e08cf861e9b299723d01d07c2e9ec5d0d4",
+    "perf-out/case-studies/production-verified/sqlalchemy-8145/run-2/fixed-record/report/semantic-findings.json": "603135b2092a1e4004eadc384f4baf07a9627cd903facb5bbb1ca72a7167c170",
+    "research/github-issue-discovery/psycopg-1466-first-check-20261126-b21/issue.json": "85f750b4902cde01a91d1ed8a4b98dbd7f18df641f480c66a159e01dbaa5982d",
+    "research/github-issue-discovery/psycopg-1466-first-check-20261126-b21/check_once.py": "874835cfbd69988d0509c232faa67b0bc4309b2fc2fc7ddf1fff9e364a758c08",
+    "perf-out/github-issue-discovery/automatic/psycopg-1466-first-check-20261126-b21/native-observation.json": "481f5353d2c936f0bd52c6bab8310d24926453d7cfe77596027e5417fe7135bd",
+    "web/coroperf-github-pages/evidence/sqlalchemy--sqlalchemy--8145.html": "f64bb952d97355ae848a82ab9fdaba923d0ec4a124f20f78792cae0cd75f0345",
+    "web/coroperf-github-pages/zh-cn/evidence/sqlalchemy--sqlalchemy--8145.html": "e18e4876d61f00373e258ccb143f058de4b33ffbf1060b13f98302183841bdb9",
+    "web/coroperf-results/public/evidence/sqlalchemy--sqlalchemy--8145.json": "7cd8c723600709f55d511ce6418e21c706716b0185ee8f60eeb3230a05512602"
+  },
+  "authorized_code_changes": {
+    "scripts/verify_semantic_case_evidence.py": {
+      "audited_before": "107b16be0425e8f99a0c2ec3c9bdbcf395ca40767ebd09d7b4257199c7242996",
+      "authorized_after": "470c6e705067f58f0422bdd069af37e69b5b804903cde421790a550d962fe159"
+    }
+  },
+  "frozen_inputs_unchanged": 46,
+  "raw_audit_sha256": "dddf336307fe7d0959ce1870e8a002d99733c8469e8ec1805247d0b973f748ac",
+  "not_claimed": [
+    "newrootcause: source already explains shielding",
+    "exact reporterhost replication",
+    "independent native Taskpointer witness",
+    "immediate fixed pool0",
+    "timed diagnosis speedup",
+    "production overhead",
+    "new execution"
+  ],
+  "new_case_credit": 0,
+  "new_target_executions": 0,
+  "new_captures": 0,
+  "new_root_cause_credit": 0,
+  "diagnosis_speedup": null,
+  "production_overhead": null,
+  "independently_rechecked_event_witnesses": [
+    {
+      "saved_repeat": 0,
+      "create_id": "1",
+      "checkout_id": "7",
+      "cancel_event_ids": [
+        254,
+        257
+      ],
+      "task_generation": "python-asyncio-task-0x7a00890d5a40-g2",
+      "record_id": "134142709961520",
+      "native_cancellation_stacks_lack_original_main": true,
+      "creation_stack_has_original_main_line21": true,
+      "fixed_checkout_task": "python-asyncio-task-0x78691c2cdd80-g2",
+      "fixed_checkin_task": "python-asyncio-task-0x78691c2cdf20-g4",
+      "fixed_record_id": "132392831654480",
+      "fixed_checkout_id": "7",
+      "fixed_checkin_id": "258"
+    },
+    {
+      "saved_repeat": 1,
+      "create_id": "1",
+      "checkout_id": "7",
+      "cancel_event_ids": [
+        254,
+        257
+      ],
+      "task_generation": "python-asyncio-task-0x7a15b57c5a40-g2",
+      "record_id": "134233646601008",
+      "native_cancellation_stacks_lack_original_main": true,
+      "creation_stack_has_original_main_line21": true,
+      "fixed_checkout_task": "python-asyncio-task-0x717ebdcb9d80-g2",
+      "fixed_checkin_task": "python-asyncio-task-0x717ebdcb9f20-g4",
+      "fixed_record_id": "124789156108880",
+      "fixed_checkout_id": "7",
+      "fixed_checkin_id": "258"
+    },
+    {
+      "saved_repeat": 2,
+      "create_id": "1",
+      "checkout_id": "7",
+      "cancel_event_ids": [
+        254,
+        257
+      ],
+      "task_generation": "python-asyncio-task-0x7247cd0c5a40-g2",
+      "record_id": "125652700402480",
+      "native_cancellation_stacks_lack_original_main": true,
+      "creation_stack_has_original_main_line21": true,
+      "fixed_checkout_task": "python-asyncio-task-0x70ff90acdd80-g2",
+      "fixed_checkin_task": "python-asyncio-task-0x70ff90acdf20-g4",
+      "fixed_record_id": "124242938272336",
+      "fixed_checkout_id": "7",
+      "fixed_checkin_id": "258"
+    }
+  ]
+}

@@ -8,17 +8,17 @@
   "corpus": {
     "discovery_entries": 1544,
     "open_in_saved_discovery": 519,
-    "review_decisions": 954,
+    "review_decisions": 956,
     "verified_cases": 140,
-    "discovery_ledger_refreshed_at": "2026-11-28T13:24:38+00:00",
+    "discovery_ledger_refreshed_at": "2026-11-28T13:39:28+00:00",
     "inputs": [
       {
         "path": "web/coroperf-github-pages/data/discovery.json",
-        "sha256": "3250e16750a33b951be7adbfb7c9a4df411269a75c1baf1dcb16cb17484d18b5"
+        "sha256": "a2a0eb722441b7d6b6077496ee275aba859c070c1cfc453cfd3951557cf5a87c"
       },
       {
         "path": "research/github-issue-discovery/automation/reviews.json",
-        "sha256": "2f1505d0475cd699fe24317af99f556226a3c1124041897698a12e08514e8568"
+        "sha256": "ebe6da2a730def658c4ffa38a74738f0390673258d3af8d68f566a0b7ab90f02"
       },
       {
         "path": "web/coroperf-github-pages/data/cases.json",
@@ -707,6 +707,26 @@
         "en": "Upstream issue is closed; original investigation and local evidence are retained in closed_investigations. Repair effectiveness is not inferred from closure.",
         "zh-CN": "上游 issue 已关闭；原调查与本地证据保留于 closed_investigations，不从关闭状态推断修复有效。"
       }
+    },
+    {
+      "id": "tokio-rs--tokio--3179",
+      "reference": "Tokio #3179",
+      "url": "https://github.com/tokio-rs/tokio/issues/3179",
+      "last_source_check": "2026-11-28T13:24:00.719171+00:00",
+      "reason": {
+        "en": "Closed with linked repair lead3492 and a timer-resolution/initial-phase hypothesis; neither patch effect nor cause verified locally. Complete finite program retained, exact matching fixture not established. Future work is virtual-clock/timer validation, not a first-root-cause or measured tool-effect claim.",
+        "zh-CN": "Closed且有关联修复线索3492及timer精度／初始相位假设；未本地核验原因或补丁效果。保留完整有限程序，未建立精确匹配环境；后续仅可称虚拟时钟／timer验证，不计首次根因或工具效果。"
+      }
+    },
+    {
+      "id": "pgjdbc--pgjdbc--194",
+      "reference": "PgJDBC #194",
+      "url": "https://github.com/pgjdbc/pgjdbc/issues/194",
+      "last_source_check": "2026-11-28T13:24:06.937499+00:00",
+      "reason": {
+        "en": "Source already explains client/server duplex send/read blocking and reply-size heuristic limits. Full linked original harness/deployment/load and complete fix history missing; Open/milestone do not establish no fix or a fixed release. No DB setup or target.",
+        "zh-CN": "来源已解释客户端／服务端双向发送读取阻塞及回复大小启发式限制；缺所链原harness／部署／负载和完整修复历史。Open／milestone不证明无修复或固定版本；未部署数据库或运行目标。"
+      }
     }
   ],
   "publication": {
@@ -741,7 +761,7 @@
     "en": "Locally verified results are shown first, followed by unresolved candidates. Asio1720 has fresh execution and repair-control evidence; pending entries retain their own limitations.",
     "zh-CN": "已验证的本地结果排在前面，之后为未解决候选。Asio1720 已有本轮执行和修改对照证据；待调查条目保留各自限制。"
   },
-  "presentation_updated_at": "2026-11-28T12:55:50.278343+00:00",
+  "presentation_updated_at": "2026-11-28T13:42:16.375833+00:00",
   "diagnosis_protocol": {
     "status": "one_local_cause_validated_other_measurements_pending",
     "claim": {
@@ -792,7 +812,24 @@
         "zh-CN": "这验证了限定范围的调用来源恢复，不代表发现新根因或定位更快。入口是适配fixture函数，不是原Discord注册入口；共享资源身份需额外API观察，未做修复或采集开销对照。"
       },
       "developer_report_url": "https://github.com/sqlalchemy/sqlalchemy/issues/5967#issuecomment-783492237"
-    }
+    },
+    "additional_effect_evidence": [
+      {
+        "case_id": "sqlalchemy--sqlalchemy--8145",
+        "reference": "SQLAlchemy #8145",
+        "case_path": "evidence/sqlalchemy--sqlalchemy--8145.html",
+        "evidence_path": "data/coroperf-effect-sqlalchemy-8145-20261128.json",
+        "developer_report_url": "https://github.com/sqlalchemy/sqlalchemy/issues/8145",
+        "summary": {
+          "en": "A saved upstream program, changed only for private database coordinates, reproduces the reported cancelled-cleanup/connection-retention symptom. Configured pool observations and Task history connect checkout, cleanup cancellation and the original submission site. The fixed capture records checkin of its own pool record; the semantic finding changes1→0 across the saved comparison.",
+          "zh-CN": "保存的上游程序仅改私有数据库地址，复现开发者报告的清理取消／连接未归还现象。启用pool观察与Task历史后，可关联checkout、清理取消及原提交入口；修复臂中，其checkout对应的record有checkin，已存对照的语义finding从1变0。"
+        },
+        "limits": {
+          "en": "Offline audit only. Both arms last print a checked-out count of1; the old initial-zero substring check was corrected. There is no common-clock print event to align that print with checkin. Pool observations are explicit; no separate native Task-reference witness or attested historical dependency binary identity. No new root cause, run, diagnosis-time gain or production overhead result.",
+          "zh-CN": "仅离线复核。两臂最后打印的checked-out计数均为1，已修正把初始0当末态的旧规则；缺公共时钟打印事件，不能精确对齐打印与checkin先后。pool观察是显式配置，未另持原生Task引用核验或证明历史依赖二进制身份；无新根因、运行、定位提速或生产开销结果。"
+        }
+      }
+    ]
   },
   "closed_investigations": {
     "netty--netty--12820": {

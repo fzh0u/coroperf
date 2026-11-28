@@ -69,13 +69,14 @@ def render(data, language):
     prefix = '../' if zh else ''
     protocol = data['diagnosis_protocol']
     steps = ''.join(f'<li>{e(step[language])}</li>' for step in protocol['steps'])
-    effect = protocol.get('effect_evidence')
+    effects = ([protocol['effect_evidence']] if protocol.get('effect_evidence') else [])
+    effects += protocol.get('additional_effect_evidence', [])
     effect_html = ''
-    if effect:
+    for effect in effects:
         developer = effect.get('developer_report_url')
         developer_link = (f' · <a href="{e(developer)}">{tr("Developer report", "开发者结果")}</a>'
                           if developer else '')
-        effect_html = (
+        effect_html += (
             f'<p><strong>{tr("Checked attribution example", "已核验的归因示例")}</strong> · '
             f'<a href="{e(effect["case_path"])}">{e(effect["reference"])}</a><br>'
             f'{e(effect["summary"][language])} '
