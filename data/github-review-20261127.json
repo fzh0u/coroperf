@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T10:51:08+00:00",
+  "updated_at": "2026-11-28T10:58:34+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -14204,6 +14204,58 @@
         "https://github.com/libuv/libuv/issues/5306"
       ]
     },
+    "libuv--libuv--discussion-3550": {
+      "id": "libuv--libuv--discussion-3550",
+      "repo": "libuv/libuv",
+      "number": 3550,
+      "url": "https://github.com/libuv/libuv/discussions/3550",
+      "title": "prepare and check handle are not executed as expected on windows",
+      "sources": [
+        "https://github.com/libuv/libuv/discussions/3550"
+      ],
+      "status": "external_environment_required",
+      "reason": "Author reports different prepare/check/read ordering on Windows versus Linux. No complete original TCP server, input or exact build was supplied; matching Windows fixture is unprepared, no target/readiness. Discussion already explains readiness versus completion semantics and supplies a scheduling patch, so this is not first-root-cause discovery.",
+      "reason_zh": "作者报告Windows与Linux的prepare/check/read次序不同。未提供完整原TCP服务端、输入或精确构建，匹配Windows原例未备，未启动目标或就绪检查。讨论已有就绪／完成语义解释及调度补丁，不计首次根因发现。",
+      "source_completeness": {
+        "body": "298-line rendered discussion archived; body141–148 describes TCP ordering and a code link, not a complete runnable original.",
+        "comments": "All visible two comments/three replies161–278 read; API completeness unknown.",
+        "version": "Windows vs Linux, source link df63ee1; no original release/toolchain/OS versions or full fixture.",
+        "scope": "Only Discussion3550 primary opened; learned conversion from issue3541 then ten-authority alias metadata check clear. PR3585/1787/code/docs not opened."
+      },
+      "upstream_evidence": {
+        "observation": "prepare/check are observed on opposite sides of read callbacks across platforms in the author TCP server.",
+        "counterevidence": "Maintainer distinguishes polling from actual reading with completion-based Windows I/O. Later discussion acknowledges reasonable non-regression behavior while proposing a bounded pending-callback drain for consistency.",
+        "unknown": "Original reproducible server/input/build, actual timing/CPU and deployed patch/release state are unavailable.",
+        "resolution_scope": "Existing semantics explanation and inline patch mean this is an attribution/control case, not a fresh unknown cause or unpatched target. The shown16-iteration proposal is not proof of current released behavior or optimization."
+      },
+      "coroperf_applicability": {
+        "assessment": "Conditional event-loop operation attribution; callbacks are not established coroutines.",
+        "required_identity": "Loop/poll-iteration and handle/request generations; IOCP readiness/completion, pending-queue enqueue/dequeue and read/prepare/check callback ordering on nativeTID.",
+        "native_baseline": "Native ordered request/callback timestamps with unchanged original Windows and Linux fixtures; none executed.",
+        "limits": "Creator lineage does not determine I/O completion or callback phase. Do not fabricate a server, replace Windows with Linux, apply the inline patch or infer CPU/latency from order.",
+        "assessment_zh": "有条件用于事件循环操作归属；callback未证明为协程。",
+        "required_identity_zh": "loop／poll轮次、handle／request代次、IOCP就绪／完成、pending队列入队出队及read／prepare／check到原生TID的顺序。",
+        "native_baseline_zh": "保留未改Windows／Linux原例的请求／callback有序时间戳；本轮未运行。",
+        "limits_zh": "创建祖先不决定I/O完成或callback阶段；不造server、以Linux替Windows、应用所示补丁或由次序推CPU／延迟。"
+      },
+      "open_issues_advice": {
+        "disposition": "not_primary",
+        "reason": "Existing semantics explanation and inline patch; no new unresolved causal question established."
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "298-line rendered discussion archived; body141–148 describes TCP ordering and a code link, not a complete runnable original. All visible two comments/three replies161–278 read; API completeness unknown. Windows vs Linux, source link df63ee1; no original release/toolchain/OS versions or full fixture. Only Discussion3550 primary opened; learned conversion from issue3541 then ten-authority alias metadata check clear. PR3585/1787/code/docs not opened.",
+        "boundaries": "作者真实观察Windows/Linux prepare/check/read次序不同；原TCP server、输入/精确版本不完整，Windows matchingfixture未备，skipped后不造server/换Linux/应用diff，不readiness/build/target。维护者明确poll不等read、Windowscompletion与Linuxreadiness语义不同；后续认可非regression但已有inline pending-callback bounded-drain补丁与Node依赖顺序讨论，不列首次rootcause/no-fix。所示16次drain proposal不是当前release行为或收益证据；源码搜索blob/ChangeLog自动展开不作源码执行/部署proof。需loop轮次、handle/request/IOCP completion代次、pendingenqueue/dequeue/read/prepare/check到TID的次序，callback不是已证coroutine，creator栈不决定I/O时机/phase/CPU。先原生orderedcallback/request baseline，暂无timing/CPU/collector支持或开销。298行141–148/body及161–278所有可见2comments/3replies读，API未知；3550是actualDiscussionID。296明确convertedIssue3541后才查十authorityalias0，增absent identity_aliases provenance但不重写raw/猜Issue3550；3541/3585/1787/code/docs未开，1217和5306旧URL/AGENTS挡。",
+        "time_budget": "原dispatch10:54:02.570666Z/source59.163705满足60/90；facts/postwrite144.796213超120、manifest在150内，独立final158.065905超150/但总180内；reserve35不足13.065905。全部研究phase0/handles[]/SLOT1unused，超时保留不reset/重启。"
+      },
+      "identity_aliases": [
+        "libuv--libuv--3541"
+      ],
+      "identity_alias_provenance": {
+        "source": "https://github.com/libuv/libuv/discussions/3550",
+        "evidence": "Rendered line296 explicitly Converted from issue#3541 on2022-03-13; learned after primary and then ten-authority alias metadata hits0. No issue3541 body or source code opened."
+      }
+    },
     "libuv--libuv--discussion-5099": {
       "id": "libuv--libuv--discussion-5099",
       "repo": "libuv/libuv",
@@ -16296,6 +16348,52 @@
       },
       "native_validation": "not_run",
       "source_status": "skipped"
+    },
+    "ossrs--srs--1579": {
+      "id": "ossrs--srs--1579",
+      "repo": "ossrs/srs",
+      "number": 1579,
+      "url": "https://github.com/ossrs/srs/issues/1579",
+      "title": "Support hot upgrade or smooth upgrade, Upgrade smoothly, Gracefully Upgrade, Source cleaning",
+      "sources": [
+        "https://github.com/ossrs/srs/issues/1579"
+      ],
+      "status": "excluded_after_review",
+      "reason": "A graceful-upgrade/lifecycle feature discussion with implementation and expected-shutdown logs. CPU/memory/OOM observations are explicitly attributed to other issues, without an independent performance workload, benchmark or complete original in1579. Preserve those reported problems without re-admitting or opening their cases.",
+      "reason_zh": "这是平滑升级/生命周期功能讨论，附实现进展及预期关闭日志。CPU/内存/OOM观察明确引用其他issue，1579没有独立性能工作负载、基准或完整原例；保留引用的真实问题，不重新入库或打开关联案例。",
+      "source_completeness": {
+        "body": "493-line primary archived; description140–166 read.",
+        "comments": "All returned substantive visible comments183–425 and completion/title activity read; fullAPI history not verified.",
+        "version": "Source commits mention3.0.119–121 and4.0.5–7; no independently specified performance fixture.",
+        "scope": "Only fresh1579 primary opened;4587 blocked by existing canonicalURL. Related issue/commit/docs links not opened. Search autoexpanded snippets are archived discovery exposure."
+      },
+      "upstream_evidence": {
+        "observation": "Body cites source retention and previously reported sustainedCPU/memory problems. Visible shutdown logs distinguish closing listeners from retaining an established streaming connection until client disconnect.",
+        "counterevidence": "The described indefinite wait with live clients is documented graceful-shutdown behavior, not an independent measured scheduling regression. Source cleanup was reportedly reverted; graceful restart is presented as a workaround.",
+        "unknown": "Referenced incidents and current cleanup implementation/effect were not independently reviewed; noCPU/latency benchmark or matched original established.",
+        "resolution_scope": "Source commits and2020 completed marker establish feature progress, not a proven permanent cleanup/performance fix. Source says cleanup remains tracked elsewhere."
+      },
+      "coroperf_applicability": {
+        "assessment": "Useful lifecycle/ownership context, excluded as an independent performance incident.",
+        "assessment_zh": "可作生命周期/归属背景，不作为独立性能事件。",
+        "required_identity": "For a separately authorized real incident, bridge process generation,Source generation,session/connection/FD generation,ST-coroutine/nativeTID,listener-close/client-disconnect and actualresource-release events. A source key or creator is not the currentresourceowner.",
+        "required_identity_zh": "对另行授权的真实事件，应桥接进程、Source、session/connection/FD代次、ST协程/原生TID及listener关闭、客户端断开、资源释放事件；Source键或创建者不等于当前资源所有者。",
+        "native_baseline": "Would require original version/workload and nativeCPU,memory,liveconnections and shutdown timing; none supplied or executed here.",
+        "native_baseline_zh": "需原版本/负载及原生CPU、内存、活动连接和关闭时序；本轮未提供或执行。",
+        "limits": "Wait duration is not CPU time; listener closure is not connection drain. Existing coroperf ST-fiber/resource-event support unverified. No signals,servers,networkload,readiness,build or target launched.",
+        "limits_zh": "等待时长不是CPU时间，listener关闭不是连接排空；coroperf对ST协程/资源事件支持未核实；未发信号、启动服务/网络负载/readiness、构建或运行目标。"
+      },
+      "open_issues_advice": {
+        "disposition": "not_primary",
+        "reason": "Known lifecycle semantics, implementation/workaround and source-cleanup references; no new first-root-cause incident to promote.",
+        "reason_zh": "已有生命周期语义、实现/绕行方案及Source清理关联记录，不新增首次根因候选。",
+        "validation": "No original execution,rootcause/fix validation or timing/speedup measurement."
+      },
+      "assessment": {
+        "source_scope": "493-line primary archived; description140–166 read. All returned substantive visible comments183–425 and completion/title activity read; fullAPI history not verified. Source commits mention3.0.119–121 and4.0.5–7; no independently specified performance fixture. Only fresh1579 primary opened;4587 blocked by existing canonicalURL. Related issue/commit/docs links not opened. Search autoexpanded snippets are archived discovery exposure.",
+        "boundaries": "平滑升级/Source生命周期功能讨论和已实现进展；CPU/内存/OOM观察引用其他issue，本条无独立performance workload或完整原例，source-excluded不是环境skip。不抹去被引用真实问题，也不重入库或打开关联源。可见shutdown日志中listener关闭后保留已连接stream，等待client断开属于graceful语义，非已证独立调度退化；source cleanup revert、graceful restart workaround及版本3.0.119–121/4.0.5–7进展不证明永久资源修复、性能gain或当前release。需进程/Source/session/connection/FD代次、ST fiber/nativeTID、listener-close/client-disconnect/resource-release真实owner桥，Source键/creator不是当前owner，waitwall非CPU、listenerclose非drain。原生CPU/RSS/活动连接/关闭时序未有，coroperf ST/resource支持未验。493行140–166及183–425可见讨论/关闭活动已读、API全史未知；4587旧canonical/4601alias挡，不开关联commit/docs/其他crash1761；未发signal、server、网络load或target。",
+        "time_budget": "原dispatch10:53:33.965757Z/source84.034243超60但90内、metadata85内；facts118.974158/post118.974240/records133.478659/final135.034243–136.034243，facts120/records150/total180/reserve35满足。所有研究phase0/handles[]/SLOT2unused。"
+      }
     },
     "ossrs--srs--1695": {
       "id": "ossrs--srs--1695",
@@ -26900,13 +26998,13 @@
     }
   },
   "counts": {
-    "external_environment_required": 564,
-    "excluded_after_review": 97,
+    "external_environment_required": 565,
+    "excluded_after_review": 98,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 81,
-  "new_review_count": 677,
+  "new_review_count": 679,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",
