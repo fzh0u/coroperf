@@ -67,6 +67,8 @@ Regular discovery also covers Reactor, Netty and PostgreSQL JDBC, using framewor
 
 Update `data/open-root-cause-review.json`, then run `python3 scripts/build_open_root_cause_review.py` to rebuild both language pages. Each issue records its next step, the additional identity/resource evidence required, and the controls needed before a root-cause claim. The shared page template links to this queue; publish generated pages, the data, and `assets/open-issues.css` together.
 
+The first independent investigation is [Asio #1720](investigations/asio-1720.html), also available in [Chinese](zh-cn/investigations/asio-1720.html). Its record is `data/investigations/asio-1720.json`; run `python3 scripts/build_investigation.py` to rebuild both pages. It is a planned investigation with no local reproduction, root-cause or repair result yet, and remains outside the verified-case catalog.
+
 The [Reactor disposal-worker note](evidence/reactor-4478-resource.html) and its [Chinese version](zh-cn/evidence/reactor-4478-resource.html) are supplemental resource provenance outside the selected case catalogue. Rebuild them from `data/reactor-4478-verification.json` with `python3 scripts/build_reactor_resource.py`. They document one execution, the explicit extra factory observer, native versus recovered stacks, and the untested repair direction.
 
 The pending C# runtime #117652 result pages were withdrawn at the user's request. The [skip record](data/dotnet-117652-user-skip.json) preserves their status; earlier local evidence remains historical and no further execution or attribution is planned for this issue.

@@ -42,11 +42,13 @@ def render(data, language):
             nxt = data['candidates'][n]
             steps.append(f'<a href="#{e(nxt["id"])}">{tr("Next issue", "下一个 issue")}</a>')
         stage = tr('Root cause unconfirmed', '根因尚未确证') if row['stage'] == 'candidate' else tr('Discussion incomplete', '讨论尚未完整核验')
+        detail = (f'<p><a href="{e(row["investigation_path"])}">{tr("Open the investigation case", "查看独立案例与验证计划")}</a></p>'
+                  if row.get('investigation_path') else '')
         cards.append(f'<section class="block review-card" id="{e(row["id"])}">'
                      f'<h2>{n}. {e(row["reference"])}</h2><h3>{text(row["question"])}</h3>'
                      f'<p class="review-meta">{e(row["language"])} · Open · {stage}</p>'
                      f'<p><a href="{e(row["url"])}">{tr("Read the upstream issue", "阅读上游 issue")}</a></p>'
-                     f'<dl>{items}</dl><nav class="review-steps" aria-label="{tr("Issue review order", "逐项审阅顺序")}">{"".join(steps)}</nav></section>')
+                     f'{detail}<dl>{items}</dl><nav class="review-steps" aria-label="{tr("Issue review order", "逐项审阅顺序")}">{"".join(steps)}</nav></section>')
     excluded = ''.join(f'<tr><th scope="row"><a href="{e(r["url"])}">{e(r["reference"])}</a></th><td>{text(r["reason"])}</td></tr>'
                        for r in data['not_primary'])
     prefix = '../' if zh else ''

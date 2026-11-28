@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Investigation created; reproduction, diagnosis and repair are pending.">
+  <title>Asio #1720: locating the missing write completion · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/investigations/asio-1720.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+<link rel="stylesheet" href="../assets/open-issues.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../open-issues.html">Open investigations</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="asio-1720.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/investigations/asio-1720.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main"><article class="wrap research open-review">
+      <section class="block"><a href="../open-issues.html">Back to open investigations</a>
+        <h1>Asio #1720: locating the missing write completion</h1><p>Investigation created; reproduction, diagnosis and repair are pending.</p><p>Primary issue and visible activity rechecked; repository-wide patch search and complete API history unavailable. Existing traces below are upstream reports, not new local runs.</p>
+        <p><a href="https://github.com/chriskohlhoff/asio/issues/1720">Upstream issue</a> · <a href="../data/investigations/asio-1720.json">Case record</a></p>
+      </section>
+      <section class="block"><h2>Observed problem and existing evidence</h2><p class="section-copy">A closed-peer writer hangs. A later upstream comment reports the same failure with callbacks and improvement with epoll disabled; handler and frame-lifetime traces already exist. These are partial results, not a confirmed root cause.</p></section>
+      <section class="block"><h2>Competing explanations</h2><div class="review-scroll"><table><thead><tr><th>Hypothesis</th><th>Discriminating evidence</th></tr></thead><tbody><tr><th scope="row">H1 · The outstanding write loses reactor progress after an earlier error.</th><td>Find operation generation still queued, with registration/readiness and no completion dispatch; establish the exact queue/error-state transition.</td></tr><tr><th scope="row">H2 · Completion occurs, but the continuation is not activated.</th><td>Require a completion event for the same operation before an absent matching resume. No completion event does not establish this hypothesis.</td></tr><tr><th scope="row">H3 · The apparent lifetime is merged by reused frame storage or cleanup is mistaken for completion.</th><td>Track fresh frame and operation generations; separate timeout destruction from successful I/O completion.</td></tr></tbody></table></div></section>
+      <section class="block"><h2>Function-stack comparison to collect</h2><p class="section-copy">No captured stacks or flame graphs exist for this investigation yet. These are collection targets.</p>
+        <div class="review-scroll"><table><thead><tr><th>Ordinary diagnostics</th><th>With CoroPerf</th></tr></thead><tbody><tr><td>Handler tracking already narrows the pending write; a worker stack or function symbol cannot distinguish successive uses of one frame address.</td><td>The target is an operation-specific event chain rooted at the correct writer generation. Its added diagnostic value must be checked against handler tracking, not assumed.</td></tr></tbody></table></div>
+      </section>
+      <section class="block"><h2>Identity and event chain</h2><ul><li>Writer instance and generation → child frame and generation</li><li>Child frame → explicit write operation and handler tag</li><li>Operation → socket generation, reactor queue, readiness and dispatch</li><li>Completion → matching resume, final suspension and destruction</li></ul><p>Join the writer and reused child-frame generations to the specific write operation, then locate the first missing registration, readiness, completion or resume event.</p></section>
+      <section class="block"><h2>Reproduction and controls</h2><ol><li>Reproduce the original pinned Boost 1.88.0 test before enabling CoroPerf. Obtain its TCPTest fixture and testTimeout; do not silently substitute later comments or a new timeout.</li><li>Compare ordinary stacks plus Asio handler tracking against the same workload with CoroPerf frame-generation attribution and explicitly added operation/reactor observations.</li><li>Treat callback and epoll-disabled variants as separate controls. Callback failure would locate the defect below coroutine-only behavior; a backend change alone does not identify the faulty transition.</li><li>After isolating a transition, test one cause-specific repair using the unchanged regression and normal/error-path controls. No repair or result exists in this case record yet.</li></ol></section>
+      <section class="block"><h2>Next action and limits</h2><p class="section-copy">Recover the original fixture and pin Boost 1.88.0 / GCC 13.3 / Ubuntu 24.04 before collecting anything.</p><p>Creation ancestry alone cannot explain lost reactor progress; callback failure argues against a coroutine-only cause. The original fixture/timeout and exact dependencies still need recovery.</p></section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
