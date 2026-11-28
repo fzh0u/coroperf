@@ -23,11 +23,14 @@ def render(data, language):
               'follow_up': tr('Earlier follow-up', '后续跟进'),
               'status_check': tr('Status check first', '先核验状态')}
     corpus = data['corpus']
-    rows = []
+    rows, follow_up_rows = [], []
     for n, row in enumerate(data['candidates'], 1):
         stage = stages[row['stage']]
-        rows.append(f'<tr><th scope="row"><a href="#{e(row["id"])}">{n}. {e(row["reference"])}</a>'
-                    f'<small>{e(row["language"])}</small></th><td>{text(row["question"])}</td><td>{stage}</td></tr>')
+        detail = (f'<small><a href="{e(row["investigation_path"])}">{tr("Investigation case", "独立案例页")}</a></small>'
+                  if row.get('investigation_path') else '')
+        target = rows if row['stage'] == 'candidate' else follow_up_rows
+        target.append(f'<tr><th scope="row"><a href="#{e(row["id"])}">{n}. {e(row["reference"])}</a>'
+                      f'<small>{e(row["language"])}</small>{detail}</th><td>{text(row["question"])}</td><td>{stage}</td></tr>')
     fields = [('known', 'Existing evidence', '已有证据'), ('patch', 'Repair status in inspected material', '所读材料中的修复状态'),
               ('coroperf_addition', 'What CoroPerf could add', 'CoroPerf 可补充的证据'),
               ('required_evidence', 'Required observations', '需要采集的关系与事件'),
@@ -71,9 +74,12 @@ def render(data, language):
           <a href="{prefix}data/open-root-cause-review.json">{tr('Download review data', '下载审阅记录')}</a>
           <a href="discovery.html">{tr('Search database', '搜索数据库')}</a></div>
       </section>
-      <section class="block"><h2>{tr('Review order', '讨论顺序')}</h2>
+      <section class="block" id="new-candidates"><h2>{tr(f'New framework candidates ({len(primary)})', f'本轮新增：热门框架候选（{len(primary)}）')}</h2>
         <div class="review-scroll"><table><thead><tr><th>Issue</th><th>{tr('Unresolved question', '未解决的问题')}</th><th>{tr('Status', '状态')}</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
         <p class="section-copy">{text(data['workflow'])}</p>
+      </section>
+      <section class="block" id="earlier-follow-ups"><h2>{tr(f'Earlier follow-ups ({len(follow_up_rows)})', f'原有跟进条目（{len(follow_up_rows)}）')}</h2>
+        <div class="review-scroll"><table><thead><tr><th>Issue</th><th>{tr('Unresolved question', '未解决的问题')}</th><th>{tr('Status', '状态')}</th></tr></thead><tbody>{''.join(follow_up_rows)}</tbody></table></div>
       </section>
       {''.join(cards)}
       <section class="block"><h2>{tr('Existing fixes and other reasons for exclusion', '已有修复及其他不列为首要候选的原因')}</h2>

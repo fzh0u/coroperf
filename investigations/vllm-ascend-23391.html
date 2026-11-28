@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Investigation created; reproduction, diagnosis and repair are pending.">
+  <title>vLLM-Ascend #23391: separating the first blocked rank from cascading waits · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/investigations/vllm-ascend-23391.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+<link rel="stylesheet" href="../assets/open-issues.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../open-issues.html">Open investigations</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="vllm-ascend-23391.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/investigations/vllm-ascend-23391.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main"><article class="wrap research open-review">
+      <section class="block"><a href="../open-issues.html">Back to open investigations</a>
+        <h1>vLLM-Ascend #23391: separating the first blocked rank from cascading waits</h1><p>Investigation created; reproduction, diagnosis and repair are pending.</p><p>Candidate based on the inspected public issue and visible discussion. No local reproduction, captured CoroPerf trace or fix validation has been performed. No causal fix was identified in the inspected material; this is not an exhaustive repository-wide absence claim.</p>
+        <p><a href="https://github.com/vllm-project/vllm-ascend/issues/23391">Upstream issue</a> · <a href="../data/investigations/vllm-ascend-23391.json">Case record</a></p>
+      </section>
+      <section class="block"><h2>Observed problem and existing evidence</h2><p class="section-copy">A November 26 report records multiple decode DP ranks losing progress together, followed by device-event synchronization timeout. Prefill remains healthy.</p><p class="section-copy">The inspected primary page remains in Backlog with no repair proposal or linked development change visible. Targeted PR search found no matching fix; this does not establish repository-wide absence.</p></section>
+      <section class="block"><h2>Competing explanations</h2><div class="review-scroll"><table><thead><tr><th>Hypothesis</th><th>Discriminating evidence</th></tr></thead><tbody><tr><th scope="row">H1 · An earlier transfer fails to publish its completion.</th><td>Join transfer generations, receiving ranks and completion observations before the first stalled decode step.</td></tr><tr><th scope="row">H2 · Device or collective progress stops before host-side waits.</th><td>Align device-event and rank timelines; a late synchronization timeout does not establish the first cause.</td></tr><tr><th scope="row">H3 · Host dispatch or completion handling stops first.</th><td>Compare per-rank dispatch/completion events and native stacks with healthy periods and earlier recoverable stalls.</td></tr></tbody></table></div></section>
+      <section class="block"><h2>Function-stack comparison to collect</h2><p class="section-copy">No captured stacks or flame graphs exist for this investigation yet. These are collection targets.</p>
+        <div class="review-scroll"><table><thead><tr><th>Ordinary diagnostics</th><th>With CoroPerf</th></tr></thead><tbody><tr><td>The report has aggregate engine counters and a late synchronization traceback, not an identity-checked first-cause chain.</td><td>Join request/transfer histories to worker and rank generations and device completion events to separate the first blocked operation from cascading waits.</td></tr></tbody></table></div>
+      </section>
+      <section class="block"><h2>Identity and event chain</h2><ul><li>Decode request, KV transfer and batch identities; process/rank generations; synchronization and device completion; cross-process timing. Actual work units must not be assumed to be coroutines.</li></ul><p>Join request/transfer histories to worker and rank generations and device completion events to separate the first blocked operation from cascading waits.</p></section>
+      <section class="block"><h2>Reproduction and controls</h2><ol><li>Obtain the original workload and per-rank traces, and confirm access to a matching Ascend deployment.</li><li>Retain the reported deployment and compare recoverable versus persistent stalls. Establish the first missing completion before designing and validating a causal repair.</li><li>Compare the same captured observations using ordinary diagnostics and CoroPerf. Test a cause-specific repair only after the first missing progress event is established.</li></ol></section>
+      <section class="block"><h2>Next action and limits</h2><p class="section-copy">Obtain the original workload and per-rank traces, and confirm access to a matching Ascend deployment.</p><p>The original setup is a multi-node Ascend A3 deployment. Required NPU observations and reproduction access are unestablished; there is no local runtime result.</p></section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

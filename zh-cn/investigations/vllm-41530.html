@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="已建立调查案例；复现、诊断和修复结果待完成。">
+  <title>vLLM #41530：追踪 worker 最初失去进展的位置 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../investigations/vllm-41530.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+<link rel="stylesheet" href="../../assets/open-issues.css">
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../open-issues.html">待分析 Issue</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../investigations/vllm-41530.html" lang="en" hreflang="en">English</a><a href="vllm-41530.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main"><article class="wrap research open-review">
+      <section class="block"><a href="../open-issues.html">返回待分析 Issue</a>
+        <h1>vLLM #41530：追踪 worker 最初失去进展的位置</h1><p>已建立调查案例；复现、诊断和修复结果待完成。</p><p>候选依据已检查的公开 issue 与可见讨论建立；尚未执行本地复现、采集 CoroPerf 轨迹或验证修复。所读材料未发现根因修复，不代表已穷尽整个仓库。</p>
+        <p><a href="https://github.com/vllm-project/vllm/issues/41530">上游 issue</a> · <a href="../../data/investigations/vllm-41530.json">案例记录</a></p>
+      </section>
+      <section class="block"><h2>问题与已有证据</h2><p class="section-copy">worker 无异常地失去响应；最近的 0.33.0 报告仍有静默停顿，讨论中混有不同失败模式，需要分开处理。</p><p class="section-copy">上游说明 #58779 限制等待时间，但没有消除底层停顿。禁用 adaptive verification 是待检验方向，不是所选失败的已确认修复。本轮讨论与定向 PR 搜索未发现针对该停顿的已验证修复。</p></section>
+      <section class="block"><h2>待区分的解释</h2><div class="review-scroll"><table><thead><tr><th>假设</th><th>区分证据</th></tr></thead><tbody><tr><th scope="row">H1 · worker 侧 CPU 执行先失去进展。</th><td>将原生采样栈关联到精确 batch／RPC，区分持续执行与阻塞等待。</td></tr><tr><th scope="row">H2 · 设备事件或 collective 先停住，RPC 回复随后缺失。</th><td>需要匹配的发起／完成及 rank 进展证据，单凭 RPC 超时不能确定该原因。</td></tr><tr><th scope="row">H3 · 操作已完成，但回复路由或生命周期记账丢失它。</th><td>先证明同一操作代次已完成，再确认其回复缺失；worker 仍存活不足以支持这一解释。</td></tr></tbody></table></div></section>
+      <section class="block"><h2>待采集的函数栈对比</h2><p class="section-copy">本调查尚无采集栈或火焰图，以下是待验证的采集目标。</p>
+        <div class="review-scroll"><table><thead><tr><th>普通诊断</th><th>增加 CoroPerf</th></tr></thead><tbody><tr><td>现有诊断显示超时路径，但 issue 内的不同报告可能不是同一种失败。</td><td>把发起请求、batch 历史接到具体 RPC、worker 代次与 rank，定位最早缺失的进展事件。</td></tr></tbody></table></div>
+      </section>
+      <section class="block"><h2>身份与事件链</h2><ul><li>request／batch／RPC 身份、进程和 rank 代次、原生 worker 栈、设备事件或 collective 进展、派发与完成次序；这些关联仍需实现和验证。</li></ul><p>把发起请求、batch 历史接到具体 RPC、worker 代次与 rank，定位最早缺失的进展事件。</p></section>
+      <section class="block"><h2>复现与对照</h2><ol><li>先取得一位报告者的配置、负载输入与原生轨迹，确认同一种静默停顿仍可复现。</li><li>选定一条静默 worker 报告，保留精确构建、模型与负载；比较正常／停顿轨迹，再验证针对原因的修复，分开处理异常退出与仅超时的其他子案例。</li><li>以同一批采集观察比较普通诊断与 CoroPerf；建立第一个缺失进展事件后，再验证针对原因的修复。</li></ol></section>
+      <section class="block"><h2>下一步与当前边界</h2><p class="section-copy">先取得一位报告者的配置、负载输入与原生轨迹，确认同一种静默停顿仍可复现。</p><p>需要所选报告对应的多 GPU／模型环境；协程祖先本身不能证明 CUDA 或 collective 死锁，目前没有本地复现、开销或修复结果。</p></section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

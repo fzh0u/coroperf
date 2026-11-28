@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="已建立调查案例；复现、诊断和修复结果待完成。">
+  <title>vLLM-Ascend #23391：区分首个阻塞 rank 与连锁等待 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../investigations/vllm-ascend-23391.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+<link rel="stylesheet" href="../../assets/open-issues.css">
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../open-issues.html">待分析 Issue</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../investigations/vllm-ascend-23391.html" lang="en" hreflang="en">English</a><a href="vllm-ascend-23391.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main"><article class="wrap research open-review">
+      <section class="block"><a href="../open-issues.html">返回待分析 Issue</a>
+        <h1>vLLM-Ascend #23391：区分首个阻塞 rank 与连锁等待</h1><p>已建立调查案例；复现、诊断和修复结果待完成。</p><p>候选依据已检查的公开 issue 与可见讨论建立；尚未执行本地复现、采集 CoroPerf 轨迹或验证修复。所读材料未发现根因修复，不代表已穷尽整个仓库。</p>
+        <p><a href="https://github.com/vllm-project/vllm-ascend/issues/23391">上游 issue</a> · <a href="../../data/investigations/vllm-ascend-23391.json">案例记录</a></p>
+      </section>
+      <section class="block"><h2>问题与已有证据</h2><p class="section-copy">11 月 26 日报告记录 decode 侧多个 DP rank 同时失去进展，随后设备事件同步超时，而 prefill 侧仍正常。</p><p class="section-copy">所读主页面仍为 Backlog，可见活动未出现修复方案或关联开发改动；定向 PR 搜索未发现匹配修复，不代表已穷尽整个仓库。</p></section>
+      <section class="block"><h2>待区分的解释</h2><div class="review-scroll"><table><thead><tr><th>假设</th><th>区分证据</th></tr></thead><tbody><tr><th scope="row">H1 · 较早的传输没有发布完成事件。</th><td>在首个停顿的 decode step 之前，关联传输代次、接收 rank 与完成观察。</td></tr><tr><th scope="row">H2 · 设备或 collective 先停止进展，主机侧等待随后出现。</th><td>对齐设备事件与 rank 时间线；较晚的同步超时不能证明最初原因。</td></tr><tr><th scope="row">H3 · 主机派发或完成处理先停止。</th><td>用逐 rank 派发／完成事件及原生栈，对比正常时段与此前可恢复的停顿。</td></tr></tbody></table></div></section>
+      <section class="block"><h2>待采集的函数栈对比</h2><p class="section-copy">本调查尚无采集栈或火焰图，以下是待验证的采集目标。</p>
+        <div class="review-scroll"><table><thead><tr><th>普通诊断</th><th>增加 CoroPerf</th></tr></thead><tbody><tr><td>报告有聚合 engine 计数与较晚的同步 traceback，尚无按身份核对的首因链。</td><td>将请求／传输历史接到 worker 与 rank 代次和设备完成事件，区分最初阻塞的操作与后续连锁等待。</td></tr></tbody></table></div>
+      </section>
+      <section class="block"><h2>身份与事件链</h2><ul><li>decode 请求、KV transfer 与 batch 身份，进程／rank 代次，同步与设备完成事件，跨进程时间；不能假定所有工作单元都是协程。</li></ul><p>将请求／传输历史接到 worker 与 rank 代次和设备完成事件，区分最初阻塞的操作与后续连锁等待。</p></section>
+      <section class="block"><h2>复现与对照</h2><ol><li>先取得原负载与逐 rank 轨迹，并确认可使用匹配的 Ascend 部署。</li><li>保留所报部署，对比可自行恢复与持续停顿的轨迹；先查明第一个缺失完成事件，再设计并验证针对原因的修复。</li><li>以同一批采集观察比较普通诊断与 CoroPerf；建立第一个缺失进展事件后，再验证针对原因的修复。</li></ol></section>
+      <section class="block"><h2>下一步与当前边界</h2><p class="section-copy">先取得原负载与逐 rank 轨迹，并确认可使用匹配的 Ascend 部署。</p><p>原配置为多节点 Ascend A3 部署；尚未建立所需 NPU 观察与复现环境，没有本地运行结果。</p></section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

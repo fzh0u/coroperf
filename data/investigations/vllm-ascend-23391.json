@@ -1,0 +1,120 @@
+{
+  "schema": "coroperf.investigation/v1",
+  "id": "vllm-project--vllm-ascend--23391",
+  "slug": "vllm-ascend-23391",
+  "reference": "vLLM-Ascend #23391",
+  "title": {
+    "en": "vLLM-Ascend #23391: separating the first blocked rank from cascading waits",
+    "zh-CN": "vLLM-Ascend #23391：区分首个阻塞 rank 与连锁等待"
+  },
+  "url": "https://github.com/vllm-project/vllm-ascend/issues/23391",
+  "created_at": "2026-11-28T10:09:53.590699+00:00",
+  "status": "planned",
+  "verified_case": false,
+  "local_execution": "not_run",
+  "root_cause_confirmed": false,
+  "upstream_state_observed": "backlog",
+  "source_scope": {
+    "en": "Candidate based on the inspected public issue and visible discussion. No local reproduction, captured CoroPerf trace or fix validation has been performed. No causal fix was identified in the inspected material; this is not an exhaustive repository-wide absence claim.",
+    "zh-CN": "候选依据已检查的公开 issue 与可见讨论建立；尚未执行本地复现、采集 CoroPerf 轨迹或验证修复。所读材料未发现根因修复，不代表已穷尽整个仓库。"
+  },
+  "question": {
+    "en": "Which rank or transfer initiates the decode-wide stall?",
+    "zh-CN": "哪个 rank 或传输首先引发 decode 侧整体停顿？"
+  },
+  "known": {
+    "en": "A November 26 report records multiple decode DP ranks losing progress together, followed by device-event synchronization timeout. Prefill remains healthy.",
+    "zh-CN": "11 月 26 日报告记录 decode 侧多个 DP rank 同时失去进展，随后设备事件同步超时，而 prefill 侧仍正常。"
+  },
+  "repair_status": {
+    "en": "The inspected primary page remains in Backlog with no repair proposal or linked development change visible. Targeted PR search found no matching fix; this does not establish repository-wide absence.",
+    "zh-CN": "所读主页面仍为 Backlog，可见活动未出现修复方案或关联开发改动；定向 PR 搜索未发现匹配修复，不代表已穷尽整个仓库。"
+  },
+  "first_step": {
+    "en": "Obtain the original workload and per-rank traces, and confirm access to a matching Ascend deployment.",
+    "zh-CN": "先取得原负载与逐 rank 轨迹，并确认可使用匹配的 Ascend 部署。"
+  },
+  "next_action": {
+    "en": "Obtain the original workload and per-rank traces, and confirm access to a matching Ascend deployment.",
+    "zh-CN": "先取得原负载与逐 rank 轨迹，并确认可使用匹配的 Ascend 部署。"
+  },
+  "proposed_addition": {
+    "en": "Join request/transfer histories to worker and rank generations and device completion events to separate the first blocked operation from cascading waits.",
+    "zh-CN": "将请求／传输历史接到 worker 与 rank 代次和设备完成事件，区分最初阻塞的操作与后续连锁等待。"
+  },
+  "limits": {
+    "en": "The original setup is a multi-node Ascend A3 deployment. Required NPU observations and reproduction access are unestablished; there is no local runtime result.",
+    "zh-CN": "原配置为多节点 Ascend A3 部署；尚未建立所需 NPU 观察与复现环境，没有本地运行结果。"
+  },
+  "hypotheses": [
+    {
+      "id": "H1",
+      "claim": {
+        "en": "An earlier transfer fails to publish its completion.",
+        "zh-CN": "较早的传输没有发布完成事件。"
+      },
+      "distinguish": {
+        "en": "Join transfer generations, receiving ranks and completion observations before the first stalled decode step.",
+        "zh-CN": "在首个停顿的 decode step 之前，关联传输代次、接收 rank 与完成观察。"
+      }
+    },
+    {
+      "id": "H2",
+      "claim": {
+        "en": "Device or collective progress stops before host-side waits.",
+        "zh-CN": "设备或 collective 先停止进展，主机侧等待随后出现。"
+      },
+      "distinguish": {
+        "en": "Align device-event and rank timelines; a late synchronization timeout does not establish the first cause.",
+        "zh-CN": "对齐设备事件与 rank 时间线；较晚的同步超时不能证明最初原因。"
+      }
+    },
+    {
+      "id": "H3",
+      "claim": {
+        "en": "Host dispatch or completion handling stops first.",
+        "zh-CN": "主机派发或完成处理先停止。"
+      },
+      "distinguish": {
+        "en": "Compare per-rank dispatch/completion events and native stacks with healthy periods and earlier recoverable stalls.",
+        "zh-CN": "用逐 rank 派发／完成事件及原生栈，对比正常时段与此前可恢复的停顿。"
+      }
+    }
+  ],
+  "required_relations": [
+    {
+      "en": "Decode request, KV transfer and batch identities; process/rank generations; synchronization and device completion; cross-process timing. Actual work units must not be assumed to be coroutines.",
+      "zh-CN": "decode 请求、KV transfer 与 batch 身份，进程／rank 代次，同步与设备完成事件，跨进程时间；不能假定所有工作单元都是协程。"
+    }
+  ],
+  "comparisons": [
+    {
+      "en": "Obtain the original workload and per-rank traces, and confirm access to a matching Ascend deployment.",
+      "zh-CN": "先取得原负载与逐 rank 轨迹，并确认可使用匹配的 Ascend 部署。"
+    },
+    {
+      "en": "Retain the reported deployment and compare recoverable versus persistent stalls. Establish the first missing completion before designing and validating a causal repair.",
+      "zh-CN": "保留所报部署，对比可自行恢复与持续停顿的轨迹；先查明第一个缺失完成事件，再设计并验证针对原因的修复。"
+    },
+    {
+      "en": "Compare the same captured observations using ordinary diagnostics and CoroPerf. Test a cause-specific repair only after the first missing progress event is established.",
+      "zh-CN": "以同一批采集观察比较普通诊断与 CoroPerf；建立第一个缺失进展事件后，再验证针对原因的修复。"
+    }
+  ],
+  "evidence_comparison": {
+    "status": "planned_no_captured_stacks",
+    "ordinary": {
+      "en": "The report has aggregate engine counters and a late synchronization traceback, not an identity-checked first-cause chain.",
+      "zh-CN": "报告有聚合 engine 计数与较晚的同步 traceback，尚无按身份核对的首因链。"
+    },
+    "with_coroperf": {
+      "en": "Join request/transfer histories to worker and rank generations and device completion events to separate the first blocked operation from cascading waits.",
+      "zh-CN": "将请求／传输历史接到 worker 与 rank 代次和设备完成事件，区分最初阻塞的操作与后续连锁等待。"
+    }
+  },
+  "results": null,
+  "repair": null,
+  "sources": [
+    "https://github.com/vllm-project/vllm-ascend/issues/23391"
+  ]
+}
