@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T11:26:09+00:00",
+  "updated_at": "2026-11-28T11:39:31+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -25428,6 +25428,49 @@
         "time_budget": "Dispatch22:16:56.079565Z/source52.913956 within60/90. First packet/seal tool aborted beforedispatch on childFINAL, no actions ran. Later reduced packet minimum/post about215.8s/post215.834704/final215.839450 exceed120/150/180(totalover35.839450,records150over65.839450,reserve35miss70.839450). No clock reset or newsource afterprimary. Records-only lateness retained; all readiness/import/compiler/build/target/controller/server/supervisor/capture0, handles[], SLOT1 unused."
       }
     },
+    "tokio-rs--tokio--5896": {
+      "id": "tokio-rs--tokio--5896",
+      "repo": "tokio-rs/tokio",
+      "number": 5896,
+      "url": "https://github.com/tokio-rs/tokio/issues/5896",
+      "title": "Unexpected Behavior of Notify::notify_waiters() in select! Block",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/5896"
+      ],
+      "status": "external_environment_required",
+      "reason": "Complete original test and observed missed shutdown retained. Tokio1.29.1/Ubuntu20.04 matching fixture was not established before the case budget expired; readiness guard denied the late probe, so no environment finding or target run. Existing explanation and author workaround exclude first-root-cause admission.",
+      "reason_zh": "保留完整原测试和错过关闭通知的输出；Tokio1.29.1/Ubuntu20.04匹配原环境未在时限内建立，时间门禁拒绝迟到的就绪检查，无环境结论或原例运行。已有解释和作者绕行方案，不计首次根因。",
+      "source_completeness": {
+        "body": "Full original test146–184, output187–201 read; routine imports/test scaffold not a missing-original claim.",
+        "comments": "Visible discussion232–334 read; API completeness unknown.",
+        "version": "Tokio1.29.1/LinuxUbuntu20.04. Original100messages/900ms sleep/1s notify/3s join unchanged.",
+        "scope": "One first primary; prior269entry was explicitly metadata-only/not selected, no body/setup. No code/related links opened."
+      },
+      "upstream_evidence": {
+        "observation": "Posted loop consumes messages after notify_waiters; notify_one changes output.",
+        "counterevidence": "Maintainer explains notified future is created after notification during sleep. Author accepts and hoists its creation; CancellationToken suggested.",
+        "unknown": "No local timeline, original run, collector coverage or overhead. No SDK/platform absence established.",
+        "resolution_scope": "Already explained waiting-object lifetime/notification semantics, not fresh unknown cause or verified library performance defect."
+      },
+      "coroperf_applicability": {
+        "assessment": "Conditional Task-versus-waiting-Future lifetime validation.",
+        "required_identity": "Task,Notify,Notified generations; future create/drop/poll, sleep/select/notify and channel events; creator is not active waiter.",
+        "native_baseline": "Unchanged original event order/output first; none executed.",
+        "limits": "Do not replace notify_waiters/hoist future/change sleeps/messages as original. Creation ancestry alone cannot prove registration or retained permit.",
+        "assessment_zh": "有条件验证Task与等待Future生命周期。",
+        "required_identity_zh": "Task/Notify/Notified代次及创建/丢弃/poll、sleep/select/notify/channel事件；创建者不是活跃waiter。",
+        "native_baseline_zh": "先保留未改原例的次序/输出；本轮未运行。",
+        "limits_zh": "不以notify_one/提前建Future/改sleep或消息替代原例；祖先关系不证明注册或permit。"
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Full original test146–184, output187–201 read; routine imports/test scaffold not a missing-original claim. Visible discussion232–334 read; API completeness unknown. Tokio1.29.1/LinuxUbuntu20.04. Original100messages/900ms sleep/1s notify/3s join unchanged. One first primary; prior269entry was explicitly metadata-only/not selected, no body/setup. No code/related links opened.",
+        "boundaries": "完整原#[test]、multi_thread runtime、100messages/900ms sleep/1s notify/3s join及输出承认，普通imports/test scaffold不是缺原例。Task存在不等于Notified future存在或在等待；消息分支胜出可drop该轮future，sleep期notify_waiters不保留notify_one式permit，后建future错过通知为维护者解释，作者接受、提前创建并接受CancellationToken建议，已闭合语义问题而非新首次rootcause/库性能缺陷。需Task/Notify/Notified及select分支代次，futurecreate/poll/drop、sleep/notify/channel事件到TID/owner，creator不证明注册或permit；原生有序时间线在前，collector观察点/开销/诊断耗时未验。原Tokio1.29.1/LinuxUbuntu20.04匹配fixture未在预算内建立，187.843s metadata guard已拒绝就绪命令，实际readiness0且没有OS/SDK存在/缺失结论；不把截止阻断写成环境fail。未改notify_one/hoist/sleeps/messages或跑control/fix替代。此为5896首次body，269只有明确notselectedmetadata不属于重启4290；当前TEN/actualURL/shorthand零hits、独立clearance后同execprimaryguard46.063允许才开，原primary373行146–201/232–334可见讨论已读，API未知、不打开实现/关联链接。",
+        "time_budget": "原dispatch11:32:20.673301Z；metadata guard0.084允许、primaryguard46.062643允许/source49.956032内60/90；迟到readinessguard187.843476拒绝（source后137.887444超30、未派发OS/SDKprobe），facts/postwrite221.243688/final221.326760超120/150/180/reserve35；原时钟与超时保留，不reset、不source或target重试。研究phase全0、handles[]、SLOT1unused。"
+      },
+      "skip_reason": "case_budget_expired_before_readiness",
+      "environment_conclusion": "Matching fixture unestablished; no environment/SDK probe dispatched, no missing-SDK or failed-run finding."
+    },
     "tokio-rs--tokio--592": {
       "id": "tokio-rs--tokio--592",
       "repo": "tokio-rs/tokio",
@@ -27137,13 +27180,13 @@
     }
   },
   "counts": {
-    "external_environment_required": 568,
+    "external_environment_required": 569,
     "excluded_after_review": 98,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 81,
-  "new_review_count": 682,
+  "new_review_count": 683,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",
