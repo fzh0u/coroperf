@@ -1,0 +1,650 @@
+{
+  "issue": "https://github.com/chriskohlhoff/asio/issues/1720",
+  "fixture": "Unchanged upstream November 26 standalone attachment; its own three-second wait, not the unavailable original Google Test fixture",
+  "boost": "1.88.0 official source archive",
+  "compiler": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "os_release": "PRETTY_NAME=\"Ubuntu 22.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"22.04\"\nVERSION=\"22.04.5 LTS (Jammy Jellyfish)\"\nVERSION_CODENAME=jammy\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=jammy\n",
+  "scope": "Local loopback failure reproduction and controls, not the original Ubuntu24.04/GCC13.3 environment",
+  "rows": [
+    {
+      "variant": "coroutine",
+      "command": [
+        "g++",
+        "-std=c++20",
+        "-O2",
+        "-g",
+        "-pthread",
+        "-I",
+        "$COROPERF_ROOT/.tools/open-issue-debug/boost_1_88_0",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/source/attachment/1720.cpp",
+        "-o",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/coroutine/target"
+      ],
+      "source": "1720.cpp",
+      "source_sha256": "e2dc59a933845836c1d81cf05fada1ecc7bf7a8baf5f16529fe431a5a5312189",
+      "binary_sha256": "1c9a1125ff689c3700351ced545c1cd539283c90c379a3b0cf85976396259924",
+      "runs": [
+        {
+          "returncode": 2,
+          "seconds": 3.003616207977757,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "returncode": 2,
+          "seconds": 3.00367379700765,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "returncode": 2,
+          "seconds": 3.0030307101551443,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "callback",
+      "command": [
+        "g++",
+        "-std=c++20",
+        "-O2",
+        "-g",
+        "-pthread",
+        "-I",
+        "$COROPERF_ROOT/.tools/open-issue-debug/boost_1_88_0",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/source/attachment/1720-callback.cpp",
+        "-o",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/callback/target"
+      ],
+      "source": "1720-callback.cpp",
+      "source_sha256": "7eda0a7564c42f1eb4b89d4e90185b57a0e5b5c032b50d148a8784a4a989cc97",
+      "binary_sha256": "7f7e654bab7082915e9a11ab8df68e8001f94587ce2a9536510e24a96218cc3b",
+      "runs": [
+        {
+          "returncode": 2,
+          "seconds": 3.0044010300189257,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        {
+          "returncode": 2,
+          "seconds": 3.0035123340785503,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        {
+          "returncode": 2,
+          "seconds": 3.004238134017214,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "no-epoll",
+      "command": [
+        "g++",
+        "-std=c++20",
+        "-O2",
+        "-g",
+        "-pthread",
+        "-DBOOST_ASIO_DISABLE_EPOLL",
+        "-I",
+        "$COROPERF_ROOT/.tools/open-issue-debug/boost_1_88_0",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/source/attachment/1720.cpp",
+        "-o",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/no-epoll/target"
+      ],
+      "source": "1720.cpp",
+      "source_sha256": "e2dc59a933845836c1d81cf05fada1ecc7bf7a8baf5f16529fe431a5a5312189",
+      "binary_sha256": "7509aa6d737300d51ae440b108556c60ed8a24094772b5123df750724086a486",
+      "runs": [
+        {
+          "returncode": 0,
+          "seconds": 0.0028254969511181116,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.0027006110176444054,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.002686823019757867,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "handler-tracking",
+      "command": [
+        "g++",
+        "-std=c++20",
+        "-O2",
+        "-g",
+        "-pthread",
+        "-DBOOST_ASIO_ENABLE_HANDLER_TRACKING",
+        "-I",
+        "$COROPERF_ROOT/.tools/open-issue-debug/boost_1_88_0",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/source/attachment/1720.cpp",
+        "-o",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/handler-tracking/target"
+      ],
+      "source": "1720.cpp",
+      "source_sha256": "e2dc59a933845836c1d81cf05fada1ecc7bf7a8baf5f16529fe431a5a5312189",
+      "binary_sha256": "ee017c652cd07e4fa075a0aa33e79d304d9be53aaa7cc73d201dbde7a94b7a2b",
+      "runs": [
+        {
+          "returncode": 2,
+          "seconds": 3.0033374400809407,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "returncode": 2,
+          "seconds": 3.0033138100989163,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "returncode": 2,
+          "seconds": 3.0031154230237007,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "repaired-coroutine",
+      "command": [
+        "g++",
+        "-std=c++20",
+        "-O2",
+        "-g",
+        "-pthread",
+        "-I",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/repair-include",
+        "-I",
+        "$COROPERF_ROOT/.tools/open-issue-debug/boost_1_88_0",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/source/attachment/1720.cpp",
+        "-o",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/repaired-coroutine/target"
+      ],
+      "source": "1720.cpp",
+      "source_sha256": "e2dc59a933845836c1d81cf05fada1ecc7bf7a8baf5f16529fe431a5a5312189",
+      "binary_sha256": "c8f055852ce11cfad7258ac505275441fd8df018bfc69a56e6e5764827f2c723",
+      "runs": [
+        {
+          "returncode": 0,
+          "seconds": 0.0029371341224759817,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.0024930350482463837,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.002089957008138299,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "repaired-callback",
+      "command": [
+        "g++",
+        "-std=c++20",
+        "-O2",
+        "-g",
+        "-pthread",
+        "-I",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/repair-include",
+        "-I",
+        "$COROPERF_ROOT/.tools/open-issue-debug/boost_1_88_0",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/source/attachment/1720-callback.cpp",
+        "-o",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/repaired-callback/target"
+      ],
+      "source": "1720-callback.cpp",
+      "source_sha256": "7eda0a7564c42f1eb4b89d4e90185b57a0e5b5c032b50d148a8784a4a989cc97",
+      "binary_sha256": "83e97b69053e2de3f494e11787f7b17e1f0f2deb344d9463a3c535ead23a0a7b",
+      "runs": [
+        {
+          "returncode": 0,
+          "seconds": 0.00448341085575521,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.002814230974763632,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.0021077159326523542,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "healthy",
+      "command": [
+        "g++",
+        "-std=c++20",
+        "-O2",
+        "-g",
+        "-pthread",
+        "-I",
+        "$COROPERF_ROOT/.tools/open-issue-debug/boost_1_88_0",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/source/attachment/../controls/healthy.cpp",
+        "-o",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/healthy/target"
+      ],
+      "source": "../controls/healthy.cpp",
+      "source_sha256": "0c92e26fdce215faddab44f9aaa4dcd27e1d4e1a34756b7fcd6cac82ac2997b6",
+      "binary_sha256": "65446cc36061a35f8bc7e6f164a754e58edea198460151da77e2eb674f831443",
+      "runs": [
+        {
+          "returncode": 0,
+          "seconds": 0.003226761007681489,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.0025044609792530537,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.002666763961315155,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "repaired-healthy",
+      "command": [
+        "g++",
+        "-std=c++20",
+        "-O2",
+        "-g",
+        "-pthread",
+        "-I",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/repair-include",
+        "-I",
+        "$COROPERF_ROOT/.tools/open-issue-debug/boost_1_88_0",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/source/attachment/../controls/healthy.cpp",
+        "-o",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/repaired-healthy/target"
+      ],
+      "source": "../controls/healthy.cpp",
+      "source_sha256": "0c92e26fdce215faddab44f9aaa4dcd27e1d4e1a34756b7fcd6cac82ac2997b6",
+      "binary_sha256": "c5202541fad3022bad13f77eab2c59679724c67942f698f539cf574188605ecf",
+      "runs": [
+        {
+          "returncode": 0,
+          "seconds": 0.0046913709957152605,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.0021128118969500065,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.0027274040039628744,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "multi-buffer",
+      "command": [
+        "g++",
+        "-std=c++20",
+        "-O2",
+        "-g",
+        "-pthread",
+        "-I",
+        "$COROPERF_ROOT/.tools/open-issue-debug/boost_1_88_0",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/source/attachment/../controls/multi-buffer.cpp",
+        "-o",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/multi-buffer/target"
+      ],
+      "source": "../controls/multi-buffer.cpp",
+      "source_sha256": "3fe81559de63f2c54538307c7bc2288c8e5c68e788c9b1b7d58aaf44ae58494d",
+      "binary_sha256": "5c6307306d17f0a83f73abb32e529d4a4b37393ee6d1344a33ef4d218c744057",
+      "runs": [
+        {
+          "returncode": 2,
+          "seconds": 3.0044219370465726,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "returncode": 2,
+          "seconds": 3.003126802155748,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "returncode": 2,
+          "seconds": 3.0038643011357635,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "variant": "repaired-multi-buffer",
+      "command": [
+        "g++",
+        "-std=c++20",
+        "-O2",
+        "-g",
+        "-pthread",
+        "-I",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/repair-include",
+        "-I",
+        "$COROPERF_ROOT/.tools/open-issue-debug/boost_1_88_0",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/source/attachment/../controls/multi-buffer.cpp",
+        "-o",
+        "$COROPERF_ROOT/perf-out/open-issue-debug/asio-1720/repaired-multi-buffer/target"
+      ],
+      "source": "../controls/multi-buffer.cpp",
+      "source_sha256": "3fe81559de63f2c54538307c7bc2288c8e5c68e788c9b1b7d58aaf44ae58494d",
+      "binary_sha256": "cb940ee480c76d1ff0b1302090a0cb584655e3f11bedcd56ab87fd31f7ef9d5e",
+      "runs": [
+        {
+          "returncode": 0,
+          "seconds": 0.003244037041440606,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.003820941084995866,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "returncode": 0,
+          "seconds": 0.0024498591665178537,
+          "attempts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ]
+    }
+  ]
+}

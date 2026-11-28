@@ -1,0 +1,1147 @@
+{
+  "schema": "coroperf.scoped-effect-evidence/v1",
+  "checked_at": "2026-11-28T12:46:16.691628+00:00",
+  "case_id": "sqlalchemy--sqlalchemy--5967",
+  "upstream_url": "https://github.com/sqlalchemy/sqlalchemy/issues/5967",
+  "scope": "Offline recheck of a saved adapted maintainer driver component. No new original execution, root-cause discovery, repair test, timed diagnosis comparison or new case.",
+  "outcome": "verified_scoped_attribution_benefit",
+  "original_execution": {
+    "source_batch_start": "2026-11-26T08:13:27.055134+00:00",
+    "finished_at": "2026-11-26T08:14:24.476191+00:00",
+    "workload_runs": 1,
+    "exit_code": 0,
+    "fixture_sha256_matches_saved_execution": true,
+    "asyncpg_version": "0.29.0",
+    "native_errors": 9,
+    "native_successes": 1,
+    "connection_closed": true,
+    "postgres_shutdown_logged": true
+  },
+  "recomputed_evidence": {
+    "actual_tasks": 10,
+    "raw_creation_segments": 10,
+    "raw_exception_segments": 9,
+    "distinct_raw_exception_function_sequences": 1,
+    "creation_to_native_exception_joins": 9,
+    "exceptions_with_submitter_in_native_traceback": 0,
+    "exceptions_with_correct_fixture_submitter_in_creation_stack": 9,
+    "recovered_submitters": {
+      "submit_moderation_update": 5,
+      "submit_member_log_update": 4
+    },
+    "distinct_connections": 1,
+    "distinct_protocols": 1,
+    "task_object_ids_independently_match_debugger_ids": true,
+    "task_references_held_through_gather_and_result_collection": true,
+    "generic_lifecycle_active_after_cleanup": 0,
+    "normalization_does_not_add_runtime_observations": true
+  },
+  "claim_supported": {
+    "en": "In this saved adapted driver component, CoroPerf correctly joins all9 real native InterfaceError observations to their actual Task creation stacks and restores the two fixture submission helpers absent from all9 native tracebacks. An explicit API observer, cross-checked by actual Task/Connection/protocol object IDs, shows these Tasks share one connection.",
+    "zh-CN": "在这一已保存的适配驱动组件中，coroperf将9个真实原生InterfaceError逐一接回实际Task创建栈，恢复9份原生异常栈均缺少的两类fixture提交入口；额外API观察通过真实Task／Connection／protocol对象ID核对，证明这些Task共用一个连接。"
+  },
+  "not_supported": [
+    "A new first root-cause discovery in one of the12OpenIssues candidates.",
+    "A diagnosis-speedup or CPU/latency/throughput gain; no comparison timings or overhead experiment exists here.",
+    "Automatic connection ownership recovery from generic Task ancestry; sharing requires the explicitly added API observer.",
+    "A reproduction of the original Discord bot or SQLAlchemy1.4 beta ORM; saved fixture is maintainer raw-asyncpg example on0.29.0 with named submission helpers and bounded exception collection.",
+    "The two recovered names are real fixture entry functions, not recovered original Discord registrations.",
+    "A validated cause-specific repair, connection-per-Task fix, changed version or repeated successful workload.",
+    "Attested historical collector binary identity: the saved execution pins fixture hash and dependency source integrity, while current collector source is inspected/hashed for consistency but was not independently hash-attested in the original execution receipt."
+  ],
+  "comparison_semantics": {
+    "baseline": "Same-run saved native exception traceback, not an independently timed baseline run.",
+    "added_information": "ActualTask identity join to saved creation stack; explicit resource observer supplies sharing identity.",
+    "new_information_vs_runtime": "The submission origin is absent from the native exception traceback; capture stores the past creation context. It is not claimed unavailable to all possible manual instrumentation.",
+    "ground_truth": "Saved producer retains actualTask refs, records id(current_task), id(connection), id(connection._protocol) at query boundary; raw IDs and fixture argument parity independently agree with captured creation helper."
+  },
+  "same_run_native_and_creation_pairs": [
+    {
+      "task_id": "task:0x77938c1aabc0",
+      "actual_task_object_id": "131475594456000",
+      "fixture_argument": 1,
+      "create_segment": 2,
+      "native_exception_segment": 11,
+      "native_exception_frames": [
+        {
+          "function": "run_asyncpg_statement",
+          "file": "check_once.py",
+          "line": 10
+        },
+        {
+          "function": "prepare",
+          "file": "connection.py",
+          "line": 636
+        },
+        {
+          "function": "_prepare",
+          "file": "connection.py",
+          "line": 654
+        },
+        {
+          "function": "_get_statement",
+          "file": "connection.py",
+          "line": 433
+        },
+        {
+          "function": "prepare",
+          "file": "protocol.pyx",
+          "line": 151
+        },
+        {
+          "function": "asyncpg.protocol.protocol.BaseProtocol._check_state",
+          "file": "protocol.pyx",
+          "line": 744
+        }
+      ],
+      "creation_frames": [
+        {
+          "function": "task_factory",
+          "file": "python_asyncio_debugger.py",
+          "line": 59
+        },
+        {
+          "function": "create_task",
+          "file": "base_events.py",
+          "line": 443
+        },
+        {
+          "function": "create_task",
+          "file": "tasks.py",
+          "line": 384
+        },
+        {
+          "function": "submit_moderation_update",
+          "file": "check_once.py",
+          "line": 15
+        },
+        {
+          "function": "<listcomp>",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "main",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "_run",
+          "file": "events.py",
+          "line": 84
+        },
+        {
+          "function": "_run_once",
+          "file": "base_events.py",
+          "line": 1936
+        },
+        {
+          "function": "run_forever",
+          "file": "base_events.py",
+          "line": 608
+        },
+        {
+          "function": "run_until_complete",
+          "file": "base_events.py",
+          "line": 641
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 118
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 190
+        },
+        {
+          "function": "<module>",
+          "file": "check_once.py",
+          "line": 33
+        }
+      ],
+      "recovered_fixture_submitter": "submit_moderation_update",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456"
+    },
+    {
+      "task_id": "task:0x77938c1aac80",
+      "actual_task_object_id": "131475594456192",
+      "fixture_argument": 2,
+      "create_segment": 3,
+      "native_exception_segment": 12,
+      "native_exception_frames": [
+        {
+          "function": "run_asyncpg_statement",
+          "file": "check_once.py",
+          "line": 10
+        },
+        {
+          "function": "prepare",
+          "file": "connection.py",
+          "line": 636
+        },
+        {
+          "function": "_prepare",
+          "file": "connection.py",
+          "line": 654
+        },
+        {
+          "function": "_get_statement",
+          "file": "connection.py",
+          "line": 433
+        },
+        {
+          "function": "prepare",
+          "file": "protocol.pyx",
+          "line": 151
+        },
+        {
+          "function": "asyncpg.protocol.protocol.BaseProtocol._check_state",
+          "file": "protocol.pyx",
+          "line": 744
+        }
+      ],
+      "creation_frames": [
+        {
+          "function": "task_factory",
+          "file": "python_asyncio_debugger.py",
+          "line": 59
+        },
+        {
+          "function": "create_task",
+          "file": "base_events.py",
+          "line": 443
+        },
+        {
+          "function": "create_task",
+          "file": "tasks.py",
+          "line": 384
+        },
+        {
+          "function": "submit_member_log_update",
+          "file": "check_once.py",
+          "line": 13
+        },
+        {
+          "function": "<listcomp>",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "main",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "_run",
+          "file": "events.py",
+          "line": 84
+        },
+        {
+          "function": "_run_once",
+          "file": "base_events.py",
+          "line": 1936
+        },
+        {
+          "function": "run_forever",
+          "file": "base_events.py",
+          "line": 608
+        },
+        {
+          "function": "run_until_complete",
+          "file": "base_events.py",
+          "line": 641
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 118
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 190
+        },
+        {
+          "function": "<module>",
+          "file": "check_once.py",
+          "line": 33
+        }
+      ],
+      "recovered_fixture_submitter": "submit_member_log_update",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456"
+    },
+    {
+      "task_id": "task:0x77938c1aad40",
+      "actual_task_object_id": "131475594456384",
+      "fixture_argument": 3,
+      "create_segment": 4,
+      "native_exception_segment": 13,
+      "native_exception_frames": [
+        {
+          "function": "run_asyncpg_statement",
+          "file": "check_once.py",
+          "line": 10
+        },
+        {
+          "function": "prepare",
+          "file": "connection.py",
+          "line": 636
+        },
+        {
+          "function": "_prepare",
+          "file": "connection.py",
+          "line": 654
+        },
+        {
+          "function": "_get_statement",
+          "file": "connection.py",
+          "line": 433
+        },
+        {
+          "function": "prepare",
+          "file": "protocol.pyx",
+          "line": 151
+        },
+        {
+          "function": "asyncpg.protocol.protocol.BaseProtocol._check_state",
+          "file": "protocol.pyx",
+          "line": 744
+        }
+      ],
+      "creation_frames": [
+        {
+          "function": "task_factory",
+          "file": "python_asyncio_debugger.py",
+          "line": 59
+        },
+        {
+          "function": "create_task",
+          "file": "base_events.py",
+          "line": 443
+        },
+        {
+          "function": "create_task",
+          "file": "tasks.py",
+          "line": 384
+        },
+        {
+          "function": "submit_moderation_update",
+          "file": "check_once.py",
+          "line": 15
+        },
+        {
+          "function": "<listcomp>",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "main",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "_run",
+          "file": "events.py",
+          "line": 84
+        },
+        {
+          "function": "_run_once",
+          "file": "base_events.py",
+          "line": 1936
+        },
+        {
+          "function": "run_forever",
+          "file": "base_events.py",
+          "line": 608
+        },
+        {
+          "function": "run_until_complete",
+          "file": "base_events.py",
+          "line": 641
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 118
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 190
+        },
+        {
+          "function": "<module>",
+          "file": "check_once.py",
+          "line": 33
+        }
+      ],
+      "recovered_fixture_submitter": "submit_moderation_update",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456"
+    },
+    {
+      "task_id": "task:0x77938c1aae00",
+      "actual_task_object_id": "131475594456576",
+      "fixture_argument": 4,
+      "create_segment": 5,
+      "native_exception_segment": 14,
+      "native_exception_frames": [
+        {
+          "function": "run_asyncpg_statement",
+          "file": "check_once.py",
+          "line": 10
+        },
+        {
+          "function": "prepare",
+          "file": "connection.py",
+          "line": 636
+        },
+        {
+          "function": "_prepare",
+          "file": "connection.py",
+          "line": 654
+        },
+        {
+          "function": "_get_statement",
+          "file": "connection.py",
+          "line": 433
+        },
+        {
+          "function": "prepare",
+          "file": "protocol.pyx",
+          "line": 151
+        },
+        {
+          "function": "asyncpg.protocol.protocol.BaseProtocol._check_state",
+          "file": "protocol.pyx",
+          "line": 744
+        }
+      ],
+      "creation_frames": [
+        {
+          "function": "task_factory",
+          "file": "python_asyncio_debugger.py",
+          "line": 59
+        },
+        {
+          "function": "create_task",
+          "file": "base_events.py",
+          "line": 443
+        },
+        {
+          "function": "create_task",
+          "file": "tasks.py",
+          "line": 384
+        },
+        {
+          "function": "submit_member_log_update",
+          "file": "check_once.py",
+          "line": 13
+        },
+        {
+          "function": "<listcomp>",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "main",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "_run",
+          "file": "events.py",
+          "line": 84
+        },
+        {
+          "function": "_run_once",
+          "file": "base_events.py",
+          "line": 1936
+        },
+        {
+          "function": "run_forever",
+          "file": "base_events.py",
+          "line": 608
+        },
+        {
+          "function": "run_until_complete",
+          "file": "base_events.py",
+          "line": 641
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 118
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 190
+        },
+        {
+          "function": "<module>",
+          "file": "check_once.py",
+          "line": 33
+        }
+      ],
+      "recovered_fixture_submitter": "submit_member_log_update",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456"
+    },
+    {
+      "task_id": "task:0x77938c1aaec0",
+      "actual_task_object_id": "131475594456768",
+      "fixture_argument": 5,
+      "create_segment": 6,
+      "native_exception_segment": 15,
+      "native_exception_frames": [
+        {
+          "function": "run_asyncpg_statement",
+          "file": "check_once.py",
+          "line": 10
+        },
+        {
+          "function": "prepare",
+          "file": "connection.py",
+          "line": 636
+        },
+        {
+          "function": "_prepare",
+          "file": "connection.py",
+          "line": 654
+        },
+        {
+          "function": "_get_statement",
+          "file": "connection.py",
+          "line": 433
+        },
+        {
+          "function": "prepare",
+          "file": "protocol.pyx",
+          "line": 151
+        },
+        {
+          "function": "asyncpg.protocol.protocol.BaseProtocol._check_state",
+          "file": "protocol.pyx",
+          "line": 744
+        }
+      ],
+      "creation_frames": [
+        {
+          "function": "task_factory",
+          "file": "python_asyncio_debugger.py",
+          "line": 59
+        },
+        {
+          "function": "create_task",
+          "file": "base_events.py",
+          "line": 443
+        },
+        {
+          "function": "create_task",
+          "file": "tasks.py",
+          "line": 384
+        },
+        {
+          "function": "submit_moderation_update",
+          "file": "check_once.py",
+          "line": 15
+        },
+        {
+          "function": "<listcomp>",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "main",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "_run",
+          "file": "events.py",
+          "line": 84
+        },
+        {
+          "function": "_run_once",
+          "file": "base_events.py",
+          "line": 1936
+        },
+        {
+          "function": "run_forever",
+          "file": "base_events.py",
+          "line": 608
+        },
+        {
+          "function": "run_until_complete",
+          "file": "base_events.py",
+          "line": 641
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 118
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 190
+        },
+        {
+          "function": "<module>",
+          "file": "check_once.py",
+          "line": 33
+        }
+      ],
+      "recovered_fixture_submitter": "submit_moderation_update",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456"
+    },
+    {
+      "task_id": "task:0x77938c1aaf80",
+      "actual_task_object_id": "131475594456960",
+      "fixture_argument": 6,
+      "create_segment": 7,
+      "native_exception_segment": 16,
+      "native_exception_frames": [
+        {
+          "function": "run_asyncpg_statement",
+          "file": "check_once.py",
+          "line": 10
+        },
+        {
+          "function": "prepare",
+          "file": "connection.py",
+          "line": 636
+        },
+        {
+          "function": "_prepare",
+          "file": "connection.py",
+          "line": 654
+        },
+        {
+          "function": "_get_statement",
+          "file": "connection.py",
+          "line": 433
+        },
+        {
+          "function": "prepare",
+          "file": "protocol.pyx",
+          "line": 151
+        },
+        {
+          "function": "asyncpg.protocol.protocol.BaseProtocol._check_state",
+          "file": "protocol.pyx",
+          "line": 744
+        }
+      ],
+      "creation_frames": [
+        {
+          "function": "task_factory",
+          "file": "python_asyncio_debugger.py",
+          "line": 59
+        },
+        {
+          "function": "create_task",
+          "file": "base_events.py",
+          "line": 443
+        },
+        {
+          "function": "create_task",
+          "file": "tasks.py",
+          "line": 384
+        },
+        {
+          "function": "submit_member_log_update",
+          "file": "check_once.py",
+          "line": 13
+        },
+        {
+          "function": "<listcomp>",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "main",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "_run",
+          "file": "events.py",
+          "line": 84
+        },
+        {
+          "function": "_run_once",
+          "file": "base_events.py",
+          "line": 1936
+        },
+        {
+          "function": "run_forever",
+          "file": "base_events.py",
+          "line": 608
+        },
+        {
+          "function": "run_until_complete",
+          "file": "base_events.py",
+          "line": 641
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 118
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 190
+        },
+        {
+          "function": "<module>",
+          "file": "check_once.py",
+          "line": 33
+        }
+      ],
+      "recovered_fixture_submitter": "submit_member_log_update",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456"
+    },
+    {
+      "task_id": "task:0x77938c1ab040",
+      "actual_task_object_id": "131475594457152",
+      "fixture_argument": 7,
+      "create_segment": 8,
+      "native_exception_segment": 17,
+      "native_exception_frames": [
+        {
+          "function": "run_asyncpg_statement",
+          "file": "check_once.py",
+          "line": 10
+        },
+        {
+          "function": "prepare",
+          "file": "connection.py",
+          "line": 636
+        },
+        {
+          "function": "_prepare",
+          "file": "connection.py",
+          "line": 654
+        },
+        {
+          "function": "_get_statement",
+          "file": "connection.py",
+          "line": 433
+        },
+        {
+          "function": "prepare",
+          "file": "protocol.pyx",
+          "line": 151
+        },
+        {
+          "function": "asyncpg.protocol.protocol.BaseProtocol._check_state",
+          "file": "protocol.pyx",
+          "line": 744
+        }
+      ],
+      "creation_frames": [
+        {
+          "function": "task_factory",
+          "file": "python_asyncio_debugger.py",
+          "line": 59
+        },
+        {
+          "function": "create_task",
+          "file": "base_events.py",
+          "line": 443
+        },
+        {
+          "function": "create_task",
+          "file": "tasks.py",
+          "line": 384
+        },
+        {
+          "function": "submit_moderation_update",
+          "file": "check_once.py",
+          "line": 15
+        },
+        {
+          "function": "<listcomp>",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "main",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "_run",
+          "file": "events.py",
+          "line": 84
+        },
+        {
+          "function": "_run_once",
+          "file": "base_events.py",
+          "line": 1936
+        },
+        {
+          "function": "run_forever",
+          "file": "base_events.py",
+          "line": 608
+        },
+        {
+          "function": "run_until_complete",
+          "file": "base_events.py",
+          "line": 641
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 118
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 190
+        },
+        {
+          "function": "<module>",
+          "file": "check_once.py",
+          "line": 33
+        }
+      ],
+      "recovered_fixture_submitter": "submit_moderation_update",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456"
+    },
+    {
+      "task_id": "task:0x77938c1ab100",
+      "actual_task_object_id": "131475594457344",
+      "fixture_argument": 8,
+      "create_segment": 9,
+      "native_exception_segment": 18,
+      "native_exception_frames": [
+        {
+          "function": "run_asyncpg_statement",
+          "file": "check_once.py",
+          "line": 10
+        },
+        {
+          "function": "prepare",
+          "file": "connection.py",
+          "line": 636
+        },
+        {
+          "function": "_prepare",
+          "file": "connection.py",
+          "line": 654
+        },
+        {
+          "function": "_get_statement",
+          "file": "connection.py",
+          "line": 433
+        },
+        {
+          "function": "prepare",
+          "file": "protocol.pyx",
+          "line": 151
+        },
+        {
+          "function": "asyncpg.protocol.protocol.BaseProtocol._check_state",
+          "file": "protocol.pyx",
+          "line": 744
+        }
+      ],
+      "creation_frames": [
+        {
+          "function": "task_factory",
+          "file": "python_asyncio_debugger.py",
+          "line": 59
+        },
+        {
+          "function": "create_task",
+          "file": "base_events.py",
+          "line": 443
+        },
+        {
+          "function": "create_task",
+          "file": "tasks.py",
+          "line": 384
+        },
+        {
+          "function": "submit_member_log_update",
+          "file": "check_once.py",
+          "line": 13
+        },
+        {
+          "function": "<listcomp>",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "main",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "_run",
+          "file": "events.py",
+          "line": 84
+        },
+        {
+          "function": "_run_once",
+          "file": "base_events.py",
+          "line": 1936
+        },
+        {
+          "function": "run_forever",
+          "file": "base_events.py",
+          "line": 608
+        },
+        {
+          "function": "run_until_complete",
+          "file": "base_events.py",
+          "line": 641
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 118
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 190
+        },
+        {
+          "function": "<module>",
+          "file": "check_once.py",
+          "line": 33
+        }
+      ],
+      "recovered_fixture_submitter": "submit_member_log_update",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456"
+    },
+    {
+      "task_id": "task:0x77938c1ab280",
+      "actual_task_object_id": "131475594457728",
+      "fixture_argument": 9,
+      "create_segment": 10,
+      "native_exception_segment": 19,
+      "native_exception_frames": [
+        {
+          "function": "run_asyncpg_statement",
+          "file": "check_once.py",
+          "line": 10
+        },
+        {
+          "function": "prepare",
+          "file": "connection.py",
+          "line": 636
+        },
+        {
+          "function": "_prepare",
+          "file": "connection.py",
+          "line": 654
+        },
+        {
+          "function": "_get_statement",
+          "file": "connection.py",
+          "line": 433
+        },
+        {
+          "function": "prepare",
+          "file": "protocol.pyx",
+          "line": 151
+        },
+        {
+          "function": "asyncpg.protocol.protocol.BaseProtocol._check_state",
+          "file": "protocol.pyx",
+          "line": 744
+        }
+      ],
+      "creation_frames": [
+        {
+          "function": "task_factory",
+          "file": "python_asyncio_debugger.py",
+          "line": 59
+        },
+        {
+          "function": "create_task",
+          "file": "base_events.py",
+          "line": 443
+        },
+        {
+          "function": "create_task",
+          "file": "tasks.py",
+          "line": 384
+        },
+        {
+          "function": "submit_moderation_update",
+          "file": "check_once.py",
+          "line": 15
+        },
+        {
+          "function": "<listcomp>",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "main",
+          "file": "check_once.py",
+          "line": 20
+        },
+        {
+          "function": "_run",
+          "file": "events.py",
+          "line": 84
+        },
+        {
+          "function": "_run_once",
+          "file": "base_events.py",
+          "line": 1936
+        },
+        {
+          "function": "run_forever",
+          "file": "base_events.py",
+          "line": 608
+        },
+        {
+          "function": "run_until_complete",
+          "file": "base_events.py",
+          "line": 641
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 118
+        },
+        {
+          "function": "run",
+          "file": "runners.py",
+          "line": 190
+        },
+        {
+          "function": "<module>",
+          "file": "check_once.py",
+          "line": 33
+        }
+      ],
+      "recovered_fixture_submitter": "submit_moderation_update",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456"
+    }
+  ],
+  "saved_resource_observations": [
+    {
+      "task_id": "task:0x77938c1aa800",
+      "actual_task_object_id": "131475594455040",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456",
+      "fixture_argument": 0
+    },
+    {
+      "task_id": "task:0x77938c1aabc0",
+      "actual_task_object_id": "131475594456000",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456",
+      "fixture_argument": 1
+    },
+    {
+      "task_id": "task:0x77938c1aac80",
+      "actual_task_object_id": "131475594456192",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456",
+      "fixture_argument": 2
+    },
+    {
+      "task_id": "task:0x77938c1aad40",
+      "actual_task_object_id": "131475594456384",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456",
+      "fixture_argument": 3
+    },
+    {
+      "task_id": "task:0x77938c1aae00",
+      "actual_task_object_id": "131475594456576",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456",
+      "fixture_argument": 4
+    },
+    {
+      "task_id": "task:0x77938c1aaec0",
+      "actual_task_object_id": "131475594456768",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456",
+      "fixture_argument": 5
+    },
+    {
+      "task_id": "task:0x77938c1aaf80",
+      "actual_task_object_id": "131475594456960",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456",
+      "fixture_argument": 6
+    },
+    {
+      "task_id": "task:0x77938c1ab040",
+      "actual_task_object_id": "131475594457152",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456",
+      "fixture_argument": 7
+    },
+    {
+      "task_id": "task:0x77938c1ab100",
+      "actual_task_object_id": "131475594457344",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456",
+      "fixture_argument": 8
+    },
+    {
+      "task_id": "task:0x77938c1ab280",
+      "actual_task_object_id": "131475594457728",
+      "connection_object_id": "131475595122848",
+      "protocol_object_id": "131475595317456",
+      "fixture_argument": 9
+    }
+  ],
+  "source_file_sha256": {
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/capture.json": "72269a4dfb36ba2dfbb90d18768f33a27b9e26476d37d1b9282fa60698761c6c",
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/capture-normalized.json": "f908787d64437a726063f2775787fb256fa61c772c11ef67f2c813a401ecfac3",
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/observation.json": "38e68c853722f82507c5ef0eba135d5aa5a4c6903e92229ce9f1cb323edc4920",
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/stdout.json": "18e6cf0e67e1dc7991834cda05b9875319410ac776071d6b6bb93486bacd6fd0",
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/execution.json": "6ded708f54fa86a4da212ccb14a8757c0282ee3515b3562b89e9599c66537f49",
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/verification.json": "4eae6876751214bc6e577870b3d2cf5b150554ef648a1e83abdd5d74962c1442",
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/attribution-joins.json": "75bcc2eda44f8a888a00a9554a894c5a84063c6613f8192743481d5a7d15666c",
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/source-integrity.json": "33c26ce0365fea8f364d2c4de0f7191edea7aef785717db9445384e856143c50",
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/postgres.log": "a382c2b8f8c9b971adb0cbed08a0b1ff95e582840faa8884648980ec66e5ef94",
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/analysis/graph.json": "5d66cdc4bacd597a62d8e47386d896c1626c5eda8874536b24758f847b9919ce",
+    "perf-out/github-issue-discovery/automatic/sqlalchemy-5967-later-batch-20261126-b6-auth-corrected/analysis/analysis.json": "a96f6e2aa3f151aef6878b720eb58a97f224ec575095bcc558956b46c0e6b32e",
+    "research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/check_once.py": "bb683046954d0f5604fb401982b7c3e612290e8cb3e7ef173d62aaf10da9dc8c",
+    "scripts/python_asyncio_debugger.py": "320cd79b2f02a576f17bdd92ef8d0f4e96e6fd4acf1077d0c9e0adb441933583",
+    "research/github-issue-discovery/sqlalchemy-5967-first-check-20261126/comments.json": "4a5cf55553747a9ad1b4bcf1c96edac561862a83ed9b0c16a76f0706b034d6fc"
+  },
+  "private_audit_sha256": "512acdbfc3b9824a867bfadd15c61d4941a6cef8fb3e7ada739739e1540b7f0e",
+  "diagnosis_speedup": null,
+  "tracing_overhead": null,
+  "new_case_credit": 0,
+  "new_target_executions": 0,
+  "new_captures": 0,
+  "new_root_cause_credit": 0,
+  "collection_track": "developer_report_matched_component",
+  "developer_report_match": {
+    "url": "https://github.com/sqlalchemy/sqlalchemy/issues/5967#issuecomment-783492237",
+    "author": "zzzeek",
+    "author_association": "MEMBER",
+    "saved_comments_sha256": "4a5cf55553747a9ad1b4bcf1c96edac561862a83ed9b0c16a76f0706b034d6fc",
+    "inspection_mode": "Offline reading of previously saved public comment, no new upstream request/status check.",
+    "reported_result": "Concurrent prepared-statement operations on one asyncpg connection raise InterfaceError: another operation is in progress. Maintainer supplies ten operations sharing one connection.",
+    "matched_result": "Saved adapted driver component reports the same native error family; actual object IDs show10Tasks sharing1Connection/protocol, with9errors and1success locally. CoroPerf restores the missing fixture submitter for all9errors.",
+    "match_limits": "Component-level symptom/resource-pattern match, not exact original Discord/ORM environment, count, or all terminal errors. Named helpers and gather(return_exceptions=True) adapt the fixture; no per-Task connection/locking repair or timed diagnosis comparison ran."
+  }
+}

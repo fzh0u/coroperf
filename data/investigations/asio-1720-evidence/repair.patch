@@ -1,0 +1,20 @@
+--- a/boost/asio/detail/reactive_socket_send_op.hpp
++++ b/boost/asio/detail/reactive_socket_send_op.hpp
+@@ -65,7 +65,7 @@
+           bufs_type::first(o->buffers_).size(), o->flags_,
+           o->ec_, o->bytes_transferred_) ? done : not_done;
+ 
+-      if (result == done)
++      if (result == done && !o->ec_)
+         if ((o->state_ & socket_ops::stream_oriented) != 0)
+           if (o->bytes_transferred_ < bufs_type::first(o->buffers_).size())
+             result = done_and_exhausted;
+@@ -77,7 +77,7 @@
+             bufs.buffers(), bufs.count(), o->flags_,
+             o->ec_, o->bytes_transferred_) ? done : not_done;
+ 
+-      if (result == done)
++      if (result == done && !o->ec_)
+         if ((o->state_ & socket_ops::stream_oriented) != 0)
+           if (o->bytes_transferred_ < bufs.total_size())
+             result = done_and_exhausted;

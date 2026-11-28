@@ -8,17 +8,17 @@
   "corpus": {
     "discovery_entries": 1544,
     "open_in_saved_discovery": 519,
-    "review_decisions": 953,
+    "review_decisions": 954,
     "verified_cases": 140,
-    "discovery_ledger_refreshed_at": "2026-11-28T12:37:05+00:00",
+    "discovery_ledger_refreshed_at": "2026-11-28T12:55:52+00:00",
     "inputs": [
       {
         "path": "web/coroperf-github-pages/data/discovery.json",
-        "sha256": "00609dba5790807aef7c015f32bbebd3ca709b4b39b7df1b9087f40d568a598f"
+        "sha256": "2f8d27bb1e8cee6c86902a7d54fa0507fac97ad17173c051db55d20824b18eb7"
       },
       {
         "path": "research/github-issue-discovery/automation/reviews.json",
-        "sha256": "2ea6acf184cedd8dfe92460e53022984b477bd6334d10c62112fc01315d8cffc"
+        "sha256": "2f1505d0475cd699fe24317af99f556226a3c1124041897698a12e08514e8568"
       },
       {
         "path": "web/coroperf-github-pages/data/cases.json",
@@ -27,14 +27,70 @@
     ]
   },
   "criteria": {
-    "en": "Primary candidates must have an unresolved causal question and no demonstrated fix for that exact failure in the inspected material. An existing patch, including an unmerged patch, removes an item from the first-root-cause queue. Timeouts, restarts and untested suggestions are not causal repairs. All proposed CoroPerf gains remain unverified.",
-    "zh-CN": "首要候选须仍有未解决的因果问题，且所读材料未展示针对该失败的有效修复。已有补丁（包括未合并补丁）退出首次根因发现队列；超时、重启和未测试建议不算根因修复。所有 CoroPerf 新增诊断收益均待验证。"
+    "en": "Pending candidates retain unresolved causal questions without a demonstrated exact repair in the inspected material. Results with locally verified causes remain here while their upstream issues are open; local repair validation is distinct from upstream acceptance. Each entry states its evidence and environment scope.",
+    "zh-CN": "待调查候选仍有未解决的因果问题，所读材料未展示针对该失败的有效修复。上游 issue 仍 open 时，已验证的本地根因与结果保留在同一列表；本地修改验证与上游接受分开记录。每条说明证据与环境范围。"
   },
   "workflow": {
     "en": "Review one issue at a time: confirm status and original inputs; reproduce with ordinary diagnostics; identify the missing identity/history relation; collect the necessary evidence; test competing causes; validate a repair against the original regression.",
     "zh-CN": "逐个过：确认状态与原始输入；用普通诊断复现；明确缺失的身份／历史关系；采集所需证据；区分竞争解释；用原回归测试验证修复。"
   },
   "candidates": [
+    {
+      "id": "chriskohlhoff--asio--1720",
+      "reference": "Asio #1720",
+      "url": "https://github.com/chriskohlhoff/asio/issues/1720",
+      "language": "C++ / stackless",
+      "stage": "diagnosed",
+      "question": {
+        "en": "Which event stops the last socket-write operation from completing?",
+        "zh-CN": "最后一次 socket write 为什么不再完成？"
+      },
+      "known": {
+        "en": "A failed stream send returns EPIPE with zero bytes. reactive_socket_send_op_base treats zero bytes as a short successful send and returns done_and_exhausted. That clears try_speculative_. Once EPOLLOUT is registered on the edge-triggered descriptor, the next write is queued without a send attempt or registration change, and remains pending until timeout cleanup.",
+        "zh-CN": "流式 send 返回 EPIPE、传输零字节。reactive_socket_send_op_base 将零字节错误当作成功短写，返回 done_and_exhausted，关闭 try_speculative_。在边沿触发的 descriptor 已注册 EPOLLOUT 后，下一次 write 直接排队，既未尝试 send 也未改变注册，直到超时清理仍未完成。"
+      },
+      "patch": {
+        "en": "Local repair: require !o->ec_ before classifying either single-buffer or buffer-sequence sends as done_and_exhausted. Each repaired error-path variant finishes ten attempts in all three runs; healthy writes finish with and without the patch. Upstream acceptance and release integration are unverified.",
+        "zh-CN": "本地修改：single-buffer 和 buffer-sequence 两条路径判定 done_and_exhausted 前均要求 !o->ec_。修复后的各错误路径三次均完成十次尝试；正常连接在有／无补丁时均通过。尚未取得上游接受或发布集成结果。"
+      },
+      "coroperf_addition": {
+        "en": "CoroPerf binary-selected probes and its existing instance graph separate repeated lifetimes at one coroutine-frame address and reconnect them to the writer. Optional activation intervals supply parent evidence missing from instruction-only creation unwinding. An extra Asio do_init frame-to-handle observer joins each write operation to the correct live generation; reactor events then distinguish a queued operation from a completed operation lacking a resume.",
+        "zh-CN": "CoroPerf 的二进制探针和既有实例图区分同一 frame 地址的多次寿命，并接回 writer。可选激活区间补足仅指令展开缺失的创建者证据；新增 Asio do_init 的 frame／handle 观察，把每次 write 接到正确的存活代次，再用 reactor 事件区分“操作仍排队”和“已完成却未恢复”。"
+      },
+      "required_evidence": {
+        "en": "Collected: binary lifecycle, generation-scoped creation edges, operation/frame joins, reactor state and unchanged-source repair controls.",
+        "zh-CN": "已采集：二进制生命周期、按代次保存的创建边、operation／frame 关联、reactor 状态及未改源程序的修复对照。"
+      },
+      "validation": {
+        "en": "Unchanged November26 upstream standalone coroutine and callback attachments; Boost1.88.0 official source archive, Linux/GCC11.4. Original O2 builds and separate O0 debugger builds are recorded. Healthy and buffer-sequence controls are explicit adaptations; the original GoogleTest fixture and Ubuntu24.04/GCC13.3 environment were not reproduced.",
+        "zh-CN": "使用 11 月 26 日上游附件中未改动的 standalone 协程版和回调版；Boost1.88.0 官方源码、Linux/GCC11.4。记录原 O2 构建与独立 O0 调试构建。正常连接和 buffer sequence 对照是明确标记的适配；未复现原 GoogleTest fixture 及 Ubuntu24.04/GCC13.3 环境。"
+      },
+      "limits": {
+        "en": "Verified for this local Boost1.88.0 loopback reproducer and named controls. Debugger observations use an explicit O0 rebuild, matching ELF information, activation intervals and extra resource observers. No universal stripped-binary recall, production overhead, multi-thread generalization or timed diagnosis comparison is established.",
+        "zh-CN": "结论覆盖本地 Boost1.88.0 loopback 复现及所列对照。调试观测使用明确的 O0 重构建、匹配 ELF、激活区间及额外资源观察点；没有证明通用 stripped binary recall、生产开销、多线程泛化或定位耗时优势。"
+      },
+      "first_step": {
+        "en": "Validate the patch on current upstream and broader send-path tests, then prepare a reviewable upstream report. No GitHub comment or pull request has been posted.",
+        "zh-CN": "继续在当前上游和更完整的 send 路径测试中验证补丁，再整理可供上游审阅的报告。尚未向 GitHub issue 发评论或提交 PR。"
+      },
+      "upstream_state": "open",
+      "new_execution": true,
+      "root_cause_confirmed": true,
+      "investigation_path": "investigations/asio-1720.html",
+      "last_source_check": "2026-11-28T03:04:27.851942+00:00",
+      "diagnosis_plan": {
+        "en": "Distinguish an operation still awaiting reactor readiness, a lost completion, and a completion whose coroutine was not resumed. The callback control tests whether the gap also occurs without coroutine resumption.",
+        "zh-CN": "区分操作仍在等待 reactor 就绪、完成事件丢失，以及完成后协程未恢复；回调对照用来检验缺口是否也发生在协程恢复之外。"
+      },
+      "diagnosis_result": {
+        "en": "The local failure mechanism is verified by CoroPerf lifetime attribution, explicit reactor observations, and 30 executions across ten configurations. A two-condition local repair restores both coroutine and callback reproducers.",
+        "zh-CN": "结合 CoroPerf 寿命归属、明确增加的 reactor 观察和十种配置共三十次执行，已验证本地失败机制。两处条件修改使协程版、回调版复现程序均恢复完成。"
+      },
+      "last_status_check": "2026-11-28T12:58:33+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-11-26T13:39:13Z",
+      "upstream_comment_count": 1
+    },
     {
       "id": "vllm-project--vllm--41530",
       "reference": "vLLM #41530",
@@ -84,7 +140,11 @@
       "diagnosis_plan": {
         "en": "Distinguish an RPC that was never dispatched, a live worker blocked in native/device work, and a completed response that was never delivered. Find the earliest missing event across one request and worker generation.",
         "zh-CN": "区分 RPC 未派发、存活 worker 阻塞于原生／设备工作，以及响应已完成但未交付；沿同一请求与 worker 代次找到最早缺失事件。"
-      }
+      },
+      "last_status_check": "2026-11-28T12:58:33+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-11-23T09:20:01Z",
+      "upstream_comment_count": 22
     },
     {
       "id": "vllm-project--vllm-ascend--23391",
@@ -124,7 +184,7 @@
         "en": "Obtain the original workload and per-rank traces, and confirm access to a matching Ascend deployment.",
         "zh-CN": "先取得原负载与逐 rank 轨迹，并确认可使用匹配的 Ascend 部署。"
       },
-      "upstream_state": "backlog",
+      "upstream_state": "open",
       "new_execution": false,
       "root_cause_confirmed": false,
       "fix_screen": "no_causal_fix_identified_in_inspected_material",
@@ -135,55 +195,11 @@
       "diagnosis_plan": {
         "en": "Distinguish a missing KV-transfer completion, device synchronization stall, and a peer rank waiting on the first stalled rank. Ordering and rank identity must identify the initiator.",
         "zh-CN": "区分 KV 传输缺失完成、设备同步停顿，以及其他 rank 对首个停顿 rank 的连锁等待；用事件顺序和 rank 身份确定起点。"
-      }
-    },
-    {
-      "id": "chriskohlhoff--asio--1720",
-      "reference": "Asio #1720",
-      "url": "https://github.com/chriskohlhoff/asio/issues/1720",
-      "language": "C++ / stackless",
-      "stage": "follow_up",
-      "question": {
-        "en": "Which event stops the last socket-write operation from completing?",
-        "zh-CN": "最后一次 socket write 为什么不再完成？"
       },
-      "known": {
-        "en": "A closed-peer writer hangs. A later upstream comment reports the same failure with callbacks and improvement with epoll disabled; handler and frame-lifetime traces already exist. These are partial results, not a confirmed root cause.",
-        "zh-CN": "对端关闭后，写协程停住。上游评论报告回调版本也失败、禁用 epoll 后恢复，并已有 handler 与 frame 生命周期轨迹；这些是阶段性证据，尚未确证根因。"
-      },
-      "patch": {
-        "en": "No repair PR is shown in the rendered Development section. A related issue and attached reproducers are not a verified patch.",
-        "zh-CN": "所读页面的 Development 未列修复 PR；相关 issue 与复现附件不等于已验证补丁。"
-      },
-      "coroperf_addition": {
-        "en": "Join the writer and reused child-frame generations to the specific write operation, then locate the first missing registration, readiness, completion or resume event.",
-        "zh-CN": "把 writer、复用的子 frame 代次与具体 write 操作关联，定位注册、就绪、完成、恢复链中第一个缺失的事件。"
-      },
-      "required_evidence": {
-        "en": "Frame generation; socket generation; operation/handler identity; epoll registration and readiness; completion, resume and cleanup order. Operation/reactor observers are additional work.",
-        "zh-CN": "frame 代次、socket 代次、operation／handler 身份、epoll 注册与就绪，以及完成／恢复／清理顺序；操作与 reactor 观察点仍需补齐。"
-      },
-      "validation": {
-        "en": "Use one pinned affected build for the original, callback and backend controls. Check whether the pending operation remains queued or completed without a resume. Validate any eventual repair against the unchanged regression and success/error paths.",
-        "zh-CN": "固定受影响构建，比较原例、回调与后端对照；核对操作仍在队列，还是已完成却未恢复。若找到修复，用未改动的回归测试及正常／错误路径验证。"
-      },
-      "limits": {
-        "en": "Creation ancestry alone cannot explain lost reactor progress; callback failure argues against a coroutine-only cause. The original fixture/timeout and exact dependencies still need recovery.",
-        "zh-CN": "仅创建祖先不能解释 reactor 丢失进展；回调同样失败，不能预设是协程缺陷。原 fixture／超时与匹配依赖仍需取得。"
-      },
-      "first_step": {
-        "en": "Recover the original fixture and pin Boost 1.88.0 / GCC 13.3 / Ubuntu 24.04 before collecting anything.",
-        "zh-CN": "先取得原 fixture，固定 Boost 1.88.0／GCC 13.3／Ubuntu 24.04，再开始采集。"
-      },
-      "upstream_state": "open",
-      "new_execution": false,
-      "root_cause_confirmed": false,
-      "investigation_path": "investigations/asio-1720.html",
-      "last_source_check": "2026-11-28T03:04:27.851942+00:00",
-      "diagnosis_plan": {
-        "en": "Distinguish an operation still awaiting reactor readiness, a lost completion, and a completion whose coroutine was not resumed. The callback control tests whether the gap also occurs without coroutine resumption.",
-        "zh-CN": "区分操作仍在等待 reactor 就绪、完成事件丢失，以及完成后协程未恢复；回调对照用来检验缺口是否也发生在协程恢复之外。"
-      }
+      "last_status_check": "2026-11-28T12:58:33+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-11-26T08:43:24Z",
+      "upstream_comment_count": 0
     },
     {
       "id": "stackexchange--stackexchange.redis--3240",
@@ -229,7 +245,11 @@
       "diagnosis_plan": {
         "en": "Distinguish a fake-server dispatch/response gap from client response parsing or a continuation that never runs. Match the exact message and connection generation before assigning ownership.",
         "zh-CN": "区分模拟服务端未派发／未响应、客户端未解析响应，以及 continuation 未运行；先匹配具体消息和连接代次，再判定责任。"
-      }
+      },
+      "last_status_check": "2026-11-28T12:58:33+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-09-17T12:15:59Z",
+      "upstream_comment_count": 0
     },
     {
       "id": "sidorares--node-mysql2--695",
@@ -275,7 +295,11 @@
       "diagnosis_plan": {
         "en": "Distinguish a queued command never dispatched, a dispatched command awaiting the database, and a received response whose callback or Promise was never settled. Correlate database activity with socket and command history.",
         "zh-CN": "区分命令未出队、命令已派发但数据库未完成，以及已收响应但回调／Promise 未结束；关联数据库活动、socket 与命令历史。"
-      }
+      },
+      "last_status_check": "2026-11-28T12:58:33+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-01-29T21:29:09Z",
+      "upstream_comment_count": 26
     },
     {
       "id": "golang--go--54461",
@@ -321,58 +345,11 @@
       "diagnosis_plan": {
         "en": "After confirming an unresolved failure, distinguish a live descendant, an inherited pipe still held open, and shutdown bookkeeping. Coroutine lineage alone cannot identify the pipe holder.",
         "zh-CN": "确认仍有未解决的失败后，区分后代进程仍存活、继承的 pipe 仍被持有，以及关闭记账未完成；仅 goroutine 祖先关系不能识别 pipe 持有者。"
-      }
-    },
-    {
-      "id": "netty--netty--12820",
-      "reference": "Netty #12820",
-      "url": "https://github.com/netty/netty/issues/12820",
-      "language": "Java / Netty event loop / ChannelPromise",
-      "stage": "status_check",
-      "upstream_state": "closed_in_inspected_page",
-      "local_status": "skipped",
-      "last_source_check": "2026-11-28T10:35:20+00:00",
-      "sources": [
-        "https://github.com/netty/netty/issues/12820"
-      ],
-      "new_execution": false,
-      "root_cause_confirmed": false,
-      "question": {
-        "en": "Where does the reported 3–5 second message delay accumulate at approximately 2000 sends/s?",
-        "zh-CN": "约2000次／秒发送时，报告的3–5秒消息延迟积累在哪一段？"
       },
-      "known": {
-        "en": "The body reports normal behavior below1500/s and multi-second delay near2000/s, with128 NIO workers, ADVANCED leak detection and multiple pipeline handlers. Only server/send fragments were supplied. Network-health statements are reporter observations.",
-        "zh-CN": "正文报告低于1500次／秒正常、约2000次／秒延迟数秒，配置含128个NIO worker、ADVANCED泄漏检测及多个pipeline handler；仅提供服务端／发送片段，网络健康是作者观察。"
-      },
-      "patch": {
-        "en": "The inspected page is marked Closed but returned no discussion or development history. Root cause and fix status are unverified; a closed marker cannot establish either a repair or absence of one.",
-        "zh-CN": "所读页面标为Closed，但未返回讨论和开发历史。根因与修复状态均未核实；关闭标记不能证明已有修复，也不能证明无修复。"
-      },
-      "coroperf_addition": {
-        "en": "Conditionally connect the submitting request/message to its channel, event-loop task, pipeline callback and Promise; separate queue delay from execution and write completion. Netty identity bridges need implementation/verification.",
-        "zh-CN": "有条件地把提交请求／消息关联到channel、event-loop任务、pipeline回调和Promise，分开队列等待、执行与写完成；Netty身份关联仍需实现／核验。"
-      },
-      "required_evidence": {
-        "en": "Request/message/channel/loop/task/Promise generations and native thread; enqueue, task start, flush, write completion and client receipt timestamps. Loop-local writes may inline; Promise completion is not remote receipt.",
-        "zh-CN": "request／message／channel／loop／task／Promise代次及原生线程；入队、任务开始、flush、写完成和客户端接收时刻。loop内写可能内联；Promise完成不等于远端接收。"
-      },
-      "diagnosis_plan": {
-        "en": "Distinguish business serialization, an event-loop admission backlog, expensive pipeline callbacks and write backpressure/client delay. Identify the first large interval on the same message before assigning cause.",
-        "zh-CN": "区分业务序列化、event-loop入队积压、高成本pipeline回调，以及写背压／客户端延迟；沿同一消息找到首个大间隔，再判定原因。"
-      },
-      "validation": {
-        "en": "Recover the unchanged finite server/client fixture and affected versions. Compare ordinary queue/CPU/socket/receipt diagnostics with added identities on the same load; validate any eventual causal repair with the original regression.",
-        "zh-CN": "取得未改动的有限服务端／客户端原例及受影响版本；在相同负载上比较常规队列／CPU／socket／接收诊断与补充身份后的证据，再用原回归验证针对原因的修复。"
-      },
-      "limits": {
-        "en": "Skipped: business handlers, message inputs, clients, dependency/JDK identity and complete runner are missing. Collector support is unverified. No reproduction, timing, validated cause or repair was obtained; retain original framing, worker count, leak detection and rate.",
-        "zh-CN": "skipped：缺业务handler、消息输入、客户端、依赖／JDK身份及完整入口；collector支持未核实。没有复现、定位耗时、已验证根因或修复；保留原framing、worker数、泄漏检测和速率。"
-      },
-      "first_step": {
-        "en": "First check discussion and repair history, then obtain the exact complete fixture. Promote only if a causal question remains unresolved with no demonstrated repair.",
-        "zh-CN": "先补齐讨论与修复历史，再取得精确完整原例；确认仍有未解因果问题且未见有效修复后才升级候选。"
-      }
+      "last_status_check": "2026-11-28T12:58:34+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-10-19T23:11:45Z",
+      "upstream_comment_count": 428
     },
     {
       "id": "reactor--reactor-core--2352",
@@ -380,7 +357,7 @@
       "url": "https://github.com/reactor/reactor-core/issues/2352",
       "language": "Java / Reactor subscriptions / scheduler workers",
       "stage": "status_check",
-      "upstream_state": "header_open_prior_closure_visible_history_incomplete",
+      "upstream_state": "open",
       "local_status": "skipped",
       "last_source_check": "2026-11-28T10:41:53+00:00",
       "sources": [
@@ -423,160 +400,11 @@
       "first_step": {
         "en": "Verify the missing history and #4347 relationship, then recover one matching original fixture. Keep this as status-check until unresolved cause and repair status are established.",
         "zh-CN": "先核实缺失历史与#4347关系，再取得一套匹配原例；明确未解因果问题和修复状态前保持状态待核验。"
-      }
-    },
-    {
-      "id": "golang--go--72765",
-      "reference": "Go #72765",
-      "url": "https://github.com/golang/go/issues/72765",
-      "language": "Go / goroutines / context cancellation / mutex profiling",
-      "stage": "status_check",
-      "upstream_state": "closed_not_planned_waiting_for_info_in_inspected_page",
-      "local_status": "skipped",
-      "last_source_check": "2026-11-28T11:11:15+00:00",
-      "sources": [
-        "https://github.com/golang/go/issues/72765"
-      ],
-      "new_execution": false,
-      "root_cause_confirmed": false,
-      "question": {
-        "en": "Why does the reported cumulative mutex-wait metric double after Go1.23.3 →1.24.0/1.24.1 in an I/O-bound gRPC service?",
-        "zh-CN": "I/O密集gRPC服务从Go1.23.3升级至1.24.0／1.24.1后，累计mutex等待指标为何翻倍？"
       },
-      "known": {
-        "en": "The reporter points to context.(*cancelCtx).propagateCancel unlock in profiles. Request rate, concurrency, time window and profile denominators are unavailable. This is a reported metric change, without a local CPU or per-request latency result.",
-        "zh-CN": "报告者指向profile中的context.(*cancelCtx).propagateCancel unlock；请求率、并发度、运行窗口和profile分母缺失。这是来源指标变化，没有本地CPU或每请求时延结果。"
-      },
-      "patch": {
-        "en": "The inspected primary is closed as not planned with WaitingForInfo and no linked branches/PRs. Comments and repair history were not returned; cause and fix status remain unverified.",
-        "zh-CN": "所读主页面为Closed/not planned、WaitingForInfo，未列关联branch／PR；评论和修复历史未取得，根因与修复状态仍未核实。"
-      },
-      "coroperf_addition": {
-        "en": "Conditionally attribute waiting goroutines to RPC/context cancellation histories and correlate them with specific contended lock generations. Mutex-owner and context-resource observations require additional verified collector support.",
-        "zh-CN": "有条件地将等待goroutine接回RPC／context取消历史，关联到具体争用锁代次；锁持有者和context资源观察仍需额外collector支持及验证。"
-      },
-      "required_evidence": {
-        "en": "RPC/request, context/cancel-node, goroutine and mutex lifetime/address generations; lock attempt/acquire/release; cancellation parent/child edges and owner. Distinguish mutex wait from runnable delay and CPU.",
-        "zh-CN": "RPC／request、context／cancel-node、goroutine、mutex生命周期／地址代次；申请／获得／释放、取消父子边及owner；分清锁等待、可运行延迟与CPU。"
-      },
-      "diagnosis_plan": {
-        "en": "Distinguish more requests/cancellations, longer lock holds or acquisition waits, changed wait accounting, and scheduling delay after release. Normalize cumulative waiter-seconds to the same window and completed RPC count before comparing versions.",
-        "zh-CN": "区分请求／取消次数增加、持锁或获取等待变长、等待计量变化，以及释放后的调度延迟；先按相同窗口和完成RPC数归一化累计waiter-seconds，再比较版本。"
-      },
-      "validation": {
-        "en": "Recover the original application and fixed workload/window, compare the exact reported versions using mutex/block/CPU profiles and runtime trace, then test competing explanations with lock/context events. Validate an eventual cause-specific repair on the unchanged regression before timing diagnosis gains.",
-        "zh-CN": "取得原应用及固定负载／窗口，在原版本间采mutex／block／CPU profile及runtime trace，再用锁／context事件区分解释；先用未改回归验证针对原因的修复，再测定位收益。"
-      },
-      "limits": {
-        "en": "Skipped: original service, request workload and run window are absent; no setup or target run. An unlock-attributed profile does not show that unlock consumes the waiting time. Creation labels do not establish mutex ownership; no collector coverage or timing result exists.",
-        "zh-CN": "skipped：缺原服务、请求负载和运行窗口，未准备或运行目标。归因到unlock的profile不代表unlock消耗该等待；创建标签不证明mutex所有权，没有collector覆盖或定位耗时结果。"
-      },
-      "first_step": {
-        "en": "Check the missing discussion/fix history and obtain the original workload/profile denominators. Keep status-check until a scoped unresolved cause and repair status can be established.",
-        "zh-CN": "先补齐讨论／修复历史，取得原负载与profile分母；明确有范围的未解原因和修复状态前保持状态待核验。"
-      }
-    },
-    {
-      "id": "netty--netty--6221",
-      "reference": "Netty #6221",
-      "url": "https://github.com/netty/netty/issues/6221",
-      "language": "Java / Netty / EventLoop / ByteBuf / direct memory",
-      "stage": "status_check",
-      "upstream_state": "closed_defect_milestone_4.0.44.Final_in_inspected_page",
-      "local_status": "skipped",
-      "last_source_check": "2026-11-28T12:06:57+00:00",
-      "sources": [
-        "https://github.com/netty/netty/issues/6221"
-      ],
-      "new_execution": false,
-      "root_cause_confirmed": false,
-      "question": {
-        "en": "What caused the reported direct-memory cap exhaustion within hours after Netty4.1.4.Final →4.1.7.Final?",
-        "zh-CN": "Netty4.1.4.Final升级至4.1.7.Final后，所报告数小时内直接内存达上限的原因是什么？"
-      },
-      "known": {
-        "en": "The reporter describes production exhaustion, previously weeks of uptime, and no QA reproduction. The 468189184-byte cap error, heap occupancy and pooled/native allocation counters describe different memory domains; they do not establish a buffer leak.",
-        "zh-CN": "作者报告生产环境从可运行数周变为数小时内耗尽，QA未复现。468189184字节上限错误、heap占用、池及原生分配计数对应不同内存域，不能据此确认缓冲泄漏。"
-      },
-      "patch": {
-        "en": "The returned page is Closed with a defect label and milestone4.0.44.Final. No technical comments or linked branches/PRs were returned. Cause, repair content and fixed release remain unverified; allocator flags are attempted settings, not demonstrated repairs.",
-        "zh-CN": "返回页面为Closed、defect及里程碑4.0.44.Final；未取得技术评论或关联branch／PR。原因、修复内容及修复版本仍未核实，尝试过的分配器参数不算已验证修复。"
-      },
-      "coroperf_addition": {
-        "en": "Conditionally reconstruct request/channel execution and ByteBuf lifetime/ownership history, then relate active and queued buffers to EventLoop scheduling and SSL work. Required resource events and owner transfer support are not validated for this case.",
-        "zh-CN": "有条件地重建请求／通道执行与ByteBuf生命周期、所有权历史，将活跃及排队缓冲关联到EventLoop调度和SSL工作。本例所需资源事件与所有权转移采集尚未验证。"
-      },
-      "required_evidence": {
-        "en": "Allocation/retain/release and address generations, owner transfers, request/channel IDs, pending writes and SSL operations, EventLoop enqueue/dequeue/thread execution; pair these with direct-memory/native allocation counters and reference-count/leak evidence.",
-        "zh-CN": "分配、retain／release、地址代次、所有权转移、请求／通道ID、待写入与SSL操作、EventLoop入队／出队／线程执行；同时保留直接内存、原生分配计数及引用计数／泄漏证据。"
-      },
-      "diagnosis_plan": {
-        "en": "Separate unreleased live buffers from allocator pool retention and slow downstream writes/SSL backlog. Check whether retained bytes track live references, free pooled capacity or pending bytes over the same window; connect each persistent buffer to its last owner and release path.",
-        "zh-CN": "区分未释放的活跃缓冲、分配池保留、下游写入过慢或SSL积压。用同一窗口检验保留字节随活跃引用、空闲池容量还是待写入字节增长；把持续存活缓冲关联到最后持有者与释放路径。"
-      },
-      "validation": {
-        "en": "Obtain the exact original application, build and workload, first establish a bounded faithful fixture with ordinary diagnostics, then compare that baseline with added verified lifecycle events. Validate a cause-specific repair on the unchanged regression before measuring time to diagnosis and observer overhead.",
-        "zh-CN": "取得原应用、构建与负载，先建立有限且忠实的原例及常规诊断基线，再加入已验证的生命周期事件比较。用未改动回归验证针对原因的修复后，再测定位耗时与观察开销。"
-      },
-      "limits": {
-        "en": "Skipped: complete original application/load/window absent; hours-long resource exhaustion was not started or shortened. No setup, SDK probe, target or capture. Callback/Promise does not automatically mean coroutine; task ancestry does not prove buffer ownership. No cause or speedup measured.",
-        "zh-CN": "skipped：缺完整原应用、负载与窗口，未启动或缩减数小时耗尽测试；未准备环境、探测SDK、运行目标或采集。callback／Promise不自动等于协程，任务创建关系不证明缓冲所有权；未测得根因或提速。"
-      },
-      "first_step": {
-        "en": "Inspect the missing discussion and repair history and recover the original inputs. Keep status-check until a scoped unresolved cause and repair status are established; do not claim an unpatched bug from an empty Development panel.",
-        "zh-CN": "先核实缺失讨论与修复历史，取得原始输入；明确有范围的未解原因与修复状态前，保持状态待核验，不能凭空的Development栏声称缺陷无补丁。"
-      }
-    },
-    {
-      "id": "tokio-rs--tokio--4659",
-      "reference": "Tokio #4659",
-      "url": "https://github.com/tokio-rs/tokio/issues/4659",
-      "language": "Rust / Tokio / Handle::block_on / mutex / I/O driver",
-      "stage": "status_check",
-      "upstream_state": "closed_in_inspected_page_discussion_not_returned",
-      "local_status": "skipped",
-      "last_source_check": "2026-11-28T12:21:15.046710+00:00",
-      "sources": [
-        "https://github.com/tokio-rs/tokio/issues/4659"
-      ],
-      "new_execution": false,
-      "root_cause_confirmed": false,
-      "question": {
-        "en": "Why does the reported network read stall when a blocking caller holds a mutex across Handle::block_on on a one-worker runtime?",
-        "zh-CN": "单worker运行时中，阻塞调用者持mutex执行Handle::block_on时，报告中的网络读取为何停滞？"
-      },
-      "known": {
-        "en": "The reporter describes the worker waiting for the same mutex while the caller waits for I/O. Two workers reportedly avoid reproduction, with possible application dependence. There is no runnable original or pinned Tokio/Rust/platform/transport fixture.",
-        "zh-CN": "作者描述worker等待同一mutex，调用者则等待I/O；双worker据称未复现，但可能依赖应用。缺原始可运行代码、固定Tokio／Rust／平台和传输环境。"
-      },
-      "patch": {
-        "en": "The inspected page is Closed; discussion and repair history were not returned. The report suggests a wait relation, without an independently verified cause or fix. A worker-count change is not a demonstrated causal repair.",
-        "zh-CN": "所读页面为Closed，未取得讨论与修复历史。报告提示一种等待关系，尚无独立核实的根因或修复；增加worker数不算已验证的因果修复。"
-      },
-      "coroperf_addition": {
-        "en": "Conditionally connect the blocking caller and root future to the worker, mutex owner/wait intervals and I/O driver progress. Distinguish a directly polled block_on root future from spawned Tasks; required ownership/driver observations remain unverified.",
-        "zh-CN": "有条件地关联阻塞调用者、root future、worker、mutex持有／等待区间及I/O驱动进展；区分block_on直接轮询的root future与spawn Task，所需锁归属和驱动观察尚未验证。"
-      },
-      "required_evidence": {
-        "en": "Runtime/thread generations, caller root-future poll spans, mutex acquire/release/owner, worker execution/wait spans, I/O request registration/readiness and driver poll/wakeup. Preserve native owner stacks and wall/CPU/runnable/wait timelines.",
-        "zh-CN": "运行时／线程代次、调用者root future轮询区间、mutex获取／释放／owner、worker运行／等待、I/O注册／就绪及驱动轮询／唤醒；保留原生持锁栈和wall／CPU／runnable／wait时间线。"
-      },
-      "diagnosis_plan": {
-        "en": "Distinguish a caller→I/O-driver→worker→mutex→caller wait cycle, I/O not becoming ready, and runnable work delayed after wakeup. Establish who holds the lock and who can poll the driver at the first loss of progress; compare the reported two-worker behavior only as supporting evidence.",
-        "zh-CN": "区分调用者→I/O驱动→worker→mutex→调用者的等待环、I/O未就绪，以及唤醒后可运行工作延迟。查清最早停滞时谁持锁、谁能轮询驱动；双worker表现仅作辅助证据。"
-      },
-      "validation": {
-        "en": "Recover the original program, exact runtime and network fixture; establish the same one-worker failure with ordinary diagnostics before adding verified lock/driver events. Validate a cause-specific change with the unchanged regression and healthy paths, then compare time to validated diagnosis and tracing overhead.",
-        "zh-CN": "取得原程序、精确运行时与网络环境，先用常规诊断建立同一单worker失败，再补已验证的锁／驱动事件。用未改回归和正常路径验证针对原因的改动后，再比较定位耗时与采集开销。"
-      },
-      "limits": {
-        "en": "Skipped because the source narrative lacks the original executable, dependencies and I/O fixture; no setup, probes, target or capture. Creation ancestry cannot establish lock ownership, a wait cycle or driver responsibility. No root cause, repair or diagnosis speedup measured.",
-        "zh-CN": "skipped：来源叙述缺原始程序、依赖及I/O环境；未准备、探测、运行或采集。创建关系不能证明持锁者、等待环或驱动职责，未测得根因、修复或定位提速。"
-      },
-      "first_step": {
-        "en": "Inspect missing discussion/repair history and obtain the original program and runtime configuration. Keep status-check until unresolved causal scope and repair status can be established.",
-        "zh-CN": "先核实缺失讨论／修复历史，取得原程序与运行时配置；明确未解因果范围和修复状态前保持先核验状态。"
-      }
+      "last_status_check": "2026-11-28T12:58:34+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-08-03T19:44:42Z",
+      "upstream_comment_count": 18
     },
     {
       "id": "grpc--grpc--38002",
@@ -584,7 +412,7 @@
       "url": "https://github.com/grpc/grpc/issues/38002",
       "language": "C++ / Java / gRPC / async API unconfirmed",
       "stage": "status_check",
-      "upstream_state": "open_lang_cpp_priority_P2_in_inspected_page",
+      "upstream_state": "open",
       "local_status": "skipped",
       "last_source_check": "2026-11-28T12:27:55.105319+00:00",
       "sources": [
@@ -627,7 +455,11 @@
       "first_step": {
         "en": "Inspect missing code and discussion/fix history, identify sync/CQ/callback/coroutine API and obtain a controlled comparison. Keep status-check until causal scope and collector applicability are established.",
         "zh-CN": "先核实缺失代码、讨论／修复历史，明确sync／CQ／callback／coroutine API并取得受控比较；因果范围与collector适用性明确前保持先核验状态。"
-      }
+      },
+      "last_status_check": "2026-11-28T12:58:35+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-07-14T01:39:19Z",
+      "upstream_comment_count": 8
     }
   ],
   "not_primary": [
@@ -821,12 +653,66 @@
         "en": "Source already explains that setting priority on the startup caller after poller creation misses pollers and affects later inherited threads, with linked completed repair20183. Outside first-root-cause discovery. Privileged original deployment not prepared; patch implementation/release coverage and performance effect unverified.",
         "zh-CN": "来源已解释poller创建后在启动调用线程设置优先级，导致poller未继承而后续线程继承，并关联完成修复20183。退出首次根因发现队列；未准备原特权部署，补丁实现、发布覆盖和性能效果未核实。"
       }
+    },
+    {
+      "id": "golang--go--68578",
+      "reference": "Go #68578",
+      "url": "https://github.com/golang/go/issues/68578",
+      "last_source_check": "2026-11-28T12:40:17.559454+00:00",
+      "reason": {
+        "en": "Detailed spin/sleeper/wakeup contention mechanism already reported. Shares the ChanContended benchmark with reviewed68477, with a different scaling question; no independent workload credit or replay. Closed/NeedsFix/Go1.24 milestone do not establish a tested repair or fixed release. Original rc2/specified host not matched; no SDK probe, capture or tool-effect result.",
+        "zh-CN": "来源已有详细自旋／睡眠／唤醒争用机制；与旧68477共享ChanContended基准但扩展性问题不同，不计独立原例、不重跑。Closed／NeedsFix／Go1.24里程碑不证明实测修复或发布版本；未匹配原rc2／指定主机，无SDK探测、采集或工具效果。"
+      }
+    },
+    {
+      "id": "netty--netty--12820",
+      "reference": "Netty #12820",
+      "url": "https://github.com/netty/netty/issues/12820",
+      "last_status_check": "2026-11-28T12:58:34+00:00",
+      "exclusion_source": "daily_tracker_refresh",
+      "reason": {
+        "en": "Upstream issue is closed; original investigation and local evidence are retained in closed_investigations. Repair effectiveness is not inferred from closure.",
+        "zh-CN": "上游 issue 已关闭；原调查与本地证据保留于 closed_investigations，不从关闭状态推断修复有效。"
+      }
+    },
+    {
+      "id": "golang--go--72765",
+      "reference": "Go #72765",
+      "url": "https://github.com/golang/go/issues/72765",
+      "last_status_check": "2026-11-28T12:58:34+00:00",
+      "exclusion_source": "daily_tracker_refresh",
+      "reason": {
+        "en": "Upstream issue is closed; original investigation and local evidence are retained in closed_investigations. Repair effectiveness is not inferred from closure.",
+        "zh-CN": "上游 issue 已关闭；原调查与本地证据保留于 closed_investigations，不从关闭状态推断修复有效。"
+      }
+    },
+    {
+      "id": "netty--netty--6221",
+      "reference": "Netty #6221",
+      "url": "https://github.com/netty/netty/issues/6221",
+      "last_status_check": "2026-11-28T12:58:35+00:00",
+      "exclusion_source": "daily_tracker_refresh",
+      "reason": {
+        "en": "Upstream issue is closed; original investigation and local evidence are retained in closed_investigations. Repair effectiveness is not inferred from closure.",
+        "zh-CN": "上游 issue 已关闭；原调查与本地证据保留于 closed_investigations，不从关闭状态推断修复有效。"
+      }
+    },
+    {
+      "id": "tokio-rs--tokio--4659",
+      "reference": "Tokio #4659",
+      "url": "https://github.com/tokio-rs/tokio/issues/4659",
+      "last_status_check": "2026-11-28T12:58:35+00:00",
+      "exclusion_source": "daily_tracker_refresh",
+      "reason": {
+        "en": "Upstream issue is closed; original investigation and local evidence are retained in closed_investigations. Repair effectiveness is not inferred from closure.",
+        "zh-CN": "上游 issue 已关闭；原调查与本地证据保留于 closed_investigations，不从关闭状态推断修复有效。"
+      }
     }
   ],
   "publication": {
     "status": "pending",
     "target": "https://fzh0u.github.io/coroperf/zh-cn/open-issues.html",
-    "note": "Independent publisher records a688a9b with950 reviewed IDs; supplemental268–279 records remain pending. One canonical public-data probe for this new commit returned tool Internal Error, so manual Open Issues content and Pages deployment remain unverified. Wave280 source additions saved locally: Tokio4659 status-check and TiKV20182 known-cause repair-validation exclusion; no target execution or diagnosis speedup. Wave281 adds gRPC38002 status-check locally; actual async API and controlled comparison missing, no target or diagnosis measurement."
+    "note": "Independent publisher records a688a9b with950 reviewed IDs; supplemental268–279 records remain pending. One canonical public-data probe for this new commit returned tool Internal Error, so manual Open Issues content and Pages deployment remain unverified. Wave280 source additions saved locally: Tokio4659 status-check and TiKV20182 known-cause repair-validation exclusion; no target execution or diagnosis speedup. Wave281 adds gRPC38002 status-check locally; actual async API and controlled comparison missing, no target or diagnosis measurement. Offline audit exposes a saved scoped caller-recovery example, without new case/target/cause/speedup credit."
   },
   "synchronized_at": "2026-11-28T12:20:57.662578+00:00",
   "synchronization": {
@@ -853,9 +739,9 @@
     "en": "The list is ordered by investigation priority. Status labels distinguish priority investigations, pending investigations and entries requiring a status check. No new verified case or execution is claimed.",
     "zh-CN": "列表按调查优先顺序排列，用状态区分优先调查、待调查和先核验状态的条目。本次未增加验证案例或执行结果。"
   },
-  "presentation_updated_at": "2026-11-28T12:30:27.334756+00:00",
+  "presentation_updated_at": "2026-11-28T12:55:50.278343+00:00",
   "diagnosis_protocol": {
-    "status": "planned_unmeasured",
+    "status": "one_local_cause_validated_other_measurements_pending",
     "claim": {
       "en": "Test whether CoroPerf supplies missing execution and resource history that reduces time to a validated cause. These candidates are opportunities to test that claim; no diagnosis speedup has been measured.",
       "zh-CN": "验证 coroperf 提供的执行与资源历史，能否缩短找到已验证根因的时间。列表中的案例用于检验这一主张，目前没有定位提速实测。"
@@ -887,8 +773,250 @@
       }
     ],
     "measurement_status": {
-      "en": "Measurements pending: baseline diagnosis time —; diagnosis time with CoroPerf —; validated cause/repair —; tracing overhead —. No new target execution was performed for this page update.",
-      "zh-CN": "实测待补：常规诊断耗时 —；加入 coroperf 后耗时 —；已验证根因／修复 —；采集开销 —。本次页面更新未运行新的目标原例。"
+      "en": "Asio1720 has one locally verified cause and repair (30 runs). Other investigations and diagnosis-time/overhead measurements remain pending.",
+      "zh-CN": "Asio1720 已完成一项本地根因及修改验证（30 次执行）；其他调查、定位耗时和开销测量仍待完成。"
+    },
+    "effect_evidence": {
+      "case_id": "sqlalchemy--sqlalchemy--5967",
+      "reference": "SQLAlchemy #5967",
+      "case_path": "evidence/sqlalchemy--sqlalchemy--5967.html",
+      "evidence_path": "data/coroperf-effect-evidence-20261128.json",
+      "summary": {
+        "en": "Offline recheck of a saved adapted driver component: all9 native exception stacks lack the submission helper; CoroPerf joins actual Task identities to creation stacks and restores the correct helper for9/9. An explicit API observer separately records10Tasks sharing one Connection/protocol. This matches the shared-connection error pattern in the maintainer driver example, at component scope.",
+        "zh-CN": "离线复核已保存的适配驱动组件：9份原生异常栈均缺少提交入口，coroperf按真实Task身份接回创建栈，9／9恢复正确入口；额外API观察另记录10个Task共用一个Connection／protocol。 该共享连接错误模式与维护者驱动示例一致，匹配范围限于组件。"
+      },
+      "limits": {
+        "en": "This verifies scoped caller recovery, not a new root cause or faster diagnosis. Helpers are adapted fixture entries, not original Discord registrations; shared-resource identity needs the added API observer. No repair or tracing-overhead comparison was run.",
+        "zh-CN": "这验证了限定范围的调用来源恢复，不代表发现新根因或定位更快。入口是适配fixture函数，不是原Discord注册入口；共享资源身份需额外API观察，未做修复或采集开销对照。"
+      },
+      "developer_report_url": "https://github.com/sqlalchemy/sqlalchemy/issues/5967#issuecomment-783492237"
     }
+  },
+  "closed_investigations": {
+    "netty--netty--12820": {
+      "id": "netty--netty--12820",
+      "reference": "Netty #12820",
+      "url": "https://github.com/netty/netty/issues/12820",
+      "language": "Java / Netty event loop / ChannelPromise",
+      "stage": "status_check",
+      "upstream_state": "closed",
+      "local_status": "skipped",
+      "last_source_check": "2026-11-28T10:35:20+00:00",
+      "sources": [
+        "https://github.com/netty/netty/issues/12820"
+      ],
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "question": {
+        "en": "Where does the reported 3–5 second message delay accumulate at approximately 2000 sends/s?",
+        "zh-CN": "约2000次／秒发送时，报告的3–5秒消息延迟积累在哪一段？"
+      },
+      "known": {
+        "en": "The body reports normal behavior below1500/s and multi-second delay near2000/s, with128 NIO workers, ADVANCED leak detection and multiple pipeline handlers. Only server/send fragments were supplied. Network-health statements are reporter observations.",
+        "zh-CN": "正文报告低于1500次／秒正常、约2000次／秒延迟数秒，配置含128个NIO worker、ADVANCED泄漏检测及多个pipeline handler；仅提供服务端／发送片段，网络健康是作者观察。"
+      },
+      "patch": {
+        "en": "The inspected page is marked Closed but returned no discussion or development history. Root cause and fix status are unverified; a closed marker cannot establish either a repair or absence of one.",
+        "zh-CN": "所读页面标为Closed，但未返回讨论和开发历史。根因与修复状态均未核实；关闭标记不能证明已有修复，也不能证明无修复。"
+      },
+      "coroperf_addition": {
+        "en": "Conditionally connect the submitting request/message to its channel, event-loop task, pipeline callback and Promise; separate queue delay from execution and write completion. Netty identity bridges need implementation/verification.",
+        "zh-CN": "有条件地把提交请求／消息关联到channel、event-loop任务、pipeline回调和Promise，分开队列等待、执行与写完成；Netty身份关联仍需实现／核验。"
+      },
+      "required_evidence": {
+        "en": "Request/message/channel/loop/task/Promise generations and native thread; enqueue, task start, flush, write completion and client receipt timestamps. Loop-local writes may inline; Promise completion is not remote receipt.",
+        "zh-CN": "request／message／channel／loop／task／Promise代次及原生线程；入队、任务开始、flush、写完成和客户端接收时刻。loop内写可能内联；Promise完成不等于远端接收。"
+      },
+      "diagnosis_plan": {
+        "en": "Distinguish business serialization, an event-loop admission backlog, expensive pipeline callbacks and write backpressure/client delay. Identify the first large interval on the same message before assigning cause.",
+        "zh-CN": "区分业务序列化、event-loop入队积压、高成本pipeline回调，以及写背压／客户端延迟；沿同一消息找到首个大间隔，再判定原因。"
+      },
+      "validation": {
+        "en": "Recover the unchanged finite server/client fixture and affected versions. Compare ordinary queue/CPU/socket/receipt diagnostics with added identities on the same load; validate any eventual causal repair with the original regression.",
+        "zh-CN": "取得未改动的有限服务端／客户端原例及受影响版本；在相同负载上比较常规队列／CPU／socket／接收诊断与补充身份后的证据，再用原回归验证针对原因的修复。"
+      },
+      "limits": {
+        "en": "Skipped: business handlers, message inputs, clients, dependency/JDK identity and complete runner are missing. Collector support is unverified. No reproduction, timing, validated cause or repair was obtained; retain original framing, worker count, leak detection and rate.",
+        "zh-CN": "skipped：缺业务handler、消息输入、客户端、依赖／JDK身份及完整入口；collector支持未核实。没有复现、定位耗时、已验证根因或修复；保留原framing、worker数、泄漏检测和速率。"
+      },
+      "first_step": {
+        "en": "First check discussion and repair history, then obtain the exact complete fixture. Promote only if a causal question remains unresolved with no demonstrated repair.",
+        "zh-CN": "先补齐讨论与修复历史，再取得精确完整原例；确认仍有未解因果问题且未见有效修复后才升级候选。"
+      },
+      "last_status_check": "2026-11-28T12:58:34+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2022-11-08T11:00:39Z",
+      "upstream_comment_count": 11
+    },
+    "golang--go--72765": {
+      "id": "golang--go--72765",
+      "reference": "Go #72765",
+      "url": "https://github.com/golang/go/issues/72765",
+      "language": "Go / goroutines / context cancellation / mutex profiling",
+      "stage": "status_check",
+      "upstream_state": "closed",
+      "local_status": "skipped",
+      "last_source_check": "2026-11-28T11:11:15+00:00",
+      "sources": [
+        "https://github.com/golang/go/issues/72765"
+      ],
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "question": {
+        "en": "Why does the reported cumulative mutex-wait metric double after Go1.23.3 →1.24.0/1.24.1 in an I/O-bound gRPC service?",
+        "zh-CN": "I/O密集gRPC服务从Go1.23.3升级至1.24.0／1.24.1后，累计mutex等待指标为何翻倍？"
+      },
+      "known": {
+        "en": "The reporter points to context.(*cancelCtx).propagateCancel unlock in profiles. Request rate, concurrency, time window and profile denominators are unavailable. This is a reported metric change, without a local CPU or per-request latency result.",
+        "zh-CN": "报告者指向profile中的context.(*cancelCtx).propagateCancel unlock；请求率、并发度、运行窗口和profile分母缺失。这是来源指标变化，没有本地CPU或每请求时延结果。"
+      },
+      "patch": {
+        "en": "The inspected primary is closed as not planned with WaitingForInfo and no linked branches/PRs. Comments and repair history were not returned; cause and fix status remain unverified.",
+        "zh-CN": "所读主页面为Closed/not planned、WaitingForInfo，未列关联branch／PR；评论和修复历史未取得，根因与修复状态仍未核实。"
+      },
+      "coroperf_addition": {
+        "en": "Conditionally attribute waiting goroutines to RPC/context cancellation histories and correlate them with specific contended lock generations. Mutex-owner and context-resource observations require additional verified collector support.",
+        "zh-CN": "有条件地将等待goroutine接回RPC／context取消历史，关联到具体争用锁代次；锁持有者和context资源观察仍需额外collector支持及验证。"
+      },
+      "required_evidence": {
+        "en": "RPC/request, context/cancel-node, goroutine and mutex lifetime/address generations; lock attempt/acquire/release; cancellation parent/child edges and owner. Distinguish mutex wait from runnable delay and CPU.",
+        "zh-CN": "RPC／request、context／cancel-node、goroutine、mutex生命周期／地址代次；申请／获得／释放、取消父子边及owner；分清锁等待、可运行延迟与CPU。"
+      },
+      "diagnosis_plan": {
+        "en": "Distinguish more requests/cancellations, longer lock holds or acquisition waits, changed wait accounting, and scheduling delay after release. Normalize cumulative waiter-seconds to the same window and completed RPC count before comparing versions.",
+        "zh-CN": "区分请求／取消次数增加、持锁或获取等待变长、等待计量变化，以及释放后的调度延迟；先按相同窗口和完成RPC数归一化累计waiter-seconds，再比较版本。"
+      },
+      "validation": {
+        "en": "Recover the original application and fixed workload/window, compare the exact reported versions using mutex/block/CPU profiles and runtime trace, then test competing explanations with lock/context events. Validate an eventual cause-specific repair on the unchanged regression before timing diagnosis gains.",
+        "zh-CN": "取得原应用及固定负载／窗口，在原版本间采mutex／block／CPU profile及runtime trace，再用锁／context事件区分解释；先用未改回归验证针对原因的修复，再测定位收益。"
+      },
+      "limits": {
+        "en": "Skipped: original service, request workload and run window are absent; no setup or target run. An unlock-attributed profile does not show that unlock consumes the waiting time. Creation labels do not establish mutex ownership; no collector coverage or timing result exists.",
+        "zh-CN": "skipped：缺原服务、请求负载和运行窗口，未准备或运行目标。归因到unlock的profile不代表unlock消耗该等待；创建标签不证明mutex所有权，没有collector覆盖或定位耗时结果。"
+      },
+      "first_step": {
+        "en": "Check the missing discussion/fix history and obtain the original workload/profile denominators. Keep status-check until a scoped unresolved cause and repair status can be established.",
+        "zh-CN": "先补齐讨论／修复历史，取得原负载与profile分母；明确有范围的未解原因和修复状态前保持状态待核验。"
+      },
+      "last_status_check": "2026-11-28T12:58:34+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-04-19T20:30:25Z",
+      "upstream_comment_count": 7
+    },
+    "netty--netty--6221": {
+      "id": "netty--netty--6221",
+      "reference": "Netty #6221",
+      "url": "https://github.com/netty/netty/issues/6221",
+      "language": "Java / Netty / EventLoop / ByteBuf / direct memory",
+      "stage": "status_check",
+      "upstream_state": "closed",
+      "local_status": "skipped",
+      "last_source_check": "2026-11-28T12:06:57+00:00",
+      "sources": [
+        "https://github.com/netty/netty/issues/6221"
+      ],
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "question": {
+        "en": "What caused the reported direct-memory cap exhaustion within hours after Netty4.1.4.Final →4.1.7.Final?",
+        "zh-CN": "Netty4.1.4.Final升级至4.1.7.Final后，所报告数小时内直接内存达上限的原因是什么？"
+      },
+      "known": {
+        "en": "The reporter describes production exhaustion, previously weeks of uptime, and no QA reproduction. The 468189184-byte cap error, heap occupancy and pooled/native allocation counters describe different memory domains; they do not establish a buffer leak.",
+        "zh-CN": "作者报告生产环境从可运行数周变为数小时内耗尽，QA未复现。468189184字节上限错误、heap占用、池及原生分配计数对应不同内存域，不能据此确认缓冲泄漏。"
+      },
+      "patch": {
+        "en": "The returned page is Closed with a defect label and milestone4.0.44.Final. No technical comments or linked branches/PRs were returned. Cause, repair content and fixed release remain unverified; allocator flags are attempted settings, not demonstrated repairs.",
+        "zh-CN": "返回页面为Closed、defect及里程碑4.0.44.Final；未取得技术评论或关联branch／PR。原因、修复内容及修复版本仍未核实，尝试过的分配器参数不算已验证修复。"
+      },
+      "coroperf_addition": {
+        "en": "Conditionally reconstruct request/channel execution and ByteBuf lifetime/ownership history, then relate active and queued buffers to EventLoop scheduling and SSL work. Required resource events and owner transfer support are not validated for this case.",
+        "zh-CN": "有条件地重建请求／通道执行与ByteBuf生命周期、所有权历史，将活跃及排队缓冲关联到EventLoop调度和SSL工作。本例所需资源事件与所有权转移采集尚未验证。"
+      },
+      "required_evidence": {
+        "en": "Allocation/retain/release and address generations, owner transfers, request/channel IDs, pending writes and SSL operations, EventLoop enqueue/dequeue/thread execution; pair these with direct-memory/native allocation counters and reference-count/leak evidence.",
+        "zh-CN": "分配、retain／release、地址代次、所有权转移、请求／通道ID、待写入与SSL操作、EventLoop入队／出队／线程执行；同时保留直接内存、原生分配计数及引用计数／泄漏证据。"
+      },
+      "diagnosis_plan": {
+        "en": "Separate unreleased live buffers from allocator pool retention and slow downstream writes/SSL backlog. Check whether retained bytes track live references, free pooled capacity or pending bytes over the same window; connect each persistent buffer to its last owner and release path.",
+        "zh-CN": "区分未释放的活跃缓冲、分配池保留、下游写入过慢或SSL积压。用同一窗口检验保留字节随活跃引用、空闲池容量还是待写入字节增长；把持续存活缓冲关联到最后持有者与释放路径。"
+      },
+      "validation": {
+        "en": "Obtain the exact original application, build and workload, first establish a bounded faithful fixture with ordinary diagnostics, then compare that baseline with added verified lifecycle events. Validate a cause-specific repair on the unchanged regression before measuring time to diagnosis and observer overhead.",
+        "zh-CN": "取得原应用、构建与负载，先建立有限且忠实的原例及常规诊断基线，再加入已验证的生命周期事件比较。用未改动回归验证针对原因的修复后，再测定位耗时与观察开销。"
+      },
+      "limits": {
+        "en": "Skipped: complete original application/load/window absent; hours-long resource exhaustion was not started or shortened. No setup, SDK probe, target or capture. Callback/Promise does not automatically mean coroutine; task ancestry does not prove buffer ownership. No cause or speedup measured.",
+        "zh-CN": "skipped：缺完整原应用、负载与窗口，未启动或缩减数小时耗尽测试；未准备环境、探测SDK、运行目标或采集。callback／Promise不自动等于协程，任务创建关系不证明缓冲所有权；未测得根因或提速。"
+      },
+      "first_step": {
+        "en": "Inspect the missing discussion and repair history and recover the original inputs. Keep status-check until a scoped unresolved cause and repair status are established; do not claim an unpatched bug from an empty Development panel.",
+        "zh-CN": "先核实缺失讨论与修复历史，取得原始输入；明确有范围的未解原因与修复状态前，保持状态待核验，不能凭空的Development栏声称缺陷无补丁。"
+      },
+      "last_status_check": "2026-11-28T12:58:35+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2019-01-26T00:41:47Z",
+      "upstream_comment_count": 123
+    },
+    "tokio-rs--tokio--4659": {
+      "id": "tokio-rs--tokio--4659",
+      "reference": "Tokio #4659",
+      "url": "https://github.com/tokio-rs/tokio/issues/4659",
+      "language": "Rust / Tokio / Handle::block_on / mutex / I/O driver",
+      "stage": "status_check",
+      "upstream_state": "closed",
+      "local_status": "skipped",
+      "last_source_check": "2026-11-28T12:21:15.046710+00:00",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/4659"
+      ],
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "question": {
+        "en": "Why does the reported network read stall when a blocking caller holds a mutex across Handle::block_on on a one-worker runtime?",
+        "zh-CN": "单worker运行时中，阻塞调用者持mutex执行Handle::block_on时，报告中的网络读取为何停滞？"
+      },
+      "known": {
+        "en": "The reporter describes the worker waiting for the same mutex while the caller waits for I/O. Two workers reportedly avoid reproduction, with possible application dependence. There is no runnable original or pinned Tokio/Rust/platform/transport fixture.",
+        "zh-CN": "作者描述worker等待同一mutex，调用者则等待I/O；双worker据称未复现，但可能依赖应用。缺原始可运行代码、固定Tokio／Rust／平台和传输环境。"
+      },
+      "patch": {
+        "en": "The inspected page is Closed; discussion and repair history were not returned. The report suggests a wait relation, without an independently verified cause or fix. A worker-count change is not a demonstrated causal repair.",
+        "zh-CN": "所读页面为Closed，未取得讨论与修复历史。报告提示一种等待关系，尚无独立核实的根因或修复；增加worker数不算已验证的因果修复。"
+      },
+      "coroperf_addition": {
+        "en": "Conditionally connect the blocking caller and root future to the worker, mutex owner/wait intervals and I/O driver progress. Distinguish a directly polled block_on root future from spawned Tasks; required ownership/driver observations remain unverified.",
+        "zh-CN": "有条件地关联阻塞调用者、root future、worker、mutex持有／等待区间及I/O驱动进展；区分block_on直接轮询的root future与spawn Task，所需锁归属和驱动观察尚未验证。"
+      },
+      "required_evidence": {
+        "en": "Runtime/thread generations, caller root-future poll spans, mutex acquire/release/owner, worker execution/wait spans, I/O request registration/readiness and driver poll/wakeup. Preserve native owner stacks and wall/CPU/runnable/wait timelines.",
+        "zh-CN": "运行时／线程代次、调用者root future轮询区间、mutex获取／释放／owner、worker运行／等待、I/O注册／就绪及驱动轮询／唤醒；保留原生持锁栈和wall／CPU／runnable／wait时间线。"
+      },
+      "diagnosis_plan": {
+        "en": "Distinguish a caller→I/O-driver→worker→mutex→caller wait cycle, I/O not becoming ready, and runnable work delayed after wakeup. Establish who holds the lock and who can poll the driver at the first loss of progress; compare the reported two-worker behavior only as supporting evidence.",
+        "zh-CN": "区分调用者→I/O驱动→worker→mutex→调用者的等待环、I/O未就绪，以及唤醒后可运行工作延迟。查清最早停滞时谁持锁、谁能轮询驱动；双worker表现仅作辅助证据。"
+      },
+      "validation": {
+        "en": "Recover the original program, exact runtime and network fixture; establish the same one-worker failure with ordinary diagnostics before adding verified lock/driver events. Validate a cause-specific change with the unchanged regression and healthy paths, then compare time to validated diagnosis and tracing overhead.",
+        "zh-CN": "取得原程序、精确运行时与网络环境，先用常规诊断建立同一单worker失败，再补已验证的锁／驱动事件。用未改回归和正常路径验证针对原因的改动后，再比较定位耗时与采集开销。"
+      },
+      "limits": {
+        "en": "Skipped because the source narrative lacks the original executable, dependencies and I/O fixture; no setup, probes, target or capture. Creation ancestry cannot establish lock ownership, a wait cycle or driver responsibility. No root cause, repair or diagnosis speedup measured.",
+        "zh-CN": "skipped：来源叙述缺原始程序、依赖及I/O环境；未准备、探测、运行或采集。创建关系不能证明持锁者、等待环或驱动职责，未测得根因、修复或定位提速。"
+      },
+      "first_step": {
+        "en": "Inspect missing discussion/repair history and obtain the original program and runtime configuration. Keep status-check until unresolved causal scope and repair status can be established.",
+        "zh-CN": "先核实缺失讨论／修复历史，取得原程序与运行时配置；明确未解因果范围和修复状态前保持先核验状态。"
+      },
+      "last_status_check": "2026-11-28T12:58:35+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2022-05-08T16:18:14Z",
+      "upstream_comment_count": 7
+    }
+  },
+  "tracker_refresh": {
+    "checked_at": "2026-11-28T12:58:35+00:00",
+    "success": 12,
+    "attempted": 12
   }
 }

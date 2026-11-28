@@ -4,9 +4,9 @@
   "reference": "Asio #1720",
   "url": "https://github.com/chriskohlhoff/asio/issues/1720",
   "created_at": "2026-11-28T03:04:27.851942+00:00",
-  "status": "planned",
-  "verified_case": false,
-  "local_execution": "not_run",
+  "status": "root_cause_confirmed_local",
+  "verified_case": true,
+  "local_execution": "completed",
   "upstream_state_observed": "open",
   "source_scope": {
     "en": "Primary issue and visible activity rechecked; repository-wide patch search and complete API history unavailable. Existing traces below are upstream reports, not new local runs.",
@@ -29,8 +29,8 @@
     "zh-CN": "把 writer、复用的子 frame 代次与具体 write 操作关联，定位注册、就绪、完成、恢复链中第一个缺失的事件。"
   },
   "limits": {
-    "en": "Creation ancestry alone cannot explain lost reactor progress; callback failure argues against a coroutine-only cause. The original fixture/timeout and exact dependencies still need recovery.",
-    "zh-CN": "仅创建祖先不能解释 reactor 丢失进展；回调同样失败，不能预设是协程缺陷。原 fixture／超时与匹配依赖仍需取得。"
+    "en": "Verified for this local Boost1.88.0 loopback reproducer and named controls. Debugger observations use an explicit O0 rebuild, matching ELF information, activation intervals and extra resource observers. No universal stripped-binary recall, production overhead, multi-thread generalization or timed diagnosis comparison is established.",
+    "zh-CN": "结论覆盖本地 Boost1.88.0 loopback 复现及所列对照。调试观测使用明确的 O0 重构建、匹配 ELF、激活区间及额外资源观察点；没有证明通用 stripped binary recall、生产开销、多线程泛化或定位耗时优势。"
   },
   "hypotheses": [
     {
@@ -115,9 +115,56 @@
     }
   },
   "next_action": {
-    "en": "Recover the original fixture and pin Boost 1.88.0 / GCC 13.3 / Ubuntu 24.04 before collecting anything.",
-    "zh-CN": "先取得原 fixture，固定 Boost 1.88.0／GCC 13.3／Ubuntu 24.04，再开始采集。"
+    "en": "Validate the patch on current upstream and broader send-path tests, then prepare a reviewable upstream report. No GitHub comment or pull request has been posted.",
+    "zh-CN": "继续在当前上游和更完整的 send 路径测试中验证补丁，再整理可供上游审阅的报告。尚未向 GitHub issue 发评论或提交 PR。"
   },
-  "results": null,
-  "repair": null
+  "results": {
+    "path": "data/investigations/asio-1720-evidence/result.json"
+  },
+  "repair": {
+    "status": "locally_validated",
+    "path": "data/investigations/asio-1720-evidence/repair.patch"
+  },
+  "title": {
+    "en": "Asio #1720: terminal write error poisons epoll progress",
+    "zh-CN": "Asio #1720：终止写错误导致 epoll 后续操作停顿"
+  },
+  "root_cause": {
+    "en": "A failed stream send returns EPIPE with zero bytes. reactive_socket_send_op_base treats zero bytes as a short successful send and returns done_and_exhausted. That clears try_speculative_. Once EPOLLOUT is registered on the edge-triggered descriptor, the next write is queued without a send attempt or registration change, and remains pending until timeout cleanup.",
+    "zh-CN": "流式 send 返回 EPIPE、传输零字节。reactive_socket_send_op_base 将零字节错误当作成功短写，返回 done_and_exhausted，关闭 try_speculative_。在边沿触发的 descriptor 已注册 EPOLLOUT 后，下一次 write 直接排队，既未尝试 send 也未改变注册，直到超时清理仍未完成。"
+  },
+  "result_summary": {
+    "en": "The local failure mechanism is verified by CoroPerf lifetime attribution, explicit reactor observations, and 30 executions across ten configurations. A two-condition local repair restores both coroutine and callback reproducers.",
+    "zh-CN": "结合 CoroPerf 寿命归属、明确增加的 reactor 观察和十种配置共三十次执行，已验证本地失败机制。两处条件修改使协程版、回调版复现程序均恢复完成。"
+  },
+  "execution_scope": {
+    "en": "Unchanged November26 upstream standalone coroutine and callback attachments; Boost1.88.0 official source archive, Linux/GCC11.4. Original O2 builds and separate O0 debugger builds are recorded. Healthy and buffer-sequence controls are explicit adaptations; the original GoogleTest fixture and Ubuntu24.04/GCC13.3 environment were not reproduced.",
+    "zh-CN": "使用 11 月 26 日上游附件中未改动的 standalone 协程版和回调版；Boost1.88.0 官方源码、Linux/GCC11.4。记录原 O2 构建与独立 O0 调试构建。正常连接和 buffer sequence 对照是明确标记的适配；未复现原 GoogleTest fixture 及 Ubuntu24.04/GCC13.3 环境。"
+  },
+  "repair_status": {
+    "en": "Local repair: require !o->ec_ before classifying either single-buffer or buffer-sequence sends as done_and_exhausted. Each repaired error-path variant finishes ten attempts in all three runs; healthy writes finish with and without the patch. Upstream acceptance and release integration are unverified.",
+    "zh-CN": "本地修改：single-buffer 和 buffer-sequence 两条路径判定 done_and_exhausted 前均要求 !o->ec_。修复后的各错误路径三次均完成十次尝试；正常连接在有／无补丁时均通过。尚未取得上游接受或发布集成结果。"
+  },
+  "observed_addition": {
+    "en": "CoroPerf binary-selected probes and its existing instance graph separate repeated lifetimes at one coroutine-frame address and reconnect them to the writer. Optional activation intervals supply parent evidence missing from instruction-only creation unwinding. An extra Asio do_init frame-to-handle observer joins each write operation to the correct live generation; reactor events then distinguish a queued operation from a completed operation lacking a resume.",
+    "zh-CN": "CoroPerf 的二进制探针和既有实例图区分同一 frame 地址的多次寿命，并接回 writer。可选激活区间补足仅指令展开缺失的创建者证据；新增 Asio do_init 的 frame／handle 观察，把每次 write 接到正确的存活代次，再用 reactor 事件区分“操作仍排队”和“已完成却未恢复”。"
+  },
+  "causal_chain": [
+    {
+      "en": "EPIPE plus bytes=0 returns status2 (done_and_exhausted), although the operation has a terminal error.",
+      "zh-CN": "EPIPE、bytes=0 被返回为 status2（done_and_exhausted），尽管这次操作是终止错误。"
+    },
+    {
+      "en": "The reactor sets try_speculative=false; a later write registers EPOLLOUT and is completed with the same error.",
+      "zh-CN": "reactor 设 try_speculative=false；后续一次 write 注册 EPOLLOUT，并以同一错误完成。"
+    },
+    {
+      "en": "The fifth operation sees try_speculative=false and EPOLLOUT already set. It stays in the write queue without perform or another readiness event until cleanup.",
+      "zh-CN": "第五次操作看到 try_speculative=false、EPOLLOUT 已设置，留在 write 队列；清理前没有 perform 或新的就绪事件。"
+    },
+    {
+      "en": "Restricting exhaustion classification to successful sends removes the stale state and restores all ten error-path attempts.",
+      "zh-CN": "将耗尽判定限于成功 send，消除错误状态，十次错误路径尝试均可完成。"
+    }
+  ]
 }
