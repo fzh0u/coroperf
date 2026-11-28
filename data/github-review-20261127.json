@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T12:37:05+00:00",
+  "updated_at": "2026-11-28T13:08:51+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -9475,6 +9475,52 @@
         "source_scope": "Complete narrative142–226 and tables read; full396-line returned extraction saved. Visible273–344 substantive discussion read; API/history unknown. go1.23rc2/darwin-arm64/M1/macOS14.4.1;reported also1.17.13 and macOS14.5. Linked57722/35057/bot references and source modifications not opened/executed.",
         "boundaries": "完整有限CPU benchmark/命令承认，不是缺原例。原Go1.23rc2/darwin-arm64/M1/macOS14.4.1(后来14.5仍现)与单次平台+VERSION文件检查的Linux/x86_64/Go1.23.0不匹配；knownGo可用但不是原fixture，不全局SDKabsence，不换Linux/Go版本、M1/P-E cores、N/CPUlist/duration/observer，不build/replay或造Cprogram。来源pprof平均403.14个onCPU线程/929.99sample-seconds除2.31s窗口是采样过计数，不是403物理线程或实际930CPU秒；Go test全命令wall与profilewindow不同。逐CPU=1,2,4,8四次独立profile，与另cpu=1..8加trace联合观测是两个协议，2→3采样密度变化不是无observer影响的成对因果证明。锁路径syscall/SIGPROF投递解释为假设；单删osyield或semasleep仍现、同时删两者profile较可信为source改动观察，不证OS根因或生产修复，不能将改变等待策略当优化验证。coroperf若只将错误权重采样归属到creationstack仍可得精确错误结果；先需独立native-thread CPU计时、SIGPROF采样投递/权重、wallclock及observer校验，再连G/P/M/nativeTID代次、锁自旋/yield/sleep/wake/CPUoffCPU与creator/owner，G数/CPU%/runnable等待不同。真实original运行为0；创建栈不是采样器准确性证明。返回396行，narrative142–226/tables及visible273–344讨论已读，API/history未知，57722/35057/botrefs/code/C再现提议未开或执行；编号跨repo不混身份，Open/Backlog非releasedfix。ProperURLguard+十authority0+独立clearance先body，learnedaliaseszero后未开其他原例。",
         "time_budget": "原dispatch02:54:20.983462Z/source76.378720超60内90/readiness+14.686779内30/facts127.212179超120/post127.212273/final150.017–151.017。Final仅whole-second区间，records150边界合规未知，reserve35未满足/total180满足；不抹超时或reset。readiness1与filesystem1同pass，VERSION-file-read1非runtimeversionprobe；其他研究phase0/nohandles/SLOT2unused。"
+      }
+    },
+    "golang--go--68578": {
+      "id": "golang--go--68578",
+      "repo": "golang/go",
+      "number": 68578,
+      "url": "https://github.com/golang/go/issues/68578",
+      "title": "runtime: improve scaling of lock2",
+      "sources": [
+        "https://github.com/golang/go/issues/68578"
+      ],
+      "status": "external_environment_required",
+      "reason": "Original Go1.23rc2 ChanContended protocols use specific Linuxi7-13700H and DarwinM1 hosts with cpu1..20/count10 or cpu1..8/count10 and separate profile. No matching fixture established; historical Go1.23.0 is not rc2. Named benchmark and related68477 are already reviewed, so no replay or independent original-workload credit.",
+      "reason_zh": "原Go1.23rc2 ChanContended协议涉及指定Linux i7-13700H或Darwin M1、cpu1..20／1..8及count10和另行profile；未建立匹配原环境，历史Go1.23.0不等于rc2。基准及关联68477已被评审，未重跑或计独立原例收益。",
+      "source_completeness": {
+        "body": "Full primary archived; body143–252, both exactGo versions/protocols and measurements inspected.",
+        "comments": "Visible bot related links276–287, maintainer299–302 and author328–330 inspected; later activity/API/fix history not inspected.",
+        "version": "Go1.23rc2 linux/amd64 i7-13700H and darwin/arm64 AppleM1; exact original benchmark protocol retained, not run.",
+        "scope": "One discovery search/query, five candidates gated; actual68578URL/title selected afterclearance. Known benchmark/related68477 overlap learned only afterprimary; no related source, runtime or fix opened."
+      },
+      "upstream_evidence": {
+        "observation": "Source reports ChanContended whole-process throughput degradation as GOMAXPROCS rises, plus ~6000ns spin and ~14ns uncontended-channel timings on M1.",
+        "counterevidence": "Spin/sleeper wake/cacheline mechanism is source analysis endorsed as plausible by maintainer, not a local causal intervention. Weighted pprof27.74sample-seconds in1.78wall is not independent physical CPU proof.",
+        "unknown": "Full later discussion/fix and release inclusion, matching rc2 fixtures, native CPU accuracy, actual ownership and collector coverage.",
+        "resolution_scope": "PageClosed/NeedsFix/Go1.24 milestone. Detailed source mechanism already exists; labels do not establish tested fix/release. Source links68477, sharing ChanContended but different profile-accounting question; not an assertion every report is duplicate."
+      },
+      "coroperf_applicability": {
+        "assessment": "Potential validation of already-described spin/wakeup contention; not a first-rootcause or measured tool-effect result.",
+        "assessment_zh": "可验证已有自旋／唤醒争用解释，不计首次根因或工具效果实测。",
+        "required_identity": "G/P/M/nativeTID execution mapping, channel/runtime.mutex address generations and owner/acquire/release, spinner/sleeper/wake histories; independently calibrated native CPU counters.",
+        "required_identity_zh": "需G／P／M／原生TID执行映射、channel／runtime.mutex地址代次与owner／获取／释放、自旋／睡眠／唤醒历史及独立校验的原生CPU计数。",
+        "native_baseline": "Exact original rc2 benchmark/protocol and CPU/wall/runqueue/per-op measurements; distinguish sample-weight errors and contention.",
+        "native_baseline_zh": "保留原rc2基准／协议和CPU／wall／runqueue／每操作度量，区分采样权重误差与争用。",
+        "limits": "Ancestry does not prove mutex ownership or fix sample overcount. Required lock events unverified. No SDK/version probe, target or capture; no speedup.",
+        "limits_zh": "创建关系不证明锁所有权或修正采样过计；所需锁事件未验证。未探测SDK／版本、运行目标或采集，无提速实测。"
+      },
+      "open_issues_advice": {
+        "assessment": "not_primary",
+        "candidate": false,
+        "reason": "Detailed source mechanism and known benchmark/related68477 overlap; outside first-rootcause queue. Full fix screen incomplete, no fixed-release claim."
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Full primary archived; body143–252, both exactGo versions/protocols and measurements inspected. Visible bot related links276–287, maintainer299–302 and author328–330 inspected; later activity/API/fix history not inspected. Go1.23rc2 linux/amd64 i7-13700H and darwin/arm64 AppleM1; exact original benchmark protocol retained, not run. One discovery search/query, five candidates gated; actual68578URL/title selected afterclearance. Known benchmark/related68477 overlap learned only afterprimary; no related source, runtime or fix opened.",
+        "boundaries": "New source-thread review, not a new independent workload: same ChanContended benchmark as already-reviewed68477, distinct scaling versus profile-accounting questions. Source already explains spin/sleeper/wakeup contention; no first rootcause claim. Exact Go1.23rc2/specified hosts/protocol not matched by historical1.23.0, no inventory or replay. Pprof weighted sample-seconds are not independently calibrated physical CPU. G/P/M/TID and lock-owner events required; ancestry alone insufficient.",
+        "time_budget": "Source79.041189 misses60 but meets90; static readiness+26.043609 and facts105.084798 meet30/120. Records154.340960 misses150; final157.467950 meets180 but35s reserve insufficient12.467950. One predispatch administrative function abort, no duplicate source. Three allowed timeguards, all research phases0/handles[]."
       }
     },
     "golang--go--69294": {
@@ -27418,13 +27464,13 @@
     }
   },
   "counts": {
-    "external_environment_required": 574,
+    "external_environment_required": 575,
     "excluded_after_review": 98,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 81,
-  "new_review_count": 688,
+  "new_review_count": 689,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",
