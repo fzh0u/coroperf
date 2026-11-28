@@ -1,0 +1,616 @@
+{
+  "schema": "coroperf.saved-component-effect-review/v1",
+  "reviewed_at": "2026-11-28T14:32:38.342784+00:00",
+  "case_id": "vllm-project--vllm--58145",
+  "developer_report_url": "https://github.com/vllm-project/vllm/issues/58145",
+  "review_scope": "Offline saved evidence only; no new source, target, capture or benchmark.",
+  "developer_observation": "Concurrent plain requests with parser flags stall on synchronous parser construction; saved py-spy stack enters _build_drop_info on MainThread. Source already proposes memoization.",
+  "reported_environment": "vLLM0.29.0/CPython3.12.3, 2xH200; reporter says source path also exists in0.30.0.",
+  "current_live_status_checked": false,
+  "reported_metrics_not_locally_reproduced": {
+    "with_flags_mean_ttft_ms": 39013,
+    "without_flags_diagnostic_mean_ttft_ms": 101,
+    "with_flags_output_tokens_per_s": 604,
+    "without_flags_diagnostic_output_tokens_per_s": 3213
+  },
+  "component_adaptations": [
+    "Bypasses vLLM model/server/native imports with ModuleType packages.",
+    "Calls StreamingParserEngine directly; does not execute renderer eligibility, HTTP request flow, full MistralParser wrapper or scheduler.",
+    "Two named asyncio fixture submission helpers and await sleep(0) introduce the caller-attribution topology.",
+    "Manual tool-call sample exercises parser semantics; original report benchmarks plain tool_choice=none requests.",
+    "Benchmark runs synchronously after asyncio.run and after profile observer is disabled."
+  ],
+  "capture_python_version": "3.12.4 (capture file-path evidence)",
+  "declared_dependencies_not_binary_attested": [
+    "mistral-common==1.13.1",
+    "regex==2026.11.19"
+  ],
+  "task_identity": {
+    "code_uses_actual_task_object_keys": true,
+    "code_holds_strong_task_keys_through_gather": true,
+    "serialized_task_identity": "request-0/request-1 logical labels and fixture-written base_to_sample edges only",
+    "independent_native_task_id_or_reference_witness_saved": false,
+    "historical_exact_probe_hash_attested": false,
+    "historical_script_difference": "Initial local-1 verification has builds list and no reverse field; current script writes helper-keyed builds and reverse, consistent with later reverse-control files. Exact initial executable script is not preserved as a run-hash receipt.",
+    "joined_samples_checked": [
+      {
+        "arm": "local-1/affected",
+        "creation_id": "0",
+        "sample_id": "2",
+        "logical_id": "request-0",
+        "fixture_submitter": "Probe.launch_export",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 2999727,
+        "native_thread_id": 2999727,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "local-1/affected",
+        "creation_id": "1",
+        "sample_id": "3",
+        "logical_id": "request-1",
+        "fixture_submitter": "Probe.launch_preview",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 2999727,
+        "native_thread_id": 2999727,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "local-1/patch",
+        "creation_id": "0",
+        "sample_id": "2",
+        "logical_id": "request-0",
+        "fixture_submitter": "Probe.launch_export",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 2999838,
+        "native_thread_id": 2999838,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "local-1/patch",
+        "creation_id": "1",
+        "sample_id": "3",
+        "logical_id": "request-1",
+        "fixture_submitter": "Probe.launch_preview",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 2999838,
+        "native_thread_id": 2999838,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "local-1/main-affected",
+        "creation_id": "0",
+        "sample_id": "2",
+        "logical_id": "request-0",
+        "fixture_submitter": "Probe.launch_export",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 2999912,
+        "native_thread_id": 2999912,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "local-1/main-affected",
+        "creation_id": "1",
+        "sample_id": "3",
+        "logical_id": "request-1",
+        "fixture_submitter": "Probe.launch_preview",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 2999912,
+        "native_thread_id": 2999912,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "local-1/main-patch",
+        "creation_id": "0",
+        "sample_id": "2",
+        "logical_id": "request-0",
+        "fixture_submitter": "Probe.launch_export",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 3000006,
+        "native_thread_id": 3000006,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "local-1/main-patch",
+        "creation_id": "1",
+        "sample_id": "3",
+        "logical_id": "request-1",
+        "fixture_submitter": "Probe.launch_preview",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 3000006,
+        "native_thread_id": 3000006,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "reversed/v0.30.0",
+        "creation_id": "0",
+        "sample_id": "2",
+        "logical_id": "request-0",
+        "fixture_submitter": "Probe.launch_preview",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 3000159,
+        "native_thread_id": 3000159,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "reversed/v0.30.0",
+        "creation_id": "1",
+        "sample_id": "3",
+        "logical_id": "request-1",
+        "fixture_submitter": "Probe.launch_export",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 3000159,
+        "native_thread_id": 3000159,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "reversed/main",
+        "creation_id": "0",
+        "sample_id": "2",
+        "logical_id": "request-0",
+        "fixture_submitter": "Probe.launch_preview",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 3000243,
+        "native_thread_id": 3000243,
+        "independent_native_task_identity_saved": false
+      },
+      {
+        "arm": "reversed/main",
+        "creation_id": "1",
+        "sample_id": "3",
+        "logical_id": "request-1",
+        "fixture_submitter": "Probe.launch_export",
+        "sample_leaf": "_build_drop_info",
+        "native_process_id": 3000243,
+        "native_thread_id": 3000243,
+        "independent_native_task_identity_saved": false
+      }
+    ],
+    "join_scope": "CoroPerf saved normalized graph preserves explicit input identities/edges and restores fixture helpers missing from current stacks. It does not independently discover the mapping or recover real production request origins.",
+    "per_task_cpu_time_or_wall_interval_measured": false,
+    "saved_folded_output_checks": [
+      {
+        "arm": "local-1/affected",
+        "current_collapsed_rows": 1,
+        "causal_rows": 2,
+        "restored_fixture_helpers": [
+          "Probe.launch_export",
+          "Probe.launch_preview"
+        ],
+        "weights_mean": "captured observations, not measured CPU duration"
+      },
+      {
+        "arm": "local-1/patch",
+        "current_collapsed_rows": 1,
+        "causal_rows": 2,
+        "restored_fixture_helpers": [
+          "Probe.launch_export",
+          "Probe.launch_preview"
+        ],
+        "weights_mean": "captured observations, not measured CPU duration"
+      },
+      {
+        "arm": "local-1/main-affected",
+        "current_collapsed_rows": 1,
+        "causal_rows": 2,
+        "restored_fixture_helpers": [
+          "Probe.launch_export",
+          "Probe.launch_preview"
+        ],
+        "weights_mean": "captured observations, not measured CPU duration"
+      },
+      {
+        "arm": "local-1/main-patch",
+        "current_collapsed_rows": 1,
+        "causal_rows": 2,
+        "restored_fixture_helpers": [
+          "Probe.launch_export",
+          "Probe.launch_preview"
+        ],
+        "weights_mean": "captured observations, not measured CPU duration"
+      },
+      {
+        "arm": "reversed/v0.30.0",
+        "current_collapsed_rows": 1,
+        "causal_rows": 2,
+        "restored_fixture_helpers": [
+          "Probe.launch_export",
+          "Probe.launch_preview"
+        ],
+        "weights_mean": "captured observations, not measured CPU duration"
+      },
+      {
+        "arm": "reversed/main",
+        "current_collapsed_rows": 1,
+        "causal_rows": 2,
+        "restored_fixture_helpers": [
+          "Probe.launch_export",
+          "Probe.launch_preview"
+        ],
+        "weights_mean": "captured observations, not measured CPU duration"
+      }
+    ]
+  },
+  "timing": {
+    "clock_source_in_saved_probe": "perf_counter_ns; wall-clock constructor duration",
+    "method_in_saved_probe": "Five group means,32 constructions per group, median of these5 group means; already warm after capture and semantic calls. Not median of160 individual calls.",
+    "observer_state_in_timing": "sys.setprofile(None) in Probe.run finally precedes semantics and timing; full observer overhead measurement absent.",
+    "same_input_scope": "Within each source-version pair, same saved tokenizer/config and constructor loop; only streaming_parser_engine source differs in local copies.",
+    "arms": {
+      "local-1/affected": {
+        "patched": false,
+        "reverse": null,
+        "builds": [
+          1,
+          1
+        ],
+        "warm_group_mean_construction_us": [
+          71344.72715625,
+          71611.641875,
+          71483.3595,
+          71943.23465625,
+          71363.85259375
+        ],
+        "recomputed_median_us": 71483.3595,
+        "event_count": 21,
+        "capture_segments": 4,
+        "capture_edges": 2,
+        "graph_clock": {
+          "domain": "legacy-unspecified",
+          "unit": "ns"
+        },
+        "capture_loss": null,
+        "native_exit_status": null
+      },
+      "local-1/patch": {
+        "patched": true,
+        "reverse": null,
+        "builds": [
+          1,
+          0
+        ],
+        "warm_group_mean_construction_us": [
+          141.76840625,
+          136.86984375,
+          136.68228125,
+          136.811875,
+          136.780875
+        ],
+        "recomputed_median_us": 136.811875,
+        "event_count": 21,
+        "capture_segments": 4,
+        "capture_edges": 2,
+        "graph_clock": {
+          "domain": "legacy-unspecified",
+          "unit": "ns"
+        },
+        "capture_loss": null,
+        "native_exit_status": null
+      },
+      "local-1/main-affected": {
+        "patched": false,
+        "reverse": null,
+        "builds": [
+          1,
+          1
+        ],
+        "warm_group_mean_construction_us": [
+          71432.6405,
+          71784.82359375,
+          71423.9435625,
+          71295.52865625,
+          71714.041625
+        ],
+        "recomputed_median_us": 71432.6405,
+        "event_count": 21,
+        "capture_segments": 4,
+        "capture_edges": 2,
+        "graph_clock": {
+          "domain": "legacy-unspecified",
+          "unit": "ns"
+        },
+        "capture_loss": null,
+        "native_exit_status": null
+      },
+      "local-1/main-patch": {
+        "patched": true,
+        "reverse": null,
+        "builds": [
+          1,
+          0
+        ],
+        "warm_group_mean_construction_us": [
+          140.13240625,
+          135.599375,
+          135.14475,
+          135.4429375,
+          135.48025
+        ],
+        "recomputed_median_us": 135.48025,
+        "event_count": 21,
+        "capture_segments": 4,
+        "capture_edges": 2,
+        "graph_clock": {
+          "domain": "legacy-unspecified",
+          "unit": "ns"
+        },
+        "capture_loss": null,
+        "native_exit_status": null
+      },
+      "reversed/v0.30.0": {
+        "patched": true,
+        "reverse": true,
+        "builds": {
+          "Probe.launch_preview": 1,
+          "Probe.launch_export": 0
+        },
+        "warm_group_mean_construction_us": [
+          140.52203125,
+          135.5835,
+          134.86109375,
+          135.02359375,
+          134.89471875
+        ],
+        "recomputed_median_us": 135.02359375,
+        "event_count": 21,
+        "capture_segments": 4,
+        "capture_edges": 2,
+        "graph_clock": {
+          "domain": "legacy-unspecified",
+          "unit": "ns"
+        },
+        "capture_loss": null,
+        "native_exit_status": null
+      },
+      "reversed/main": {
+        "patched": true,
+        "reverse": true,
+        "builds": {
+          "Probe.launch_preview": 1,
+          "Probe.launch_export": 0
+        },
+        "warm_group_mean_construction_us": [
+          143.1015,
+          137.74684375,
+          137.49634375,
+          137.49684375,
+          137.32771875
+        ],
+        "recomputed_median_us": 137.49684375,
+        "event_count": 21,
+        "capture_segments": 4,
+        "capture_edges": 2,
+        "graph_clock": {
+          "domain": "legacy-unspecified",
+          "unit": "ns"
+        },
+        "capture_loss": null,
+        "native_exit_status": null
+      }
+    },
+    "rounded_public_values_supported": true,
+    "diagnosis_time_speedup_measured": false,
+    "end_to_end_ttft_or_throughput_gain_measured": false,
+    "randomization_affinity_variance_or_binary_attestation_available": false
+  },
+  "repair_and_semantics": {
+    "local_repair": "LRU maxsize16 caches lexer shape by base-shape object and frozenset of drop texts; per-call token-ID map and per-parser scanner/lexer state remain separate in inspected code.",
+    "saved_reverse_control": "Patched reverse order makes preview first/cold and export second/reused on both versions.",
+    "same_saved_tool_event_sequence_all6_arms": true,
+    "saved_event_count_per_arm": 21,
+    "state_isolation_rebased_token_id_and_reasoning_mode_checks": "Assertions exist in current saved probe, before writing verification; historical exact-script/binary receipt and independent state snapshots absent, so this audit does not independently certify all historical assertions.",
+    "production_full_regression_or_merged_release_verified": false
+  },
+  "claim_verdicts": [
+    {
+      "claim": "Developer-reported expensive _build_drop_info component and memoization mechanism match saved component work.",
+      "verdict": "supported at component scope",
+      "limits": "Full original serving stall, eligibility path and reported TTFT/throughput are not reproduced; cause was already stated upstream."
+    },
+    {
+      "claim": "Actual Task submission origins independently verified from saved artifacts.",
+      "verdict": "partially_supported",
+      "limits": "Current probe uses actual Task keys and saved graph joins correct fixture logical IDs; no independent native Task witness or historical exact probe hash."
+    },
+    {
+      "claim": "71.5ms to0.14ms warm constructor medians on0.30.0.",
+      "verdict": "supported within saved local component measurements",
+      "limits": "71.4833595ms and0.136811875ms are medians of5 group means, not request latency, Task CPU time or diagnostic speedup."
+    },
+    {
+      "claim": "Local repair preserves all vLLM semantics and production performance.",
+      "verdict": "unsupported beyond selected saved examples",
+      "limits": "21 saved events agree and reverse reuse counts agree; full serving/load/production regression and artifact/binary attestation absent."
+    }
+  ],
+  "limits": [
+    "No current GitHub fix-status screen; do not put this known-cause local-patch case in no-public-solution candidates.",
+    "No independently archived target argv/exit, dependency binaries, observer overhead or lost-event coverage for historical runs.",
+    "No new experiment, reproduction, optimizer validation or source fetch was performed."
+  ],
+  "parent_saved_verification_checks": [
+    {
+      "path": "perf-out/github-caller-stitching/vllm-58145/local-1/affected/verification.json",
+      "group_means_us": [
+        71344.72715625,
+        71611.641875,
+        71483.3595,
+        71943.23465625,
+        71363.85259375
+      ],
+      "median_us": 71483.3595,
+      "patched": false,
+      "reverse": null,
+      "builds": [
+        1,
+        1
+      ]
+    },
+    {
+      "path": "perf-out/github-caller-stitching/vllm-58145/local-1/patch/verification.json",
+      "group_means_us": [
+        141.76840625,
+        136.86984375,
+        136.68228125,
+        136.811875,
+        136.780875
+      ],
+      "median_us": 136.811875,
+      "patched": true,
+      "reverse": null,
+      "builds": [
+        1,
+        0
+      ]
+    },
+    {
+      "path": "perf-out/github-caller-stitching/vllm-58145/local-1/main-affected/verification.json",
+      "group_means_us": [
+        71432.6405,
+        71784.82359375,
+        71423.9435625,
+        71295.52865625,
+        71714.041625
+      ],
+      "median_us": 71432.6405,
+      "patched": false,
+      "reverse": null,
+      "builds": [
+        1,
+        1
+      ]
+    },
+    {
+      "path": "perf-out/github-caller-stitching/vllm-58145/local-1/main-patch/verification.json",
+      "group_means_us": [
+        140.13240625,
+        135.599375,
+        135.14475,
+        135.4429375,
+        135.48025
+      ],
+      "median_us": 135.48025,
+      "patched": true,
+      "reverse": null,
+      "builds": [
+        1,
+        0
+      ]
+    },
+    {
+      "path": "perf-out/github-caller-stitching/vllm-58145/reversed/v0.30.0/verification.json",
+      "group_means_us": [
+        140.52203125,
+        135.5835,
+        134.86109375,
+        135.02359375,
+        134.89471875
+      ],
+      "median_us": 135.02359375,
+      "patched": true,
+      "reverse": true,
+      "builds": {
+        "Probe.launch_preview": 1,
+        "Probe.launch_export": 0
+      }
+    },
+    {
+      "path": "perf-out/github-caller-stitching/vllm-58145/reversed/main/verification.json",
+      "group_means_us": [
+        143.1015,
+        137.74684375,
+        137.49634375,
+        137.49684375,
+        137.32771875
+      ],
+      "median_us": 137.49684375,
+      "patched": true,
+      "reverse": true,
+      "builds": {
+        "Probe.launch_preview": 1,
+        "Probe.launch_export": 0
+      }
+    }
+  ],
+  "inputs_rehashed": 74,
+  "source_input_sha256": {
+    "research/github-issue-discovery/vllm-58145/README.md": "edce6fab0a3efd3d652f6f0874e1bdd5399462d823388fa7e96fe71b41b3f204",
+    "research/github-issue-discovery/vllm-58145/case.json": "8ec37e1123cfd48e440c474cbde7ea4c083e3269c412237c3f4215c84b676ed7",
+    "research/github-issue-discovery/vllm-58145/check_parser.py": "f24506b706f1fde9cb0389d70b3623a7ec6c6e9c40b24f556bde50acf6f8f1cf",
+    "research/github-issue-discovery/vllm-58145/cache-drop-shape.patch": "db43614553e7b0a2df256bfaa1a7a67463065ef47e24985c8b5c8ea0082b3e57",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/issue.json": "f3eb30e7cd870c36a9fdd2445004de0a985f51018e7b72a4ef724d0e98db51e2",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/tekken.json": "b1272b956bd6edd2d2c674c76896c7661308c9e723997b0afb55ecb429cb5dc7",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/v0.30.0/mistral-tokenizer.py": "d298280ff0871d306a2eeaa9c179b98ac7ad2c41e393664c0511792a08824180",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/v0.30.0/vllm/renderers/online_renderer.py": "147ac64103d7ffa842cc6b91e916c5de8aaab35f79762451e2c0ee8cb5513c0e",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/v0.30.0/vllm/parser/mistral.py": "6a425212868227ddbd745b2713880a4f8527da319c3b48296a773ab3f30f8b01",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/v0.30.0/vllm/parser/engine/token_id_scanner.py": "5800a7db3ab9dd505f9f6dbdcdcda5b98a4c530e4417d2e0dfadc3b53a7c972e",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/v0.30.0/vllm/parser/engine/adapters.py": "7a77bcb86e2129762f4199ee726398a4850b9e207893fc4295f2b759bcfeeb36",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/v0.30.0/vllm/parser/engine/parser_engine_config.py": "5ffb34f104e752f91fea039e825eb6d7677c12cc6314a1b0189d552f5bb04e84",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/v0.30.0/vllm/parser/engine/streaming_parser_engine.py": "40b417f60b89a7ca5f20bec3d926941522a0ad2b9a5e1e6ffd6b45672f0bc5ae",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/v0.30.0/vllm/parser/engine/incremental_lexer.py": "2bc1c24768cba2e13420dd0802ff98a4a4f83e3b7337c8c3c0dc49f198eb0cc6",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/v0.30.0/vllm/parser/engine/parser_engine.py": "177cbc807c47579001b4a750ca51e6dd50efdc6a57df0768251540585ca73dd2",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/v0.30.0/vllm/parser/engine/events.py": "fc094827b5444dd7ec986a430fc26615f0b1a5de4fcd132a4d4e210a4c1c552d",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/bfe3d7e879344289915ad4c0b5d01c219fbefbae/vllm/renderers/online_renderer.py": "7839414432ef08ddb0a5dfd7107ebb1f9c73770235c33ab7fae27bdef532adbb",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/bfe3d7e879344289915ad4c0b5d01c219fbefbae/vllm/parser/mistral.py": "84c7433e233a7173a2994f7b5ef64323626a07cab46a28be8ffd62a1cf1de7e6",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/bfe3d7e879344289915ad4c0b5d01c219fbefbae/vllm/parser/engine/token_id_scanner.py": "9c84fc104978bfa64a5c8ca2c9b88f4f3a8bcfcedefe10a54b177dc3228d9e5d",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/bfe3d7e879344289915ad4c0b5d01c219fbefbae/vllm/parser/engine/adapters.py": "f6a4e2dc5fc5f9f402f04bd8d413d4c67529ced5995f04899200813ecdb34a97",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/bfe3d7e879344289915ad4c0b5d01c219fbefbae/vllm/parser/engine/parser_engine_config.py": "4984485e8f682cf2a9a5703f41c2a4ed0336c6c89915e148d22dfd5570218473",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/bfe3d7e879344289915ad4c0b5d01c219fbefbae/vllm/parser/engine/streaming_parser_engine.py": "a17df2f43c3605ce0999c35a9d299df6e8cd9aaf482cc4d51a8d832764251089",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/bfe3d7e879344289915ad4c0b5d01c219fbefbae/vllm/parser/engine/incremental_lexer.py": "685e6d413d2ed1a62bd4ee5ebc3359a4a99875015140bcbdc692c93289f73fa3",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/bfe3d7e879344289915ad4c0b5d01c219fbefbae/vllm/parser/engine/parser_engine.py": "3af334925fcd1a16b87964acbcdc15247152697d8cab1c6a0a989bba60242144",
+    "perf-out/github-caller-stitching/vllm-58145/upstream/bfe3d7e879344289915ad4c0b5d01c219fbefbae/vllm/parser/engine/events.py": "fc094827b5444dd7ec986a430fc26615f0b1a5de4fcd132a4d4e210a4c1c552d",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-v0.30.0/mistral-tokenizer.py": "d298280ff0871d306a2eeaa9c179b98ac7ad2c41e393664c0511792a08824180",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-v0.30.0/vllm/renderers/online_renderer.py": "147ac64103d7ffa842cc6b91e916c5de8aaab35f79762451e2c0ee8cb5513c0e",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-v0.30.0/vllm/parser/mistral.py": "6a425212868227ddbd745b2713880a4f8527da319c3b48296a773ab3f30f8b01",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-v0.30.0/vllm/parser/engine/token_id_scanner.py": "5800a7db3ab9dd505f9f6dbdcdcda5b98a4c530e4417d2e0dfadc3b53a7c972e",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-v0.30.0/vllm/parser/engine/adapters.py": "7a77bcb86e2129762f4199ee726398a4850b9e207893fc4295f2b759bcfeeb36",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-v0.30.0/vllm/parser/engine/parser_engine_config.py": "5ffb34f104e752f91fea039e825eb6d7677c12cc6314a1b0189d552f5bb04e84",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-v0.30.0/vllm/parser/engine/streaming_parser_engine.py": "86f428f3dca2e5dcef8e28b2900015c9084a10896719fef6cc102d2c3ffe3cb2",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-v0.30.0/vllm/parser/engine/incremental_lexer.py": "2bc1c24768cba2e13420dd0802ff98a4a4f83e3b7337c8c3c0dc49f198eb0cc6",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-v0.30.0/vllm/parser/engine/parser_engine.py": "177cbc807c47579001b4a750ca51e6dd50efdc6a57df0768251540585ca73dd2",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-v0.30.0/vllm/parser/engine/events.py": "fc094827b5444dd7ec986a430fc26615f0b1a5de4fcd132a4d4e210a4c1c552d",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-main/vllm/renderers/online_renderer.py": "7839414432ef08ddb0a5dfd7107ebb1f9c73770235c33ab7fae27bdef532adbb",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-main/vllm/parser/mistral.py": "84c7433e233a7173a2994f7b5ef64323626a07cab46a28be8ffd62a1cf1de7e6",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-main/vllm/parser/engine/token_id_scanner.py": "9c84fc104978bfa64a5c8ca2c9b88f4f3a8bcfcedefe10a54b177dc3228d9e5d",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-main/vllm/parser/engine/adapters.py": "f6a4e2dc5fc5f9f402f04bd8d413d4c67529ced5995f04899200813ecdb34a97",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-main/vllm/parser/engine/parser_engine_config.py": "4984485e8f682cf2a9a5703f41c2a4ed0336c6c89915e148d22dfd5570218473",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-main/vllm/parser/engine/streaming_parser_engine.py": "46d76a0f3a3b2ebd693fcd3093d3c069f6a5fe3e60a0f3b2f8fc14e11892a8a6",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-main/vllm/parser/engine/incremental_lexer.py": "685e6d413d2ed1a62bd4ee5ebc3359a4a99875015140bcbdc692c93289f73fa3",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-main/vllm/parser/engine/parser_engine.py": "3af334925fcd1a16b87964acbcdc15247152697d8cab1c6a0a989bba60242144",
+    "perf-out/github-caller-stitching/vllm-58145/candidate-main/vllm/parser/engine/events.py": "fc094827b5444dd7ec986a430fc26615f0b1a5de4fcd132a4d4e210a4c1c552d",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/affected/capture.json": "7a3fe1d5a0710e50ae32f3510020dcb3afbc5b98c573f1aae2d0ea51fb929b45",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/affected/verification.json": "0a795240abce0a4720da182d8a2440c8c5c0d22603229d1bac5f6cfb885ca0d8",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/affected/analysis/graph.json": "82de626dc1d1cfaec9c251a4fc78eb086f2808cf779f082263e3f68f511b97dc",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/patch/capture.json": "e41162ac05261ff19158d706c428d9a52b65795f65ebfd723350e3ec1ba64432",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/patch/verification.json": "a8fcca698ddb8bb9b78dd39298d51180ebdf0c13353ff499435106b7a3a937d1",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/patch/analysis/graph.json": "706c8a305f3353fa088172684c1e6bd94df986e3aa43c2b44a88c34fb8015689",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/main-affected/capture.json": "956c89529c2c05192271d1a7a3e86bcc2e4847f7bacc072191c5bcb5932b002a",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/main-affected/verification.json": "661deefb452865ba5fd7fb0705955549c418b523e8eb4c84d2e8f0c6648bfbc5",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/main-affected/analysis/graph.json": "ad62a6c07ad530c6f468554f451b6b5173141fa6d3a11b0ef06a1907a36619a3",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/main-patch/capture.json": "e6965ee4ac6334a8e72e276b2cd614659d945325e48504a68c335f0b9d169d6d",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/main-patch/verification.json": "43c3ffad8461d5d6e2dcd650ce333466ff51d4257b6b16d005ee98a071cbb262",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/main-patch/analysis/graph.json": "e52b202ae0912d45f914fbd4ab6c6c33e42379944bb0b90555441525c6df329e",
+    "perf-out/github-caller-stitching/vllm-58145/reversed/v0.30.0/capture.json": "3421b2f739fbe37d515cfe45618a8324ca217918991f9ba12742dc1cd48a8f30",
+    "perf-out/github-caller-stitching/vllm-58145/reversed/v0.30.0/verification.json": "d80807e36f1c36055302e9c5362b853ae441f91e89d5bfb21eb651048f87f547",
+    "perf-out/github-caller-stitching/vllm-58145/reversed/v0.30.0/analysis/graph.json": "cb18a3765216cee4a4364731e549892ed3eba64ba0cfa8a10df58e690e6867eb",
+    "perf-out/github-caller-stitching/vllm-58145/reversed/main/capture.json": "915afd74378542abea7aeeab6eb8703c3058abf66fda56c5adaa00cdb89429aa",
+    "perf-out/github-caller-stitching/vllm-58145/reversed/main/verification.json": "82858a753b492ead0b28845298de57bb0f11a1eefa03254a4a5cfd24409c3f50",
+    "perf-out/github-caller-stitching/vllm-58145/reversed/main/analysis/graph.json": "de28c69e4729084bfbf64e9e4570d0e7c6762109e37cec44e671aef82e7abdad",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/affected/analysis/current.folded": "6f63a2ea45c2e3ec82b68b544dafd6e517947cc496fd6885f762e640cdc5b4d9",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/affected/analysis/causal.folded": "8ef80674b519ef677632b7d65eb11b0668281c88f78aa7878979c677206d6117",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/patch/analysis/current.folded": "6f63a2ea45c2e3ec82b68b544dafd6e517947cc496fd6885f762e640cdc5b4d9",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/patch/analysis/causal.folded": "8ef80674b519ef677632b7d65eb11b0668281c88f78aa7878979c677206d6117",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/main-affected/analysis/current.folded": "6f63a2ea45c2e3ec82b68b544dafd6e517947cc496fd6885f762e640cdc5b4d9",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/main-affected/analysis/causal.folded": "8ef80674b519ef677632b7d65eb11b0668281c88f78aa7878979c677206d6117",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/main-patch/analysis/current.folded": "6f63a2ea45c2e3ec82b68b544dafd6e517947cc496fd6885f762e640cdc5b4d9",
+    "perf-out/github-caller-stitching/vllm-58145/local-1/main-patch/analysis/causal.folded": "8ef80674b519ef677632b7d65eb11b0668281c88f78aa7878979c677206d6117",
+    "perf-out/github-caller-stitching/vllm-58145/reversed/v0.30.0/analysis/current.folded": "6f63a2ea45c2e3ec82b68b544dafd6e517947cc496fd6885f762e640cdc5b4d9",
+    "perf-out/github-caller-stitching/vllm-58145/reversed/v0.30.0/analysis/causal.folded": "6bc21b21d113654cf083c2e1469fbf147c413d56c2071039205b1035e1aca2e2",
+    "perf-out/github-caller-stitching/vllm-58145/reversed/main/analysis/current.folded": "6f63a2ea45c2e3ec82b68b544dafd6e517947cc496fd6885f762e640cdc5b4d9",
+    "perf-out/github-caller-stitching/vllm-58145/reversed/main/analysis/causal.folded": "6bc21b21d113654cf083c2e1469fbf147c413d56c2071039205b1035e1aca2e2"
+  },
+  "private_audit_sha256": "e1a4bbbbc701e93f05826d3369aa40f6d0e56919b5354c53cba5ae5472860fae",
+  "new_case_or_first_root_cause_credit": 0,
+  "new_target_runs": 0,
+  "diagnosis_time_gain_measured": false
+}
