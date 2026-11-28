@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T10:32:14+00:00",
+  "updated_at": "2026-11-28T10:39:01+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -15247,6 +15247,55 @@
       "builds": 0,
       "captures": 0
     },
+    "netty--netty--12820": {
+      "id": "netty--netty--12820",
+      "repo": "netty/netty",
+      "number": 12820,
+      "url": "https://github.com/netty/netty/issues/12820",
+      "title": "Multiple calls writeAndflush at the same time will delay 3-5 seconds",
+      "sources": [
+        "https://github.com/netty/netty/issues/12820"
+      ],
+      "status": "external_environment_required",
+      "reason": "The author reports real multi-second message delays around2000 online users/writeAndFlush calls per second versus normal behavior below1500/s. Only server setup and send fragments are supplied, without WebSocketServerHandler/WebMessage, complete business logic, clients, messages, dependency/JDK identity or a finite unchanged runner. No faithful complete original can be executed from this body; no readiness/target was started.",
+      "reason_zh": "作者报告约2000在线用户/每秒writeAndFlush调用时消息延迟数秒，低于1500次/秒则正常。正文只有服务端设置及发送片段，缺少WebSocketServerHandler/WebMessage、完整业务逻辑、客户端、消息输入、依赖/JDK身份及有限执行入口；无法据此执行完整忠实原例，未启动readiness或目标。",
+      "source_completeness": {
+        "body": "Returned302-line primary archived; description204–250 and all code in it read.",
+        "comments": "No comments or Activity content returned; actual comment count/history/API completeness unknown.",
+        "version": "Opened2022-09-18; Netty release/JDK/OS unspecified in visible body; visible stateClosed.",
+        "scope": "Saved discovery metadata first, no websearch. One canonical issue primary only; no related source, implementation, client, build, or links opened."
+      },
+      "upstream_evidence": {
+        "observation": "Author reports normal behavior below1500 sends/s, delays about5s above2000/s, many business threads,128 NIO workers, ADVANCED leak detection and a pipeline containing HTTP codecs/aggregator/chunked handler/2MiB FixedLengthFrameDecoder/WebSocket handler.",
+        "counterevidence": "Author says TCP window/buffer and network looked healthy, messages are small and each channel sends only every few seconds; these are source claims, not independently measured exclusions. Per-channel small sends do not establish aggregate event-loop queue or callback cost.",
+        "unknown": "Latency boundary, business-thread serialization cost, event-loop task admission/start, pending flush/write completion, client receipt, channel-to-loop mapping and network/host saturation have no synchronized trace or complete fixture.",
+        "resolution_scope": "Closed marker and no visible development links establish neither diagnosed root cause nor corresponding released fix; comments/history unavailable."
+      },
+      "coroperf_applicability": {
+        "assessment": "Async scheduling/queue attribution incident with a concrete observed threshold; source-skipped because the complete incident fixture is missing.",
+        "assessment_zh": "具有具体负载阈值观察的异步调度/排队归因事件；因缺完整事件原例而skipped。",
+        "required_identity": "Bridge business request/message generation, submitting thread, channel generation, assigned NioEventLoop/nativeTID, queued write task, pipeline callback, flush batch and ChannelPromise completion; record enqueue/start/flush/completion/receipt timestamps. Creation and channel labels alone do not establish owner; loop-local writes may inline.",
+        "required_identity_zh": "桥接业务请求/消息代次、提交线程、channel代次、所属NioEventLoop/原生TID、排队写任务、pipeline回调、flush批次和ChannelPromise完成；记录入队/开始/flush/完成/接收时刻。创建关系及channel标签不足以确定归属，loop内写可能内联。",
+        "native_baseline": "Needs unchanged complete server/client workload and native queue-delay/CPU/socket-write/receipt baseline with synchronized clocks before coroperf attribution or overhead comparison; none executed.",
+        "native_baseline_zh": "需完整未改服务端/客户端工作负载，以及同步时钟下原生队列延迟、CPU、socket写入和接收基线，之后才可比较coroperf归因/开销；本轮未执行。",
+        "limits": "writeAndFlush invocation/return, Promise completion and remote receipt differ. Wall delay is not CPU time.128 workers may share many channels; business thread count is not coroutine count. Do not remove ADVANCED leak detection, alter framing/workers/rate or fabricate clients to create an easier substitute. Existing collector support for Netty channel/task/Promise identity is unverified.",
+        "limits_zh": "writeAndFlush调用/返回、Promise完成及远端接收是不同事件；墙钟延迟不是CPU时间；128worker可各自负责多个channel，业务线程数不是协程数；不可删除ADVANCED泄漏检测、改framing/worker/速率或造客户端替代；现有collector是否支持Netty channel/task/Promise身份尚未核实。"
+      },
+      "open_issues_advice": {
+        "disposition": "status_check",
+        "reason": "Concrete unresolved scheduling-versus-business-work-versus-write-backpressure question, but only cached primary body/Closed marker read; comments and fix history not established. Root should not label no-root-cause/no-fix from this evidence.",
+        "question": "Where does the multi-second interval accrue: business serialization, event-loop task queue, pipeline work, flush/write backpressure or client receipt?",
+        "first_step": "Acquire the exact dependency/JDK identity and complete unchanged finite fixture, then verify issue discussion/fix history through separately gated public sources before candidate promotion. No frozen original replay.",
+        "validation": "No original run, root-cause validation, collector support check, diagnosis timing or speedup measurement occurred.",
+        "reason_zh": "有明确待判别的业务计算/调度/写入背压问题，但仅读取缓存正文及Closed标记，评论与修复历史未核实；不能据此称无根因/无修复候选。"
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Returned302-line primary archived; description204–250 and all code in it read. No comments or Activity content returned; actual comment count/history/API completeness unknown. Opened2022-09-18; Netty release/JDK/OS unspecified in visible body; visible stateClosed. Saved discovery metadata first, no websearch. One canonical issue primary only; no related source, implementation, client, build, or links opened.",
+        "boundaries": "保留作者约2000在线／每秒writeAndFlush时3–5s延迟、低于1500/s正常的实际报告；正文只有服务端和发送片段，缺WebSocketServerHandler／WebMessage、完整业务／客户端／输入／依赖JDK及有限runner，无法忠实执行，skipped后继续。128NIOworker、ADVANCED检测与2MiB framing均保留，不删检测／改workers/rate/framing/造客户端。网络与TCP健康是报告者说法，非独立排除；每channel小发送不排除聚合event-loop queue成本。区分业务序列化、提交到执行队列、pipeline、flush／socket写及客户端接收；ChannelPromise完成不等远端收到，墙钟非CPU、线程数非协程数。需request/message/channel/NioEventLoop/Task/Promise/flush代次到nativeTID与enqueue/start/completion/receipt，loop内可能inline。先同原例原生队列／CPU／socket时间线，再比较额外归属与开销，collector支持未知。302行正文204–250已读，无Activity/comments返回不等零评论；Closed不证明已有根因或无fix，故Open Issues仅status_check、不升无修复候选。",
+        "time_budget": "原dispatch10:34:24.682038Z；source55.317962s，facts95.002363，postwrite95.002446，records109.116894，独立final111.317962–112.317962s（whole-second precision），source60/90/facts120/records150/total180/reserve35满足。所有研究phase0、handles[]、SLOT2unused。"
+      }
+    },
     "netty--netty--12848": {
       "id": "netty--netty--12848",
       "repo": "netty/netty",
@@ -24904,6 +24953,47 @@
         "https://github.com/tokio-rs/tokio/issues/3803"
       ]
     },
+    "tokio-rs--tokio--4290": {
+      "id": "tokio-rs--tokio--4290",
+      "repo": "tokio-rs/tokio",
+      "number": 4290,
+      "url": "https://github.com/tokio-rs/tokio/issues/4290",
+      "title": "Current thread runtime doesn't exit when main task completes when using yield",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/4290"
+      ],
+      "status": "external_environment_required",
+      "reason": "The complete current-thread Rust original and reported 50/100 progress are retained. No pinned Tokio/Rust/Cargo fixture is specified, so no matching original was run. Maintainer and author distinguish detached JoinHandle work from main returning; no work is shown after done. This is not an unresolved first-root-cause target.",
+      "reason_zh": "保留完整 current-thread Rust 原例及 50／100 进度输出；未给出固定 Tokio／Rust／Cargo 构建，未运行匹配原例。维护者与作者区分丢弃 JoinHandle 后仍运行的任务和 main 真正返回；所示 done 后无工作，不列为未解首次根因候选。",
+      "source_completeness": {
+        "body": "Complete finite Rust functions and async main are visible; imports/Cargo/build versions unspecified. Routine scaffolding alone is not the blocker.",
+        "comments": "Rendered discussion through final acknowledgement read; API completeness unknown.",
+        "version": "No pinned Tokio/Rust/toolchain/manifest; 2021 date does not establish a version.",
+        "scope": "Original 50/100 tasks and current_thread flavor unchanged; proposed removal of wrapper was not supplied/executed."
+      },
+      "upstream_evidence": {
+        "observation": "Posted output runs yielding-task iterations through57 after select winner and before done. The workload prints progress and adds values despite factorial names.",
+        "counterevidence": "No work follows done in the posted output. Dropping a losing JoinHandle does not cancel its spawned task; outer main awaits the enclosing spawned task. Final separate reporter admits a loop held a thread after executor polling ended.",
+        "unknown": "Exact affected build, timings/CPU cost and a local original trace are unavailable. The separate reporter does not establish the same failure.",
+        "resolution_scope": "Closed completed on2022-03-09 with scheduling/cancellation semantics explained; no patch or released optimization is demonstrated."
+      },
+      "coroperf_applicability": {
+        "assessment": "Conditional attribution validation, not new root-cause discovery.",
+        "required_identity": "Runtime, outer main, enclosing Task, spawned child Task and JoinHandle generations; select winner/drop/abort, poll/yield/wake and main-return/shutdown ordering. Creation is not cancellation ownership.",
+        "native_baseline": "Ordinary ordered task/poll and main-return instrumentation on a pinned original; wall/CPU must be measured separately from printed iteration counts.",
+        "limits": "No local run or collector coverage/overhead result. Printing changes scheduling; do not remove it or change50/100 to manufacture a benchmark.",
+        "assessment_zh": "仅适合有条件的归属验证，不计首次根因发现。",
+        "required_identity_zh": "关联 runtime、外层 main、包装 Task、两个子 Task／JoinHandle 代次及 select 胜出、drop／abort、poll／yield／wake 和 main 返回／关闭顺序；创建不等于取消所有权。",
+        "native_baseline_zh": "在固定原构建上保留任务／poll 和 main-return 次序；迭代计数不当作墙钟或 CPU 耗时。",
+        "limits_zh": "无本地运行、collector 覆盖或开销结果；保留打印与原50／100输入，不能改造出新的 benchmark。"
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Complete finite Rust functions and async main are visible; imports/Cargo/build versions unspecified. Routine scaffolding alone is not the blocker. Rendered discussion through final acknowledgement read; API completeness unknown. No pinned Tokio/Rust/toolchain/manifest; 2021 date does not establish a version. Original 50/100 tasks and current_thread flavor unchanged; proposed removal of wrapper was not supplied/executed.",
+        "boundaries": "完整有限 Rust 原例承认，current_thread、spawn 包装、select 两个 JoinHandle 与50／100输入及打印不改。输出中 winner 后 fact_yielding 继续到57，但 done 后无工作；丢弃败方 JoinHandle 不取消其 Task、外层 main 尚未返回是所读讨论解释，不能把迭代数当 CPU 或停顿耗时。2021日期不能推版本；缺固定 Cargo／Tokio／Rust 构建，未准备或运行匹配原例，不换现代 SDK／删打印／改 N／去包装造 benchmark。关闭及预期语义说明不抹去真实调度输出，但不作新未解根因／修复成就。需 runtime／main／包装 Task／子 Task／JoinHandle 代次及 poll/yield/wake、胜出/drop/abort/main-return/关闭顺序；创建不等取消所有权。正文完整368行、160–225原例／输出、244–328讨论已读，API完整性未知，basic_scheduler链接未开。原生基线与coroperf支持／开销及定位耗时均未验证；旧4730及selected8085挡，5896未开正文。",
+        "time_budget": "原dispatch10:34:52.777912Z；source archive后检查78.533118s（晚于HTTP返回，非HTTP时延，保守计source60超时、90内）；facts/postwrite78.561642，独立final89.261442，120/150/180与reserve35内。所有研究phase0、handles[]、SLOT1unused；无重启source或原例。"
+      }
+    },
     "tokio-rs--tokio--525": {
       "status": "excluded_after_review",
       "sources": [
@@ -26669,13 +26759,13 @@
     }
   },
   "counts": {
-    "external_environment_required": 559,
+    "external_environment_required": 561,
     "excluded_after_review": 97,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 81,
-  "new_review_count": 672,
+  "new_review_count": 674,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",

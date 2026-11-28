@@ -322,6 +322,57 @@
         "en": "After confirming an unresolved failure, distinguish a live descendant, an inherited pipe still held open, and shutdown bookkeeping. Coroutine lineage alone cannot identify the pipe holder.",
         "zh-CN": "确认仍有未解决的失败后，区分后代进程仍存活、继承的 pipe 仍被持有，以及关闭记账未完成；仅 goroutine 祖先关系不能识别 pipe 持有者。"
       }
+    },
+    {
+      "id": "netty--netty--12820",
+      "reference": "Netty #12820",
+      "url": "https://github.com/netty/netty/issues/12820",
+      "language": "Java / Netty event loop / ChannelPromise",
+      "stage": "status_check",
+      "upstream_state": "closed_in_inspected_page",
+      "local_status": "skipped",
+      "last_source_check": "2026-11-28T10:35:20+00:00",
+      "sources": [
+        "https://github.com/netty/netty/issues/12820"
+      ],
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "question": {
+        "en": "Where does the reported 3–5 second message delay accumulate at approximately 2000 sends/s?",
+        "zh-CN": "约2000次／秒发送时，报告的3–5秒消息延迟积累在哪一段？"
+      },
+      "known": {
+        "en": "The body reports normal behavior below1500/s and multi-second delay near2000/s, with128 NIO workers, ADVANCED leak detection and multiple pipeline handlers. Only server/send fragments were supplied. Network-health statements are reporter observations.",
+        "zh-CN": "正文报告低于1500次／秒正常、约2000次／秒延迟数秒，配置含128个NIO worker、ADVANCED泄漏检测及多个pipeline handler；仅提供服务端／发送片段，网络健康是作者观察。"
+      },
+      "patch": {
+        "en": "The inspected page is marked Closed but returned no discussion or development history. Root cause and fix status are unverified; a closed marker cannot establish either a repair or absence of one.",
+        "zh-CN": "所读页面标为Closed，但未返回讨论和开发历史。根因与修复状态均未核实；关闭标记不能证明已有修复，也不能证明无修复。"
+      },
+      "coroperf_addition": {
+        "en": "Conditionally connect the submitting request/message to its channel, event-loop task, pipeline callback and Promise; separate queue delay from execution and write completion. Netty identity bridges need implementation/verification.",
+        "zh-CN": "有条件地把提交请求／消息关联到channel、event-loop任务、pipeline回调和Promise，分开队列等待、执行与写完成；Netty身份关联仍需实现／核验。"
+      },
+      "required_evidence": {
+        "en": "Request/message/channel/loop/task/Promise generations and native thread; enqueue, task start, flush, write completion and client receipt timestamps. Loop-local writes may inline; Promise completion is not remote receipt.",
+        "zh-CN": "request／message／channel／loop／task／Promise代次及原生线程；入队、任务开始、flush、写完成和客户端接收时刻。loop内写可能内联；Promise完成不等于远端接收。"
+      },
+      "diagnosis_plan": {
+        "en": "Distinguish business serialization, an event-loop admission backlog, expensive pipeline callbacks and write backpressure/client delay. Identify the first large interval on the same message before assigning cause.",
+        "zh-CN": "区分业务序列化、event-loop入队积压、高成本pipeline回调，以及写背压／客户端延迟；沿同一消息找到首个大间隔，再判定原因。"
+      },
+      "validation": {
+        "en": "Recover the unchanged finite server/client fixture and affected versions. Compare ordinary queue/CPU/socket/receipt diagnostics with added identities on the same load; validate any eventual causal repair with the original regression.",
+        "zh-CN": "取得未改动的有限服务端／客户端原例及受影响版本；在相同负载上比较常规队列／CPU／socket／接收诊断与补充身份后的证据，再用原回归验证针对原因的修复。"
+      },
+      "limits": {
+        "en": "Skipped: business handlers, message inputs, clients, dependency/JDK identity and complete runner are missing. Collector support is unverified. No reproduction, timing, validated cause or repair was obtained; retain original framing, worker count, leak detection and rate.",
+        "zh-CN": "skipped：缺业务handler、消息输入、客户端、依赖／JDK身份及完整入口；collector支持未核实。没有复现、定位耗时、已验证根因或修复；保留原framing、worker数、泄漏检测和速率。"
+      },
+      "first_step": {
+        "en": "First check discussion and repair history, then obtain the exact complete fixture. Promote only if a causal question remains unresolved with no demonstrated repair.",
+        "zh-CN": "先补齐讨论与修复历史，再取得精确完整原例；确认仍有未解因果问题且未见有效修复后才升级候选。"
+      }
     }
   ],
   "not_primary": [
@@ -414,12 +465,22 @@
         "en": "HTTPcore PRs #1113/#1116 address the original double-cancel case. A distinct fully-read cleanup gap remains discussed; the whole issue cannot be labeled as having no fix.",
         "zh-CN": "原 double-cancel 场景已有 HTTPcore PR #1113／#1116 与验证；另有 fully-read 清理缺口讨论，不能将整个 issue 宣称为没有 fix。"
       }
+    },
+    {
+      "id": "tokio-rs--tokio--4290",
+      "reference": "Tokio #4290",
+      "url": "https://github.com/tokio-rs/tokio/issues/4290",
+      "last_source_check": "2026-11-28T10:36:11.311030+00:00",
+      "reason": {
+        "en": "The inspected discussion explains losing JoinHandle drop versus cancellation and main-return ordering; the posted output contains no work after done. Useful for attribution validation, outside the unresolved first-root-cause queue. No pinned original build or local run.",
+        "zh-CN": "所读讨论已解释败方JoinHandle丢弃与取消、main返回的次序；所示done后无工作。可验证归属，不计未解首次根因队列；缺固定原构建且未本地运行。"
+      }
     }
   ],
   "publication": {
     "status": "pending",
     "target": "https://fzh0u.github.io/coroperf/zh-cn/open-issues.html",
-    "note": "Current popular-framework review update is awaiting Git publication."
+    "note": "Wave269 source-reviewed status-check intake and validation plans prepared locally; Git push and Pages deployment unverified."
   },
   "synchronized_at": "2026-11-28T10:17:59.175034+00:00",
   "synchronization": {
@@ -432,7 +493,7 @@
     "en": "The list is ordered by investigation priority. Status labels distinguish priority investigations, pending investigations and entries requiring a status check. No new verified case or execution is claimed.",
     "zh-CN": "列表按调查优先顺序排列，用状态区分优先调查、待调查和先核验状态的条目。本次未增加验证案例或执行结果。"
   },
-  "presentation_updated_at": "2026-11-28T10:30:37.095885+00:00",
+  "presentation_updated_at": "2026-11-28T10:38:51.323380+00:00",
   "diagnosis_protocol": {
     "status": "planned_unmeasured",
     "claim": {
