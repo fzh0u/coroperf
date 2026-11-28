@@ -9,7 +9,7 @@
   },
   "url": "https://github.com/vllm-project/vllm/issues/41530",
   "created_at": "2026-11-28T10:09:53.590429+00:00",
-  "status": "planned",
+  "status": "collector_prepared",
   "verified_case": false,
   "local_execution": "not_run",
   "root_cause_confirmed": false,
@@ -31,20 +31,20 @@
     "zh-CN": "上游说明 #58779 限制等待时间，但没有消除底层停顿。禁用 adaptive verification 是待检验方向，不是所选失败的已确认修复。本轮讨论与定向 PR 搜索未发现针对该停顿的已验证修复。"
   },
   "first_step": {
-    "en": "Recover one reporter configuration, workload inputs and native traces; establish that the same silent stall still reproduces.",
-    "zh-CN": "先取得一位报告者的配置、负载输入与原生轨迹，确认同一种静默停顿仍可复现。"
+    "en": "Collect the same failing H200/model/request workload with the prepared host probes plus worker/native/device progress. Compare matching RPC generations and rank budgets before testing an adaptive-verification change.",
+    "zh-CN": "在同一H200／模型／请求负载上，结合已准备的主机探针与worker原生／设备进展采集；匹配RPC代次和rank预算后，再检验adaptive verification改动。"
   },
   "next_action": {
-    "en": "Recover one reporter configuration, workload inputs and native traces; establish that the same silent stall still reproduces.",
-    "zh-CN": "先取得一位报告者的配置、负载输入与原生轨迹，确认同一种静默停顿仍可复现。"
+    "en": "Collect the same failing H200/model/request workload with the prepared host probes plus worker/native/device progress. Compare matching RPC generations and rank budgets before testing an adaptive-verification change.",
+    "zh-CN": "在同一H200／模型／请求负载上，结合已准备的主机探针与worker原生／设备进展采集；匹配RPC代次和rank预算后，再检验adaptive verification改动。"
   },
   "proposed_addition": {
     "en": "Connect initiating request and batch histories to the specific RPC, worker generation and rank; identify the earliest missing progress event.",
     "zh-CN": "把发起请求、batch 历史接到具体 RPC、worker 代次与 rank，定位最早缺失的进展事件。"
   },
   "limits": {
-    "en": "Requires the selected multi-GPU/model environment. Coroutine ancestry alone cannot prove a CUDA or collective deadlock; no local reproduction, overhead or repair result is available.",
-    "zh-CN": "需要所选报告对应的多 GPU／模型环境；协程祖先本身不能证明 CUDA 或 collective 死锁，目前没有本地复现、开销或修复结果。"
+    "en": "The incident remains unreproduced. Preparation checks use explicit collector fixtures, not vLLM inference. Collection overhead, trace effects on the rare schedule, device completion and root cause are unmeasured.",
+    "zh-CN": "原故障尚未复现。准备检查使用明确的采集器fixture，不是vLLM推理；采集开销、对罕见时序的影响、设备完成及根因均未测得。"
   },
   "hypotheses": [
     {
@@ -116,5 +116,28 @@
   "repair": null,
   "sources": [
     "https://github.com/vllm-project/vllm/issues/41530"
+  ],
+  "preparation": {
+    "path": "data/investigations/vllm-41530-progress/progress.json",
+    "collector": "data/investigations/vllm-41530-progress/collector.zip",
+    "component": "data/investigations/vllm-41530-progress/component-validation.json"
+  },
+  "progress_notes": [
+    {
+      "en": "The 0.33.0 revision 4ba787ec has 19 matching source selections. Four engineering checks pass for the launcher, selected metadata, task/thread/fork identity and persistence before blocked-process exit. These are collector checks, with zero incident executions.",
+      "zh-CN": "0.33.0 的固定 revision4ba787ec 匹配19个源码选择点。启动器、元数据、任务／线程／fork 身份及阻塞进程退出前落盘，共四项工程检查通过；原故障执行次数仍为零。"
+    },
+    {
+      "en": "Source analysis: adaptive verification chooses a local draft budget, followed by graph/DP dispatch. This supplies an observation point for the suggested rank-disagreement hypothesis, not evidence that disagreement caused this incident. The default 300 s RPC deadline and 60 s first warning account for roughly 240 s from first warning to fatal; 239 s in second-resolution logs does not identify a worker cause.",
+      "zh-CN": "源码分析：adaptive verification 在本地选择 draft 预算，再进入 graph／DP 派发。这给 rank 分歧假设提供了观察点，尚不能证明原故障由分歧造成。默认300秒 RPC deadline 与60秒首条告警解释了约240秒的告警到退出时长；秒级日志中的239秒不是 worker 首因证据。"
+    },
+    {
+      "en": "The selected report uses 4×H200 and a 475 GiB DeepSeekV4.1Flash checkpoint. The inspected local environment has 8×A100 and lacks that checkpoint. A small-model run would be a separate control, not reproduction of this incident. Host progress does not establish CUDA/NCCL completion.",
+      "zh-CN": "所选报告使用4×H200及475GiB的DeepSeekV4.1Flash checkpoint。本地已检查环境为8×A100，未找到该checkpoint。小模型运行只能作为另一个对照，不能称为原故障复现；主机事件也不证明CUDA／NCCL已经完成。"
+    },
+    {
+      "en": "In an isolated check using the unchanged FutureWrapper source class, three completed submitting Tasks were linked to three later synchronous waits through the captured Future and response-closure identities. Baseline and profiled callback results agree. These controlled callbacks do not reproduce the engine stall or validate its cause.",
+      "zh-CN": "在使用未改动 FutureWrapper 源码类的独立组件检查中，通过记录的 Future 与响应闭包身份，将三个已结束的提交 Task 分别关联到之后的三次同步等待。开启采集前后的回调结果一致。回调输入为受控测试，不是原引擎停顿的复现或根因验证。"
+    }
   ]
 }

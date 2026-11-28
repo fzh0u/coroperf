@@ -1,0 +1,120 @@
+{
+  "status": "collector_prepared_incident_unreproduced",
+  "checked_at": "2026-11-28T14:44:10+00:00",
+  "target_revision": "4ba787ec9959e566d3b587a796dff07673324da5",
+  "original_incident_runs": 0,
+  "root_cause_confirmed": false,
+  "repair_validated": false,
+  "source_selections": 19,
+  "collector_engineering_checks": 4,
+  "local_gpu_probe": [
+    "0, NVIDIA A100-SXM4-80GB, 8.0",
+    "1, NVIDIA A100-SXM4-80GB, 8.0",
+    "2, NVIDIA A100-SXM4-80GB, 8.0",
+    "3, NVIDIA A100-SXM4-80GB, 8.0",
+    "4, NVIDIA A100-SXM4-80GB, 8.0",
+    "5, NVIDIA A100-SXM4-80GB, 8.0",
+    "6, NVIDIA A100-SXM4-80GB, 8.0",
+    "7, NVIDIA A100-SXM4-80GB, 8.0"
+  ],
+  "environment_gap": "Selected report uses4xH200 and a475GiB DeepSeekV4.1Flash checkpoint, unavailable in the inspected local8xA100 environment/cache.",
+  "source_analysis": {
+    "hypothesis": "Rank-local adaptive budgets may select inconsistent execution shapes; not demonstrated in the reported incident.",
+    "deadline": "The default300s RPC deadline and60s first warning imply about240s warning-to-fatal time; the reported239s does not identify a worker cause.",
+    "anchors": [
+      "vllm/envs.py:252",
+      "vllm/v1/executor/multiproc_executor.py:447",
+      "vllm/distributed/device_communicators/shm_broadcast.py:800",
+      "vllm/v1/worker/gpu/spec_decode/adaptive_verification.py:313"
+    ]
+  },
+  "files": [
+    {
+      "path": "agents/python/sitecustomize.py",
+      "sha256": "8ac1625970eb387a044a872a24a1ed753a4c20d340e3ed46f48039f06e972009"
+    },
+    {
+      "path": "agents/python/corostitch_agent.py",
+      "sha256": "ef0fb3f8977b80ab273146c80cfb8952273922b09558ab9181ba90b16970753f"
+    },
+    {
+      "path": "agents/python/coroperf_semantic_probes.py",
+      "sha256": "78b099d2d73e53d2e86ddc0544d36533ad4e984de7e63051337c56e458989b05"
+    },
+    {
+      "path": "tools/vllm-progress/launch.py",
+      "sha256": "87c8d964a44fb47d91ae161b7d4e0a328c3442ab969c20fd83bf46310495c8f9"
+    },
+    {
+      "path": "tools/vllm-progress/boundaries-v0.33.json",
+      "sha256": "40a1f4dee0e2187e890d03e02ec5847483a48875dc200400ca977e4e66ac4724"
+    },
+    {
+      "path": "tools/vllm-progress/validate_spec.py",
+      "sha256": "11d47665e665f633dd7a7c3b478fc6f27a03ac5de0c07610413a9960f3b90e38"
+    },
+    {
+      "path": "tools/vllm-progress/README.md",
+      "sha256": "3525daa981efdcfea1f6cbcc82595bbec8cc839f827e93032149bc859ef5bd73"
+    },
+    {
+      "path": "tests/test_python_selected_boundary_progress.py",
+      "sha256": "52112f37174a66de4da4a58e4c648fd6f07fcc14f6607e63cec00cb32ca16588"
+    },
+    {
+      "path": "tests/test_corostitch_cli.py",
+      "sha256": "affc1386297ecdd71f98f1ea571df84771125f219da87ab4b3f48cca56780116"
+    },
+    {
+      "path": "research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+      "sha256": "aa3d4bf0175eb07cebd0935c67e15eeb00fbefb101151e8e8bbd49b969f53963"
+    },
+    {
+      "path": "research/open-issue-debug/vllm-41530/analyze_component.py",
+      "sha256": "4d9bd6f0bffd8ba97eb155b7b54d5fd435d1da969c331587b80189509e8e5e72"
+    }
+  ],
+  "collector_zip_sha256": "238a9e2cc86b9c73c5e40aab19f0247b04cca3cdda74ff82c504511e79e47a9e",
+  "scope": "Preparation and engineering checks only. Synthetic collector fixtures are not evidence of vLLM failure, root cause, diagnosis speedup or serving overhead.",
+  "component_check": {
+    "status": "passed",
+    "source_class": "FutureWrapper",
+    "submitted_tasks": 3,
+    "source_to_wait_joins": 3,
+    "baseline_profiled_outputs_match": true,
+    "result": "component-validation.json",
+    "scope": "Source-only class, controlled callbacks, no engine/model run."
+  },
+  "exports": [
+    {
+      "path": "source-selection.json",
+      "sha256": "b1426f39a288ca2c48af7b09e598e0a53a468161726a26075cb1bc3a4cb5f886",
+      "original_sha256": "b1426f39a288ca2c48af7b09e598e0a53a468161726a26075cb1bc3a4cb5f886"
+    },
+    {
+      "path": "collector-checks.txt",
+      "sha256": "f51eaaec144912f13bf37d58abf5385ddf03e10e4d7a215bf8baa5d4c3b540e9",
+      "original_sha256": "f51eaaec144912f13bf37d58abf5385ddf03e10e4d7a215bf8baa5d4c3b540e9"
+    },
+    {
+      "path": "component-validation.json",
+      "sha256": "dc5cc1f2456f3dd6141c44f549dc8e7a465419072e2dc9a543e02cdf533b0b4f",
+      "original_sha256": "dc5cc1f2456f3dd6141c44f549dc8e7a465419072e2dc9a543e02cdf533b0b4f"
+    },
+    {
+      "path": "component-baseline.json",
+      "sha256": "2aab760a54cfc89a079f97031c05829ceef857a027fd889eb7b76f54b3208cf0",
+      "original_sha256": "2aab760a54cfc89a079f97031c05829ceef857a027fd889eb7b76f54b3208cf0"
+    },
+    {
+      "path": "component-profiled.json",
+      "sha256": "55ccdd59e66360835ee259c788f0be59c95dc2d6b962ad84ccbad4e666289e39",
+      "original_sha256": "55ccdd59e66360835ee259c788f0be59c95dc2d6b962ad84ccbad4e666289e39"
+    },
+    {
+      "path": "component-graph.json",
+      "sha256": "fd00831f68254c19badc0a097ea35a9ebf0e044af6da2bad96eb2b94fbbda7cf",
+      "original_sha256": "dde1f76ca7d63ed613724d3e450a6c1c4d917fe5f1c17a92bd46e924ef2fd988"
+    }
+  ]
+}

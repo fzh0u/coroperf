@@ -53,6 +53,8 @@ def render(data, language):
         if plan:
             details += f'<dt>{tr("Competing explanations", "需要区分的解释")}</dt><dd>{e(plan[language])}</dd>'
         evidence = row.get('diagnosis_result')
+        if row.get('preparation_result'):
+            details += f'<dt>{tr("Preparation and collector checks", "准备与采集检查")}</dt><dd>{e(row["preparation_result"][language])}</dd>'
         if evidence:
             details += f'<dt>{tr("Measured diagnosis result", "定位实测结果")}</dt><dd>{e(evidence[language])}</dd>'
         else:

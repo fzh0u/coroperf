@@ -76,19 +76,31 @@ def render(case, language):
     description = tr('Investigation created; reproduction, diagnosis and repair are pending.', '已建立调查案例；复现、诊断和修复结果待完成。')
     if case.get('skip_reason') == 'user_request':
         description = tr('Skipped at the user’s request; retained for reference. No local cause or repair is verified.', '按用户要求跳过，保留资料；未验证本地根因或修复。')
+    elif case.get('status') == 'collector_prepared':
+        description = tr('Source-matched collector prepared; the incident and its cause remain unverified.', '已准备匹配源码的采集器；原故障与根因仍未验证。')
     hypotheses = ''.join(f'<tr><th scope="row">{e(h["id"])} · {text(h["claim"])}</th><td>{text(h["distinguish"])}</td></tr>' for h in case['hypotheses'])
     relations = ''.join(f'<li>{text(row)}</li>' for row in case['required_relations'])
     comparisons = ''.join(f'<li>{text(row)}</li>' for row in case['comparisons'])
     repair_status = (f'<p class="section-copy">{text(case["repair_status"])}</p>'
                      if case.get('repair_status') else '')
+    preparation = ''
+    if case.get('preparation'):
+        prefix = '../../' if zh else '../'
+        notes = ''.join(f'<p>{text(note)}</p>' for note in case.get('progress_notes', []))
+        component = (f' · <a href="{e(prefix + case["preparation"]["component"])}">{tr("Isolated component check", "独立组件检查")}</a>'
+                     if case['preparation'].get('component') else '')
+        preparation = (f'<section class="block"><h2>{tr("Preparation and source analysis", "采集准备与源码分析")}</h2>{notes}'
+                       f'<p><a href="{e(prefix + case["preparation"]["path"])}">{tr("Source selection and check results", "源码选择点与检查结果")}</a> · '
+                       f'<a href="{e(prefix + case["preparation"]["collector"])}">{tr("Collector bundle", "采集器包")}</a>{component}</p></section>')
     body = f'''<article class="wrap research open-review">
       <section class="block"><a href="../open-issues.html">{tr('Back to open investigations', '返回待分析 Issue')}</a>
         <h1>{title}</h1><p>{description}</p><p>{text(case['source_scope'])}</p>
         <p><a href="{e(case['url'])}">{tr('Upstream issue', '上游 issue')}</a> · <a href="{'../../' if zh else '../'}data/investigations/{e(slug)}.json">{tr('Case record', '案例记录')}</a></p>
       </section>
       <section class="block"><h2>{tr('Observed problem and existing evidence', '问题与已有证据')}</h2><p class="section-copy">{text(case['known'])}</p>{repair_status}</section>
+      {preparation}
       <section class="block"><h2>{tr('Competing explanations', '待区分的解释')}</h2><div class="review-scroll"><table><thead><tr><th>{tr('Hypothesis', '假设')}</th><th>{tr('Discriminating evidence', '区分证据')}</th></tr></thead><tbody>{hypotheses}</tbody></table></div></section>
-      <section class="block"><h2>{tr('Function-stack comparison to collect', '待采集的函数栈对比')}</h2><p class="section-copy">{tr('No captured stacks or flame graphs exist for this investigation yet. These are collection targets.', '本调查尚无采集栈或火焰图，以下是待验证的采集目标。')}</p>
+      <section class="block"><h2>{tr('Function-stack comparison to collect', '待采集的函数栈对比')}</h2><p class="section-copy">{tr('Stacks and flame graphs from the original failure remain unavailable. These are collection targets.', '尚无原始故障的采集栈或火焰图，以下是待验证的采集目标。')}</p>
         <div class="review-scroll"><table><thead><tr><th>{tr('Ordinary diagnostics', '普通诊断')}</th><th>{tr('With CoroPerf', '增加 CoroPerf')}</th></tr></thead><tbody><tr><td>{text(case['evidence_comparison']['ordinary'])}</td><td>{text(case['evidence_comparison']['with_coroperf'])}</td></tr></tbody></table></div>
       </section>
       <section class="block"><h2>{tr('Identity and event chain', '身份与事件链')}</h2><ul>{relations}</ul><p>{text(case['proposed_addition'])}</p></section>

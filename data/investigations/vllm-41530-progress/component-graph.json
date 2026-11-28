@@ -1,0 +1,840 @@
+{
+  "schema_version": 1,
+  "language": "python",
+  "runtime": "asyncio-sitecustomize",
+  "frame_order": "root_to_leaf",
+  "producer": {
+    "name": "asyncio-frame-inspection",
+    "identity_kind": "runtime-token-generation",
+    "continuation_storage": "stackless-state",
+    "frame_order": "root_to_leaf",
+    "clock": "monotonic-ns",
+    "observation_kind": "task_snapshot"
+  },
+  "segments": [
+    {
+      "id": 0,
+      "coroutine_id": "python-asyncio-task-0x7adad649b280-g1",
+      "capture_reason": "create",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424081572972,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:194:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run:100:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py"
+      ],
+      "function_name": "submit_all",
+      "coroutine_object_id": "135080315265776",
+      "parent_coroutine_id": null
+    },
+    {
+      "id": 1,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g2",
+      "capture_reason": "create",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424082925904,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:194:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run:118:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:674:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "run_forever:641:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run_once:1987:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run:88:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+        "submit_all:37:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "create_task:420:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py"
+      ],
+      "function_name": "launch_request",
+      "coroutine_object_id": "135080313505472",
+      "parent_coroutine_id": "python-asyncio-task-0x7adad649b280-g1"
+    },
+    {
+      "id": 2,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g2",
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424083161443,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:194:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run:118:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:674:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "run_forever:641:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run_once:1987:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run:88:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+        "launch_request:34:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "__init__:93:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-call",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "call",
+        "function": "__init__",
+        "resource_id": "135080313886848",
+        "qualname": "FutureWrapper.__init__",
+        "activation_id": "135080313505680",
+        "fields": {
+          "get_response": {
+            "unavailable": true
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "8e3def3bbfdac757599ed7536408b188ad8a4d4ce59ab226ba645604913a8c2a"
+        },
+        "activation_token": 1,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {
+          "response_closure": {
+            "type": "function",
+            "object_id": "135080313538496"
+          }
+        },
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 3,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g2",
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424083378129,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:194:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run:118:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:674:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "run_forever:641:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run_once:1987:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run:88:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+        "launch_request:34:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "__init__:103:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-return",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "return",
+        "function": "__init__",
+        "resource_id": "135080313886848",
+        "qualname": "FutureWrapper.__init__",
+        "activation_id": "135080313505680",
+        "fields": {
+          "get_response": {
+            "type": "function",
+            "object_id": "135080313538496"
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "8e3def3bbfdac757599ed7536408b188ad8a4d4ce59ab226ba645604913a8c2a"
+        },
+        "activation_token": 1,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {
+          "response_closure": {
+            "type": "function",
+            "object_id": "135080313538496"
+          }
+        },
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 4,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g2",
+      "capture_reason": "exit",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424083522167,
+      "frames": [],
+      "exit_reason": "return"
+    },
+    {
+      "id": 5,
+      "coroutine_id": "python-asyncio-task-0x7adad649b4c0-g3",
+      "capture_reason": "create",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424084026295,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:194:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run:118:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:674:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "run_forever:641:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run_once:1987:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run:88:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+        "submit_all:37:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "create_task:420:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py"
+      ],
+      "function_name": "launch_request",
+      "coroutine_object_id": "135080313506720",
+      "parent_coroutine_id": "python-asyncio-task-0x7adad649b280-g1"
+    },
+    {
+      "id": 6,
+      "coroutine_id": "python-asyncio-task-0x7adad649b4c0-g3",
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424084136460,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:194:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run:118:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:674:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "run_forever:641:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run_once:1987:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run:88:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+        "launch_request:34:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "__init__:93:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-call",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "call",
+        "function": "__init__",
+        "resource_id": "135080313886896",
+        "qualname": "FutureWrapper.__init__",
+        "activation_id": "135080313505472",
+        "fields": {
+          "get_response": {
+            "unavailable": true
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "8e3def3bbfdac757599ed7536408b188ad8a4d4ce59ab226ba645604913a8c2a"
+        },
+        "activation_token": 2,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {
+          "response_closure": {
+            "type": "function",
+            "object_id": "135080313541056"
+          }
+        },
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 7,
+      "coroutine_id": "python-asyncio-task-0x7adad649b4c0-g3",
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424084222002,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:194:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run:118:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:674:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "run_forever:641:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run_once:1987:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run:88:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+        "launch_request:34:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "__init__:103:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-return",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "return",
+        "function": "__init__",
+        "resource_id": "135080313886896",
+        "qualname": "FutureWrapper.__init__",
+        "activation_id": "135080313505472",
+        "fields": {
+          "get_response": {
+            "type": "function",
+            "object_id": "135080313541056"
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "8e3def3bbfdac757599ed7536408b188ad8a4d4ce59ab226ba645604913a8c2a"
+        },
+        "activation_token": 2,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {
+          "response_closure": {
+            "type": "function",
+            "object_id": "135080313541056"
+          }
+        },
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 8,
+      "coroutine_id": "python-asyncio-task-0x7adad649b4c0-g3",
+      "capture_reason": "exit",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424084344791,
+      "frames": [],
+      "exit_reason": "return"
+    },
+    {
+      "id": 9,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g4",
+      "capture_reason": "create",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424084829800,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:194:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run:118:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:674:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "run_forever:641:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run_once:1987:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run:88:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+        "submit_all:37:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "create_task:420:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py"
+      ],
+      "function_name": "launch_request",
+      "coroutine_object_id": "135080313507552",
+      "parent_coroutine_id": "python-asyncio-task-0x7adad649b280-g1"
+    },
+    {
+      "id": 10,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g4",
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424084931262,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:194:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run:118:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:674:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "run_forever:641:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run_once:1987:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run:88:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+        "launch_request:34:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "__init__:93:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-call",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "call",
+        "function": "__init__",
+        "resource_id": "135080313888864",
+        "qualname": "FutureWrapper.__init__",
+        "activation_id": "135080313506720",
+        "fields": {
+          "get_response": {
+            "unavailable": true
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "8e3def3bbfdac757599ed7536408b188ad8a4d4ce59ab226ba645604913a8c2a"
+        },
+        "activation_token": 3,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {
+          "response_closure": {
+            "type": "function",
+            "object_id": "135080313537536"
+          }
+        },
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 11,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g4",
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424084998677,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:194:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run:118:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:674:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "run_forever:641:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run_once:1987:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "_run:88:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/events.py",
+        "launch_request:34:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "__init__:103:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-return",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "return",
+        "function": "__init__",
+        "resource_id": "135080313888864",
+        "qualname": "FutureWrapper.__init__",
+        "activation_id": "135080313506720",
+        "fields": {
+          "get_response": {
+            "type": "function",
+            "object_id": "135080313537536"
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "8e3def3bbfdac757599ed7536408b188ad8a4d4ce59ab226ba645604913a8c2a"
+        },
+        "activation_token": 3,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {
+          "response_closure": {
+            "type": "function",
+            "object_id": "135080313537536"
+          }
+        },
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 12,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g4",
+      "capture_reason": "exit",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424085128761,
+      "frames": [],
+      "exit_reason": "return"
+    },
+    {
+      "id": 13,
+      "coroutine_id": "python-asyncio-task-0x7adad649b280-g1",
+      "capture_reason": "exit",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424085240917,
+      "frames": [],
+      "exit_reason": "return"
+    },
+    {
+      "id": 14,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g5",
+      "capture_reason": "create",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424085793035,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:193:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "__exit__:62:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "close:71:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:666:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "ensure_future:695:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py"
+      ],
+      "function_name": "BaseEventLoop.shutdown_asyncgens",
+      "coroutine_object_id": "135080315481584",
+      "parent_coroutine_id": null
+    },
+    {
+      "id": 15,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g5",
+      "capture_reason": "exit",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424085960451,
+      "frames": [],
+      "exit_reason": "return"
+    },
+    {
+      "id": 16,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g6",
+      "capture_reason": "create",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424086406625,
+      "frames": [
+        "<module>:39:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "run:193:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "__exit__:62:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "close:72:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py",
+        "run_until_complete:666:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py",
+        "ensure_future:695:$COROPERF_ROOT/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/tasks.py"
+      ],
+      "function_name": "BaseEventLoop.shutdown_default_executor",
+      "coroutine_object_id": "135080315751488",
+      "parent_coroutine_id": null
+    },
+    {
+      "id": 17,
+      "coroutine_id": "python-asyncio-task-0x7adad649b940-g6",
+      "capture_reason": "exit",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424086560062,
+      "frames": [],
+      "exit_reason": "return"
+    },
+    {
+      "id": 18,
+      "coroutine_id": null,
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424086917895,
+      "frames": [
+        "<module>:40:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "result:112:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+        "_wait_for_response:115:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-call",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "call",
+        "function": "_wait_for_response",
+        "resource_id": "135080313886848",
+        "qualname": "FutureWrapper._wait_for_response",
+        "activation_id": "135080315595776",
+        "fields": {
+          "get_response": {
+            "type": "function",
+            "object_id": "135080313538496"
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "daeb3cec7c43445e087e4f8bf135dc320c4f6b3282eddf7dfd09d27db158ce1b"
+        },
+        "activation_token": 4,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {},
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 19,
+      "coroutine_id": null,
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424087047392,
+      "frames": [
+        "<module>:40:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "result:112:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+        "_wait_for_response:118:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-return",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "return",
+        "function": "_wait_for_response",
+        "resource_id": "135080313886848",
+        "qualname": "FutureWrapper._wait_for_response",
+        "activation_id": "135080315595776",
+        "fields": {
+          "get_response": {
+            "type": "function",
+            "object_id": "135080313538496"
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "daeb3cec7c43445e087e4f8bf135dc320c4f6b3282eddf7dfd09d27db158ce1b"
+        },
+        "activation_token": 4,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {},
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 20,
+      "coroutine_id": null,
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424087108998,
+      "frames": [
+        "<module>:40:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "result:112:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+        "_wait_for_response:115:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-call",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "call",
+        "function": "_wait_for_response",
+        "resource_id": "135080313886896",
+        "qualname": "FutureWrapper._wait_for_response",
+        "activation_id": "135080315595776",
+        "fields": {
+          "get_response": {
+            "type": "function",
+            "object_id": "135080313541056"
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "daeb3cec7c43445e087e4f8bf135dc320c4f6b3282eddf7dfd09d27db158ce1b"
+        },
+        "activation_token": 5,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {},
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 21,
+      "coroutine_id": null,
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424087203155,
+      "frames": [
+        "<module>:40:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "result:112:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+        "_wait_for_response:121:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-return",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "return",
+        "function": "_wait_for_response",
+        "resource_id": "135080313886896",
+        "qualname": "FutureWrapper._wait_for_response",
+        "activation_id": "135080315595776",
+        "fields": {
+          "get_response": {
+            "type": "function",
+            "object_id": "135080313541056"
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "daeb3cec7c43445e087e4f8bf135dc320c4f6b3282eddf7dfd09d27db158ce1b"
+        },
+        "activation_token": 5,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {},
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 22,
+      "coroutine_id": null,
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424087254804,
+      "frames": [
+        "<module>:40:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "result:112:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+        "_wait_for_response:115:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-call",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "call",
+        "function": "_wait_for_response",
+        "resource_id": "135080313888864",
+        "qualname": "FutureWrapper._wait_for_response",
+        "activation_id": "135080315598016",
+        "fields": {
+          "get_response": {
+            "type": "function",
+            "object_id": "135080313537536"
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "daeb3cec7c43445e087e4f8bf135dc320c4f6b3282eddf7dfd09d27db158ce1b"
+        },
+        "activation_token": 6,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {},
+        "rank_environment": {},
+        "result": null
+      }
+    },
+    {
+      "id": 23,
+      "coroutine_id": null,
+      "capture_reason": "sample",
+      "thread_id": 258376,
+      "timestamp_ns": 2085424087342279,
+      "frames": [
+        "<module>:40:$COROPERF_ROOT/research/open-issue-debug/vllm-41530/future_wrapper_component.py",
+        "result:112:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+        "_wait_for_response:118:$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py"
+      ],
+      "label": "boundary-return",
+      "sample_kind": "semantic_boundary",
+      "semantic": {
+        "kind": "python-function",
+        "phase": "return",
+        "function": "_wait_for_response",
+        "resource_id": "135080313888864",
+        "qualname": "FutureWrapper._wait_for_response",
+        "activation_id": "135080315598016",
+        "fields": {
+          "get_response": {
+            "type": "function",
+            "object_id": "135080313537536"
+          }
+        },
+        "source": {
+          "file": "$COROPERF_ROOT/.tools/open-issue-debug/vllm-41530/vllm-4ba787ec9959e566d3b587a796dff07673324da5/vllm/v1/executor/multiproc_executor.py",
+          "file_sha256": "d1de4acfa99d63325c7449e61aef24dbe96c16291ef7347836695faee8faa3fc",
+          "bytecode_sha256": "daeb3cec7c43445e087e4f8bf135dc320c4f6b3282eddf7dfd09d27db158ce1b"
+        },
+        "activation_token": 6,
+        "parent_activation_token": null,
+        "call_index": 1,
+        "locals": {},
+        "rank_environment": {},
+        "result": null
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": 1,
+      "to": 0,
+      "kind": "coroutine_created_by"
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "kind": "base_to_sample"
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "kind": "same_task_next_sample"
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "kind": "base_to_sample"
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "kind": "same_task_next_sample"
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "kind": "same_task_exit"
+    },
+    {
+      "from": 5,
+      "to": 0,
+      "kind": "coroutine_created_by"
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "kind": "base_to_sample"
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "kind": "same_task_next_sample"
+    },
+    {
+      "from": 5,
+      "to": 7,
+      "kind": "base_to_sample"
+    },
+    {
+      "from": 6,
+      "to": 7,
+      "kind": "same_task_next_sample"
+    },
+    {
+      "from": 7,
+      "to": 8,
+      "kind": "same_task_exit"
+    },
+    {
+      "from": 9,
+      "to": 0,
+      "kind": "coroutine_created_by"
+    },
+    {
+      "from": 9,
+      "to": 10,
+      "kind": "base_to_sample"
+    },
+    {
+      "from": 9,
+      "to": 10,
+      "kind": "same_task_next_sample"
+    },
+    {
+      "from": 9,
+      "to": 11,
+      "kind": "base_to_sample"
+    },
+    {
+      "from": 10,
+      "to": 11,
+      "kind": "same_task_next_sample"
+    },
+    {
+      "from": 11,
+      "to": 12,
+      "kind": "same_task_exit"
+    },
+    {
+      "from": 0,
+      "to": 13,
+      "kind": "same_task_exit"
+    },
+    {
+      "from": 14,
+      "to": 15,
+      "kind": "same_task_exit"
+    },
+    {
+      "from": 16,
+      "to": 17,
+      "kind": "same_task_exit"
+    }
+  ],
+  "active_coroutines": 0,
+  "agent": {
+    "python": "3.12.4",
+    "process_id": 258376,
+    "boundary_journal_error": null,
+    "parent_process_id": 258373,
+    "output_owner_process_id": 258376,
+    "sample_interval_seconds": 0.2,
+    "sampling_tick_times_ns": [],
+    "stack_limit": 32,
+    "transparent_launch": true,
+    "remote_attach": false,
+    "seeded_tasks": 0,
+    "interpreter_id": 0,
+    "interpreter_count": 1,
+    "main_interpreter": true,
+    "coverage_unit": "one-interpreter"
+  }
+}

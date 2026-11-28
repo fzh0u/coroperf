@@ -122,12 +122,12 @@
         "zh-CN": "选定一条静默 worker 报告，保留精确构建、模型与负载；比较正常／停顿轨迹，再验证针对原因的修复，分开处理异常退出与仅超时的其他子案例。"
       },
       "limits": {
-        "en": "Requires the selected multi-GPU/model environment. Coroutine ancestry alone cannot prove a CUDA or collective deadlock; no local reproduction, overhead or repair result is available.",
-        "zh-CN": "需要所选报告对应的多 GPU／模型环境；协程祖先本身不能证明 CUDA 或 collective 死锁，目前没有本地复现、开销或修复结果。"
+        "en": "The incident remains unreproduced. Preparation checks use explicit collector fixtures, not vLLM inference. Collection overhead, trace effects on the rare schedule, device completion and root cause are unmeasured.",
+        "zh-CN": "原故障尚未复现。准备检查使用明确的采集器fixture，不是vLLM推理；采集开销、对罕见时序的影响、设备完成及根因均未测得。"
       },
       "first_step": {
-        "en": "Recover one reporter configuration, workload inputs and native traces; establish that the same silent stall still reproduces.",
-        "zh-CN": "先取得一位报告者的配置、负载输入与原生轨迹，确认同一种静默停顿仍可复现。"
+        "en": "Collect the same failing H200/model/request workload with the prepared host probes plus worker/native/device progress. Compare matching RPC generations and rank budgets before testing an adaptive-verification change.",
+        "zh-CN": "在同一H200／模型／请求负载上，结合已准备的主机探针与worker原生／设备进展采集；匹配RPC代次和rank预算后，再检验adaptive verification改动。"
       },
       "upstream_state": "open",
       "new_execution": false,
@@ -141,10 +141,14 @@
         "en": "Distinguish an RPC that was never dispatched, a live worker blocked in native/device work, and a completed response that was never delivered. Find the earliest missing event across one request and worker generation.",
         "zh-CN": "区分 RPC 未派发、存活 worker 阻塞于原生／设备工作，以及响应已完成但未交付；沿同一请求与 worker 代次找到最早缺失事件。"
       },
-      "last_status_check": "2026-11-28T13:01:23+00:00",
+      "last_status_check": "2026-11-28T14:44:33+00:00",
       "status_check_method": "GitHub issue API",
       "last_upstream_activity": "2026-11-23T09:20:01Z",
-      "upstream_comment_count": 22
+      "upstream_comment_count": 22,
+      "preparation_result": {
+        "en": "The 0.33.0 revision 4ba787ec has 19 matching source selections. Four engineering checks pass for the launcher, selected metadata, task/thread/fork identity and persistence before blocked-process exit. These are collector checks, with zero incident executions. In an isolated check using the unchanged FutureWrapper source class, three completed submitting Tasks were linked to three later synchronous waits through the captured Future and response-closure identities. Baseline and profiled callback results agree. These controlled callbacks do not reproduce the engine stall or validate its cause.",
+        "zh-CN": "0.33.0 的固定 revision4ba787ec 匹配19个源码选择点。启动器、元数据、任务／线程／fork 身份及阻塞进程退出前落盘，共四项工程检查通过；原故障执行次数仍为零。 在使用未改动 FutureWrapper 源码类的独立组件检查中，通过记录的 Future 与响应闭包身份，将三个已结束的提交 Task 分别关联到之后的三次同步等待。开启采集前后的回调结果一致。回调输入为受控测试，不是原引擎停顿的复现或根因验证。"
+      }
     },
     {
       "id": "sidorares--node-mysql2--695",
