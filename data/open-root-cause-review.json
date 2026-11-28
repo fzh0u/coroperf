@@ -8,17 +8,17 @@
   "corpus": {
     "discovery_entries": 1544,
     "open_in_saved_discovery": 519,
-    "review_decisions": 952,
+    "review_decisions": 953,
     "verified_cases": 140,
-    "discovery_ledger_refreshed_at": "2026-11-28T12:24:47+00:00",
+    "discovery_ledger_refreshed_at": "2026-11-28T12:30:34+00:00",
     "inputs": [
       {
         "path": "web/coroperf-github-pages/data/discovery.json",
-        "sha256": "4ff92af89903d09689c41df4f581b61fad4791b31ad642c6acb7f11f9bda8beb"
+        "sha256": "3362c35b62402681d6475b46f937158cf547e7ca722768bcdd62976dfbbb6782"
       },
       {
         "path": "research/github-issue-discovery/automation/reviews.json",
-        "sha256": "1d546ea218648253e097baa721a284351e52054dff943d6c483f5448d7c469e6"
+        "sha256": "2ea6acf184cedd8dfe92460e53022984b477bd6334d10c62112fc01315d8cffc"
       },
       {
         "path": "web/coroperf-github-pages/data/cases.json",
@@ -577,6 +577,57 @@
         "en": "Inspect missing discussion/repair history and obtain the original program and runtime configuration. Keep status-check until unresolved causal scope and repair status can be established.",
         "zh-CN": "先核实缺失讨论／修复历史，取得原程序与运行时配置；明确未解因果范围和修复状态前保持先核验状态。"
       }
+    },
+    {
+      "id": "grpc--grpc--38002",
+      "reference": "gRPC #38002",
+      "url": "https://github.com/grpc/grpc/issues/38002",
+      "language": "C++ / Java / gRPC / async API unconfirmed",
+      "stage": "status_check",
+      "upstream_state": "open_lang_cpp_priority_P2_in_inspected_page",
+      "local_status": "skipped",
+      "last_source_check": "2026-11-28T12:27:55.105319+00:00",
+      "sources": [
+        "https://github.com/grpc/grpc/issues/38002"
+      ],
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "question": {
+        "en": "What accounts for the reported higher C++ gRPC server CPU than Java under similar load, particularly on limited-CPU machines?",
+        "zh-CN": "相似负载下，C++ gRPC服务器被报告比Java消耗更多CPU，尤其在CPU较少机器上，原因是什么？"
+      },
+      "known": {
+        "en": "The report names C++gRPC1.61 on SLES15SP5/RHEL8 and supplies a unary proto. It gives no numeric CPU/throughput/latency, controlled request distribution or Java version, and does not establish equivalent server behavior.",
+        "zh-CN": "报告给出SLES15SP5／RHEL8上的C++gRPC1.61及unary proto；缺CPU／吞吐／时延数值、受控请求分布和Java版本，尚未建立两种服务行为等价。"
+      },
+      "patch": {
+        "en": "The returned primary is Open with lang/c++ and priority/P2, with no linked branches/PRs shown. Technical discussion, original code attachment and complete repair history were not returned; no repository-wide no-fix conclusion is supported.",
+        "zh-CN": "返回主页面为Open、lang/c++及priority/P2，未列关联branch／PR。未取得技术讨论、所提原代码附件及完整修复历史，不能得出整个仓库无修复的结论。"
+      },
+      "coroperf_addition": {
+        "en": "Conditionally attribute native execution to RPC histories after identifying the actual server API. CQ tags/callbacks require a verified request/queue/owner bridge; a C++20 frame bridge applies only if the application uses coroutines.",
+        "zh-CN": "确认实际server API后，才可有条件地将原生执行关联到RPC历史。CQ tag／callback需验证请求、队列、owner桥；仅在应用使用协程时才适用C++20帧关联。"
+      },
+      "required_evidence": {
+        "en": "Matched request/message distributions, runtime/build/CPU allocations; CPU and thread profiles, completed RPC count, latency and idle polling; actual RPC/channel/tag generations and enqueue/dequeue/dispatch/complete/native-thread ownership where the selected API supports them.",
+        "zh-CN": "匹配请求／消息分布、运行时／构建／CPU配额；CPU及线程profile、完成RPC数、时延和空轮询；按实际API采RPC／channel／tag代次及入出队／派发／完成／原生线程归属。"
+      },
+      "diagnosis_plan": {
+        "en": "First normalize CPU by the same completed work and CPU quota. Separate polling while idle, serialization/application work and scheduler/lock/queue overhead; locate costs per RPC or explicitly unowned native worker, without assuming all C++ work is a coroutine.",
+        "zh-CN": "先按相同完成工作量与CPU配额归一化CPU，区分空闲轮询、序列化／应用工作与调度／锁／队列成本；逐RPC或明确未归属的原生worker定位开销，不假定所有C++工作都是协程。"
+      },
+      "validation": {
+        "en": "Recover both original servers, versions, client and fixed workload; establish ordinary CPU/throughput/latency baselines for equivalent behavior. Add only verified request/queue events, validate a cause-specific change on unchanged regression and healthy paths, then compare diagnosis times and observer overhead.",
+        "zh-CN": "取得两种原服务、版本、客户端和固定负载，为等价行为建立常规CPU／吞吐／时延基线；补充已验证请求／队列事件，用未改回归及正常路径验证针对原因的改动，再比较定位耗时与采集开销。"
+      },
+      "limits": {
+        "en": "Skipped: missing executable originals and comparable measurement protocol; proto alone is insufficient. No setup/probe/target/capture. Async API is unconfirmed; generic C++ lifecycle plus sparse snapshots and explicit demo queue events do not establish arbitrary gRPC coverage. No cause or speedup measured.",
+        "zh-CN": "skipped：缺可执行原程序及可比测量协议，仅proto不足；未准备／探测／运行／采集。异步API未确认，通用C++生命周期、低频快照和demo队列事件不能证明任意gRPC覆盖；未测得根因或提速。"
+      },
+      "first_step": {
+        "en": "Inspect missing code and discussion/fix history, identify sync/CQ/callback/coroutine API and obtain a controlled comparison. Keep status-check until causal scope and collector applicability are established.",
+        "zh-CN": "先核实缺失代码、讨论／修复历史，明确sync／CQ／callback／coroutine API并取得受控比较；因果范围与collector适用性明确前保持先核验状态。"
+      }
     }
   ],
   "not_primary": [
@@ -775,7 +826,7 @@
   "publication": {
     "status": "pending",
     "target": "https://fzh0u.github.io/coroperf/zh-cn/open-issues.html",
-    "note": "Independent publisher records a688a9b with950 reviewed IDs; supplemental268–279 records remain pending. One canonical public-data probe for this new commit returned tool Internal Error, so manual Open Issues content and Pages deployment remain unverified. Wave280 source additions saved locally: Tokio4659 status-check and TiKV20182 known-cause repair-validation exclusion; no target execution or diagnosis speedup."
+    "note": "Independent publisher records a688a9b with950 reviewed IDs; supplemental268–279 records remain pending. One canonical public-data probe for this new commit returned tool Internal Error, so manual Open Issues content and Pages deployment remain unverified. Wave280 source additions saved locally: Tokio4659 status-check and TiKV20182 known-cause repair-validation exclusion; no target execution or diagnosis speedup. Wave281 adds gRPC38002 status-check locally; actual async API and controlled comparison missing, no target or diagnosis measurement."
   },
   "synchronized_at": "2026-11-28T12:20:57.662578+00:00",
   "synchronization": {
@@ -802,7 +853,7 @@
     "en": "The list is ordered by investigation priority. Status labels distinguish priority investigations, pending investigations and entries requiring a status check. No new verified case or execution is claimed.",
     "zh-CN": "列表按调查优先顺序排列，用状态区分优先调查、待调查和先核验状态的条目。本次未增加验证案例或执行结果。"
   },
-  "presentation_updated_at": "2026-11-28T12:24:37.063811+00:00",
+  "presentation_updated_at": "2026-11-28T12:30:27.334756+00:00",
   "diagnosis_protocol": {
     "status": "planned_unmeasured",
     "claim": {
