@@ -1,0 +1,154 @@
+{
+  "schema": "coroperf.frozen-native-component/v1",
+  "issue_id": "kotlin--kotlinx.coroutines--4262",
+  "source": "https://github.com/Kotlin/kotlinx.coroutines/issues/4262",
+  "claim_class": "native_component_only",
+  "target_runs": 1,
+  "compiler_processes_recorded": 1,
+  "target_exit": 0,
+  "successful_original_frozen": true,
+  "source_program": "Only the second complete liveness original; the abandoned-dispatcher cleanup example was not run.",
+  "source_fidelity": {
+    "primary": "primary-source.json",
+    "primary_scope": "Saved277-line returned GitHub page, not a fresh fetch or full API history.",
+    "selected_source_lines": [
+      194,
+      212
+    ],
+    "selection": "Second complete liveness program, not first abandoned-dispatcher cleanup program.",
+    "normalization": "Remove page L-number markers and exactly four leading display-indent spaces where present; preserve blank lines, Kotlin tokens, strings and final newline. No code fences occur in selected block.",
+    "byte_exact": true,
+    "source_bytes": 817,
+    "local_bytes": 817,
+    "source_sha256": "e3c9d85a8425712ac303286975974308df95037a0a0e9de9396f8c6ca7edc871",
+    "local_sha256": "e3c9d85a8425712ac303286975974308df95037a0a0e9de9396f8c6ca7edc871",
+    "requested_delay_ms": 150,
+    "a_delay_ms": 100,
+    "a_thread_sleep_ms": 500
+  },
+  "local_versions_reported": {
+    "jdk": "Temurin21.0.1+12",
+    "kotlin": "2.2.20",
+    "coroutines_core": "1.11.0",
+    "boundary": "Source unpinned; saved local readiness/classpath provenance is not historical or all-version certification."
+  },
+  "measurements": {
+    "parsed_stdout_events": [
+      {
+        "label": "A",
+        "milliseconds": "48.082874",
+        "thread": "Thread[#37,DefaultDispatcher-worker-1,5,main]",
+        "event": "Sleeping for 100 milliseconds"
+      },
+      {
+        "label": "B",
+        "milliseconds": "63.081756",
+        "thread": "Thread[#38,DefaultDispatcher-worker-2,5,main]",
+        "event": "Sleeping for 150 milliseconds"
+      },
+      {
+        "label": "A",
+        "milliseconds": "161.371362",
+        "thread": "Thread[#39,kotlinx.coroutines.DefaultExecutor,5,main]",
+        "event": "Beginning to work for 500 milliseconds"
+      },
+      {
+        "label": "A",
+        "milliseconds": "661.669502",
+        "thread": "Thread[#39,kotlinx.coroutines.DefaultExecutor,5,main]",
+        "event": "Finished work"
+      },
+      {
+        "label": "B",
+        "milliseconds": "662.529826",
+        "thread": "Thread[#37,DefaultDispatcher-worker-1,5,main]",
+        "event": "Awoken"
+      }
+    ],
+    "b_log_interval_ms": "599.448070",
+    "a_blocking_segment_log_interval_ms": "500.298140",
+    "b_requested_delay_ms": 150,
+    "b_excess_over_requested_ms": "449.448070",
+    "requested_delay_source": "Main.kt delay(150), exactly matched to saved primary.",
+    "recorded_process_wall_seconds": "0.711860717041418",
+    "recorded_process_wall_rounded_9dp": "0.711860717",
+    "utc_start_finish_interval_seconds": "0.711185",
+    "recorded_wall_minus_utc_interval_seconds": "0.000675717041418",
+    "wall_limit": "Process wall is recorded in run.json, not independently reconstructible from monotonic start/end because those raw endpoints are absent. UTC timestamps yield0.711185s; difference0.000675717041418s is disclosed, with clock/boundary cause unverified. Do not replace recorded wall or claim exact independent wall recalculation.",
+    "interpretation": "Log intervals include print, scheduling and resume overhead. They are not CPU time, runnable duration, exact timer queue wait, or direct coroutine identity capture."
+  },
+  "identity_capture": "Program log labels and thread names only; no runtime Job/Continuation generations, timer-owner bridge, CPU or runnable-time capture.",
+  "coroperf_captures": 0,
+  "optimization_validated": false,
+  "source_record_timing": {
+    "dispatch": "2026-11-27T04:18:48Z",
+    "source_seconds": 53,
+    "target_finished_seconds": 95.534173,
+    "records_seconds": 185.630937,
+    "record_target_seconds": 150,
+    "total_budget_seconds": 180,
+    "total_overrun_seconds": 5.630937,
+    "clock_reset": false
+  },
+  "independent_audit": {
+    "payload_hashes": 6,
+    "source_payload_hashes": 21,
+    "actual_completion_reported_seconds": 93.789111,
+    "budget_seconds": 90,
+    "overrun_seconds": 3.789111,
+    "native_sdk_or_compiler_processes": 0,
+    "status": "pass_with_evidence_limits",
+    "material_limits": [
+      "No separate detailed compiler process receipt; compilation count/exit rely on saved execution/timing plus classes/streams.",
+      "Recorded process wall0.711860717041418s rounds0.711860717s; UTC start/finish give0.711185s. Difference0.000675717041418s disclosed; no raw monotonic endpoints to independently recalculate process wall.",
+      "Saved JDK21.0.1/Kotlin2.2.20 and selected core1.11.0 classpath metadata are local run provenance; source unpinned. No global version or historical certification.",
+      "Log wall intervals are not CPU/runnable/puretimerqueue wait; A/B labels/thread IDs are not actual coroutine/Job/Continuation generations or owner capture."
+    ],
+    "completion_provenance": "Contributor-reported post-write tool receipt, separate from saved70s payload checkpoint."
+  },
+  "exports": {
+    "readiness": "research/github-issue-discovery/managed-wave97-20261127/readiness.json",
+    "execution": "research/github-issue-discovery/managed-wave97-20261127/execution.json",
+    "run": "research/github-issue-discovery/managed-wave97-20261127/run.json",
+    "stdout": "research/github-issue-discovery/managed-wave97-20261127/run.stdout",
+    "independent-audit": "research/github-issue-discovery/kotlin4262-saved-audit-wave97-20261127/audit.json"
+  },
+  "frozen_inputs": {
+    "research/github-issue-discovery/managed-wave97-20261127/Main.kt": "e3c9d85a8425712ac303286975974308df95037a0a0e9de9396f8c6ca7edc871",
+    "research/github-issue-discovery/managed-wave97-20261127/build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "research/github-issue-discovery/managed-wave97-20261127/build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "research/github-issue-discovery/managed-wave97-20261127/classes/META-INF/main.kotlin_module": "05077e5c676f19767f4433f21c2fda279882c5e2197b4b4ad8f40878bb99416e",
+    "research/github-issue-discovery/managed-wave97-20261127/classes/MainKt$main$1$1.class": "13371019f2a9269784424ba76d9dba193ee7582d84f5ee48744e1b4bbb99f2a5",
+    "research/github-issue-discovery/managed-wave97-20261127/classes/MainKt$main$1$2.class": "39892dfd7af0cf642c5811ee6dbb6ca2cde1099fc969bc0a72273f3beabfad3c",
+    "research/github-issue-discovery/managed-wave97-20261127/classes/MainKt$main$1.class": "f2715757512575c5ba17f472273c1afc911f27d33720da76ca0cfb51d28fce35",
+    "research/github-issue-discovery/managed-wave97-20261127/classes/MainKt.class": "f4247c190926551b0121fbdb97af66d8b187e3e428261dfb596bae31f3225876",
+    "research/github-issue-discovery/managed-wave97-20261127/clearance.json": "86697a4345e9953b1427f8f0ad841fd140f5addefae87fe85d77836816f05606",
+    "research/github-issue-discovery/managed-wave97-20261127/decisions.json": "6b3caba138d9bb963beb76a23679c7cd69b6af50cfae33edc95d8f1eca7fbfdf",
+    "research/github-issue-discovery/managed-wave97-20261127/execution.json": "b7ab263ca9f7a941f9d515cb7077cbfabe98241e25e8f91ebdb1fb2d1c08b2b0",
+    "research/github-issue-discovery/managed-wave97-20261127/gates.json": "5cd6129ca2bd0fa7b064e0adbadbb3b100aef12d420de763ca5789a6fba3f6a8",
+    "research/github-issue-discovery/managed-wave97-20261127/primary-source.json": "8077abc9082484401aa13d39440731fc13fa09e2e4cade974aaf23b287bc703b",
+    "research/github-issue-discovery/managed-wave97-20261127/readiness.json": "37dbbf0408d80b136a123494719d3f6b7e4fd353e2f72d6a7e923357d3aba218",
+    "research/github-issue-discovery/managed-wave97-20261127/run.json": "720dfcb5b5884e0e8078261a8fafe1d4998459e2c3a95996b7c6386bef182ead",
+    "research/github-issue-discovery/managed-wave97-20261127/run.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "research/github-issue-discovery/managed-wave97-20261127/run.stdout": "165404b3d46b56a1c1074dc25cd0eba8dfd22980d21f42bb69230a4d134e53d2",
+    "research/github-issue-discovery/managed-wave97-20261127/search-current-kotlin.json": "cbc5cbb4e0ea8e398a32631931f460f343132dd92b25b318d1b22cc169ce233e",
+    "research/github-issue-discovery/managed-wave97-20261127/search-originals.json": "e8e02075f1b3513218b02b38eb2103dfbf672e0dc5664cfcd015b354b1fe89f1",
+    "research/github-issue-discovery/managed-wave97-20261127/source-checkpoint.json": "ddd2087ce2be2ff575159b7e4ca62ad1eda0c3b24885bb94e3c7df467fe858bd",
+    "research/github-issue-discovery/managed-wave97-20261127/timing.json": "9d279f882bf672bcaa1722c0d4315d3dbf60c1c562c8a579800ee3284f318fe6",
+    "research/github-issue-discovery/managed-wave97-20261127/manifest.json": "58a8677a1a222e3b24bcf8b2fbff6cb6204d6f14fe68f4afb0d06b190701374e",
+    "research/github-issue-discovery/kotlin4262-saved-audit-wave97-20261127/audit.json": "ba5e54d81953c02ecf67e5c30da5c929eadebfeb6707720c8a342fda02e4d253",
+    "research/github-issue-discovery/kotlin4262-saved-audit-wave97-20261127/execution-audit.json": "554443cd0c9f2803c87cf63a954e449ef5e2f0f4cdc30e165e6a2c93df2bc74f",
+    "research/github-issue-discovery/kotlin4262-saved-audit-wave97-20261127/measurements.json": "e8110d155080a70b1060a52d74c830f31753790c27a13335f62444baaee6fe50",
+    "research/github-issue-discovery/kotlin4262-saved-audit-wave97-20261127/source-fidelity.json": "829dce0a250770c1b875985b063ad5c3eef264b6309b18908739f98eb761a999",
+    "research/github-issue-discovery/kotlin4262-saved-audit-wave97-20261127/source-integrity.json": "e2f30aa6b89cd9962ff411c9d61aadece937588ea349ff78f0f12fce0d916df7",
+    "research/github-issue-discovery/kotlin4262-saved-audit-wave97-20261127/timing.json": "641563b3c613f0b09d816e0aa5995219902a69910ea03cab6d7b3bcb6484bee5",
+    "research/github-issue-discovery/kotlin4262-saved-audit-wave97-20261127/manifest.json": "6bab22145d24f25bd16abf9d6ba8dcd7db056ab914182fb1968ec9e184e79e5f"
+  },
+  "publication": "Local export; deployed bytes unverified.",
+  "limits": [
+    "Log intervals include printing, scheduling and resume overhead; they are not pure timer queue wait or CPU time.",
+    "Compilation count and exit are attested by execution/timing plus compiled outputs and streams; a detailed standalone compiler receipt is absent.",
+    "Recorded process wall is not independently recalculable without raw monotonic endpoints; UTC delta and its discrepancy remain in measurements.",
+    "No replay, control, alternate version, fix, profiler, source fetch or native process in the independent audit."
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "schema": "coroperf.anyio947-scoped-result/v1",
+  "issue": "https://github.com/agronholm/anyio/issues/947",
+  "framework": "cached AnyIO4.8.0",
+  "python": "3.11.11",
+  "reporter_framework": "4.9.0",
+  "target_runs": 1,
+  "target_exit_code": 0,
+  "frozen": true,
+  "historical_submission_join_verified": true,
+  "record_pair": [
+    "2",
+    "4"
+  ],
+  "selected_case": true,
+  "pending_catalogue_export": false,
+  "native_window_seconds": 0.1,
+  "native_state": {
+    "borrowed_tokens": 0,
+    "tasks_waiting": 1
+  },
+  "findings": {
+    "observation": "One bounded cached AnyIO4.8.0/CPython3.11.11 component retains the maintainer test ordering: the controller holds CapacityLimiter(1), starts two borrowers, cancels the first scope before releasing, then waits100ms for the second signal. The second borrower remains queued with borrowed_tokens=0 and tasks_waiting=1. TaskGroup cleanup returns and the process exits0. The target ran once; no fixed-version or repeated workload ran.",
+    "interpretation": "Actual Event arguments and current Task IDs distinguish the two borrower submissions. Read-only limiter statistics and queue snapshots identify the second Task as the remaining waiter. Its unique runtime generation joins creation2 to wait4 through an explicit base_to_sample edge. CoroPerf recovers the real second tg.start site test_acquire_cancelled:47, absent from both native get_stack and the current await-chain samples. Native state already establishes idle capacity with a waiter; the added diagnostic value is historical submission attribution.",
+    "limits": "The report names4.9.0; this is a historical4.8.0 component, not exact-version or production confirmation. Primitive Task/Event/queue observations add timing work but no await. The public completion Event is distinct from the internal queue Event, whose identity was not captured. Only the100ms window is established. Task snapshots are not CPU samples; generic creation does not prove resource ownership. The original failure is exported as data with cleanup; process exit0 is not an upstream passing test. No natural-race frequency, instrumentation baseline, root-cause discovery, repair experiment or optimization result is claimed."
+  },
+  "findings_zh": {
+    "observation": "缓存AnyIO4.8.0／CPython3.11.11的一次有界组件运行保留维护者测试顺序：controller持有CapacityLimiter(1)，启动两个borrower，在释放前取消第一个scope，随后等待第二个signal约100ms。第二个borrower仍在队列，borrowed_tokens=0、tasks_waiting=1；TaskGroup清理返回，进程exit0。目标只运行一次，没有修复版或重复负载。",
+    "interpretation": "实际Event参数与current Task ID区分两个borrower提交；额外只读limiter统计及队列快照识别第二Task为残留等待者。它的唯一运行时代际经显式base_to_sample边连接创建2与等待4。CoroPerf恢复真实的第二次tg.start入口test_acquire_cancelled:47，原生get_stack及当前await链均没有该提交位置。原生状态已经证明空闲容量与等待并存；新增诊断价值是历史提交归属。",
+    "limits": "原帖为4.9.0，本次是4.8.0历史组件，不是精确版本或生产确认。原始Task／Event／队列观察增加计时工作但不增加await。公开完成Event与内部队列Event不同，后者ID没有采集；仅证明100ms窗口。Task快照不是CPU采样，通用创建关系不能证明资源占有。原测试失败转换为数据并清理，进程exit0不表示上游测试通过；没有自然竞争发生率、插桩基线、新根因发现、修复试验或优化效果。"
+  },
+  "evidence": {
+    "graph": "perf-out/github-issue-discovery/automatic/anyio947-wave5-20261127/graph.json",
+    "native": "perf-out/github-issue-discovery/automatic/anyio947-wave5-20261127/native-result.json",
+    "verification": "research/github-issue-discovery/anyio947-wave5-20261127/offline-verification.json"
+  },
+  "input_sha256": {
+    "research/github-issue-discovery/anyio947-wave5-20261127/component.py": "38edfb4930063815d25afb25139c5259d87f6a07475bd3ba6d046d4a1939ff20",
+    "perf-out/github-issue-discovery/automatic/anyio947-wave5-20261127/native-result.json": "965a09d218de7fcfdf63cf0c2d3df1f52c31293d7e149d6353b3c310806594da",
+    "perf-out/github-issue-discovery/automatic/anyio947-wave5-20261127/graph.json": "5aabb88bb9f5e346e1cc2681697edcf91d1572d5333c81ec47c1f969d8a7b9b5",
+    "perf-out/github-issue-discovery/automatic/anyio947-wave5-20261127/run-summary.json": "10a8a5d0a28ecb3fd267bf77d460dcb55dbb1d324c94dce7ab10c345dbd524a2",
+    ".tools/systems-repro/langgraph-input-reemit/venv/lib/python3.11/site-packages/anyio/_backends/_asyncio.py": "ffa043143ac43c8d5a44f14348fb14cf23c69be76746004f7c439d7821f52318",
+    "research/github-issue-discovery/anyio947-wave5-20261127/source-web-response.json": "b1affc9ab0191981f789902e7cfa2a7dcc37710484ff33d3a7c0ab39522d5ffa"
+  },
+  "first_native_check_seconds_after_marker": 96.95954656600952,
+  "first_check_scope": "Initial search snippet precedes marker; native completion and later offline bookkeeping are separate.",
+  "optimization_verified": false,
+  "selected_record_pair": [
+    "2",
+    "4"
+  ],
+  "existing_catalogue_entries_unchanged": 139
+}

@@ -1,0 +1,149 @@
+{
+  "schema": "corostitch.evidence/v1",
+  "frame_order": "leaf_to_root",
+  "producer": {
+    "name": "offline-selected-runtime-trace-birth-and-wait",
+    "identity_kind": "native-Go-runtime-goroutine-ID",
+    "frame_order": "leaf_to_root"
+  },
+  "clock": {
+    "domain": "Go-runtime-trace-monotonic",
+    "unit": "ns"
+  },
+  "segments": [
+    {
+      "id": "0",
+      "coroutine_id": "go73964-frozen-process:goid:8",
+      "capture_reason": "create",
+      "timestamp_ns": "1920606751591616",
+      "frames": [
+        {
+          "function": "main.main",
+          "file": "/data1/fzhou/coro/research/github-issue-discovery/runtime-wave4-20261127/main.go",
+          "line": 6,
+          "ip": "0x49403d"
+        }
+      ],
+      "runtime_parent_goid": "1",
+      "native_event_header": "M=4 P=0 G=1 StateTransition Time=1920606751591616 Resource=Goroutine(8) Reason=\"\" GoID=8 NotExist->Runnable",
+      "process_id": null,
+      "thread_id": null,
+      "sample_kind": "unknown",
+      "weight": 1
+    },
+    {
+      "id": "1",
+      "coroutine_id": "go73964-frozen-process:goid:8",
+      "capture_reason": "sample",
+      "sample_kind": "runtime_wait_transition",
+      "timestamp_ns": "1920606751664512",
+      "frames": [
+        {
+          "function": "time.Sleep",
+          "file": "/data1/fzhou/coro/.tools/go1.23.0/go/src/runtime/time.go",
+          "line": 285,
+          "ip": "0x469671"
+        },
+        {
+          "function": "main.main.func1",
+          "file": "/data1/fzhou/coro/research/github-issue-discovery/runtime-wave4-20261127/main.go",
+          "line": 6,
+          "ip": "0x494417"
+        }
+      ],
+      "native_event_header": "M=6 P=1 G=8 StateTransition Time=1920606751664512 Resource=Goroutine(8) Reason=\"sleep\" GoID=8 Running->Waiting",
+      "semantic": {
+        "runtime_state": "Waiting",
+        "reason": "sleep"
+      },
+      "process_id": null,
+      "thread_id": null,
+      "weight": 1
+    },
+    {
+      "id": "2",
+      "coroutine_id": "go73964-frozen-process:goid:9",
+      "capture_reason": "create",
+      "timestamp_ns": "1920606751598848",
+      "frames": [
+        {
+          "function": "main.main",
+          "file": "/data1/fzhou/coro/research/github-issue-discovery/runtime-wave4-20261127/main.go",
+          "line": 7,
+          "ip": "0x494049"
+        }
+      ],
+      "runtime_parent_goid": "1",
+      "native_event_header": "M=4 P=0 G=1 StateTransition Time=1920606751598848 Resource=Goroutine(9) Reason=\"\" GoID=9 NotExist->Runnable",
+      "process_id": null,
+      "thread_id": null,
+      "sample_kind": "unknown",
+      "weight": 1
+    },
+    {
+      "id": "3",
+      "coroutine_id": "go73964-frozen-process:goid:9",
+      "capture_reason": "sample",
+      "sample_kind": "runtime_wait_transition",
+      "timestamp_ns": "1920606765793985",
+      "frames": [
+        {
+          "function": "time.Sleep",
+          "file": "/data1/fzhou/coro/.tools/go1.23.0/go/src/runtime/time.go",
+          "line": 285,
+          "ip": "0x469671"
+        },
+        {
+          "function": "main.main.func2",
+          "file": "/data1/fzhou/coro/research/github-issue-discovery/runtime-wave4-20261127/main.go",
+          "line": 7,
+          "ip": "0x494457"
+        }
+      ],
+      "native_event_header": "M=4 P=0 G=9 StateTransition Time=1920606765793985 Resource=Goroutine(9) Reason=\"sleep\" GoID=9 Running->Waiting",
+      "semantic": {
+        "runtime_state": "Waiting",
+        "reason": "sleep"
+      },
+      "process_id": null,
+      "thread_id": null,
+      "weight": 1
+    }
+  ],
+  "edges": [
+    {
+      "from_segment_id": "0",
+      "to_segment_id": "1",
+      "edge_kind": "create_base_to_sample_stack",
+      "coroutine_id": "go73964-frozen-process:goid:8",
+      "from": "0",
+      "to": "1",
+      "kind": "create_base_to_sample_stack"
+    },
+    {
+      "from_segment_id": "2",
+      "to_segment_id": "3",
+      "edge_kind": "create_base_to_sample_stack",
+      "coroutine_id": "go73964-frozen-process:goid:9",
+      "from": "2",
+      "to": "3",
+      "kind": "create_base_to_sample_stack"
+    }
+  ],
+  "diagnostics": [],
+  "capture_loss": null,
+  "source_metadata": {
+    "scope": "Only two sleeper task births and first sleep waits from one frozen run. Standard runtime trace is the original source; no new target capture.",
+    "trace_sha256": "18453a89d6c4bc20a57f3db709a15aa0faa61f2636c61d45c41da690fa50a5e7",
+    "unknowns": [
+      "No sleeper exits occur before tracing stops.",
+      "Main predates trace start; creation stack/time unknown.",
+      "No exact wall/stdout-to-trace clock alignment.",
+      "No OS scheduling trace."
+    ],
+    "diagnostic_value": "Auditable existing creator-site/current-wait joins; no independent missing business caller recovered and no root-cause/optimization claim.",
+    "language": "go",
+    "runtime": "go1.23.0 saved runtime.trace"
+  },
+  "active_coroutines": null
+}

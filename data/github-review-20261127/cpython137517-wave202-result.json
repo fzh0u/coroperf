@@ -1,0 +1,61 @@
+{
+  "schema": "coroperf.native-observation/v1",
+  "case_id": "python--cpython--137517",
+  "source_url": "https://github.com/python/cpython/issues/137517",
+  "source_fidelity": {
+    "source_lines": [
+      168,
+      196
+    ],
+    "bytes": 824,
+    "sha256": "f97c85f709a8ae3f364ea35a30470bd5d8e6cb1b4c4168259a1b91fe494915f9",
+    "byte_equal_after_provider_labels_and_common_indent_removal": true,
+    "ast_equal": true,
+    "internal_waits_preserved_seconds": [
+      0.5,
+      1
+    ],
+    "debug_true_and_gather_preserved": true
+  },
+  "environment": {
+    "observed": "CPython3.14.3 Linux",
+    "source_tested": "CPython3.13/3.14 Linux, exact patch unspecified",
+    "variant_disclosed": true
+  },
+  "native_observation": {
+    "runs": 1,
+    "elapsed_seconds": 4.003708322998136,
+    "stdout_context_running_lines": 4,
+    "completed_parent_task_diagnostic": true,
+    "background_valueerror_logged": true,
+    "stdout_sha256": "db9f909b709dde2f6ce294f7b1f491a17480ce5e943f8f51e759160172e5019f",
+    "stderr_sha256": "cb963b58d22d801b8d4b3a5189cb536d0bb9342fc958408b9c92826641905c6e"
+  },
+  "lifecycle": {
+    "guard_seconds": 4,
+    "guard_fired": true,
+    "signal": "SIGTERM",
+    "returncode": -15,
+    "reaped": true,
+    "process_group_absence_observed": true,
+    "clean_exit": false,
+    "full_descendant_or_fd_census": false
+  },
+  "capture": {
+    "choice_before_first_run": "native_only",
+    "attempts": 0,
+    "captures": 0,
+    "actual_task_ids_or_edges": false
+  },
+  "frozen": true,
+  "selected_case_addition": false,
+  "optimization_verified": false,
+  "limits": [
+    "One unchanged original with an external guard; no direct-await control, fix, version or replay.",
+    "Native diagnostic and output recorded in separate pipes without per-event timestamps; no measured combined event ordering, per-Task CPU or complete Task graph.",
+    "Requested waits are not measured failure or scheduling latencies.",
+    "Terminated observation does not verify graceful AsyncExitStack exit, eventual propagation or indefinite delay.",
+    "Task names/function labels are not stable identities; caller, cleanup owner and TaskGroup parent differ.",
+    "Native behavior match does not establish a runtime defect or optimization."
+  ]
+}

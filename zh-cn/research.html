@@ -21,6 +21,7 @@
         <a href="index.html#issues">案例证据</a>
         <a href="research.html">研究摘要</a>
         <a href="discovery.html">搜索进度</a>
+        <a href="open-issues.html">待分析 Issue</a>
         <a href="index.html#method">分析方法</a>
       </nav>
       <nav class="languages" aria-labelledby="language-label">
@@ -43,7 +44,7 @@
         <h1>拼接栈补回了什么</h1>
         <p class="section-copy">按协程拼接所支持的主要诊断结论浏览案例。</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(42)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(22)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(19)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(33)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf 贡献"><ul><li><a href="#caller_recovery">补回调用来源 <span>(42)</span></a></li><li><a href="#request_handoff">请求与结果交接归因 <span>(22)</span></a></li><li><a href="#failure_lifecycle">异常、取消与任务生命周期 <span>(19)</span></a></li><li><a href="#scheduling_contention">调度与资源争用定位 <span>(34)</span></a></li><li><a href="#cost_attribution">性能开销归因 <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">暂缓跟进</h2></div>
@@ -639,6 +640,13 @@
               <small>因安全限制暂缓复现跟进</small>
             </th>
             <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/ray-project/ray/issues/59347">待核对</a><span class="fix-label">修复待核实</span></td>
+          </tr>
+          <tr id="followup-grpc--grpc-go--9330">
+            <th scope="row">
+              <a href="https://github.com/grpc/grpc-go/issues/9330"><span>grpc/grpc-go #9330</span>gRPC-Go #9330：用户跳过</a>
+              <small>因安全限制暂缓复现跟进</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/grpc/grpc-go/issues/9330">待核对</a><span class="fix-label">修复待核实</span></td>
           </tr></tbody>
         </table>
       </div>
@@ -1090,7 +1098,7 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">调度与资源争用定位</h2><span class="case-kind">33 个案例</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">调度与资源争用定位</h2><span class="case-kind">34 个案例</span></div>
       <p class="section-copy">将延迟任务接到造成等待的执行顺序、轮询区间或被占用的资源。</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
@@ -1260,6 +1268,11 @@
         <th scope="row"><a href="evidence/tokio-rs--tokio--8085.html#call-stack"><span>tokio-rs/tokio #8085</span>哪个调用者拖慢了 socket 读取？</a></th>
         <td><p>两个 CPU 任务挂起后的物理栈相同，运行时给出的 spawn 位置也相同。CoroPerf 把各次 poll 接回各自的创建栈。在这个本地改编实验中，把同样的 CPU 工作移到独立运行时后，读取延迟中位数从 107.924 毫秒降到 0.039 毫秒。</p></td>
         <td class="row-status"><a class="state-pill state-open" href="https://github.com/tokio-rs/tokio/issues/8085">开放</a><span class="fix-label">修复待核实</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/agronholm--anyio--947.html#call-stack"><span>agronholm/anyio #947</span>空闲limiter中的等待者来自哪一次borrower提交？</a></th>
+        <td><p>实际Task／limiter快照识别第二个排队borrower；创建2→等待4恢复第二次tg.start提交位置。资源状态来自额外观察器；本次为100ms历史4.8.0组件，无优化对照。</p></td>
+        <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/agronholm/anyio/issues/947">待核对</a><span class="fix-label">修复待核实</span></td>
       </tr></tbody>
         </table>
       </div>

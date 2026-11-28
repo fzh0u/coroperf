@@ -1,0 +1,148 @@
+{
+  "schema": "independent-native-batch-v1",
+  "batch": "python-wave19-20261127",
+  "started_at": "2026-11-26T18:35:44.796788+00:00",
+  "finished_at": "2026-11-26T18:39:20.034247+00:00",
+  "elapsed_seconds": 215.237,
+  "limit_seconds": 180,
+  "within_budget": false,
+  "exploration_end_seconds": 194.05343985999934,
+  "exploration_before_150": false,
+  "first_native_finished_seconds": 119.59977766615339,
+  "new_reviews": 2,
+  "builds": 0,
+  "native_executions": 1,
+  "coroperf_captures": 1,
+  "selected_additions": 0,
+  "decisions": {
+    "agronholm--anyio--1170": {
+      "reviewed_at": "2026-11-26T18:38:58.850329+00:00",
+      "builds": 0,
+      "new_verified_case": false,
+      "evidence": "research/github-issue-discovery/python-wave19-20261127/public-result.json",
+      "status": "component_reproduced",
+      "local_status": "native_reproduced",
+      "execution_status": "completed_once",
+      "native_executions": 1,
+      "native_process_exit": 1,
+      "collector_cli_exit": null,
+      "collector_validation_pass": false,
+      "coroperf_capture": true,
+      "case_kind": "CapacityLimiter reservation handoff versus synchronous nowait borrower",
+      "reason": "Unmodified original1170 program ran ONCE on actualAnyIO4.13.0/CPython3.12.4 (report Python3.12, exact patch unspecified). Native stdout confirms B/X jointly borrow2tokens at capacity1, available-1; original AssertionError produces rawOSexit1. Same-run transparent graph has8segments/5edges,4births/4exits and0samples; collector sample validation FAILS. Also, borrower labels/File-independent limiter state are not native Task/limiter/Event ownership IDs. Creation ancestry alone cannot prove token reservation ownership or an extra caller benefit. No CPU/runnable/queue latency, fix or optimization measured; instrumentation has no baseline. Frozen1170/1172/associated1223 overgrant workload, no replay/version/fix/capture refill.",
+      "reason_zh": "原1170程序未改，在实际AnyIO4.13.0/CPython3.12.4仅运行一次（报告Python3.12未列patch）。stdout确认B/X共借2token而容量1、available-1；原AssertionError导致真实OSexit1。同run透明graph为8segments/5edges、4创建/4退出、0samples；collector采样验证FAIL。另外，borrower标签不是native Task/limiter/Event归属ID；创建祖先不能单独证明token预留所有权或额外caller收益。未测CPU/runnable/queue延迟、fix或优化，无instrumentation基线。冻结1170/1172/关联1223同overgrant工作负载，不重放/换版本/fix/补采。",
+      "sources": [
+        "https://github.com/agronholm/anyio/issues/1170"
+      ],
+      "frozen_workload_ids": [
+        "agronholm--anyio--1170",
+        "agronholm--anyio--1172",
+        "agronholm--anyio--1223"
+      ],
+      "no_followup_native": true
+    },
+    "agronholm--anyio--1197": {
+      "reviewed_at": "2026-11-26T18:38:58.850329+00:00",
+      "builds": 0,
+      "new_verified_case": false,
+      "evidence": "research/github-issue-discovery/python-wave19-20261127/public-result.json",
+      "status": "external_environment_required",
+      "local_status": "skipped",
+      "execution_status": "skipped",
+      "native_executions": 0,
+      "native_process_exit": null,
+      "collector_cli_exit": null,
+      "coroperf_capture": false,
+      "case_kind": "TaskGroup.start readiness versus sibling-group cancellation",
+      "reason": "Original test reports AnyIO4.14.1/Python3.14 and uses TaskHandle/start_value checkpoint ordering. Inspected saved archive inventory declares4.14.0/4.14.2 and other versions, but no verified matching4.14.1 runtime; no compatible release substitute or authored fixture. Skipped without import/test/Trio comparison, added synchronization or1198fix. Conditional CoroPerf needs actual target TaskGroup/cancel-scope/TaskHandle, starter Task and started(value)/checkpoint sequence; Task parentage does not establish cancellation ownership or return-value delivery.",
+      "reason_zh": "原test报告AnyIO4.14.1/Python3.14，涉及TaskHandle与started(value)/checkpoint取消顺序。已读缓存档案声明有4.14.0/4.14.2等，但未验证匹配4.14.1运行环境；未拿兼容release替代或自编fixture。直接skipped，没有import/test/Trio对比、增加同步或1198fix。CoroPerf需实际目标TaskGroup/cancel scope/TaskHandle、starter Task及started(value)/checkpoint顺序；Task祖先不证明取消所有权或返回值交付。",
+      "sources": [
+        "https://github.com/agronholm/anyio/issues/1197"
+      ]
+    }
+  },
+  "native": {
+    "started_at": "2026-11-26T18:37:44.232423+00:00",
+    "recorded_at": "2026-11-26T18:37:44.396559+00:00",
+    "native_process_exit": 1,
+    "collector_cli_used": false,
+    "collector_cli_exit": null,
+    "deadline": false,
+    "native_elapsed_seconds": 0.16417088103480637,
+    "user_cpu_seconds": 0.143923,
+    "system_cpu_seconds": 0.010994999999999998,
+    "native_finished_batch_seconds": 119.59977766615339,
+    "graph_exists": true,
+    "fixture_sha256": "05a133e6be3311e9dd49205fd81e3f8abbcff9b8c70f4902c11602ab2d986328",
+    "native_runs": 1,
+    "frozen": true
+  },
+  "collector_validation": {
+    "pass": false,
+    "segments": 8,
+    "edges": 5,
+    "creates": 4,
+    "recovered_creates": 0,
+    "task_discoveries": 0,
+    "samples": 0,
+    "exits": 4,
+    "base_edges": 0,
+    "exit_edges": 4,
+    "active_reported": 0,
+    "active_replayed": 0,
+    "max_active": 2,
+    "replay_underflow": 0,
+    "samples_without_base": 0,
+    "samples_from_discovered_tasks": 0,
+    "boundary_conservation": true,
+    "dangling_edges": 0,
+    "functions": [
+      "BaseEventLoop.shutdown_asyncgens",
+      "BaseEventLoop.shutdown_default_executor",
+      "main",
+      "main.<locals>.b"
+    ],
+    "missing_target_functions": []
+  },
+  "verification": "10saved checks:9pass, collector sample validation fails because0samples; native assertion confirmation remains separate.",
+  "source_provenance": {
+    "source": "github-sources.json1170renderedlines173-204",
+    "fixture": "source/repro1170.py",
+    "normalization": "only common4space codeblock indent and rendered-line prefixes stripped; no executable edits"
+  },
+  "runtime_prerequisite": "preflight.json actual4.13.0 import/backend,3.12.4 interpreter; initial missingtyping_extensions resolved only via existing pure-Python archive PYTHONPATH. No install/download. Library archive declared version, not independently authenticated upstream wheel hash.",
+  "identity_limits": [
+    "original A/B/X are borrower labels, not native TaskIDs",
+    "generic capture observes actual Task address+generation; no explicit limiter/Event/borrower-to-Task bridge added",
+    "native traceback already identifies original main assertion and wrapper; caller benefit not established"
+  ],
+  "cpu_scope": "native-result process CPU/wall include interpreter/import+collector; not limiter CPU cost, runnable or queue wait; no overhead baseline",
+  "gates": "gates.json nine exact escaped-token+(?![0-9]) files;1170/1172/1197/1198/1178 and source refs clear. Known textual1092 freeze from AGENTS remains effective even absent fullID regex.",
+  "filtered": [
+    {
+      "id": "agronholm--anyio--1113",
+      "reason": "public report explicitlymaster-after1092; respect frozen1091/1092 relation; no setup/import/test/fixture/fix for this case"
+    },
+    {
+      "id": "agronholm--anyio--1223",
+      "reason": "issues URL redirects to PR; source context only, not a new Issues/Discussions case or execution opportunity"
+    }
+  ],
+  "inventory_inputs": [
+    "scope-batch-20261127/python-header-inventory-wave15.json",
+    "python-root-wave15-20261127/cache-inventory.json"
+  ],
+  "heat": null,
+  "heat_reason": "No complete live/saved issue comments/reactions count; page-relative cache age not heat",
+  "no_followup_native": true,
+  "frozen_workload_ids": [
+    "agronholm--anyio--1170",
+    "agronholm--anyio--1172",
+    "agronholm--anyio--1223"
+  ],
+  "native_artifact_directory": "perf-out/github-issue-discovery/automatic/python-wave19-20261127",
+  "shared_ledger_changed": false,
+  "initial_assessment_seconds": 194.053,
+  "budget_overrun_seconds": 35.237,
+  "stop_note": "Native completed119.600s; later saved-only verification/documentation exceeded180s. Recorded overrun and stopped; no target/capture/version rerun."
+}

@@ -1,0 +1,52 @@
+{
+  "schema": "coroperf.native-component-public-result/v1",
+  "issue": "https://github.com/agronholm/anyio/issues/1111",
+  "title": "Repeated cancellation callbacks after an abandoned async context",
+  "language": "Python",
+  "framework": "AnyIO4.10.0",
+  "python": "3.13.5",
+  "status": "component_reproduced",
+  "selected_case": false,
+  "run_count": 1,
+  "exit_code": 0,
+  "frozen": true,
+  "native_measurements": {
+    "window_seconds": 0.5371507259551436,
+    "process_cpu_seconds": 0.537009048,
+    "delivery_calls": 74955,
+    "instrumented": true,
+    "baseline_available": false
+  },
+  "native_state": "The latest added read-only scope snapshot retains the same completed/noncancelled worker Task as its host/member.",
+  "capture": {
+    "segments": 76,
+    "edges": 136,
+    "worker_creation": 1,
+    "worker_runtime_error": [
+      3,
+      4
+    ],
+    "worker_return": 6,
+    "direct_base_to_sample_edge": true,
+    "scope_membership_observer": "additional read-only API-state observation",
+    "cpu_attribution_verified": false
+  },
+  "limits": [
+    "Cached released version differs from unpinned reporter master.",
+    "No production SDK workload or fix comparison.",
+    "Observer overhead is not quantified; timings are instrumented observations.",
+    "Cancellation callback executes in the event loop; CPU cannot be labeled as execution by the completed worker.",
+    "Generic Task lifecycle does not independently establish scope membership."
+  ],
+  "evidence": {
+    "graph": "perf-out/github-issue-discovery/automatic/managed-wave2-20261127/graph.json",
+    "native": "perf-out/github-issue-discovery/automatic/managed-wave2-20261127/native-result.json",
+    "verification": "perf-out/github-issue-discovery/automatic/managed-wave2-20261127/verification.json"
+  },
+  "artifact_sha256": {
+    "perf-out/github-issue-discovery/automatic/managed-wave2-20261127/graph.json": "65e622e68ee2e317797c43d9666641b79cfe1c1abfd604b3a2c24172ad38df5a",
+    "perf-out/github-issue-discovery/automatic/managed-wave2-20261127/native-result.json": "bfaf8493e3d725073a808266f933b0ba1b37c09a3b7527b76f3726da2479ad39",
+    "perf-out/github-issue-discovery/automatic/managed-wave2-20261127/verification.json": "a0aba73163ebaaa705862ba587ba5712606c9f003ee530b0467974f9dc75f3a3",
+    "research/github-issue-discovery/managed-wave2-20261127/anyio_component.py": "396deb3853b70d394ecfb3f8b5dbd34024ff7f2c2d68b92f8bbfdb0ab35a67e0"
+  }
+}

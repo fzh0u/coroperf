@@ -1,0 +1,277 @@
+{
+  "schema": "coroperf.open-root-cause-review/v1",
+  "reviewed_at": "2026-11-28T02:20:54.586839+00:00",
+  "scope": {
+    "en": "Targeted review of existing database entries, not an exhaustive list of every unresolved issue. Upstream observations use rendered primary pages, some cached; complete API history and a repository-wide patch search were not available.",
+    "zh-CN": "从现有数据库定向筛选，不代表所有未解决 issue。上游核验依据所返回的主页面，部分为缓存；未取得完整 API 历史，也未作仓库级穷尽补丁搜索。"
+  },
+  "corpus": {
+    "discovery_entries": 1514,
+    "open_in_saved_discovery": 498,
+    "review_decisions": 931,
+    "verified_cases": 140,
+    "discovery_ledger_refreshed_at": "2026-11-28T00:20:30+00:00",
+    "inputs": [
+      {
+        "path": "web/coroperf-github-pages/data/discovery.json",
+        "sha256": "3033649c533e7b95faf8ce39685b899b232cc1e87a38a74d5dfaf52223dd375a"
+      },
+      {
+        "path": "research/github-issue-discovery/automation/reviews.json",
+        "sha256": "9a9d2b35e11ce9bb2aff8ff3b42ceaacb761dd44d52edab3bca6052dad04c430"
+      },
+      {
+        "path": "web/coroperf-github-pages/data/cases.json",
+        "sha256": "7a69e4d63600a99258e932aa3dc7d630cd4505bfb1d6b714e57d4eca64389555"
+      }
+    ]
+  },
+  "criteria": {
+    "en": "Prefer an observed open incident, no confirmed repair in inspected material, an unresolved causal link, and a concrete observation CoroPerf could add. Existing hypotheses, partial results and workarounds are retained explicitly. Native resource observations may be required. No new reproduction or root-cause result was produced in this review.",
+    "zh-CN": "优先选择已观察为 open、所读材料未确认修复、因果链仍有缺口且 CoroPerf 有具体证据可补的事故。已有假设、阶段性结果与缓解均保留说明，必要时需增加原生资源观察。本轮没有新增复现或根因结果。"
+  },
+  "workflow": {
+    "en": "Review one issue at a time: confirm status and original inputs; reproduce with ordinary diagnostics; identify the missing identity/history relation; collect the necessary evidence; test competing causes; validate a repair against the original regression.",
+    "zh-CN": "逐个过：确认状态与原始输入；用普通诊断复现；明确缺失的身份／历史关系；采集所需证据；区分竞争解释；用原回归测试验证修复。"
+  },
+  "candidates": [
+    {
+      "id": "chriskohlhoff--asio--1720",
+      "reference": "Asio #1720",
+      "url": "https://github.com/chriskohlhoff/asio/issues/1720",
+      "language": "C++ / stackless",
+      "stage": "candidate",
+      "question": {
+        "en": "Which event stops the last socket-write operation from completing?",
+        "zh-CN": "最后一次 socket write 为什么不再完成？"
+      },
+      "known": {
+        "en": "A closed-peer writer hangs. A later upstream comment reports the same failure with callbacks and improvement with epoll disabled; handler and frame-lifetime traces already exist. These are partial results, not a confirmed root cause.",
+        "zh-CN": "对端关闭后，写协程停住。上游评论报告回调版本也失败、禁用 epoll 后恢复，并已有 handler 与 frame 生命周期轨迹；这些是阶段性证据，尚未确证根因。"
+      },
+      "patch": {
+        "en": "No repair PR is shown in the rendered Development section. A related issue and attached reproducers are not a verified patch.",
+        "zh-CN": "所读页面的 Development 未列修复 PR；相关 issue 与复现附件不等于已验证补丁。"
+      },
+      "coroperf_addition": {
+        "en": "Join the writer and reused child-frame generations to the specific write operation, then locate the first missing registration, readiness, completion or resume event.",
+        "zh-CN": "把 writer、复用的子 frame 代次与具体 write 操作关联，定位注册、就绪、完成、恢复链中第一个缺失的事件。"
+      },
+      "required_evidence": {
+        "en": "Frame generation; socket generation; operation/handler identity; epoll registration and readiness; completion, resume and cleanup order. Operation/reactor observers are additional work.",
+        "zh-CN": "frame 代次、socket 代次、operation／handler 身份、epoll 注册与就绪，以及完成／恢复／清理顺序；操作与 reactor 观察点仍需补齐。"
+      },
+      "validation": {
+        "en": "Use one pinned affected build for the original, callback and backend controls. Check whether the pending operation remains queued or completed without a resume. Validate any eventual repair against the unchanged regression and success/error paths.",
+        "zh-CN": "固定受影响构建，比较原例、回调与后端对照；核对操作仍在队列，还是已完成却未恢复。若找到修复，用未改动的回归测试及正常／错误路径验证。"
+      },
+      "limits": {
+        "en": "Creation ancestry alone cannot explain lost reactor progress; callback failure argues against a coroutine-only cause. The original fixture/timeout and exact dependencies still need recovery.",
+        "zh-CN": "仅创建祖先不能解释 reactor 丢失进展；回调同样失败，不能预设是协程缺陷。原 fixture／超时与匹配依赖仍需取得。"
+      },
+      "first_step": {
+        "en": "Recover the original fixture and pin Boost 1.88.0 / GCC 13.3 / Ubuntu 24.04 before collecting anything.",
+        "zh-CN": "先取得原 fixture，固定 Boost 1.88.0／GCC 13.3／Ubuntu 24.04，再开始采集。"
+      },
+      "upstream_state": "open",
+      "new_execution": false,
+      "root_cause_confirmed": false
+    },
+    {
+      "id": "stackexchange--stackexchange.redis--3240",
+      "reference": "StackExchange.Redis #3240",
+      "url": "https://github.com/seredis/StackExchange.Redis/issues/3240",
+      "language": ".NET / async state machines",
+      "stage": "candidate",
+      "question": {
+        "en": "Why does the subscription handshake stop in ConnectedEstablishing?",
+        "zh-CN": "订阅连接握手为何停在 ConnectedEstablishing？"
+      },
+      "known": {
+        "en": "One CI run stalled against a fake in-process replica. The issue explains why that state consumes the connect timeout, but leaves client versus test-server scheduling unresolved; repeated local attempts did not reproduce it.",
+        "zh-CN": "一次 CI 在进程内模拟 replica 上停住。报告已解释该状态为何耗尽连接超时，但客户端还是模拟服务端调度造成停顿尚未确定，多次本地尝试未复现。"
+      },
+      "patch": {
+        "en": "Two referenced commits change test discovery/setup; the report does not establish them as a repair of the stalled handshake. No repair PR is shown in Development.",
+        "zh-CN": "两个引用提交涉及测试发现／准备，报告没有证明它们修复握手停顿；Development 未列修复 PR。"
+      },
+      "coroperf_addition": {
+        "en": "Connect handshake and response-processing Tasks to one connection generation and determine which pending response or continuation prevents completion.",
+        "zh-CN": "把握手、响应处理 Task 关联到同一连接代次，找出哪个未完成响应或 continuation 阻止结束。"
+      },
+      "required_evidence": {
+        "en": "Task tokens across resumes; interactive versus subscription connection identity; message/response and pipe ownership; fake-server dispatch; completion times.",
+        "zh-CN": "跨恢复的 Task token、interactive／subscription 连接身份、消息／响应及 pipe 所有权、模拟服务端派发和完成时间。"
+      },
+      "validation": {
+        "en": "Capture the original in-process test and compare successful and stalled connection generations. Locate the earliest missing response/dispatch; distinguish a fake-server fault from a client defect before a repair claim.",
+        "zh-CN": "采集原进程内测试，对比正常与停住的连接代次，定位最早缺失的响应／派发，先区分模拟服务端与客户端问题，再谈修复。"
+      },
+      "limits": {
+        "en": "A real Redis replica is not an equivalent reproduction. Task creation does not establish message or pipe ownership; resource observers and the rare failing schedule are still needed.",
+        "zh-CN": "真实 Redis replica 不能替代这个复现。Task 创建关系不证明消息或 pipe 所有权，仍需资源观察及原始失败时序。"
+      },
+      "first_step": {
+        "en": "Recover the exact CI revision, test and logs; preserve the pub/sub path that the later discovery test bypassed.",
+        "zh-CN": "先取得精确 CI revision、测试和日志，保留后来 discovery 测试绕开的 pub/sub 路径。"
+      },
+      "upstream_state": "open",
+      "new_execution": false,
+      "root_cause_confirmed": false
+    },
+    {
+      "id": "sidorares--node-mysql2--695",
+      "reference": "node-mysql2 #695",
+      "url": "https://github.com/sidorares/node-mysql2/issues/695",
+      "language": "Node.js / Promise resources",
+      "stage": "candidate",
+      "question": {
+        "en": "Which command or completion leaves the sequential database workflow waiting?",
+        "zh-CN": "哪条命令或完成事件让数据库顺序工作流一直等待？"
+      },
+      "known": {
+        "en": "The original report describes post-insert hangs; later reports discuss a growing queue. A 2026 maintainer comparison did not reproduce the original behavior. The page still requests a reproduction and investigation.",
+        "zh-CN": "原报告描述批量插入后的挂起，后续报告提到队列增长；维护者 2026 年的对照没有复现原症状，页面仍标记需要复现与调查。"
+      },
+      "patch": {
+        "en": "No repair PR is shown in Development. Bulk loading and transaction suggestions do not establish a repair for the original hang.",
+        "zh-CN": "Development 未列修复 PR；批量导入、事务等建议没有证明修复原始挂起。"
+      },
+      "coroperf_addition": {
+        "en": "Attribute queued/current commands to their initiating Promise resources and compare enqueue, dispatch and callback settlement.",
+        "zh-CN": "把排队／当前命令接回发起 Promise 资源，对照入队、派发、回调与 settlement 的缺口。"
+      },
+      "required_evidence": {
+        "en": "Async-resource identity; connection generation; command sequence; transaction ownership; socket progress and settlement. These resource relations need explicit observations.",
+        "zh-CN": "async-resource 身份、连接代次、命令序号、事务所有权、socket 进展与 settlement；这些资源关系需要额外观察。"
+      },
+      "validation": {
+        "en": "First reproduce one pinned reporter workflow. Compare its stalled command history with a successful run and database activity, then test a cause-specific change without changing the submitted workload.",
+        "zh-CN": "先复现一套固定的报告者工作流，比较挂起／正常运行的命令历史和数据库活动，再保持负载不变验证针对原因的改动。"
+      },
+      "limits": {
+        "en": "Several versions and reporter workloads are mixed in this long thread. The 2026 test is not a confirmed reproduction; async-resource lineage alone cannot prove server-side delay or command ownership.",
+        "zh-CN": "长讨论混有不同版本与报告者负载；2026 年测试不是已确认复现。仅 async-resource 祖先不能证明数据库延迟或命令所有权。"
+      },
+      "first_step": {
+        "en": "Obtain a reproducing input and exact package/server versions before reusing the maintainer comparison.",
+        "zh-CN": "先取得能复现的输入及精确客户端／服务端版本，再决定是否复用维护者对照。"
+      },
+      "upstream_state": "open",
+      "new_execution": false,
+      "root_cause_confirmed": false
+    },
+    {
+      "id": "golang--go--54461",
+      "reference": "Go / gopls #54461",
+      "url": "https://github.com/golang/go/issues/54461",
+      "language": "Go / stackful",
+      "stage": "status_check",
+      "question": {
+        "en": "Does command shutdown wait on a live child, inherited pipes, or bookkeeping?",
+        "zh-CN": "命令关闭究竟在等子进程、被继承的 pipe，还是清理记账？"
+      },
+      "known": {
+        "en": "The captured issue body reports long command waits. The rendered page omits discussion despite a large comment count in the database, so current conclusions and repair status are unknown.",
+        "zh-CN": "所读正文报告长时间等待命令结束，但页面未返回讨论，而数据库记录大量评论；目前的结论与补丁状态未知。"
+      },
+      "patch": {
+        "en": "Unverified: full discussion and tracker history must be read before admitting this as an unpatched issue.",
+        "zh-CN": "未核实：必须先读完整讨论和 tracker 历史，才能列为无补丁候选。"
+      },
+      "coroperf_addition": {
+        "en": "Join goroutine creation/execution to subprocess PID generations and descriptor ownership, then separate process exit, copy completion and shutdown wait.",
+        "zh-CN": "把 goroutine 创建／执行接到子进程 PID 代次与 fd 所有权，区分进程退出、复制结束与关闭等待。"
+      },
+      "required_evidence": {
+        "en": "Goroutine generations, child/descendant process generations, pipe holders, cancellation and reap events. Process/descriptor observers go beyond creation-stack stitching.",
+        "zh-CN": "goroutine 代次、子／后代进程代次、pipe 持有者、取消和回收事件；进程／fd 观察超出创建栈拼接。"
+      },
+      "validation": {
+        "en": "Recover the exact failing regtest and command inputs; do not infer one common root cause for every flake in the tracker.",
+        "zh-CN": "恢复精确失败的 regtest 与命令输入，不把 tracker 中所有偶发失败归成同一根因。"
+      },
+      "limits": {
+        "en": "Supplemental status check, outside the three primary candidates. No complete comment history or original runnable fixture is available in the reviewed record.",
+        "zh-CN": "仅作补充核验，不计入三个主要候选；现有记录没有完整评论历史和原始可运行 fixture。"
+      },
+      "first_step": {
+        "en": "Read the missing discussion and locate an unresolved failing build first.",
+        "zh-CN": "先补齐讨论，找到仍未解决的具体失败构建。"
+      },
+      "upstream_state": "open",
+      "new_execution": false,
+      "root_cause_confirmed": false
+    }
+  ],
+  "not_primary": [
+    {
+      "id": "npgsql--npgsql--5975",
+      "reference": "Npgsql #5975",
+      "url": "https://github.com/npgsql/npgsql/issues/5975",
+      "reason": {
+        "en": "Open, but a maintainer already identifies a timeout/cancellation race and a keepalive workaround. It is a hypothesis-validation case, not a blank root-cause discovery case; the original application is incomplete.",
+        "zh-CN": "仍 open，但维护者已指出 timeout／cancellation 竞争并给出 keepalive 缓解；适合验证假设，不能写成从零发现根因，且原应用不完整。"
+      }
+    },
+    {
+      "id": "npgsql--npgsql--6733",
+      "reference": "Npgsql #6733",
+      "url": "https://github.com/npgsql/npgsql/issues/6733",
+      "reason": {
+        "en": "Open, but the activity references repair commits and PR review. A Development box without a PR does not establish no patch.",
+        "zh-CN": "仍 open，但活动中已有修复提交和 PR review；Development 未列 PR 不能证明没有补丁。"
+      }
+    },
+    {
+      "id": "reactor--reactor-core--4488",
+      "reference": "Reactor #4488",
+      "url": "https://github.com/reactor/reactor-core/issues/4488",
+      "reason": {
+        "en": "The report already explains executor head-of-line blocking and supplies an application scheduler workaround and regression comparison. Earlier local capture timed out without saved target results.",
+        "zh-CN": "报告已解释 executor 队头阻塞，并给出应用 scheduler 缓解与回归对照；早前本地采集超时，未保存目标结果。"
+      }
+    },
+    {
+      "id": "reactor--reactor-core--4442",
+      "reference": "Reactor #4442",
+      "url": "https://github.com/reactor/reactor-core/issues/4442",
+      "reason": {
+        "en": "The report already gives the lost-demand/ABA interleaving, test counts and workaround. Useful for attribution validation, not a new root-cause claim.",
+        "zh-CN": "报告已有 demand 丢失／ABA 交错分析、测试计数与缓解；可验证归属，不适合作为新发现根因。"
+      }
+    },
+    {
+      "id": "chriskohlhoff--asio--1763",
+      "reference": "Asio #1763",
+      "url": "https://github.com/chriskohlhoff/asio/issues/1763",
+      "reason": {
+        "en": "The report already explains the completion-token executor/strand mismatch and a debugger-forced ordering. Remaining work concerns validation or repair.",
+        "zh-CN": "报告已解释 completion token 的 executor／strand 不匹配，并给出调试器强制交错；剩余工作是验证或修复。"
+      }
+    },
+    {
+      "id": "duckdb--duckdb--23885",
+      "reference": "DuckDB #23885",
+      "url": "https://github.com/duckdb/duckdb/issues/23885",
+      "reason": {
+        "en": "Still open, but a maintainer cannot reproduce on v2.0 and asks for a retest. Establish an affected build before root-cause work. Its async I/O task representation is not yet established as a coroutine.",
+        "zh-CN": "仍 open，但维护者表示 v2.0 无法复现并请求重测；应先确认受影响构建，且尚未建立其 async I/O task 就是协程。"
+      }
+    },
+    {
+      "id": "magicstack--asyncpg--442",
+      "reference": "asyncpg #442",
+      "url": "https://github.com/MagicStack/asyncpg/issues/442",
+      "reason": {
+        "en": "The reporter supplies timeout clues and a terminate-on-timeout application workaround. No confirmed library repair is shown; this is not an issue with no existing result.",
+        "zh-CN": "报告者已有 timeout 线索及超时后 terminate 的应用缓解；页面未展示已确认库修复，但不属于没有任何已有结果的 issue。"
+      }
+    }
+  ],
+  "publication": {
+    "status": "failed",
+    "attempted_at": "2026-11-28T02:23:02.904577+00:00",
+    "reason": "Git fetch could not resolve github.com; no new commit was pushed and GitHub Pages deployment is unverified."
+  }
+}

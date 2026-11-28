@@ -61,6 +61,7 @@ def document(path, title, description, body, language):
         <a href="{prefix}index.html#issues">{text["issues"]}</a>
         <a href="{prefix}research.html">{text["research"]}</a>
         <a href="{prefix}discovery.html">{"搜索进度" if chinese else "Search progress"}</a>
+        <a href="{prefix}open-issues.html">{"待分析 Issue" if chinese else "Open investigations"}</a>
         <a href="{prefix}index.html#method">{text["method"]}</a>
       </nav>
       <nav class="languages" aria-labelledby="language-label">

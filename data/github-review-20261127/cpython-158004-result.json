@@ -1,0 +1,80 @@
+{
+  "schema": "coroperf.cpython158004-component/v1",
+  "case_id": "python--cpython--158004",
+  "native_runs": 1,
+  "raw_native_returncode": null,
+  "cli_returncode": 1,
+  "native_stdout": "['a']",
+  "runtime": "CPython3.13.5",
+  "report_runtime": "main branch, Linux; no pinned commit",
+  "source_code_unchanged": true,
+  "native_symptom_reproduced": true,
+  "capture_validation_pass": false,
+  "graph_segments": 8,
+  "graph_edges": 5,
+  "samples": 0,
+  "selected_case_added": false,
+  "successful_workload_frozen": true,
+  "first_check_seconds": 105.82452169503085,
+  "record_elapsed_seconds": 195.919,
+  "record_exceeds_180_seconds": true,
+  "verification": {
+    "pass": true,
+    "saved_only": true,
+    "checks": {
+      "stdout_single_result": true,
+      "stderr_empty": true,
+      "four_creates": true,
+      "four_exits": true,
+      "waiter_cancelled": true,
+      "main_returned": true,
+      "no_samples": true,
+      "collector_validation_failed": true,
+      "lifecycle_balanced": true,
+      "no_replay": true
+    },
+    "native_symptom_reproduced": true,
+    "historical_component_only": true,
+    "coroperf_capture_validation_pass": false,
+    "target_raw_returncode": "unknown: wrapper combines target exit and collector validation; main return and empty stderr are saved, not a raw exit code",
+    "waiter_task": "python-asyncio-task-0x7035d78b9390-g2",
+    "waiter_creation": 1,
+    "waiter_cancel_exit": 2,
+    "unobserved": [
+      "a/b Future identities and lifecycle events",
+      "iterator/queue identity and slot-count history",
+      "waiting/sample/exception stack",
+      "CPU cost/optimization benefit"
+    ],
+    "native_target_runs": 1,
+    "additional_target_runs": 0
+  },
+  "decision": {
+    "status": "component_reproduced",
+    "execution_status": "historical_native_symptom_with_capture_validation_failure",
+    "reason": "One unmodified upstream program ran once with cached CPython3.13.5, a historical component rather than the reported main commit. Stdout is [a], confirming one of two completed inputs is omitted after anext cancellation. Four Task creations/exits include two runner shutdown Tasks;8segments/5edges, waiter creation1→cancel-exit2 and main return. There are zero samples: collector validation fails and the CLI/envelope reports1; the wrapper combines target status with validation and did not preserve an independent raw target exit. This must not be described as an application exception or collector pass. No actual a/b Future→iterator/queue identity, count mutation history or extra missing-caller value was established. No selected case or optimization claim; successful native symptom frozen, including linked158005/159877/159878, without replay, extra capture or version/fix matrix.",
+    "reason_zh": "原帖未修改程序以缓存CPython3.13.5仅运行一次，属历史组件，非原报告main commit。stdout为单个[a]，确认取消anext后两个完成输入仅返回其一。4条Task创建／结束含2条runner shutdown；8段／5边，waiter创建1→取消结束2，main返回。采样0，collector校验失败，CLI／envelope报1；wrapper合并原target状态与校验，未独立保留原始target exit，不能当应用异常或采集通过。未取得a／b Future→iterator／queue真实身份、计数变更历史或新增caller收益。不新增精选或优化结论；原生症状成功冻结，含关联158005／159877／159878，不重跑、补采或版本／修复矩阵。",
+    "sources": [
+      "https://github.com/python/cpython/issues/158004"
+    ],
+    "reviewed_at": "2026-11-26T17:43:59.077618+00:00",
+    "native_executions": 1,
+    "capture_runs": 1,
+    "coroperf_validated": false,
+    "selected_case_added": false,
+    "optimization_verified": false,
+    "workload_frozen": true,
+    "first_check_through_native_seconds": 105.82452169503085,
+    "first_check_through_record_seconds": 195.919,
+    "heat": null,
+    "reported_issue_kind": "functional",
+    "coroperf_applicability": "Conditional Future/iterator/queue cancellation and ownership history; generic Task creation and terminal status do not explain a dropped iterator slot."
+  },
+  "evidence": {
+    "native": "perf-out/github-issue-discovery/automatic/cpython-root-wave11-20261127/capture/stdout.log",
+    "graph": "perf-out/github-issue-discovery/automatic/cpython-root-wave11-20261127/capture/graph.json",
+    "summary": "perf-out/github-issue-discovery/automatic/cpython-root-wave11-20261127/capture/summary.json",
+    "run": "perf-out/github-issue-discovery/automatic/cpython-root-wave11-20261127/run.json",
+    "verification": "research/github-issue-discovery/cpython-root-wave11-20261127/verification.json"
+  }
+}

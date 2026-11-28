@@ -21,6 +21,7 @@
         <a href="index.html#issues">Issue evidence</a>
         <a href="research.html">Research notes</a>
         <a href="discovery.html">Search progress</a>
+        <a href="open-issues.html">Open investigations</a>
         <a href="index.html#method">Method</a>
       </nav>
       <nav class="languages" aria-labelledby="language-label">
@@ -43,7 +44,7 @@
         <h1>What the joined stack recovers</h1>
         <p class="section-copy">Browse the same issues by the primary finding established by the recorded coroutine join.</p>
       </header>
-      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(42)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(33)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
+      <nav class="research-categories" aria-label="CoroPerf contribution"><ul><li><a href="#caller_recovery">Caller recovery <span>(42)</span></a></li><li><a href="#request_handoff">Request and result handoffs <span>(22)</span></a></li><li><a href="#failure_lifecycle">Failure and task lifecycle <span>(19)</span></a></li><li><a href="#scheduling_contention">Scheduling and contention <span>(34)</span></a></li><li><a href="#cost_attribution">Performance cost attribution <span>(23)</span></a></li></ul></nav>
 
     <section class="block" id="deferred-followups" aria-labelledby="deferred-title">
       <div class="section-head"><h2 id="deferred-title">Deferred follow-ups</h2></div>
@@ -639,6 +640,13 @@
               <small>Reproduction follow-up paused under safety restrictions</small>
             </th>
             <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/ray-project/ray/issues/59347">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
+          </tr>
+          <tr id="followup-grpc--grpc-go--9330">
+            <th scope="row">
+              <a href="https://github.com/grpc/grpc-go/issues/9330"><span>grpc/grpc-go #9330</span>gRPC-Go #9330: user skipped</a>
+              <small>Reproduction follow-up paused under safety restrictions</small>
+            </th>
+            <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/grpc/grpc-go/issues/9330">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
           </tr></tbody>
         </table>
       </div>
@@ -1090,7 +1098,7 @@
       </div>
     </section>
     <section class="block" id="scheduling_contention" aria-labelledby="scheduling_contention-title">
-      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">33 issues</span></div>
+      <div class="section-head"><h2 id="scheduling_contention-title">Scheduling and contention</h2><span class="case-kind">34 issues</span></div>
       <p class="section-copy">Connect a delayed task to the execution order, poll interval, or resource that held it up.</p>
       <div class="table-wrap research-table">
         <table aria-labelledby="scheduling_contention-title">
@@ -1260,6 +1268,11 @@
         <th scope="row"><a href="evidence/tokio-rs--tokio--8085.html#call-stack"><span>tokio-rs/tokio #8085</span>Which caller delayed the socket read?</a></th>
         <td><p>Two CPU tasks have the same physical stack after suspension and the same stock spawn location. CoroPerf joins each poll to its creation stack. In this local adaptation, moving the same CPU work to a separate runtime changes median read delay from 107.924 ms to 0.039 ms.</p></td>
         <td class="row-status"><a class="state-pill state-open" href="https://github.com/tokio-rs/tokio/issues/8085">Open</a><span class="fix-label">Fix unconfirmed</span></td>
+      </tr>
+      <tr>
+        <th scope="row"><a href="evidence/agronholm--anyio--947.html#call-stack"><span>agronholm/anyio #947</span>Which borrower submission is waiting on an idle limiter?</a></th>
+        <td><p>Actual Task/limiter snapshots select the second queued borrower; creation2→wait4 recovers its second tg.start submission site. Resource state is an extra observer, and the100ms historical4.8.0 component has no optimization control.</p></td>
+        <td class="row-status"><a class="state-pill state-unconfirmed" href="https://github.com/agronholm/anyio/issues/947">Unconfirmed</a><span class="fix-label">Fix unconfirmed</span></td>
       </tr></tbody>
         </table>
       </div>

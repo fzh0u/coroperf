@@ -1,0 +1,80 @@
+{
+  "schema": "coroperf.github-coverage-attempts/v1",
+  "checked_at": "2026-11-26T19:45:56.121529+00:00",
+  "scope": "Public GitHub source gaps only; index/related/PR metadata are not completed reviews.",
+  "coverage_only_records": {
+    "cloudflare/pingora": {
+      "repositories": [
+        "cloudflare/pingora"
+      ],
+      "result": {
+        "batch": "pingora-wave27-20261127",
+        "assessment": "coverage_only",
+        "repositories": [
+          "cloudflare/pingora"
+        ],
+        "new_reviews": 0,
+        "selected": 0,
+        "scope": "Five narrow queries across two search calls, plus one repository Performance issue-index request. Index fetch returned cache miss. No complete fresh Issue/Discussion reviewed; not evidence of zero Pingora performance incidents.",
+        "search_findings": [
+          {
+            "id": "cloudflare--pingora--372",
+            "handling": "Exact existing review matched automation/reviews.json; no explicit issue open/setup/replay."
+          },
+          {
+            "id": "cloudflare--pingora--447",
+            "handling": "Linked memory-context metadata in the old372 search result, not pursued or treated as fresh workload."
+          },
+          {
+            "id": "cloudflare--pingora--937",
+            "handling": "RFC/feature-design search result, not promoted to measured performance case; primary not opened, unreviewed, no environment verdict."
+          },
+          {
+            "url": "https://github.com/cloudflare/pingora/pull/713",
+            "handling": "PR search result only, not an eligible new case; not opened."
+          }
+        ],
+        "coroperf_applicability": {
+          "assessment": "unknown_without_complete_original_case",
+          "required_identity": [
+            "actual session/request/HTTP stream and resource generation",
+            "owning Tokio Task/coroutine frame and Future poll/wake identity",
+            "upstream connection/pool admission and I/O events",
+            "OS worker and scheduler enqueue/run events"
+          ],
+          "limits": "Session/request/stream are not automatically Tokio Task identities; worker is not coroutine. End-to-end latency and RSS alone do not isolate CPU, OS runnable delay, executor queue, pool admission or I/O service. No actual identity bridge, native metric, root cause, caller benefit or optimization evidence collected."
+        },
+        "heat": null,
+        "heat_note": "No reliable heat for an eligible new case; no live global ranking.",
+        "run_summary": {
+          "original_clock_epoch": 1795722022.6934056,
+          "budget_seconds": 120,
+          "exploration_stop_seconds": 39.44149041175842,
+          "exploration_before_45_seconds": true,
+          "decisions_written_seconds": 39.441157817840576,
+          "decisions_before_80_seconds": true,
+          "target_executions": 0,
+          "builds": 0,
+          "package_imports": 0,
+          "captures": 0,
+          "native_successes": 0,
+          "socket_jdi_ptrace_retries": 0,
+          "shared_state_modified": false
+        },
+        "source_note": "No external tracker, malformed-traffic experiment, packet generation or explicit primary case open. No repeated fetch after index cache miss. Old378 and all other held/successful workloads untouched."
+      }
+    }
+  },
+  "risingwave_coverage_only": {
+    "27908": "primary cache miss,0review",
+    "27918": "primary cache miss,0review"
+  },
+  "new_reviews_from_coverage_only": 0,
+  "new_reviews_elsewhere_this_wave": 3,
+  "native_executions": 0,
+  "builds": 0,
+  "captures": 0,
+  "artifact_hashes_checked": 33,
+  "timing_limits": "Materialized source/decision records: brpc76.75s, Pingora69.71s, RisingWave81.86s; RisingWave decision81.86s exceeds80s target. Root131.148s within its180s total, decision later than90s target, source ended29.451s. brpc agent status stillrunning at parent-observed165.899s despite complete saved artifacts; parent interrupt attempt aborted before dispatch on arrival of terminal response. No interrupt/restart/native occurred.",
+  "limits": "Performance-index cache miss is not zero Pingora incidents, disabled channels or an environment failure in metadata candidates. No malformed traffic or external tracker experiments."
+}

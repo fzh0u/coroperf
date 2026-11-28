@@ -1,0 +1,108 @@
+{
+  "schema": "coroperf.independent-offline-review/v1",
+  "reviewed_at": "2026-11-26T17:04:08.558477+00:00",
+  "mode": "Offline inspection only; zero target/build/capture/replay launches by reviewer.",
+  "verdict": "sufficient_for_one_scoped_selected_case",
+  "contribution_kind": "scheduling_contention",
+  "recommended_record_pair": [
+    "2",
+    "4"
+  ],
+  "selected_case_created_by_this_review": false,
+  "checks": {
+    "native_process_exit_zero": true,
+    "native_group_cleanup_complete": true,
+    "native_second_borrower_unfinished_during_bounded_window": true,
+    "two_distinct_borrower_tasks": true,
+    "public_event2_matches_second_borrower_argument": true,
+    "public_event1_matches_first_borrower_argument": true,
+    "actual_task_address_matches_g3": true,
+    "unique_target_generation_in_capture": true,
+    "create2_same_identity_as_sample4": true,
+    "create2_is_create_and_sample4_is_task_snapshot": true,
+    "explicit_base_to_sample_edge2_4": true,
+    "create2_captures_second_start_line47": true,
+    "first_start_create1_captures_distinct_line45": true,
+    "sample4_lacks_submission_line47": true,
+    "all_target_current_samples_lack_submission_line47": true,
+    "native_get_stack_lacks_submission_line47": true,
+    "sample4_shows_limiter_acquire_wait": true,
+    "same_limiter_id_across_snapshots": true,
+    "before_cancel_has_two_actual_waiters_and_one_borrower": true,
+    "after_release_same_target_queued_free_capacity": true,
+    "after_window_same_target_still_queued": true,
+    "creation_precedes_sample": true,
+    "target_eventual_cancel_exit_captured": true,
+    "all_capture_lifetimes_closed": true,
+    "observe_has_no_await_or_yield": true,
+    "scope_cancellation_precedes_controller_release_observation_and_signal_wait": true,
+    "observer_does_not_call_release_cancel_acquire_or_event_set": true,
+    "historical_version_boundary_explicit": true
+  },
+  "all_checks_passed": true,
+  "identity_chain": {
+    "public_signal_event2_id": 135408890486800,
+    "second_borrower_task_id": 135408891728256,
+    "runtime_task_generation": "python-asyncio-task-0x7b2756e41180-g3",
+    "limiter_id": 135408892308496,
+    "resource_identity_source": "Extra read-only observation of actual borrower Event argument/current Task plus actual limiter statistics/_wait_queue; not inferred from Task ancestry.",
+    "native_internal_queue_event_id": "not captured; the _wait_queue asyncio.Event must not be identified as the public AnyIO event2."
+  },
+  "diagnostic_contribution": "Native statistics already establish free capacity with a pending waiter. Native get_stack and current await-chain samples show borrower/limiter waiting but omit which of the two identical borrower submissions initiated that Task. Captured creation2 recovers the real second tg.start call at test_acquire_cancelled:47 for exactly the same Task as sample4. This is historical submission attribution; it does not discover the limiter root cause.",
+  "observer_order_review": {
+    "fixture_order": "controller holds limiter; await first tg.start; await second tg.start; synchronous observe; scope1.cancel; controller exits async-with limiter/release; synchronous observe; bounded wait event2; synchronous observe; cleanup group cancellation.",
+    "added_observers": "Task/Event IDs are primitive snapshots. observe reads statistics(), _wait_queue, Task.done/get_stack and internal Event.is_set, with no await or limiter mutation. Installed statistics implementation only reads state. The added work can perturb timing but does not insert a scheduler checkpoint or reorder cancel/release/wait.",
+    "source_comparison_limit": "Resolved by archived complete maintainer test at source-web-response.json lines398–431: AST comparison confirms the observed cancellation/release/wait path; success-return and final pytest.fail are intentionally converted to result data plus uniform cleanup, as detailed in source_comparison."
+  },
+  "required_scope_limits": [
+    "Cached AnyIO4.8.0/Python3.11.11 component; report4.9.0 is not the tested version.",
+    "Only the observed approximately100ms wait window is established; do not assert infinite starvation.",
+    "Current graph samples are Task await-chain snapshots, not CPU samples.",
+    "Native resource state comes from additional explicit observation; generic Task ancestry alone does not prove limiter or signal ownership.",
+    "No internal limiter queue Event ID or queue mutation history is captured.",
+    "No uninstrumented overhead baseline, repair run, optimized-versus-baseline result or production deployment evidence.",
+    "Do not claim original root-cause discovery or superiority over native runtime tracing/debugging."
+  ],
+  "input_sha256": {
+    "research/github-issue-discovery/anyio947-wave5-20261127/component.py": "38edfb4930063815d25afb25139c5259d87f6a07475bd3ba6d046d4a1939ff20",
+    "perf-out/github-issue-discovery/automatic/anyio947-wave5-20261127/native-result.json": "965a09d218de7fcfdf63cf0c2d3df1f52c31293d7e149d6353b3c310806594da",
+    "perf-out/github-issue-discovery/automatic/anyio947-wave5-20261127/graph.json": "5aabb88bb9f5e346e1cc2681697edcf91d1572d5333c81ec47c1f969d8a7b9b5",
+    "perf-out/github-issue-discovery/automatic/anyio947-wave5-20261127/run-summary.json": "10a8a5d0a28ecb3fd267bf77d460dcb55dbb1d324c94dce7ab10c345dbd524a2",
+    ".tools/systems-repro/langgraph-input-reemit/venv/lib/python3.11/site-packages/anyio/_backends/_asyncio.py": "ffa043143ac43c8d5a44f14348fb14cf23c69be76746004f7c439d7821f52318",
+    "research/github-issue-discovery/anyio947-wave5-20261127/source-web-response.json": "b1affc9ab0191981f789902e7cfa2a7dcc37710484ff33d3a7c0ab39522d5ffa"
+  },
+  "review_execution_seconds_for_final_computation": 0.0015237841289490461,
+  "source_comparison": {
+    "reviewed_at": "2026-11-26T17:05:56.326469+00:00",
+    "source_url": "https://github.com/agronholm/anyio/issues/947",
+    "archive_kind": "Browsing text extraction; not raw HTML/API. Browsing may use cache.",
+    "original_span": "Browsing extraction lines398–431, maintainer2025-07-23 comment",
+    "source_web_response_sha256": "b1affc9ab0191981f789902e7cfa2a7dcc37710484ff33d3a7c0ab39522d5ffa",
+    "dedented_test_snippet_sha256": "722e435b47f251341168e4309f09b878e3ee60d692c8bdbd328b2e0b0c702433",
+    "checks": {
+      "upstream_snippet_complete_and_parseable": true,
+      "test_function_name_unchanged": true,
+      "borrower_function_name_unchanged": true,
+      "held_limiter_two_starts_and_cancel_sequence_identical_after_removing_observe": true,
+      "borrower_started_acquire_signal_checkpoint_sequence_identical": true,
+      "both_use_move_on_after_0_1": true,
+      "same_event2_await_at_start_of_window": true,
+      "original_success_path_has_return": true,
+      "fixture_success_path_exported_instead_of_return": true,
+      "original_final_pytest_fail_present": true
+    },
+    "all_checks_passed": true,
+    "conclusion": "The control path through the locally observed failure is preserved: controller holds CapacityLimiter(1), awaits the first then second borrower via tg.start, cancels scope1 before releasing its own token, then waits on event2 under move_on_after(0.1). Read-only observers add synchronous work but no scheduling checkpoint; exact timing is not claimed invariant.",
+    "intentional_transformations": [
+      "Original successful event2.wait path returns from inside the timeout scope; fixture instead records success/failure as data and performs uniform group cancellation/cleanup. The successful branch was not the locally observed branch.",
+      "Original timeout branch cancels the task group, then raises pytest.fail after group exit. Fixture records second_borrower_finished=false and timeout_caught=true, cancels the group, confirms group exit and writes data; process exit0 is successful capture/cleanup, not a passing upstream pytest.",
+      "Added primitive Task/Event identity recording in borrower and synchronous limiter/native-stack snapshots; no target state mutation or extra await is inserted before cancellation/release/wait.",
+      "CancelScope import is qualified as anyio.CancelScope; function names and borrower handoff statements retain their roles."
+    ],
+    "limitations": [
+      "The supplied archive is browser-extracted text and may be cached, not raw GitHub HTML/API.",
+      "Cached AnyIO4.8.0/Python3.11.11 remains distinct from the reported4.9.0 environment.",
+      "This source comparison does not establish CPU cost, optimized behavior or original root-cause discovery."
+    ]
+  }
+}

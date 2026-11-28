@@ -61,6 +61,12 @@ Official database discovery uses PostgreSQL archive relevance/date windows and M
 
 Regular discovery also covers Reactor, Netty and PostgreSQL JDBC, using framework-specific terms for Mono/Flux, ChannelFuture and LazyCleaner. Preparation failures have their own review status; they are distinct from unavailable external environments and safety holds.
 
+## Open root-cause investigations
+
+[Open investigations](open-issues.html) and [待分析 Issue](zh-cn/open-issues.html) provide a separate, ordered discussion queue. The review distinguishes unresolved root causes, partial upstream results, repair commits, workarounds, and incomplete status checks. Proposed CoroPerf observations are not verified diagnoses. The original discovery and verified-case records are preserved.
+
+Update `data/open-root-cause-review.json`, then run `python3 scripts/build_open_root_cause_review.py` to rebuild both language pages. Each issue records its next step, the additional identity/resource evidence required, and the controls needed before a root-cause claim. The shared page template links to this queue; publish generated pages, the data, and `assets/open-issues.css` together.
+
 The [Reactor disposal-worker note](evidence/reactor-4478-resource.html) and its [Chinese version](zh-cn/evidence/reactor-4478-resource.html) are supplemental resource provenance outside the selected case catalogue. Rebuild them from `data/reactor-4478-verification.json` with `python3 scripts/build_reactor_resource.py`. They document one execution, the explicit extra factory observer, native versus recovered stacks, and the untested repair direction.
 
 The pending C# runtime #117652 result pages were withdrawn at the user's request. The [skip record](data/dotnet-117652-user-skip.json) preserves their status; earlier local evidence remains historical and no further execution or attribution is planned for this issue.

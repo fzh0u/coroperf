@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="Which borrower submission is waiting on an idle limiter?">
+  <title>agronholm/anyio #947 · coroPerf</title>
+  <link rel="alternate" hreflang="zh-CN" href="../zh-cn/evidence/agronholm--anyio--947.html">
+  <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script defer src="../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#issues">Issue evidence</a>
+        <a href="../research.html">Research notes</a>
+        <a href="../discovery.html">Search progress</a>
+        <a href="../index.html#method">Method</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          Language
+        </span>
+        <a href="agronholm--anyio--947.html" lang="en" hreflang="en" aria-current="page">English</a><a href="../zh-cn/evidence/agronholm--anyio--947.html" lang="zh-CN" hreflang="zh-CN">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← Issue evidence</a>
+      <header class="case-header">
+        <p class="eyebrow">agronholm/anyio #947</p>
+        <h1>Which borrower submission is waiting on an idle limiter?</h1>
+        <div class="case-links"><a href="https://github.com/agronholm/anyio/issues/947">Upstream report ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf contribution</dt><dd>Scheduling and contention</dd></div>
+          <div><dt>Issue type</dt><dd>Functional failures and correctness</dd></div>
+          <div><dt>Upstream status</dt><dd>Unconfirmed</dd></div>
+          <div><dt>Fix evidence</dt><dd>Fix unconfirmed</dd></div>
+          <div><dt>Case language</dt><dd>Python</dd></div>
+          <div><dt>Reproduction</dt><dd>Component reproduced</dd></div>
+          <div><dt>Diagnosis</dt><dd>Direct</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">Call-stack evidence</h2></div>
+        <div class="join-contribution"><h3>What stitching revealed</h3><p>Actual Task/limiter snapshots select the second queued borrower; creation2→wait4 recovers its second tg.start submission site. Resource state is an extra observer, and the100ms historical4.8.0 component has no optimization control.</p></div>
+        <p class="small join-guide">Start with the observed execution stack. Follow the joins back to the creation stack and earlier callers. Each block keeps its recorded frame order.</p>
+        <p class="provenance">Observation 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>Original task snapshot</h3>
+          <section class="stack observed"><div class="stack-head"><h4>Observed task stack</h4><span>Record 4 · task_snapshot</span></div><ol class="frames"><li><code>borrower:38:component.py</code></li><li><code>__aenter__:1939:_asyncio.py</code></li><li><code>acquire:1993:_asyncio.py</code></li><li><code>acquire_on_behalf_of:2003:_asyncio.py</code></li><li><code>wait:213:locks.py</code></li></ol></section>
+          <p class="small trace-note">Frames from record 4 alone. Each stack block lists frames from caller to callee.</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf connected stack</h3>
+          <nav class="join-links" aria-label="Jump to a join point"><a href="#join-1-point-2">Join point 2 <code>4 → 2</code></a><a href="#join-1-point-1">Join point 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>Observed task stack</h4><span>Record 4 · task_snapshot</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>borrower:38:component.py</code></li><li><code>__aenter__:1939:_asyncio.py</code></li><li><code>acquire:1993:_asyncio.py</code></li><li><code>acquire_on_behalf_of:2003:_asyncio.py</code></li><li><code>wait:213:locks.py</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="Join point 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">Join point 2</a><strong>Creation → observed execution</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">Record 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">Record 4</a></p>
+          <p>The graph records this edge, and both endpoints carry the same captured instance identity.</p>
+          <p>The capture tracks the runtime token together with its generation to distinguish separate instances if a token is reused.</p>
+          <p class="join-verification">Graph edge <code>base_to_sample · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>Creation stack</h4><span>Record 2</span><span class="record-instance">Instance from record 2</span></div><ol class="frames"><li><code>&lt;module&gt;:67:component.py</code></li><li><code>run:74:_eventloop.py</code></li><li><code>run:2303:_asyncio.py</code></li><li><code>run:118:runners.py</code></li><li><code>run_until_complete:641:base_events.py</code></li><li><code>run_forever:608:base_events.py</code></li><li><code>_run_once:1936:base_events.py</code></li><li><code>_run:84:events.py</code></li><li><code>wrapper:2291:_asyncio.py</code></li><li><code>test_acquire_cancelled:47:component.py</code></li><li><code>start:886:_asyncio.py</code></li><li><code>_spawn:863:_asyncio.py</code></li><li><code>create_task:384:tasks.py</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="Join point 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">Join point 1</a><strong>Creator → child creation</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">Record 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">Record 2</a></p>
+          <p>A recorded graph edge connects these two creation records and identifies the creator relationship.</p>
+
+          <p class="join-verification">Graph edge <code>coroutine_created_by · 2 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>Ancestor creation stack</h4><span>Record 0</span><span class="record-instance">Instance from record 0</span></div><ol class="frames"><li><code>&lt;module&gt;:67:component.py</code></li><li><code>run:74:_eventloop.py</code></li><li><code>run:2303:_asyncio.py</code></li><li><code>run:100:runners.py</code></li></ol></section>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">Issue findings</h2></div>
+        <dl><div><dt>Local observation</dt><dd>One bounded cached AnyIO4.8.0/CPython3.11.11 component retains the maintainer test ordering: the controller holds CapacityLimiter(1), starts two borrowers, cancels the first scope before releasing, then waits100ms for the second signal. The second borrower remains queued with borrowed_tokens=0 and tasks_waiting=1. TaskGroup cleanup returns and the process exits0. The target ran once; no fixed-version or repeated workload ran.</dd></div><div><dt>What CoroPerf showed</dt><dd>Actual Event arguments and current Task IDs distinguish the two borrower submissions. Read-only limiter statistics and queue snapshots identify the second Task as the remaining waiter. Its unique runtime generation joins creation2 to wait4 through an explicit base_to_sample edge. CoroPerf recovers the real second tg.start site test_acquire_cancelled:47, absent from both native get_stack and the current await-chain samples. Native state already establishes idle capacity with a waiter; the added diagnostic value is historical submission attribution.</dd></div><div><dt>Scope and limits</dt><dd>The report names4.9.0; this is a historical4.8.0 component, not exact-version or production confirmation. Primitive Task/Event/queue observations add timing work but no await. The public completion Event is distinct from the internal queue Event, whose identity was not captured. Only the100ms window is established. Task snapshots are not CPU samples; generic creation does not prove resource ownership. The original failure is exported as data with cleanup; process exit0 is not an upstream passing test. No natural-race frequency, instrumentation baseline, root-cause discovery, repair experiment or optimization result is claimed.</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>

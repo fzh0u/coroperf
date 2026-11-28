@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#772f26">
+  <meta name="description" content="空闲limiter中的等待者来自哪一次borrower提交？">
+  <title>agronholm/anyio #947 · coroPerf</title>
+  <link rel="alternate" hreflang="en" href="../../evidence/agronholm--anyio--947.html">
+  <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/navigation.js"></script>
+
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="../index.html"><img class="brand-pony" src="../../assets/coroperf-pony-full.png" width="52" height="52" alt="">coro<em>Perf</em></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html#issues">案例证据</a>
+        <a href="../research.html">研究摘要</a>
+        <a href="../discovery.html">搜索进度</a>
+        <a href="../index.html#method">分析方法</a>
+      </nav>
+      <nav class="languages" aria-labelledby="language-label">
+        <span class="language-label" id="language-label">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.5"/>
+            <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+            <path d="M3.8 7.25h16.4M2.5 12h19M3.8 16.75h16.4"/>
+          </svg>
+          选择语言
+        </span>
+        <a href="../../evidence/agronholm--anyio--947.html" lang="en" hreflang="en">English</a><a href="agronholm--anyio--947.html" lang="zh-CN" hreflang="zh-CN" aria-current="page">简体中文</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="wrap case">
+      <a class="back" href="../index.html#issues">← 案例证据</a>
+      <header class="case-header">
+        <p class="eyebrow">agronholm/anyio #947</p>
+        <h1>空闲limiter中的等待者来自哪一次borrower提交？</h1>
+        <div class="case-links"><a href="https://github.com/agronholm/anyio/issues/947">上游报告 ↗</a></div>
+        <dl class="case-status">
+          <div><dt>CoroPerf 贡献</dt><dd>调度与资源争用定位</dd></div>
+          <div><dt>问题类型</dt><dd>功能故障与正确性问题</dd></div>
+          <div><dt>上游状态</dt><dd>待核对</dd></div>
+          <div><dt>修复证据</dt><dd>修复待核实</dd></div>
+          <div><dt>案例语言</dt><dd>Python</dd></div>
+          <div><dt>复现范围</dt><dd>复现相关组件</dd></div>
+          <div><dt>诊断依据</dt><dd>直接证据</dd></div>
+        </dl>
+      </header>
+      <section class="call-stack" aria-labelledby="stack-title" id="call-stack">
+        <div class="section-head"><h2 id="stack-title">调用栈证据</h2></div>
+        <div class="join-contribution"><h3>拼接补回了什么</h3><p>实际Task／limiter快照识别第二个排队borrower；创建2→等待4恢复第二次tg.start提交位置。资源状态来自额外观察器；本次为100ms历史4.8.0组件，无优化对照。</p></div>
+        <p class="small join-guide">先看协程执行栈，再沿拼接点追溯创建栈和更早的调用者。各栈块保留原有帧顺序。</p>
+        <p class="provenance">观测记录 4</p>
+      <div class="trace-grid">
+        <div class="trace-pane">
+          <h3>原始任务栈快照</h3>
+          <section class="stack observed"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 4 · task_snapshot</span></div><ol class="frames"><li><code>borrower:38:component.py</code></li><li><code>__aenter__:1939:_asyncio.py</code></li><li><code>acquire:1993:_asyncio.py</code></li><li><code>acquire_on_behalf_of:2003:_asyncio.py</code></li><li><code>wait:213:locks.py</code></li></ol></section>
+          <p class="small trace-note">这里只显示记录 4 的栈帧。各个栈块均按调用者到被调用者的顺序排列。</p>
+        </div>
+        <div class="trace-pane stitched">
+          <h3>CoroPerf 拼接调用栈</h3>
+          <nav class="join-links" aria-label="跳转到拼接点"><a href="#join-1-point-2">拼接点 2 <code>4 → 2</code></a><a href="#join-1-point-1">拼接点 1 <code>2 → 0</code></a></nav>
+          <section class="stack observed" id="join-1-record-4"><div class="stack-head"><h4>观测到的任务栈</h4><span>记录 4 · task_snapshot</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>borrower:38:component.py</code></li><li><code>__aenter__:1939:_asyncio.py</code></li><li><code>acquire:1993:_asyncio.py</code></li><li><code>acquire_on_behalf_of:2003:_asyncio.py</code></li><li><code>wait:213:locks.py</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-2" aria-label="拼接点 2">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-2">拼接点 2</a><strong>创建 → 执行观测</strong></div>
+          <p class="join-records"><a href="#join-1-record-2">记录 2</a><span aria-hidden="true">→</span><a href="#join-1-record-4">记录 4</a></p>
+          <p>采集图记录了这条边，两个端点也携带相同的协程实例标识。</p>
+          <p>采集器用运行时标识及其代次一起区分实例，即使运行时标识后来被复用。</p>
+          <p class="join-verification">采集图边 <code>base_to_sample · 2 → 4</code></p>
+        </aside><section class="stack " id="join-1-record-2"><div class="stack-head"><h4>创建时的物理栈</h4><span>记录 2</span><span class="record-instance">实例首次见于记录 2</span></div><ol class="frames"><li><code>&lt;module&gt;:67:component.py</code></li><li><code>run:74:_eventloop.py</code></li><li><code>run:2303:_asyncio.py</code></li><li><code>run:118:runners.py</code></li><li><code>run_until_complete:641:base_events.py</code></li><li><code>run_forever:608:base_events.py</code></li><li><code>_run_once:1936:base_events.py</code></li><li><code>_run:84:events.py</code></li><li><code>wrapper:2291:_asyncio.py</code></li><li><code>test_acquire_cancelled:47:component.py</code></li><li><code>start:886:_asyncio.py</code></li><li><code>_spawn:863:_asyncio.py</code></li><li><code>create_task:384:tasks.py</code></li></ol></section>
+        <aside class="join-marker" id="join-1-point-1" aria-label="拼接点 1">
+        <div class="join-heading"><span aria-hidden="true">↑</span><a href="#join-1-point-1">拼接点 1</a><strong>创建者 → 子协程创建</strong></div>
+          <p class="join-records"><a href="#join-1-record-0">记录 0</a><span aria-hidden="true">→</span><a href="#join-1-record-2">记录 2</a></p>
+          <p>采集图用一条创建关系边连接了这两条创建记录，记录了谁创建了谁。</p>
+
+          <p class="join-verification">采集图边 <code>coroutine_created_by · 2 → 0</code></p>
+        </aside><section class="stack " id="join-1-record-0"><div class="stack-head"><h4>上游协程创建时的物理栈</h4><span>记录 0</span><span class="record-instance">实例首次见于记录 0</span></div><ol class="frames"><li><code>&lt;module&gt;:67:component.py</code></li><li><code>run:74:_eventloop.py</code></li><li><code>run:2303:_asyncio.py</code></li><li><code>run:100:runners.py</code></li></ol></section>
+        </div>
+      </div>
+      </section>
+      <section class="findings" aria-labelledby="findings-title">
+        <div class="section-head"><h2 id="findings-title">案例结论</h2></div>
+        <dl><div><dt>本地复现结果</dt><dd>缓存AnyIO4.8.0／CPython3.11.11的一次有界组件运行保留维护者测试顺序：controller持有CapacityLimiter(1)，启动两个borrower，在释放前取消第一个scope，随后等待第二个signal约100ms。第二个borrower仍在队列，borrowed_tokens=0、tasks_waiting=1；TaskGroup清理返回，进程exit0。目标只运行一次，没有修复版或重复负载。</dd></div><div><dt>CoroPerf 证据说明</dt><dd>实际Event参数与current Task ID区分两个borrower提交；额外只读limiter统计及队列快照识别第二Task为残留等待者。它的唯一运行时代际经显式base_to_sample边连接创建2与等待4。CoroPerf恢复真实的第二次tg.start入口test_acquire_cancelled:47，原生get_stack及当前await链均没有该提交位置。原生状态已经证明空闲容量与等待并存；新增诊断价值是历史提交归属。</dd></div><div><dt>适用范围与局限</dt><dd>原帖为4.9.0，本次是4.8.0历史组件，不是精确版本或生产确认。原始Task／Event／队列观察增加计时工作但不增加await。公开完成Event与内部队列Event不同，后者ID没有采集；仅证明100ms窗口。Task快照不是CPU采样，通用创建关系不能证明资源占有。原测试失败转换为数据并清理，进程exit0不表示上游测试通过；没有自然竞争发生率、插桩基线、新根因发现、修复试验或优化效果。</dd></div></dl>
+      </section>
+    </article></main>
+  <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
+</body>
+</html>

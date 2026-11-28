@@ -1,0 +1,566 @@
+{
+  "schema": "coroperf.source-support-snapshot/v1",
+  "checked_at": "2026-11-26T21:08:47.646793+00:00",
+  "scope": "Selected collectors, instrumented adapters and offline parsers; not whole-backend certification or native validation.",
+  "native_validation": "not_run",
+  "runtimes": [
+    {
+      "runtime": "Go",
+      "route_kind": "actual source route: unified bpftrace runtime hooks plus stackagg registry",
+      "events": [
+        "create(parent_g,child_g,caller_pc,ustack)",
+        "resume",
+        "ready",
+        "suspend",
+        "exit",
+        "profile_hz sample with goroutine_g"
+      ],
+      "identity": "Collector runtime.execute assigns @current_g[tid]=AX; profile event reads that same mapping. newproc1 returns child raw*g. stackagg increments generation per observed create, raw_g#N; missing-create observations use a separate observed-instance path. Raw*g is not numeric Go goid or resource identity.",
+      "limits": [
+        "Source inspection only; no BPF attach/runtime/architecture compatibility validation. Register AX/BX/CX conventions depend on pinned Go ABI/architecture, not portable guarantees.",
+        "Resume/ready/suspend emissions are gap-throttled; omitted transitions prevent treating every observed pair as complete runnable/IO wait intervals. Sampling CPU stacks does not identify lock/channel/socket owner or request causality automatically.",
+        "Generation increments require delivered create events; missed events and midstream attachment require explicit coverage qualification. Coroutine exit does not establish heap/resource final release.",
+        "Language README describes this route, not fresh native validation or current performance/overhead."
+      ],
+      "source_anchors": [
+        {
+          "path": "languages/go/README.md",
+          "line": 9,
+          "sha256": "4a237357eaccb9b05627b6494684611382a8f951c33d49f04a396e04c55a91aa",
+          "fact": "Documents raw*g generations, runtime hooks and in-sample thread binding."
+        },
+        {
+          "path": "scripts/trace_go_coroutines_unified.sh",
+          "line": 24,
+          "sha256": "f10dadaa4e75abb7e8b17b6094af56df655e1f34a0cbadc74f963ed281020a30",
+          "fact": "newproc1 entry saves parent BX/caller CX; return emits child retval plus creation stack."
+        },
+        {
+          "path": "scripts/trace_go_coroutines_unified.sh",
+          "line": 44,
+          "sha256": "f10dadaa4e75abb7e8b17b6094af56df655e1f34a0cbadc74f963ed281020a30",
+          "fact": "execute sets current_g; park/exit clear it; profile:hz condition reads it when sampling."
+        },
+        {
+          "path": "cmd/stackagg/main.go",
+          "line": 584,
+          "sha256": "a46df65982774be181e640576245a60468a427a049216e3ca362e7a8d7c13f58",
+          "fact": "Registry create branch increments generation and assigns raw_g#N; exit branch records exited and removes active mapping."
+        }
+      ],
+      "native_validation": "not_run",
+      "route_zh": "运行时探针与栈聚合器",
+      "identity_zh": "原始 *g 地址；观察到 create 时分代，不能等同数值 goid。",
+      "limits_zh": "ABI／架构和探针覆盖须匹配；部分状态事件节流，等待区间可能不完整。资源归属需额外关联。"
+    },
+    {
+      "runtime": "C++20",
+      "route_kind": "Configured ELF-offset eBPF lifecycle collector plus generation-aware frame graph adapter",
+      "events": [
+        "create_snapshot",
+        "resume",
+        "resume_return",
+        "destroy",
+        "sample_snapshot"
+      ],
+      "identity": "Collector emits TaskPtr as frame; inspected adapter distinguishes address generations and tracks actual instance. Correct upstream ABI/register extraction remains unverified in this focused scope.",
+      "creator_association": "Conditional: adapter consumes explicit parent_frame, parent_status and parent_source; links only an observed live non-self parent generation. This does not establish that every collector execution supplies those fields.",
+      "limits": [
+        "Requires target executable/PID, compiled BPF object, valid create/resume/return/destroy sites and usable BPF/uprobe permissions; none tested here.",
+        "Periodic sample capture is optional; sample-frequency defaults to zero. Event availability does not prove loss-free capture or CPU attribution.",
+        "C++20 frame route does not certify stackful ST, Helio fibers or Boost.Asio spawn/yield_context; separate identity/lifecycle evidence is required.",
+        "libuv callbacks, handles and OS workers must not be relabeled C++20 coroutine frames without an explicit demonstrated bridge.",
+        "Frame creation ancestry does not establish ownership of mutexes, queues, requests or resources; each case needs explicit observer evidence."
+      ],
+      "source_anchors": [
+        {
+          "path": "cmd/cpp20lifecycle/main.go",
+          "line": 101,
+          "sha256": "6ceee652d5f3d95397744c8f118523f60a8c42a62f9f7617fb7fe522123ede71",
+          "fact": "CLI collector entrypoint; requires executable, target PID and configured probe sites."
+        },
+        {
+          "path": "cmd/cpp20lifecycle/main.go",
+          "line": 31,
+          "sha256": "6ceee652d5f3d95397744c8f118523f60a8c42a62f9f7617fb7fe522123ede71",
+          "fact": "Event tags: create snapshot, resume, resume return, destroy, sample snapshot."
+        },
+        {
+          "path": "cmd/cpp20lifecycle/main.go",
+          "line": 42,
+          "sha256": "6ceee652d5f3d95397744c8f118523f60a8c42a62f9f7617fb7fe522123ede71",
+          "fact": "Raw event carries TaskPtr alongside PID/TID, timestamp, kind, CPU and stack ID; register-to-frame correctness not verified here."
+        },
+        {
+          "path": "cmd/cpp20lifecycle/main.go",
+          "line": 521,
+          "sha256": "6ceee652d5f3d95397744c8f118523f60a8c42a62f9f7617fb7fe522123ede71",
+          "fact": "Decoded event counters include zero-frame creates, resume entries/returns, destroy and sample snapshots."
+        },
+        {
+          "path": "cmd/cpp20lifecycle/main.go",
+          "line": 613,
+          "sha256": "6ceee652d5f3d95397744c8f118523f60a8c42a62f9f7617fb7fe522123ede71",
+          "fact": "Lifecycle text emitter labels nonzero TaskPtr as frame."
+        },
+        {
+          "path": "cmd/cpp20lifecycle/main.go",
+          "line": 135,
+          "sha256": "6ceee652d5f3d95397744c8f118523f60a8c42a62f9f7617fb7fe522123ede71",
+          "fact": "Collector rejects incomplete configured site sets when running bindings are enabled."
+        },
+        {
+          "path": "scripts/cpp20_abi_events_to_graph.py",
+          "line": 39,
+          "sha256": "76589b673f47c714a0d24626f7bd49bf7e984d770b53ddda4795abef91aacdfc",
+          "fact": "Adapter creates per-address generations; raw frame address alone is not lifetime identity."
+        },
+        {
+          "path": "scripts/cpp20_abi_events_to_graph.py",
+          "line": 64,
+          "sha256": "76589b673f47c714a0d24626f7bd49bf7e984d770b53ddda4795abef91aacdfc",
+          "fact": "Creator binding consumes parent_frame/status/source; rejects self-parent, unavailable parent generation or non-live parent; emits edge only after these checks."
+        }
+      ],
+      "native_validation": "not_run",
+      "route_zh": "指定 ELF 偏移的 eBPF 生命周期采集器及图适配器",
+      "identity_zh": "协程 frame 地址；图适配器处理地址代次，creator 需要明确的父 frame 证据。",
+      "limits_zh": "采样默认关闭；ABI、寄存器、探针点及权限尚未验证。不能据此推定 stackful fiber／回调覆盖。"
+    },
+    {
+      "runtime": "Rust/Tokio",
+      "route_kind": "Configured Tokio runtime ELF-offset eBPF lifecycle collector",
+      "events": [
+        "poll_enter",
+        "poll_return",
+        "complete",
+        "shutdown",
+        "dealloc",
+        "create",
+        "create_snapshot"
+      ],
+      "identity": "Source retains runtime TaskPtr in emitted task_ptr. It does not establish a separate identity for every nested Future; arbitrary Future poll/await is not necessarily another runtime Task or a scheduler yield.",
+      "creator_association": "Unknown in this focused audit: inspected raw lifecycle record/text emitter does not itself provide parent Task identity. A creation stack is not a verified creator-Task link. Tokio graph reconstruction was not inspected in this recovery scope.",
+      "limits": [
+        "Requires compatible target runtime probe offsets, executable/PID, compiled BPF object and permitted BPF/uprobe attachment; not validated.",
+        "Poll and complete offsets are mandatory; observing complete is distinct from observing deallocation. Missing optional create/dealloc sites limits lifetime closure.",
+        "Raw Task pointer reuse/generation reconstruction and creator graph correctness were not audited here.",
+        "This runtime route does not certify async-std/futures-rs/hyper or every Rust executor; nested Future, runtime Task and OS worker differ.",
+        "No standalone periodic CPU-sample event is established by this collector event mapping; CPU integration and runnable/queue delay require additional evidence.",
+        "Task lifecycle and creation stacks do not establish wait queue membership or resource ownership without per-case observation."
+      ],
+      "source_anchors": [
+        {
+          "path": "cmd/tokiolifecycle/main.go",
+          "line": 92,
+          "sha256": "a87248e4f8e2112c4cab9f39cc3822350bea9c5353b69b0a9465de27603ca813",
+          "fact": "CLI collector entrypoint loads BPF object and attaches executable-offset uprobes for specified PID."
+        },
+        {
+          "path": "cmd/tokiolifecycle/main.go",
+          "line": 27,
+          "sha256": "a87248e4f8e2112c4cab9f39cc3822350bea9c5353b69b0a9465de27603ca813",
+          "fact": "Event tags cover poll enter/return, complete, shutdown, dealloc, create and create snapshot."
+        },
+        {
+          "path": "cmd/tokiolifecycle/main.go",
+          "line": 41,
+          "sha256": "a87248e4f8e2112c4cab9f39cc3822350bea9c5353b69b0a9465de27603ca813",
+          "fact": "Raw event carries TaskPtr, PID/TID, timestamp, kind, CPU and stack ID; this inspected record has no parent Task field."
+        },
+        {
+          "path": "cmd/tokiolifecycle/main.go",
+          "line": 118,
+          "sha256": "a87248e4f8e2112c4cab9f39cc3822350bea9c5353b69b0a9465de27603ca813",
+          "fact": "Collector requires configured poll and complete offsets; creation/deallocation coverage depends on additional configured probes."
+        },
+        {
+          "path": "cmd/tokiolifecycle/main.go",
+          "line": 455,
+          "sha256": "a87248e4f8e2112c4cab9f39cc3822350bea9c5353b69b0a9465de27603ca813",
+          "fact": "Text emitter retains nonzero TaskPtr; task creation can include stack ID."
+        },
+        {
+          "path": "cmd/tokiolifecycle/main.go",
+          "line": 479,
+          "sha256": "a87248e4f8e2112c4cab9f39cc3822350bea9c5353b69b0a9465de27603ca813",
+          "fact": "Maps event kinds to rt_raw_poll, poll-return, harness-complete, shutdown, dealloc and Cell::new-return names."
+        }
+      ],
+      "native_validation": "not_run",
+      "route_zh": "指定 ELF 偏移的 eBPF Task 生命周期采集器",
+      "identity_zh": "实际 Task 指针，不等于每个嵌套 Future；本次未检查下游分代／creator 关联。",
+      "limits_zh": "必需 poll／complete 探针，create／dealloc 可选；未确立独立 CPU 采样事件，也不代表所有 Rust executor。"
+    },
+    {
+      "runtime": "Python asyncio",
+      "route_kind": "actual source route: instrumented Task factory/get_stack/done callback; separate thread-only CPython USDT converter",
+      "events": [
+        "Task create stack",
+        "Task.get_stack sample",
+        "Task exit",
+        "Task cancellation",
+        "Task exception",
+        "USDT function entry/return (separate thread stream)"
+      ],
+      "identity": "Asyncio debugger uses task:0x{id(task):x}. create/sample/exit join by that actual Task-derived key. sample captures sampler native TID; thread_current is updated while iterating sampled Tasks, not a proven running-Task CPU binding. Separate USDT converter labels coroutine_id=thread:TID and same-thread edges; it does not emit asyncio Task identity.",
+      "limits": [
+        "Task factory path is instrumented; this source review does not certify transparent runtime-wide lifecycle coverage or all Python versions. Other repository routes were not audited here.",
+        "Task.get_stack() samples suspended/live Task stacks, not per-Task on-CPU samples. thread_current in this adapter must not be equated to true task-step scheduler binding.",
+        "Task key uses object address without a generation suffix in this inspected adapter; completion cleanup is not heap lifetime/strong-reference or Task-address-reuse proof.",
+        "USDT stacks are keyed by OS thread and function names; function probes alone do not establish coroutine creation, current Task, shared-resource owner or queue/IO cause.",
+        "README historical service metrics are documentation only; no numeric result is imported into this audit."
+      ],
+      "source_anchors": [
+        {
+          "path": "languages/python/README.md",
+          "line": 9,
+          "sha256": "1fa420107844c18473613139f390eb8bdceba79c6e0574b57ee334f8103e41a6",
+          "fact": "Documents Task identity/lifecycle adapter and separately describes external probe routes; not native evidence."
+        },
+        {
+          "path": "scripts/python_asyncio_debugger.py",
+          "line": 51,
+          "sha256": "320cd79b2f02a576f17bdd92ef8d0f4e96e6fd4acf1077d0c9e0adb441933583",
+          "fact": "install wraps existing/default Task factory, calls create and installs done callback."
+        },
+        {
+          "path": "scripts/python_asyncio_debugger.py",
+          "line": 71,
+          "sha256": "320cd79b2f02a576f17bdd92ef8d0f4e96e6fd4acf1077d0c9e0adb441933583",
+          "fact": "sample uses Task.get_stack and updates thread_current; edges join the Task create base."
+        },
+        {
+          "path": "scripts/python_asyncio_debugger.py",
+          "line": 84,
+          "sha256": "320cd79b2f02a576f17bdd92ef8d0f4e96e6fd4acf1077d0c9e0adb441933583",
+          "fact": "done callback distinguishes cancel/exception/exit, emits final segment and clears active/base/thread mappings."
+        },
+        {
+          "path": "scripts/python_asyncio_debugger.py",
+          "line": 134,
+          "sha256": "320cd79b2f02a576f17bdd92ef8d0f4e96e6fd4acf1077d0c9e0adb441933583",
+          "fact": "task_id formats Python id(task) as task:0x... without a generation suffix."
+        },
+        {
+          "path": "scripts/python_usdt_events_to_graph.py",
+          "line": 58,
+          "sha256": "1c27acc906927340b47d5757d41d6874d7459fb7471ff29eeb4430792ad7a9b0",
+          "fact": "Converter labels emitted stack segments coroutine_id=thread:TID and connects same_thread_next_python_stack, not Task identities."
+        }
+      ],
+      "native_validation": "not_run",
+      "route_zh": "Task factory／get_stack 插桩适配器；另有线程级 USDT 转换器",
+      "identity_zh": "Task 路径使用 id(task)，没有显式代次；USDT 路径只有 thread:TID。",
+      "limits_zh": "遍历 Task 时更新的 thread_current 不是实际 on-CPU Task 绑定；get_stack 快照不能当 CPU 样本。"
+    },
+    {
+      "runtime": "Java virtual threads",
+      "route_kind": "Runtime-event offline JFR-to-graph adapter, service-oriented; source implementation observed, native compatibility not validated in this pass.",
+      "events": [
+        "jdk.VirtualThreadStart -> create",
+        "jdk.VirtualThreadEnd -> exit",
+        "jdk.ExecutionSample, jdk.ThreadPark, jdk.VirtualThreadPinned -> sample",
+        "jdk.ThreadSleep -> sleep",
+        "jdk.JavaExceptionThrow -> exception",
+        "GC/GCPhasePause/GCHeapSummary counted separately"
+      ],
+      "identity": "thread_metadata chooses eventThread then sampledThread then thread; javaThreadId becomes java-thread:<id>, fallback id/osThreadId becomes jfr-thread:<id>, final fallback thread name. Graph create/sample/exit and successive-event edges share this key, not a managed object address.",
+      "limits": [
+        "Inspected parser consumes an existing JFR file using jfr print; the recording launcher, JVM/JVMTI/SA implementations were not audited. README production recommendations are not executed support proof.",
+        "Selected EVENTS list has no mount/unmount or carrier binding event handling; inspected adapter does not reconstruct virtual-thread-to-OS-carrier migration. This is a limit of this file, not universal repository absence.",
+        "Thread-name fallback may conflate unnamed/same-name threads; Java logical ID and osThreadId fallback have different identity semantics. Parser output keys do not include process/recording generation.",
+        "Park/pinned events classified sample are diagnostic events, not necessarily on-CPU samples; elapsed event duration cannot be treated as CPU or pure runnable delay.",
+        "Request/Future/executor/resource ownership requires a case-specific join absent from this inspected parser; no generic callback/task caller benefit verified."
+      ],
+      "source_anchors": [
+        {
+          "path": "languages/java/README.md",
+          "line": 3,
+          "sha256": "6af2e938dd98420a9b46ca09b9b4269909ee45548cd29ef30b2f6edbcaf07986",
+          "fact": "README labels the route JVM/runtime-based and separately describes executor/task-pool adapters."
+        },
+        {
+          "path": "scripts/parse_java_jfr_service.py",
+          "line": 9,
+          "sha256": "e547fa04cd4341d6b93a4294a8b441997bad9230bd34ecb41a2a332d7eae80e1",
+          "fact": "Adapter enumerates exact runtime JFR event types including VT start/end and diagnostic samples."
+        },
+        {
+          "path": "scripts/parse_java_jfr_service.py",
+          "line": 33,
+          "sha256": "e547fa04cd4341d6b93a4294a8b441997bad9230bd34ecb41a2a332d7eae80e1",
+          "fact": "Identity preference is logical javaThreadId, then JFR/OS fallback, then name; no object address."
+        },
+        {
+          "path": "scripts/parse_java_jfr_service.py",
+          "line": 142,
+          "sha256": "e547fa04cd4341d6b93a4294a8b441997bad9230bd34ecb41a2a332d7eae80e1",
+          "fact": "Actual event-to-create/sample/sleep/exception/exit conversion."
+        },
+        {
+          "path": "scripts/parse_java_jfr_service.py",
+          "line": 171,
+          "sha256": "e547fa04cd4341d6b93a4294a8b441997bad9230bd34ecb41a2a332d7eae80e1",
+          "fact": "Creates base-to-observation edges and same-routine successive event edges keyed by thread metadata."
+        }
+      ],
+      "native_validation": "not_run",
+      "route_zh": "现有 JFR 记录的离线事件解析器",
+      "identity_zh": "优先 Java 逻辑线程 ID，再退回 JFR／OS ID 或线程名；没有录制代次。",
+      "limits_zh": "此文件不重建 mount／carrier 迁移；park／pinned 事件不是必然的 CPU 样本。启动录制等其他路径未审计。"
+    },
+    {
+      "runtime": "Kotlin",
+      "route_kind": "JVM javaagent ASM instrumentation of specific kotlinx.coroutines AbstractCoroutine and generated invokeSuspend ABI; actual library object lifecycle adapter, beyond the README stdlib semantic demo, limited by matched ABI.",
+      "events": [
+        "AbstractCoroutine constructor RETURN -> create",
+        "generated invokeSuspend entry -> enter",
+        "invokeSuspend ARETURN or catch-all Throwable -> leave",
+        "onCompletionInternal -> complete with terminal=false",
+        "exceptional completion -> diagnostic sample with Throwable stack/cause chain"
+      ],
+      "identity": "WeakReference identity-key map assigns monotonically increasing raw IDs to actual AbstractCoroutine Job receivers. Continuation.getContext().get(Job.Key) resolves active Job identity; ThreadLocal stack records currently executing Job. parent_raw_id comes from active invokeSuspend Job at construction; structured_parent_raw_id independently comes from constructor CoroutineContext Job.Key. thread_id is Java Thread.getId, not OS TID.",
+      "limits": [
+        "Transformer matches exact AbstractCoroutine class/method signature plus direct generated state-machine base classes; arbitrary compiler/runtime ABI/version coverage is not established.",
+        "Weak keys do not retain Job objects, but complete terminal=false is completion evidence, not coroutine frame/object storage retirement or a destroy/exit event.",
+        "No DebugProbes integration in inspected adapter; completion error stacks are diagnostic, not periodic CPU samples. No enqueue/waker/dispatcher admission clock is emitted here.",
+        "Continuation class is recorded, but no unique continuation/frame ID is emitted; Job ID cannot be assumed identical to every nested continuation/frame.",
+        "Creator active Job and structured parent are distinct relationships; unknown entries/errors are counted. Per-case resource ownership, Future/executor/OS joins need explicit evidence.",
+        "README semantic-L1 microbenchmark statements describe a different route; source presence of this agent does not revalidate historical claims or prove compatibility/native benefit."
+      ],
+      "source_anchors": [
+        {
+          "path": "languages/kotlin/README.md",
+          "line": 40,
+          "sha256": "98140da57ce07218fe4a3f25276318dab8691dc4d5b7dda122dc7ddd6fb4138f",
+          "fact": "README explicitly limits its stdlib microbenchmark to semantic L1; this is not a whole-repository absence assertion."
+        },
+        {
+          "path": "agents/java/kotlin-probes/CoroPerfKotlinAgent.java",
+          "line": 19,
+          "sha256": "61293a33711e1bd2cfd7cbbad57bd9be24cdc9afb469d7825555fdc688365cbf",
+          "fact": "Transformer targets AbstractCoroutine lifecycle and selected state machine bases."
+        },
+        {
+          "path": "agents/java/kotlin-probes/CoroPerfKotlinAgent.java",
+          "line": 34,
+          "sha256": "61293a33711e1bd2cfd7cbbad57bd9be24cdc9afb469d7825555fdc688365cbf",
+          "fact": "Exact completion-hook signature and invokeSuspend entry/leave instrumentation."
+        },
+        {
+          "path": "agents/java/kotlin-probes/CoroPerfKotlinTrace.java",
+          "line": 14,
+          "sha256": "d94ba7316ad4392760ec814f1ce2ab7367df6dd7e6c851dc3382508cb1359556",
+          "fact": "Weak object-identity keys compare referents by reference equality, not identityHashCode uniqueness."
+        },
+        {
+          "path": "agents/java/kotlin-probes/CoroPerfKotlinTrace.java",
+          "line": 70,
+          "sha256": "d94ba7316ad4392760ec814f1ce2ab7367df6dd7e6c851dc3382508cb1359556",
+          "fact": "Actual Job receiver allocated a tool ID; creator and structured-parent relationships recorded separately."
+        },
+        {
+          "path": "agents/java/kotlin-probes/CoroPerfKotlinTrace.java",
+          "line": 82,
+          "sha256": "d94ba7316ad4392760ec814f1ce2ab7367df6dd7e6c851dc3382508cb1359556",
+          "fact": "Continuation execution maps through actual context Job to tracked Job ID."
+        },
+        {
+          "path": "agents/java/kotlin-probes/CoroPerfKotlinTrace.java",
+          "line": 102,
+          "sha256": "d94ba7316ad4392760ec814f1ce2ab7367df6dd7e6c851dc3382508cb1359556",
+          "fact": "Completion emitted terminal=false, so no object-storage retirement inferred."
+        }
+      ],
+      "native_validation": "not_run",
+      "route_zh": "JVM ASM agent，插桩指定 AbstractCoroutine／invokeSuspend ABI",
+      "identity_zh": "弱引用对象身份分配 Job ID；活跃 creator 与结构化 parent 分开记录。",
+      "limits_zh": "Job 不等于每个嵌套 continuation；complete 不证明存储销毁。没有周期 CPU 采样／enqueue 时钟，ABI 兼容性待验证。"
+    },
+    {
+      "runtime": ".NET",
+      "route_kind": "Offline TraceEvent EventPipe/TPL/runtime/SampleProfiler plus optional CoroStitch-TaskBridge parser; service-shaped adapter with exact bridge wire checks. The separate JIT/hardware route is README-only in this limited audit.",
+      "events": [
+        "TaskScheduled/AwaitTaskContinuationScheduled/TaskWaitBegin/TraceOperationBegin -> create",
+        "TaskStarted/TaskWaitContinuationStarted/TaskWaitEnd -> enter_thread",
+        "TaskCompleted/TaskWaitContinuationComplete/TraceOperationEnd -> exit",
+        "ThreadPool worker start/stop -> worker_start/leave_thread",
+        "SampleProfiler stacks require active thread binding -> sample",
+        "CoroStitch-TaskBridge exact id/version/field schema -> runtime_task_bridge"
+      ],
+      "identity": "Standard TPL payload TaskID/ContinuationId alternatives are numeric keys rendered task:<id>; per-thread Stack<long> binds active continuation/task for sample attribution. Bridge records instead require logicalIdentity or identityToken >2^32 and exact schemas; diagnosticTaskId remains metadata. This parser does not itself prove bridge-token-to-Task/state-machine object mapping. Unbound worker events use negative native ThreadID fallback.",
+      "limits": [
+        "Standard task/continuation IDs, bridge tokens, async state-machine boxes, work items and OS ThreadID are distinct domains; do not promote all task:<id> output into globally unique object lifetimes. Current parser keys are not visibly process-namespaced.",
+        "Bridge handler validates exact event version and fields and rejects legacy TaskId-only records; bridge producer/object mapping and downstream join were not inspected.",
+        "off_cpu_wait_interval is this adapter label for AwaitTaskContinuationScheduled to ContinuationStarted relative time. Without OS/GC/dependency/ready evidence, this is not independently measured off-CPU or pure runnable/queue time.",
+        "Sample attribution requires a nonempty reconstructed threadActive stack; unmatched samples are retained as counters/examples or omitted from graph. Provider omissions/variants can affect lifecycle/bindings; conservation counters are diagnostics, not proof every logical async frame is covered.",
+        "SelectContinuationBoundary uses stack-name predicates; it is a selector rather than an object identity bridge. No per-case queue/resource/Future ownership inference follows automatically.",
+        "Optional UTC/monotonic sync maps event timestamps; absent sync gives timestamp_ns=0 while relative milliseconds remain. Clock alignment and process generation require validation.",
+        "README JIT execute-breakpoint/eBPF/ARM64 and previous benchmarks were not executed or independently audited here; no universal absence or architecture compatibility claim."
+      ],
+      "source_anchors": [
+        {
+          "path": "languages/dotnet/README.md",
+          "line": 8,
+          "sha256": "1b736dad992aa633eff513e2c638f3d265ad356c25880a4443a9a45b10f8675e",
+          "fact": "README distinguishes EventPipe diagnostics and a separate targeted JIT/hardware route."
+        },
+        {
+          "path": "tools/dotnet_eventpipe_parser/Program.cs",
+          "line": 61,
+          "sha256": "fbedb0f42cac368bc719ba899fc5c21ee22d9b08f2227fc022608df01aac0d3a",
+          "fact": "Concrete adapter consumes saved EventPipe data into TraceLog."
+        },
+        {
+          "path": "tools/dotnet_eventpipe_parser/Program.cs",
+          "line": 89,
+          "sha256": "fbedb0f42cac368bc719ba899fc5c21ee22d9b08f2227fc022608df01aac0d3a",
+          "fact": "Runtime/TPL/sample providers and optional exact bridge are separate branches."
+        },
+        {
+          "path": "tools/dotnet_eventpipe_parser/Program.cs",
+          "line": 106,
+          "sha256": "fbedb0f42cac368bc719ba899fc5c21ee22d9b08f2227fc022608df01aac0d3a",
+          "fact": "Bridge accepts only exact ID/version/payload schema and validates high logical token range."
+        },
+        {
+          "path": "tools/dotnet_eventpipe_parser/Program.cs",
+          "line": 152,
+          "sha256": "fbedb0f42cac368bc719ba899fc5c21ee22d9b08f2227fc022608df01aac0d3a",
+          "fact": "Samples require active per-thread binding before assigning stack to task."
+        },
+        {
+          "path": "tools/dotnet_eventpipe_parser/Program.cs",
+          "line": 229,
+          "sha256": "fbedb0f42cac368bc719ba899fc5c21ee22d9b08f2227fc022608df01aac0d3a",
+          "fact": "Scheduled-to-start event delta is emitted with off_cpu_wait_interval label, not OS scheduler evidence."
+        },
+        {
+          "path": "tools/dotnet_eventpipe_parser/Program.cs",
+          "line": 498,
+          "sha256": "fbedb0f42cac368bc719ba899fc5c21ee22d9b08f2227fc022608df01aac0d3a",
+          "fact": "Timestamp_ns uses optional UTC/monotonic mapping and defaults to0 without synchronization."
+        },
+        {
+          "path": "tools/dotnet_eventpipe_parser/Program.cs",
+          "line": 621,
+          "sha256": "fbedb0f42cac368bc719ba899fc5c21ee22d9b08f2227fc022608df01aac0d3a",
+          "fact": "Stack-name selector identifies candidates, not Task/state-machine object uniqueness."
+        }
+      ],
+      "native_validation": "not_run",
+      "route_zh": "EventPipe／TPL／Runtime／SampleProfiler 离线解析器，可选严格 bridge schema",
+      "identity_zh": "TPL Task／Continuation ID 与 bridge token 分域；生产端对象映射本次未审计。",
+      "limits_zh": "scheduled→start 差值不能直接当 OS off-CPU／纯 runnable 延迟；采样依赖活跃线程绑定，缺失时钟同步时 timestamp_ns 为零。"
+    }
+  ],
+  "shared_join": {
+    "scope": "Source-only shared buildGraph contract; not producer/native validation.",
+    "checked_at": "2026-11-26T21:01:24.040049+00:00",
+    "source_anchors": [
+      {
+        "path": "core/evidence.mjs",
+        "line": 93,
+        "sha256": "f54a8562717d380415fab8d0c379e59aa87b9d7f553aaf6304f47f7d38b50e00",
+        "fact": "Duplicate live raw identity quarantined; instances include process, identity domain, raw ID and generation."
+      },
+      {
+        "path": "core/evidence.mjs",
+        "line": 101,
+        "sha256": "f54a8562717d380415fab8d0c379e59aa87b9d7f553aaf6304f47f7d38b50e00",
+        "fact": "Creator edge needs known parent_raw_id, recovered/linked parent_status, live parent and creation base; otherwise unknown/unobserved-parent."
+      },
+      {
+        "path": "core/evidence.mjs",
+        "line": 125,
+        "sha256": "f54a8562717d380415fab8d0c379e59aa87b9d7f553aaf6304f47f7d38b50e00",
+        "fact": "Samples use live explicit ID or active binding if raw ID absent; conflict stays unknown. Terminal events close binding; complete alone does not prove object deallocation."
+      }
+    ],
+    "conclusions": [
+      "Resource labels alone do not establish lock/request/buffer ownership; real relations need producer or separate observer evidence.",
+      "Declared producer identity/clock events consumed by parser are not proof a runtime emitted them correctly for the affected workload."
+    ],
+    "execution_counts": {
+      "imports": 0,
+      "builds": 0,
+      "targets": 0,
+      "captures": 0
+    },
+    "elapsed_seconds": 62.60790157318115,
+    "budget_seconds": 60,
+    "within_budget": false,
+    "timing_note": "First documentation call aborted before dispatch on family completion; original clock retained."
+  },
+  "evidence_sha256": "231980aabb1df00537a083333ac98b1838228f59ae8ae6eccce3aa53a0d1fc0b",
+  "source_file_count": 17,
+  "anchor_count": 47,
+  "original_stage": {
+    "schema": "coroperf.source-audit-recovery/v1",
+    "recorded_at": "2026-11-26T21:00:21.432038+00:00",
+    "original_start_sha256": "014dfb6fd6f2ac0e4b293cc826e5d9f005aa7bb628d34eb7b3771884ea022b3f",
+    "original_budget_seconds": 180,
+    "parent_observed_running_seconds": 185.065833568573,
+    "actual_interrupt_confirmed_previous_status": "running",
+    "first_stage_outcome": "incomplete_no_matrix_or_source_evidence_saved",
+    "first_stage_agent_attestation": {
+      "imports": 0,
+      "builds": 0,
+      "targets": 0,
+      "captures": 0,
+      "actually_read_anchors": [
+        "cmd/cpp20lifecycle/main.go:521",
+        "cmd/tokiolifecycle/main.go:479",
+        "core/evidence.mjs:101"
+      ],
+      "missing": "Complete source restrictions, SHA256 and seven-runtime matrix were missing; native validation UNKNOWN."
+    },
+    "recovery_route": "Three focused source-only family contributions with120s local allowances; original overrun preserved and total campaign elapsed still measured from original start. No issue/native preparation is reopened.",
+    "shared_join_followup_started_epoch": 1795726821.4320855,
+    "shared_join_followup_budget_seconds": 60,
+    "native_runs": 0
+  },
+  "family_timing": {
+    "native": {
+      "start_epoch": 1795726791.592294,
+      "source_stop_epoch": 1795726850.8923156,
+      "source_stop_elapsed_seconds": 59.30002164840698,
+      "subtask_budget_seconds": 120,
+      "records_completed_epoch": 1795726850.8929548,
+      "records_completed_elapsed_seconds": 59.300660848617554
+    },
+    "go-python": {
+      "source_stop_unix": 1795726860.0371323,
+      "source_stop_elapsed_seconds": 48.401686906814575,
+      "source_only": true,
+      "records_elapsed_seconds": 91.33623576164246,
+      "final_elapsed_seconds": 91.33654499053955,
+      "source_overrun_seconds": 0,
+      "record_overrun_seconds": 0,
+      "final_overrun_seconds": 0
+    },
+    "jvm-dotnet": {
+      "start_utc": "2026-11-26T21:00:03.111981+00:00",
+      "source_stop_seconds": 27.398339493898675,
+      "source_limit_seconds": 70,
+      "artifact_elapsed_seconds": 101.466,
+      "budget_seconds": 120,
+      "original_audit_elapsed_seconds": 185.066,
+      "original_audit_preserved": true,
+      "within120": true,
+      "source_before70": true
+    }
+  },
+  "campaign_elapsed_seconds_at_record": 855.9768190383911,
+  "timing_scope": "Elapsed campaign wall time includes original interrupted attempt, focused recovery and documentation; not CPU time or a case-native budget reset.",
+  "execution_counts": {
+    "imports": 0,
+    "builds": 0,
+    "targets": 0,
+    "captures": 0
+  },
+  "historical_saved_target_results_used": false,
+  "new_issue_reviews": 0,
+  "new_selected_cases": 0
+}

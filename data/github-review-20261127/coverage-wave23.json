@@ -1,0 +1,138 @@
+{
+  "schema": "coroperf.github-coverage-attempts/v1",
+  "checked_at": "2026-11-26T19:10:57.059506+00:00",
+  "scope": "Public GitHub only; unsuccessful/duplicate-only searches are not completed case reviews.",
+  "coverage_only_records": {
+    "spark": {
+      "schema": "independent-coverage-only-batch-v1",
+      "batch": "spark-wave23-20261127",
+      "started_at": "2026-11-26T19:08:12.385760+00:00",
+      "finished_at": "2026-11-26T19:09:27.392502+00:00",
+      "elapsed_seconds": 75.007,
+      "limit_seconds": 120,
+      "within120": true,
+      "finished_before100": true,
+      "exploration_end_seconds": 43.46441812906414,
+      "exploration_before45": true,
+      "decisions_seconds": 43.464560713851824,
+      "decisions_before80": true,
+      "status": "coverage_only",
+      "new_reviews": 0,
+      "candidate_primary_issues_or_discussions": 0,
+      "decisions_file": "decisions.json is empty mapping; no fabricated skipped case",
+      "imports": 0,
+      "builds": 0,
+      "native_executions": 0,
+      "collector_executions": 0,
+      "coroperf_captures": 0,
+      "selected_additions": 0,
+      "native_process_exit": null,
+      "collector_exit": null,
+      "reason": "Four narrow public GitHub queries returned Spark code/tests/configuration/performance documentation rather than a new complete Issue/Discussion source. Stopped within45s and persisted coverage-only0reviews; did not promote PRs/docs or route into external trackers.",
+      "queries": [
+        "site:github.com/apache/spark/issues \"async\" \"performance\"",
+        "site:github.com/apache/spark/discussions \"performance\" \"scheduler\"",
+        "site:github.com/apache/spark/issues/ \"performance\" -59803",
+        "site:github.com/apache/spark/discussions/ \"async\""
+      ],
+      "coverage_limit": "This is a bounded indexed-search gap, not proof that Spark has zero GitHub issues/discussions or zero performance incidents. No repository channel availability claim or live global rank.",
+      "source_raw": "sources.json",
+      "returned_source_kinds": [
+        "GitHub Spark TaskSchedulerImplSuite.scala search excerpt",
+        "GitHub Spark configuration.md search excerpt",
+        "GitHub Spark sql-performance-tuning.md search excerpt"
+      ],
+      "excluded_from_case_counts": "Documentation/source test/benchmark descriptions are not independent public incident discussions, and source benchmark numbers are not local results.",
+      "gates": "gates.json nine current file hashes and exact escaped-token+(?![0-9]) knownexisting identifiers. Existing59803 and successfulSPARK54279/related55037 never explicitlyopened/setup/executed. No new candidate source required further numeric gate.",
+      "future_identity_requirements": [
+        "actual Spark job/stage/task-attempt IDs and retry/speculation generation",
+        "actual executor process/JVM thread association",
+        "actual async Future/callback or operator work-item association if one exists",
+        "event enqueue/dispatch/run/completion timestamps on aligned clocks"
+      ],
+      "identity_limits": [
+        "Spark distributed Task/operator/businessjob is not automatically JVMTask/Future or coroutine",
+        "same task-attempt number across executors or retries needs generation and process context",
+        "distributed scheduler queue, executor job queue, JVM runnable and thread CPU are separate",
+        "creation ancestry alone cannot assign distributed operation/resource ownership"
+      ],
+      "unknowns": [
+        "eligible new primarysource",
+        "original program/version/environment",
+        "actual native identities",
+        "CPU/queue/runnable durations",
+        "CoroPerf fit and overhead",
+        "local optimization benefit"
+      ],
+      "heat": null,
+      "shared_ledger_web_scheduler_changed": false,
+      "external_tracker_requests": 0,
+      "socket_jdi_ptrace_retries": 0
+    },
+    "redpanda": {
+      "batch": "redpanda-wave23-20261127",
+      "assessment": "coverage_only",
+      "new_reviews": 0,
+      "selected": 0,
+      "scope": "Six narrow public GitHub search queries in three calls. No explicit issue/discussion page opened and no complete new performance case reviewed. This is not evidence of zero Redpanda incidents or a global ranking.",
+      "coverage_findings": [
+        {
+          "url": "https://github.com/redpanda-data/redpanda/issues/7892",
+          "handling": "Existing review matched exact canonical ID and source URL in automation/reviews.json. Search response retained only; no explicit open, setup or replay."
+        },
+        {
+          "url": "https://github.com/redpanda-data/redpanda/issues/7853",
+          "handling": "Search responses identify the original topic from which already-reviewed 7892 was split. Treated as same-workload context, not a fresh case despite exact-ID gate having no standalone match."
+        },
+        {
+          "url": "https://github.com/redpanda-data/redpanda/discussions/31318",
+          "handling": "Release-announcement search result; enumerated fix claims and PR references are background, not independently reviewed new workloads."
+        },
+        {
+          "url": "https://github.com/redpanda-data/redpanda/discussions/17209",
+          "handling": "Startup resource/cpuset configuration guidance in search result; no measured performance case reviewed."
+        }
+      ],
+      "coroperf_applicability": {
+        "assessment": "unknown_without_original_case",
+        "required_identity": [
+          "actual Seastar coroutine frame/Future/continuation and lifetime",
+          "reactor shard/OS worker",
+          "partition and raft operation identity",
+          "actual resource queue/admission and completion events"
+        ],
+        "limits": "Partition, shard and raft job labels are not automatically coroutine/Fiber identity. A stall report, request timeout or CPU aggregate alone cannot separate CPU execution, OS runnable delay, executor queue residence, admission delay and network/disk service time. No identities or native timing captured; no root cause or optimization claim."
+      },
+      "heat": null,
+      "heat_note": "No reliable per-case heat preserved for a new eligible case; no live global popularity claim.",
+      "run_summary": {
+        "original_clock_epoch": 1795720074.6476517,
+        "exploration_stop_seconds": 50.13351798057556,
+        "exploration_stop_before_45_seconds": false,
+        "exploration_guard_overrun_seconds": 5.1335179805755615,
+        "timing_note": "Exploration stop marker was written at 50.134s, exceeding the 45s guard by 5.134s; no further search or source opening followed.",
+        "decisions_written_seconds": 77.13013219833374,
+        "decision_by_80_seconds": true,
+        "target_executions": 0,
+        "builds": 0,
+        "package_imports": 0,
+        "captures": 0,
+        "native_successes": 0,
+        "socket_jdi_ptrace_retries": 0,
+        "shared_state_modified": false
+      }
+    }
+  },
+  "unavailable_primary_sources": {
+    "risingwavelabs--risingwave--27905": "direct source cache miss,0review",
+    "risingwavelabs--risingwave--27917": "direct source cache miss,0review"
+  },
+  "new_reviews_from_coverage_only": 0,
+  "new_reviews_elsewhere_this_wave": 2,
+  "builds": 0,
+  "native_executions": 0,
+  "captures": 0,
+  "artifact_hashes_checked": 33,
+  "timing_limits": "Redpanda exploration marker50.134s exceeded45s by5.134s. Root Tokio exploration51.512s exceeded45s by6.512s; decision recorded117.540s, later than80s decision target but within120s total. No clocks reset or additional source/setup after stop markers.",
+  "limits": "Saved indexed queries and cached page availability do not establish zero incidents, global heat, disabled repository channels or an environment failure in unassessed candidates."
+}

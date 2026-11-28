@@ -1,0 +1,52 @@
+{
+  "schema": "coroperf.python-capture-route-source-audit/v1",
+  "scope": "Static source assessment only; no runtime/import/collector/target validation. No GitHub review or environment skip.",
+  "result": "Existing arbitrary-target transparent-asyncio launch route is documented and implemented; it preserves target source bytes but is an in-process observer with semantic and scheduling perturbation. Legacy install-in-loop helper is not the only route.",
+  "result_zh": "已有文档及实现的transparent-asyncio任意目标启动路径，保留目标源码字节，但属于进程内观察器，会改变运行时与调度，并非无扰动认证；旧install-in-loop helper不是唯一入口。",
+  "documented_launch_argv": [
+    "./bin/corostitch",
+    "run",
+    "--language",
+    "python",
+    "--adapter",
+    "transparent-asyncio",
+    "--sample-interval",
+    "0.2",
+    "--out-dir",
+    "perf-out/python-launch",
+    "--",
+    "python3",
+    "app.py"
+  ],
+  "launch_argv_status": "Exact documented example, statically inspected only; placeholders are not a verified command for any frozen case. Target argv forwarded after --; controller script uses system python3.",
+  "implementation": {
+    "entry": "bin/corostitch -> scripts/corostitch.py -> PYTHONPATH agents/python -> sitecustomize -> corostitch_agent.install",
+    "target_bytes": "No rewrite or target import statement inserted. cwd forced repository ROOT, env/import path changed; relative-input/cwd equivalence must be checked for a future original. -S/-I/-E or custom sitecustomize/import/loop behavior can bypass assumptions.",
+    "kwargs_factory": "Launch BaseEventLoop.create_task wrapper forwards *args/**kwargs to original, preserving its existing factory handling. Remote-only loop factory forwards **kwargs to prior factory/default Task. Explicit context/name forwarding absent in old python_asyncio_debugger two-arg wrapper; do not substitute it on that basis. Forwarding alone does not prove all CPython3.13 patch/eager/custom factory compatibility.",
+    "version_dependencies": "Default launch agent/CLI helpers use stdlib imports in inspected source. CPython3.13 is not rejected by launch source and argv can select a matching interpreter; no runtime readiness certified. Remote branch actually accepts version strings starting Python3.14, despite3.14+ error wording; not usable as3.13 remote route. Optional unawaited warning hook uses private CPython warnings API and origin tracking/GC; optional boundary spec uses profile hook and may import SQLAlchemy.",
+    "identity": "Task weak keys map actual Task address to a monotonic generation suffix. Segments use monotonic_ns and current observation nativeTID; creator is tracked current Task at post-create observation, not resource owner. Eager-completed Task may be observed after it executed. Direct Task construction/custom create_task overrides may evade BaseEventLoop patch. Process/interpreter metadata needed when joining graphs.",
+    "sampler": "Default general agent adds call_later TimerHandles, no sampler Task or new thread in inspected default path. Reads await chain/get_stack on event-loop callbacks; suspended-state snapshots, not per-Task CPU samples. Busy loop delays observer itself; short originals may finish before first tick.",
+    "cleanup_perturbation": "Done callback records return/cancel/exception, clears active/base/latest, weak Task map avoids permanent strong retention. Reading task.exception can change unretrieved-exception reporting. No pending-Task destruction retirement guarantee. atexit flush is not assured after hard kill; opt-in unawaited capture also forces GC. Remote detach restores its stored factory and removes callbacks, not proof of all multi-loop cleanup.",
+    "graph": "graph.json plus PID-scoped helper graphs; CLI summary/report. Internal graph conservation is observed coverage, not independent Task census. Ordinary launch can return0 with no graph because no required graph failure branch; do not accept CLI exit alone or stale output as capture proof.",
+    "ownership": "Default lifecycle/snapshots do not establish pipe/queue/socket/resource ownership, true running-Task CPU binding, admission/wait cause or timer attribution. USDT converter only thread/function stacks."
+  },
+  "wave37": "All three unique named Python anchors have unchanged SHA256 since snapshot37. Broader runner/agent inspected here was outside that snapshot row; no claim that the repo previously lacked it.",
+  "future_first_run_rule": [
+    "Only for a genuinely new, gate-cleared original within its original clock: establish compatible interpreter/dependencies and source/argv/cwd invariants, then consider the existing launch route before the single first run.",
+    "Use capture only when its in-process hooks, factory/kwargs behavior, TimerHandle sampling, cleanup, child output and shutdown behavior fit that original. Source availability alone is not readiness or nonperturbation certification; do not execute unneeded probes.",
+    "Use fresh unique output and verify actual graph metadata/coverage, target stdout/stderr, exit/kill/handles and original bytes. --seconds does not bound this launch; preserve original workload with authorized external supervision if necessary.",
+    "If optional capture remains unready or changes the authorized protocol, a feasible unchanged native-only first run remains allowed with explicit capture gap. Never replay any of the ten frozen successes for backfill, controls or profiler evidence."
+  ],
+  "future_first_run_rule_zh": "仅对全新且当前门禁通过的原例，在原时钟内先确认匹配环境、原源码/argv/cwd及hook扰动边界，再考虑已有启动采集路径并仅执行首次原例。必须验证新graph及覆盖/退出/清理；源码存在或CLI exit0不代表采集成功。可选采集未ready时仍可忠实native-only并说明缺口；十项冻结成功原例均不重跑补采集。",
+  "native_validation": "not_run",
+  "artifact_provenance": {
+    "raw_result_sha256": "3f53eaa3b51d0259f580fa85d0d9b480e96c82415f1a834c1eb14e8001fc8653",
+    "source_evidence_public_path": "data/github-review-20261127/python-capture-route-wave100-evidence.json",
+    "source_evidence_sha256": "25bd371f2210c1e51c8e13f6135905c4c9931aaa3847cba9f412548ad74cb1cd",
+    "unique_source_files_sha256_rechecked": 13,
+    "anchors": 22,
+    "parent_recheck_at": "2026-11-27T05:06:49.990571+00:00",
+    "raw_source_audit_modified": false
+  },
+  "parent_scope_addendum": "No native readiness, child-process behavior, graph coverage or semantic transparency is certified. Inherited environment, per-process output selection and cross-process joins require verification in a future genuinely new original. Ten frozen successes are never replayed to fill these gaps."
+}

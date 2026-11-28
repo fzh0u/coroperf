@@ -1,0 +1,63 @@
+{
+  "batch": "vllm10123-source-wave36-20261127",
+  "case_id": "vllm-project--vllm--10123",
+  "review_count": 1,
+  "first_complete_review": true,
+  "source_only": true,
+  "status": "external_environment_required",
+  "execution_status": "skipped",
+  "execution_counts": {
+    "imports": 0,
+    "builds": 0,
+    "targets": 0,
+    "captures": 0
+  },
+  "source_url": "https://github.com/vllm-project/vllm/issues/10123",
+  "combined_source": {
+    "old_prefix": "../vllm-wave35-20261127/source.json lines0-504",
+    "new_tail": "tail-source.json lines205-673 of674 (tool expanded requested480 window)",
+    "coverage": "continuous0-673; no gap, one new window only",
+    "prior_binding": "prior-evidence-binding.json; all12 old artifact hashes match; old manifest bound separately, no rewrite"
+  },
+  "new_information": "Tail contains additional propagation traceback, author reports lingering GPU subprocesses, maintainer long-image-processing hypothesis, peer pillow-simd mitigation and inactivity closure.9238 not opened; no external assets/trackers/PR/search.",
+  "assessment": {
+    "coroperf_fit": "conditional_async_engine_request_task_callback_worker_and_image_preprocessing_bridge",
+    "required_identity": "Actual ASGI request Task+generation, AsyncLLMEngine background Task, real completion callback Task argument, request stream/queue owner and native process/worker lifetime. Correlate preprocessing CPU span to actual running Task, scheduler iteration/timeout cancellation and result propagation. Model request/batch/PP rank/GPU indices are not asyncio Task/Future/frame IDs; callback physical stack is not automatically request-owner execution. Collector support for these bridges remains unverified.",
+    "native_baseline": "Would require same-run per-Task/OS-thread CPU, loop wake-to-run/runnable delay, request admission/queue residence, preprocessing input dimensions and timing, engine/device completion/IPC waits and cancellation-delivery order. sleep(0) suspended/cancel stack and Pending0/Running1 snapshot cannot establish on-CPU starvation, blocked GPU/IPC, or queue delay. Timeout elapsed is not CPU duration.",
+    "limits": "SOURCE-ONLY follow-up; no setup/native opportunity is authorized by this new source clock. Exact original vLLM0.6.3.post1/Torch2.4.0/Python3.10/Ubuntu20.04 four-RTX-A6000 pipeline-parallel serving stack, model checkpoint, original prompts/images/client finite harness and cleanup are unprepared. This is genuinely GPU inference, not CPU-only; no local GPU absence claim. Maintainer suggests long image processing and another reporter says pillow-simd removed symptoms; neither is isolated local optimization proof or a guarantee for original author. Closure was inactivity, not a verified fix.",
+    "imports": 0,
+    "builds": 0,
+    "native_runs": 0,
+    "capture_runs": 0,
+    "optimization_verified": false,
+    "heat": {
+      "reactions": "unknown in saved original page",
+      "displayed_human_comments": 2,
+      "scope": "saved original GitHub page only; not live/global ranking"
+    }
+  },
+  "time": {
+    "source_stop_unix": 1795726000.3397481,
+    "source_stop_elapsed_seconds": 20.176273345947266,
+    "source_only": true,
+    "new_source_windows": 1,
+    "decision_elapsed_seconds": 62.775691747665405
+  },
+  "shared_mutations": false,
+  "parent_source_audit": {
+    "checked_at": "2026-11-26T20:50:39.317090+00:00",
+    "old_artifact_hashes_rechecked": 12,
+    "old_manifest_hash_rechecked": true,
+    "old_raw_artifacts_preserved": true,
+    "continuous_rendered_line_range": [
+      0,
+      673
+    ],
+    "overlap_lines_rechecked": 300,
+    "overlap_text_identical": true,
+    "prior_prefix_sha256": "e2f5cf3c5658358b7f098bae4427c305a7e2f8d7dc744ad1e457b6383ac06d9f",
+    "new_tail_sha256": "9455df632320b34f650a58a76a6d427cb3f24f3a60d5e4bd25bb7c05cb4e1054",
+    "new_native_runs": 0,
+    "no_native_pass_reopened": true
+  }
+}

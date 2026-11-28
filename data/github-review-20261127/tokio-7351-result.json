@@ -1,0 +1,147 @@
+{
+  "schema": "coroperf.runtime-wave9/v1",
+  "started_at": "2026-11-26T17:29:30.469017+00:00",
+  "finished_at": "2026-11-26T17:32:58.371801+00:00",
+  "elapsed_seconds": 207.903,
+  "initial_source_to_success_seconds": 142.89196338388138,
+  "review_decisions": 2,
+  "native_component_successes": 1,
+  "skipped_environment": 1,
+  "target_runs": 1,
+  "successful_builds": 1,
+  "pre_target_build_failures": 1,
+  "target_replays": 0,
+  "coroperf_capture": false,
+  "selected_additions": 0,
+  "native": {
+    "successful_target_runs": 1,
+    "target_replays_after_success": 0,
+    "exit_code": 0,
+    "process_elapsed_seconds": 3.068545554066077,
+    "initial_source_to_native_completion_seconds": 142.89196338388138,
+    "task_application_indices": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "application_indices_are_native_Task_IDs": false,
+    "start_spread_ns": 27358,
+    "permits_before_acquisition": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "permits_after_acquisition": [
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "all_original_five_tasks_joined": true,
+    "compiler_reports_unused_permit": true,
+    "runtime_version": "Tokio1.41.0",
+    "report_claimed_version_range": "1.0 through1.45.0; both editions2021/2024",
+    "rustc": "1.96.1",
+    "local_platform": "Linuxx86_64",
+    "report_platform": "Windows10/rustc1.85.1",
+    "native_Tokio_task_IDs": "unknown",
+    "coroperf_capture": false,
+    "coroperf_attribution_verified": false,
+    "scope": "Original five-task/three-second example, historical reported version range; no semaphore fix or runtime defect established. Permit is unused and not referenced inside async move; comments claiming ownership are not runtime ownership evidence."
+  },
+  "gates": {
+    "research/github-issue-discovery/automation/reviews.json": {
+      "sha256": "44f98a29888bf4c124a825d25218a08e32260241fde44e6940e86928990012b4",
+      "present": {
+        "tokio-rs--tokio--7351": false,
+        "tokio-rs--tokio--7744": false
+      }
+    },
+    "research/deferred-security-issues.json": {
+      "sha256": "531c272d49edd19c9b8de9ab612f77f14442640745d3049b3e2e692c969f8458",
+      "present": {
+        "tokio-rs--tokio--7351": false,
+        "tokio-rs--tokio--7744": false
+      }
+    },
+    "perf-out/github-issue-discovery/automatic/automatic-holds.json": {
+      "sha256": "d45e7b172f0723b2d79fe54bd8cdded751903c32e76c4eb7ded8a50857e1b237",
+      "present": {
+        "tokio-rs--tokio--7351": false,
+        "tokio-rs--tokio--7744": false
+      }
+    },
+    "web/coroperf-github-pages/data/focus.json": {
+      "sha256": "4b266f60f53216fddf1fa75fed85649fd38e2c4bb340df8c37e6d72309822c61",
+      "present": {
+        "tokio-rs--tokio--7351": false,
+        "tokio-rs--tokio--7744": false
+      }
+    },
+    "web/coroperf-github-pages/data/cases.json": {
+      "sha256": "7a69e4d63600a99258e932aa3dc7d630cd4505bfb1d6b714e57d4eca64389555",
+      "present": {
+        "tokio-rs--tokio--7351": false,
+        "tokio-rs--tokio--7744": false
+      }
+    },
+    "research/github-issue-discovery/case-coverage.json": {
+      "sha256": "c0bc648ed8fe1d8b3122b838d94cecb06ab2adec4a76599e8a6fad7f2e7fc7e2",
+      "present": {
+        "tokio-rs--tokio--7351": false,
+        "tokio-rs--tokio--7744": false
+      }
+    },
+    "perf-out/systems-repro/ledger.json": {
+      "sha256": "692ac5d7d5797ba797e598aeb6d507ac03d02f4c736c8175e130e01c44ab0ccc",
+      "present": {
+        "tokio-rs--tokio--7351": false,
+        "tokio-rs--tokio--7744": false
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "tokio-rs--tokio--7351",
+      "reviewed_at": "2026-11-26T17:32:58.371801+00:00",
+      "new_verified_case": false,
+      "coroperf_capture": false,
+      "evidence": "research/github-issue-discovery/runtime-wave9-20261127/public-result.json",
+      "status": "component_reproduced",
+      "local_status": "native_component_reproduced",
+      "reason": "One original five-task/three-second example ran with cached Tokio1.41.0/edition2021, within the reporter claimed1.0–1.45.0 range. Linux/rustc1.96.1 differs from reported Windows/rustc1.85.1. All five task starts fall within27.358us; every main-loop acquisition sees3before/2after; exit0 in3.06855s. Compiler warns permit is unused: the async move body never references it, so the comments claiming child ownership are not evidence of a transferred permit. This is native reported-symptom confirmation, not a Tokio semaphore defect or fix. Initial registry-hash offline build failure preserved; direct unchanged cached source paths then built successfully. No native Task-ID bridge or CoroPerf capture was obtained; printed0..4 are application indices only. Freeze successful workload; no rerun/version/fix/capture refill.",
+      "reason_zh": "原5Task/3秒例以缓存Tokio1.41.0、edition2021运行一次，属于报告者声称1.0至1.45.0范围；本地Linux/rustc1.96.1与原Windows/rustc1.85.1不同。五个启动时刻分布27.358微秒；每次main获取均3before/2after，3.06855秒exit0。编译器提示permit未使用：async move体没有引用它，注释所说child持有permit不是实际转移证据。这只确认原生报告症状，不证明Tokio semaphore缺陷或fix。初始registry hash导致offline build失败已保留，随后用未修改缓存source path编译成功。未获得native Task-ID桥或CoroPerf capture；0..4只是应用序号。成功冻结，不再重放、版本/fix或补采。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/7351"
+      ],
+      "native_executions": 1
+    },
+    {
+      "id": "tokio-rs--tokio--7744",
+      "reviewed_at": "2026-11-26T17:32:58.371801+00:00",
+      "new_verified_case": false,
+      "coroperf_capture": false,
+      "evidence": "research/github-issue-discovery/runtime-wave9-20261127/public-result.json",
+      "status": "external_environment_required",
+      "local_status": "skipped",
+      "reason": "Reverse cache search found exactly reported-affected Tokio1.48.0 locally, so dependency version is not the primary blocker. Original regression uses latte fork0.32.0 with60threads/concurrency64 and a real ScyllaDB2025.3.3 cluster/50,100,100-row workload. No matching application,data or cluster is prepared; known sockets/network restrictions were not retested. Skipped without build/benchmark, reduced timer loop, alternative implementation or fix run. CoroPerf needs actual request/Task/timer/poll CPU and queue relationships; creation ancestry alone cannot attribute the timer-lock regression. Upstream alternative-timer results require explicit activation and are not local optimization evidence.",
+      "reason_zh": "缓存反查命中原帖受影响Tokio1.48.0，版本不是主要障碍；原回退依赖latte fork0.32.0、60线程/concurrency64、真实ScyllaDB2025.3.3集群及50,100,100行工作负载，当前缺匹配应用/数据/集群。未重试已知socket/network限制；直接skipped，无build/基准、缩小timer loop、替代实现或fix运行。CoroPerf需实际request/Task/timer/poll CPU与queue关系，创建关系不能单独归因timer锁回退。上游alt timer效果需显式启用，也不是本地优化证据。",
+      "sources": [
+        "https://github.com/tokio-rs/tokio/issues/7744"
+      ],
+      "native_executions": 0
+    }
+  ],
+  "timing_scope": {
+    "first_check_including_inventory_source_design_build_run_seconds": 142.89196338388138,
+    "requested_first_check_budget_seconds": 180,
+    "first_check_within_budget": true,
+    "later_analysis_and_documentation_total_elapsed_seconds": 207.903,
+    "note": "207.903s overall includes later saved-output analysis, source conclusions and documentation after the only successful target had exited. No additional target ran."
+  }
+}

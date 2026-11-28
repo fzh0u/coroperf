@@ -1,0 +1,182 @@
+{
+  "complete": true,
+  "case": "agronholm--anyio--1170",
+  "mode": "independent saved-only audit",
+  "reviewed_at": "2026-11-26T18:42:36.849126+00:00",
+  "elapsed_seconds": 106.22472929954529,
+  "budget_seconds": 90,
+  "within_budget": false,
+  "exploration_ended_seconds": 44.99197864532471,
+  "exploration_before_60": true,
+  "first_result_written_seconds": 44.99197864532471,
+  "target_executions": 0,
+  "package_imports": 0,
+  "captures": 0,
+  "original_artifacts_modified": false,
+  "evidence_consistency_checks": {
+    "all_original_manifest_hashes_and_sizes_match": true,
+    "recomputed_ten_checks_match_saved": true,
+    "exactly_nine_original_checks_pass": true,
+    "native_and_collector_status_separate": true,
+    "exact_runtime_saved_evidence": true,
+    "runtime_archive_matches_native_trace": true,
+    "graph_counts_match": true,
+    "no_samples": true,
+    "graph_endpoints_valid": true,
+    "balanced_task_lifetimes": true,
+    "four_task_roles": true,
+    "child_creator_edge": true,
+    "main_exception_child_return": true,
+    "no_explicit_resource_identity_fields": true,
+    "no_selected_upgrade": true
+  },
+  "all_evidence_consistency_checks_pass": true,
+  "recomputed_original_ten_checks": {
+    "source_ast_equal": true,
+    "native_exit_one": true,
+    "native_deadline_false": true,
+    "stdout_overgrant": true,
+    "stdout_available_negative": true,
+    "stdout_actual_borrower_labels": true,
+    "original_assertion_leaf": true,
+    "actual_python312": true,
+    "collector_validation": false,
+    "native_source_hash": true
+  },
+  "original_ten_checks_pass_count": 9,
+  "collector_validation_pass": false,
+  "source_comparison": {
+    "archive": "research/github-issue-discovery/python-wave19-20261127/github-sources.json",
+    "rendered_lines": [
+      173,
+      204
+    ],
+    "ast_equal": true,
+    "normalization": "Only rendered prefixes/common four-space indentation removed. Both source and fixture parsed, not executed.",
+    "fixture_sha256": "05a133e6be3311e9dd49205fd81e3f8abbcff9b8c70f4902c11602ab2d986328"
+  },
+  "native": {
+    "raw_saved_exit": 1,
+    "original_assertion_leaf": true,
+    "borrowed_tokens": 2,
+    "total_tokens": 1,
+    "available_tokens": -1,
+    "borrower_labels": [
+      "B",
+      "X"
+    ],
+    "anyio_version": "4.13.0",
+    "python": "3.12.4 (main, Jul 25 2024, 22:42:01) [Clang 18.1.8 ]",
+    "preflight_only_original_import_saved": true,
+    "runtime_limit": "Version established from saved preflight import metadata and matching traceback archive; no package imported during audit, no upstream wheel authentication asserted."
+  },
+  "graph": {
+    "segments": 8,
+    "edges": 5,
+    "captures": {
+      "create": 4,
+      "exit": 4
+    },
+    "main_task": "python-asyncio-task-0x7815b6b8f400-g1",
+    "b_task": "python-asyncio-task-0x7815b6b8f580-g2",
+    "functions": {
+      "python-asyncio-task-0x7815b6b8f400-g1": "main",
+      "python-asyncio-task-0x7815b6b8f580-g2": "main.<locals>.b",
+      "python-asyncio-task-0x7815b6b8f580-g3": "BaseEventLoop.shutdown_asyncgens",
+      "python-asyncio-task-0x7815b6b8f580-g4": "BaseEventLoop.shutdown_default_executor"
+    },
+    "edge_kinds": {
+      "coroutine_created_by": 1,
+      "same_task_exit": 4
+    },
+    "active_final": 0,
+    "max_active": 2,
+    "address_reuse": "g2(b),g3(shutdown_asyncgens),g4(shutdown_default_executor) reuse raw address0x7815b6b8f580, but generations are distinct.",
+    "resource_identity_fields_absent": [
+      "limiter_id",
+      "event_id",
+      "borrower_id",
+      "resource_id",
+      "capacity_limiter_id"
+    ]
+  },
+  "identity_assessment": {
+    "borrower_labels_are_task_ids": false,
+    "runtime_resource_task_bridge_captured": false,
+    "source_level_role_inference": "Original AST places A release and X nowait in main, and B acquire in its only child b. Unique recorded main/b Tasks support a source-backed role inference. This is NOT an observed API-object bridge: A and X are two labels in the SAME main Task, B is an explicit on-behalf-of label, no limiter/Event object ID or reservation/wake interval was captured.",
+    "creation_edge_scope": "b birth1→main birth0 only identifies submitter. It does not prove token ownership, queue reservation, limiter/Event membership or wake→run delay.",
+    "native_caller_benefit": "Raw traceback already contains wrapper and main:30 assertion; b returned normally. No extra callback/resource caller recovery is established."
+  },
+  "assessment_zh": "保存证据支持原程序一次native确认borrowed2／total1／available-1及B/X，原AssertionError/rawOSexit1；原AST一致。graph8segments／5edges／4create／4exit／0samples自洽，但collector验证FAIL，原10checks仅9通过。存在源码支持的main=A/X、唯一child b=B角色推断；没有实际limiter／Event／borrower→Task API身份桥，标签绝不是Task IDs。不得升级selected、声称完整采样、CPU／排队／wake分解或fix验证。",
+  "limits": [
+    "No target/package import/build/capture or successful workload replay;1170/1172/1223 remain frozen.",
+    "No samples: no suspended borrower wait/event snapshot or native resource timeline.",
+    "Native success means reproducing overgrant; raw application exit1 is original assertion, not collector-synthesized failure.",
+    "Saved receipt/output corroborate one recorded run; audit does not independently prove absence of unrecorded executions.",
+    "Original215.237s batch/35.237s overrun remains unchanged.",
+    "No per-job CPU/queue/service/runnable measurement or uninstrumented overhead baseline."
+  ],
+  "original_manifest_integrity": {
+    "research/github-issue-discovery/python-wave19-20261127/clock.json": {
+      "sha256": "31fca0f3bf58f8011d72cec4c05fc163920bfba23f698f778533136dae293aa1",
+      "matches": true
+    },
+    "research/github-issue-discovery/python-wave19-20261127/verification.json": {
+      "sha256": "b5e0954a7087a6f44874b9d1d3b5000a5cc21f31ea7a5024cb135095858aa5f2",
+      "matches": true
+    },
+    "research/github-issue-discovery/python-wave19-20261127/public-result.json": {
+      "sha256": "0bcb34eace05d1d4098b76805cf35bd501a3f14d88ccbaf0a432296ad9b3c426",
+      "matches": true
+    },
+    "research/github-issue-discovery/python-wave19-20261127/gates.json": {
+      "sha256": "a1c9e626aa09125e26f13746b2080978db712daf19c9323e0b79d07d182e2ae1",
+      "matches": true
+    },
+    "research/github-issue-discovery/python-wave19-20261127/preflight.json": {
+      "sha256": "058c7d9df60c67c9431572d54c91d288c0a8f8648a550ac5a89b83ea7ff7d1b0",
+      "matches": true
+    },
+    "research/github-issue-discovery/python-wave19-20261127/README.md": {
+      "sha256": "c2b6f9148a436b74595a86ca1e905c96d62439bac6fcd64b48cdf45fd8114c04",
+      "matches": true
+    },
+    "research/github-issue-discovery/python-wave19-20261127/decisions.json": {
+      "sha256": "cb24a57c46c07a06828731d46cf610e2336ea8fa2354f9757aa3192ae011bf83",
+      "matches": true
+    },
+    "research/github-issue-discovery/python-wave19-20261127/exploration-ended.json": {
+      "sha256": "1bdfef87896f39175a2f94dd047ddeae5baf1b682e06b40b0e1d4cf99322e247",
+      "matches": true
+    },
+    "research/github-issue-discovery/python-wave19-20261127/github-sources.json": {
+      "sha256": "5df8d5dbc26a9aad11e22074eda0559979dc44e4c64f89fc293f8b8aca34aa5d",
+      "matches": true
+    },
+    "research/github-issue-discovery/python-wave19-20261127/source/repro1170.py": {
+      "sha256": "05a133e6be3311e9dd49205fd81e3f8abbcff9b8c70f4902c11602ab2d986328",
+      "matches": true
+    },
+    "perf-out/github-issue-discovery/automatic/python-wave19-20261127/stderr.log": {
+      "sha256": "65dc76a3d8f3f2fabd3594205d85fb684537e825ae9606e3e2bed8948b61d571",
+      "matches": true
+    },
+    "perf-out/github-issue-discovery/automatic/python-wave19-20261127/collector-validation.json": {
+      "sha256": "38391de0da1af74d0a42f90e6ff62885aceb226722bdf9362a18ab1f16e3e008",
+      "matches": true
+    },
+    "perf-out/github-issue-discovery/automatic/python-wave19-20261127/stdout.log": {
+      "sha256": "b2cc5272b168e18d59eeea8db54abec47ac51c8dceecedcf10f15d7da054368f",
+      "matches": true
+    },
+    "perf-out/github-issue-discovery/automatic/python-wave19-20261127/graph.json": {
+      "sha256": "728a6182ea67f400a0a35810317c31792ddaf077cd8d3b1055c5a78f5d6e9ed5",
+      "matches": true
+    },
+    "perf-out/github-issue-discovery/automatic/python-wave19-20261127/native-result.json": {
+      "sha256": "e0860e1ab2afc34b64c4c5051c50e7517b0d1f76b63ab021ddf45f762d34232a",
+      "matches": true
+    }
+  },
+  "input_manifest_sha256": "ece7c972aa50ff1ce4055556bb46b735a4f4107c824cc85b51fbbb87344fd393"
+}

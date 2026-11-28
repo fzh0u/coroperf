@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/data1/fzhou/coro/research/github-issue-discovery/python-wave19-20261127/source/repro1170.py", line 32, in <module>
+    anyio.run(main)
+  File "/home/fzhou/.cache/uv/archive-v0/8yTMsnfv2OeSn5Nb/anyio/_core/_eventloop.py", line 77, in run
+    return async_backend.run(func, args, {}, backend_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fzhou/.cache/uv/archive-v0/8yTMsnfv2OeSn5Nb/anyio/_backends/_asyncio.py", line 2358, in run
+    return runner.run(wrapper())
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/data1/fzhou/coro/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data1/fzhou/coro/.tools/replay-cpython/cpython-3.12.4-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/fzhou/.cache/uv/archive-v0/8yTMsnfv2OeSn5Nb/anyio/_backends/_asyncio.py", line 2341, in wrapper
+    return await func(*args)
+           ^^^^^^^^^^^^^^^^^
+  File "/data1/fzhou/coro/research/github-issue-discovery/python-wave19-20261127/source/repro1170.py", line 30, in main
+    assert lim.borrowed_tokens <= lim.total_tokens, "borrowed_tokens > total_tokens"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: borrowed_tokens > total_tokens

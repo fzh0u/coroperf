@@ -1,0 +1,156 @@
+{
+  "schema": "coroperf.go73964-saved-audit/v1",
+  "id": "golang--go--73964",
+  "reviewed_at": "2026-11-26T17:01:17.099362+00:00",
+  "elapsed_seconds": 215.808,
+  "mode": "offline_saved_evidence_only",
+  "new_target_runs": 0,
+  "target_replays": 0,
+  "original_sha256_unchanged": {
+    "runtime.trace": true,
+    "goroutines.txt": true,
+    "main.go": true,
+    "execution.json": true,
+    "native-result.json": true,
+    "native.stdout": true,
+    "scheduler.pprof": true
+  },
+  "trace_decode": {
+    "completed": true,
+    "decoder_exit_code": 0,
+    "decoder_seconds": 74.69842036091723,
+    "events": 10907132,
+    "clock_domain": "Go runtime trace monotonic",
+    "trace_duration_ns": 1504077249
+  },
+  "native_identity": {
+    "sleeper_goroutine_ids": [
+      8,
+      9
+    ],
+    "parent_goroutine_id": 1,
+    "trace_reader_goroutine_id": 7,
+    "births_observed": 2,
+    "birth_to_first_sleep_wait_joins_verified": 2,
+    "run_wait_wake_transitions_observed": true,
+    "transition_counts": {
+      "1": {
+        "Undetermined->Running": 1,
+        "Running->Syscall": 14,
+        "Syscall->Running": 14,
+        "Running->Runnable": 13,
+        "Runnable->Running": 13,
+        "Running->Running": 1
+      },
+      "8": {
+        "NotExist->Runnable": 1,
+        "Runnable->Running": 1926900,
+        "Running->Waiting": 1926900,
+        "Waiting->Runnable": 1926900,
+        "Runnable->Runnable": 1
+      },
+      "9": {
+        "NotExist->Runnable": 1,
+        "Runnable->Running": 1707183,
+        "Running->Waiting": 1707183,
+        "Waiting->Runnable": 1707183,
+        "Runnable->Runnable": 1
+      }
+    },
+    "sleeper_exits_observed": false,
+    "main_birth_observed": false
+  },
+  "main_runtime_runnable": {
+    "intervals": 13,
+    "over_50ms_intervals": 11,
+    "max_interval_ns": 161083456,
+    "sum_of_decoded_intervals_ns": 1330407039,
+    "sum_scope": "Computed only from decoded G1 Runnable→Running intervals, not assigned from the unknown-stack scheduler profile.",
+    "intervals_file": "decoded-summary.json"
+  },
+  "measurement_alignment": {
+    "native_printed_gaps": [
+      138113626,
+      124897246,
+      117920753,
+      158631388,
+      158045610
+    ],
+    "native_printed_max_gap_ns": 158631388,
+    "exact_stdout_to_trace_alignment": false,
+    "duration_similarity_only": [
+      {
+        "printed_gap_ns": 138113626,
+        "nearest_runtime_runnable_ns": 138112575,
+        "difference_ns": 1051,
+        "exact_time_alignment_verified": false
+      },
+      {
+        "printed_gap_ns": 124897246,
+        "nearest_runtime_runnable_ns": 124896448,
+        "difference_ns": 798,
+        "exact_time_alignment_verified": false
+      },
+      {
+        "printed_gap_ns": 117920753,
+        "nearest_runtime_runnable_ns": 117919872,
+        "difference_ns": 881,
+        "exact_time_alignment_verified": false
+      },
+      {
+        "printed_gap_ns": 158631388,
+        "nearest_runtime_runnable_ns": 158615104,
+        "difference_ns": 16284,
+        "exact_time_alignment_verified": false
+      },
+      {
+        "printed_gap_ns": 158045610,
+        "nearest_runtime_runnable_ns": 158044928,
+        "difference_ns": 682,
+        "exact_time_alignment_verified": false
+      }
+    ],
+    "limits": [
+      "stdout records only durations, not synchronized interval endpoints or trace regions/log markers.",
+      "Main has13 decoded runnable intervals but only5 printed threshold gaps; counts differ and no one-to-one mapping is claimed.",
+      "Longest runtime runnable interval161.083456ms differs from printed max158.631388ms; do not merge them."
+    ]
+  },
+  "cause_scope": {
+    "runtime_runnable_wait_observed": true,
+    "OS_thread_off_CPU_separated": false,
+    "runnext_root_cause_verified": false,
+    "instrumentation_overhead_measured": false,
+    "note": "Runtime marks G1 Runnable while sleepers repeatedly run/wait/wake. The trace provides runtime state, not OS sched_switch/cpu residency; this supports runnable-queue delay observations but does not exclude OS scheduling or prove runnext internals."
+  },
+  "coroperf_offline_graph": {
+    "existing_dump_converter": "scripts/go_dump_case_graph.py",
+    "dump_instances": 4,
+    "dump_observations": 4,
+    "dump_time_alignment": "unknown; all placeholder timestamps cleared",
+    "native_trace_extractor": "build_saved_graph.py (new scoped offline extraction, not an existing binary-trace importer)",
+    "native_trace_instances": 2,
+    "native_trace_observations": 2,
+    "verified_native_ID_joins": 2,
+    "shared_analyzer": "scripts/corostitch_analyze.mjs / core/evidence.mjs",
+    "shared_analyzer_succeeded": true,
+    "graph_file": "trace-capture.json",
+    "normalized_graph_file": "trace-analysis/graph.json",
+    "independent_missing_caller_recovery_verified": false,
+    "diagnostic_root_cause_or_optimization_verified": false,
+    "selected_catalogue_additions": 0
+  },
+  "limitations": [
+    "Historical Go1.23.0 differs from original tip/1.24.",
+    "Workers still existed when capture stopped; process exit0 is not an observed individual goroutine exit.",
+    "Native scheduler total1.42s retains unknown stack attribution and is not assigned to main.",
+    "Runtime trace already includes creator stacks; normalization is not new instrumentation or demonstrated superiority."
+  ],
+  "time_budget": {
+    "requested_approx_seconds": 180,
+    "recorded_elapsed_seconds": 215.808,
+    "overrun_seconds": 35.808,
+    "overrun_acknowledged": true,
+    "note": "Offline decoder plus converter/verification bookkeeping exceeded the approximate review budget; clock was not reset and no target ran."
+  }
+}

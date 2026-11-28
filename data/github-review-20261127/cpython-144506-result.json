@@ -1,0 +1,117 @@
+{
+  "schema": "independent-native-batch-v1",
+  "batch": "python-wave18-20261127",
+  "started_at": "2026-11-26T18:25:42.320900+00:00",
+  "finished_at": "2026-11-26T18:28:40.315792+00:00",
+  "elapsed_seconds": 177.995,
+  "limit_seconds": 180,
+  "within_budget": true,
+  "exploration_end_seconds": 120.24558765185066,
+  "exploration_before_150": true,
+  "first_native_finished_seconds": 90.92379832291044,
+  "new_reviews": 1,
+  "builds": 0,
+  "native_executions": 1,
+  "coroperf_captures": 1,
+  "selected_additions": 0,
+  "case": {
+    "reviewed_at": "2026-11-26T18:28:40.315792+00:00",
+    "status": "component_reproduced",
+    "local_status": "native_behavior_observed",
+    "execution_status": "completed_once",
+    "builds": 0,
+    "native_executions": 1,
+    "native_process_exit": 0,
+    "collector_cli_exit": null,
+    "collector_validation_pass": true,
+    "coroperf_capture": true,
+    "new_verified_case": false,
+    "evidence": "research/github-issue-discovery/python-wave18-20261127/public-result.json",
+    "case_kind": "executor completion versus chained callback scheduling order",
+    "reason": "Unmodified original20-iteration program ran ONCE on actual cachedCPython3.14.3/Linux, matching the reported patch release; compiler/build differs from reporterGCC15.2.1. It printed14FAIL/6PASS for its callback-order predicate, exit0, stderr empty. These labels are not framework test failures: maintainer says the old callback-order guarantee never existed and closed not-planned. Same-run transparent capture validates15segments/21edges,3Task births/3exits/9samples; test_timing is inline in main, not20 spawned Tasks. Original native stdout already exposes operation order. No actual executor job/Future/callback identity bridge was recorded, so no additional CoroPerf caller recovery, performance defect, root cause, optimization or selected-case addition is established. Frozen144506/associated141696 workload; no replay, sleep/version/monkeypatch variant or capture refill.",
+    "reason_zh": "原帖未改20轮程序在实际缓存CPython3.14.3/Linux仅运行一次，patch版本匹配，compiler/build异于报告GCC15.2.1。输出14FAIL/6PASS（回调顺序predicate），原生exit0、stderr空；这些标签不是框架测试失败，维护者称旧顺序从未保证并not-planned关闭。同run透明capture验证15segments/21edges、3Task创建/3退出/9samples；test_timing inline于main，不是20个spawn Task。stdout本身已显示操作顺序；未捕获实际executor job/Future/callback身份桥，不能声称新增caller恢复、性能bug、根因、优化或selected。冻结144506/关联141696同工作负载，不重放、跑sleep/版本/monkeypatch或补采。",
+    "sources": [
+      "https://github.com/python/cpython/issues/144506"
+    ]
+  },
+  "native": {
+    "started_at": "2026-11-26T18:27:13.244625+00:00",
+    "process_id": 4,
+    "command": [
+      "/data1/fzhou/coro/.tools/replay-cpython/cpython-3.14.3-linux-x86_64-gnu/bin/python3.14",
+      "/data1/fzhou/coro/research/github-issue-discovery/python-wave18-20261127/source/main.py"
+    ],
+    "native_process_exit": 0,
+    "collector_cli_used": false,
+    "collector_cli_exit": null,
+    "deadline": false,
+    "elapsed_seconds": 0.11449941899627447,
+    "child_user_cpu_seconds": 0.072088,
+    "child_system_cpu_seconds": 0.013198999999999999,
+    "first_native_finished_batch_seconds": 90.92379832291044,
+    "graph_exists": true,
+    "original20iteration_program_once": true,
+    "freeze_workload_after_this_run": true
+  },
+  "native_timestamp_limit": "native-result.started_at was written after proc.wait; it is result-record time, not an independent launch timestamp. Monotonic elapsed/first_native_finished_batch_seconds are the valid duration fields.",
+  "native_stdout": {
+    "PASS": 6,
+    "FAIL": 14,
+    "iterations": 20,
+    "meaning": "original non-guaranteed order predicate, not a failing process/assertion"
+  },
+  "capture_validation": {
+    "pass": true,
+    "segments": 15,
+    "edges": 21,
+    "creates": 3,
+    "recovered_creates": 0,
+    "task_discoveries": 0,
+    "samples": 9,
+    "exits": 3,
+    "base_edges": 9,
+    "exit_edges": 3,
+    "active_reported": 0,
+    "active_replayed": 0,
+    "max_active": 1,
+    "replay_underflow": 0,
+    "samples_without_base": 0,
+    "samples_from_discovered_tasks": 0,
+    "boundary_conservation": true,
+    "dangling_edges": 0,
+    "functions": [
+      "BaseEventLoop.shutdown_asyncgens",
+      "BaseEventLoop.shutdown_default_executor",
+      "main"
+    ],
+    "missing_target_functions": []
+  },
+  "actual_main_task": [
+    "python-asyncio-task-0x743afaa0d4f0-g1"
+  ],
+  "identity_limits": [
+    "test_timing coroutine is awaited inline in main; no separate20Task births",
+    "3births include main and2runner shutdown Tasks",
+    "Task IDs are actual agent-recorded address+generation; no independent callback/Future/job mapping was observed",
+    "callbacks are ordinary loop Handle executions; executor worker is an OS thread, not an asyncio Task",
+    "stdout already provides operation labels/order; extra caller benefit unverified"
+  ],
+  "cpu_scope": "child process user0.072088s+system0.013199s versus wall0.114499s includes interpreter+agent+whole20iteration program; no per-job CPU/queue/runnable estimate or uninstrumented baseline",
+  "verification": "verification.json 11saved-evidence checks, source AST equals archived original",
+  "source": "github-sources.json and source/fixture-provenance.json",
+  "gates": "gates.json nine exact escaped-token+(?![0-9]) files,144506/141696 clear. Existing947/1111/1091/158004/1274 never reopened.",
+  "inventory_inputs": [
+    "research/github-issue-discovery/scope-batch-20261127/python-header-inventory-wave15.json",
+    "research/github-issue-discovery/python-root-wave15-20261127/cache-inventory.json"
+  ],
+  "inventory_scope": "Read corrected existing path after initial python-root-wave15/cache-inventory.json path missing. Headers/AnyIO archive metadata were not treated as executed runtimes; selected actual3.14.3 loaded in preflight and native stdout/agent metadata.",
+  "heat": null,
+  "heat_reason": "No full comments/reactions count acquired; cached page3days is not live API count",
+  "native_artifact_directory": "perf-out/github-issue-discovery/automatic/python-wave18-20261127",
+  "frozen_workload_ids": [
+    "python--cpython--144506",
+    "python--cpython--141696"
+  ],
+  "no_followup_native": true,
+  "shared_ledger_changed": false
+}

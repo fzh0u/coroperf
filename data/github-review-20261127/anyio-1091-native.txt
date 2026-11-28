@@ -1,0 +1,43 @@
+  + Exception Group Traceback (most recent call last):
+  |   File "/data1/fzhou/coro/research/github-issue-discovery/python-ai-wave9-20261127/anyio1091_original.py", line 52, in <module>
+  |     anyio.run(main, backend="asyncio")
+  |     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/home/fzhou/.cache/uv/archive-v0/mb57tl1BPzaP2KRW/anyio/_core/_eventloop.py", line 77, in run
+  |     return async_backend.run(func, args, {}, backend_options)
+  |            ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/home/fzhou/.cache/uv/archive-v0/mb57tl1BPzaP2KRW/anyio/_backends/_asyncio.py", line 2342, in run
+  |     return runner.run(wrapper())
+  |            ~~~~~~~~~~^^^^^^^^^^^
+  |   File "/data1/fzhou/coro/.tools/replay-cpython/cpython-3.13-linux-x86_64-gnu/lib/python3.13/asyncio/runners.py", line 118, in run
+  |     return self._loop.run_until_complete(task)
+  |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  |   File "/data1/fzhou/coro/.tools/replay-cpython/cpython-3.13-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+  |     return future.result()
+  |            ~~~~~~~~~~~~~^^
+  |   File "/home/fzhou/.cache/uv/archive-v0/mb57tl1BPzaP2KRW/anyio/_backends/_asyncio.py", line 2325, in wrapper
+  |     return await func(*args)
+  |            ^^^^^^^^^^^^^^^^^
+  |   File "/data1/fzhou/coro/research/github-issue-discovery/python-ai-wave9-20261127/anyio1091_original.py", line 42, in main
+  |     async with SomeSafeAsyncResource():
+  |                ~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/data1/fzhou/coro/research/github-issue-discovery/python-ai-wave9-20261127/anyio1091_original.py", line 27, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "Exceptions from AsyncResource __aexit__", exceptions
+  |     )
+  | BaseExceptionGroup: Exceptions from AsyncResource __aexit__ (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/data1/fzhou/coro/research/github-issue-discovery/python-ai-wave9-20261127/anyio1091_original.py", line 21, in __aexit__
+    |     await self.aclose()
+    |   File "/data1/fzhou/coro/research/github-issue-discovery/python-ai-wave9-20261127/anyio1091_original.py", line 36, in aclose
+    |     await anyio.lowlevel.checkpoint()
+    |   File "/home/fzhou/.cache/uv/archive-v0/mb57tl1BPzaP2KRW/anyio/lowlevel.py", line 38, in checkpoint
+    |     await get_async_backend().checkpoint()
+    |   File "/home/fzhou/.cache/uv/archive-v0/mb57tl1BPzaP2KRW/anyio/_backends/_asyncio.py", line 2358, in checkpoint
+    |     await sleep(0)
+    |   File "/data1/fzhou/coro/.tools/replay-cpython/cpython-3.13-linux-x86_64-gnu/lib/python3.13/asyncio/tasks.py", line 706, in sleep
+    |     await __sleep0()
+    |   File "/data1/fzhou/coro/.tools/replay-cpython/cpython-3.13-linux-x86_64-gnu/lib/python3.13/asyncio/tasks.py", line 700, in __sleep0
+    |     yield
+    | asyncio.exceptions.CancelledError: Cancelled via cancel scope 76bb523f0590 by <Task pending name='__main__.main' coro=<main() running at /home/fzhou/.cache/uv/archive-v0/mb57tl1BPzaP2KRW/anyio/_backends/_asyncio.py:2325> cb=[_exit() at /data1/fzhou/coro/agents/python/corostitch_agent.py:307, _run_until_complete_cb() at /data1/fzhou/coro/.tools/replay-cpython/cpython-3.13-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py:181]>
+    +------------------------------------

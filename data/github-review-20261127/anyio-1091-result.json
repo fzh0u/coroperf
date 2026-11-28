@@ -1,0 +1,47 @@
+{
+  "schema": "coroperf.directed-review/v1",
+  "batch": "python-ai-wave9-20261127",
+  "cases": [
+    {
+      "id": "agronholm--anyio--1091",
+      "url": "https://github.com/agronholm/anyio/issues/1091",
+      "execution_status": "component_reproduced",
+      "reason_zh": "原帖较完整CPU程序仅运行一次，历史缓存AnyIO4.12.1/CPython3.13.5，非报告master d68670b/3.13.12。原生exit1保留RuntimeError except*处理后的单个CancelledError叶子，未打印clean exit。透明采集11segments/13edges，5个显式文件限定异常观测，含shutdown在内3个Task创建/退出。原生traceback已有main/aclose，未建立新增missing-caller增益或独立scope ownership，不新增selected case。成功负载冻结，不重放、切版本、测fix或执行关联1092。",
+      "native_runs": 1,
+      "capture_runs": 1
+    },
+    {
+      "id": "agronholm--anyio--710",
+      "url": "https://github.com/agronholm/anyio/issues/710",
+      "execution_status": "skipped",
+      "reason_zh": "原帖有界TaskGroup.start/move_on_after程序需要受影响AnyIO4.3.0。已查uv缓存版本无4.3.0；较新缓存已在关联修复717之后，不能替代受影响实现。未运行710、安装、补丁或采集。需实际group/start Future/scope/Task身份及取消时序，创建关系不能证明scope归属或取消传播；关联685仅保留来源上下文，不当新执行机会。",
+      "native_runs": 0,
+      "capture_runs": 0
+    }
+  ],
+  "new_verified_cases": 0,
+  "verification": {
+    "saved_evidence_only": true,
+    "pass": true,
+    "checks": {
+      "target_returned_one": true,
+      "native_one_remaining_group_leaf": true,
+      "native_cancellation_escaped": true,
+      "clean_exit_message_absent": true,
+      "one_workload_task_generation": true,
+      "three_creations": true,
+      "five_exception_stack_observations": true,
+      "creation_to_cancel_event_edge": true,
+      "all_generations_retired": true,
+      "single_execution": true
+    },
+    "segments": 11,
+    "edges": 13,
+    "native_runs": 1,
+    "capture_runs": 1,
+    "target_exit": 1,
+    "native_scope": "Original less-minimized AnyIO #1091 program, cached historical AnyIO4.12.1/CPython3.13.5; no added application Tasks",
+    "diagnostic_scope": "5 file-scoped exception observations of main Task, 3 total runtime Task creations/exits including shutdown. Native traceback already retains main/aclose; no newly missing caller or scope ownership recovery established.",
+    "optimization_verified": false
+  }
+}

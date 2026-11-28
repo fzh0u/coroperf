@@ -1,0 +1,56 @@
+{
+  "schema": "coroperf.native-observation-and-capture/v1",
+  "issue": "https://github.com/python/cpython/issues/119710",
+  "source_fidelity": {
+    "byte_equal": true,
+    "ast_equal": true,
+    "bytes": 845,
+    "sha256": "92c8f6d7f6b7834578133b3bc8fce3c05e264c04430909817d197e33becb9471",
+    "lines": [
+      142,
+      163
+    ],
+    "literal_child_command_and_sleep20_preserved": true
+  },
+  "runtime_scope": "Linux parent CPython3.11.15, source3.11 family; literal child executable unchanged, child version unmeasured. Instrumented single run; no uninstrumented control.",
+  "original_runs": 1,
+  "supervised_elapsed_seconds": 20.193820172920823,
+  "collector_duration_seconds": 20.121691541,
+  "duration_scope_limit": "Different measurement scopes, not observer overhead. Buffered scripted diagnostics do not measure kill-to-wait latency.",
+  "target_launcher_exit": 0,
+  "deadline_kill": false,
+  "observation": "One unchanged original with a one-second blocking sleep then kill request and awaited Process.wait completed after about20seconds. This is consistent with the reported inherited-pipe wait symptom; no independent per-child/FD causal observation.",
+  "cleanup_scope": "Controller reports supervised-process reap and absent owned process group; ps has headers only. Killed-child exit, descendant reaping, complete process tree and FD ownership unverified.",
+  "capture": {
+    "produced": true,
+    "sha256": "4bb3e295d768ffd7567a0c20c7b63089fac0b53636293a12d5f83d8517fee7ea",
+    "segments": 104,
+    "edges": 197,
+    "sampled_snapshots": 96,
+    "task_generations": 4,
+    "creation_relations": 1,
+    "active_reported_at_end": 0,
+    "supported": "Sampled main/wait/_wait chain and pipe-connect-helper creation relation; two later shutdown Tasks.",
+    "limits": "Task-token generations are not OS children or FD owners. No CPU/runnable/queue timing, pipe EOF timeline or verified resource provenance. Collector pass is structural, not causal proof."
+  },
+  "verified_resource_attribution": false,
+  "optimization_verified": false,
+  "selected_case_addition": false,
+  "original_frozen": true,
+  "no_replay": true,
+  "budget": {
+    "native_computed_finish_elapsed_from_dispatch_seconds": 145.235835,
+    "computed_from_saved_start_plus_elapsed": true,
+    "original_post_write_seconds": 236.808061,
+    "original_final_seconds": 240,
+    "total180_overrun_seconds": 60,
+    "saved_only_audit_final_seconds": 117,
+    "audit90_overrun_seconds": 27
+  },
+  "independent_saved_only_audit": {
+    "relevant_payloads_checked": 12,
+    "audit_payloads": 2,
+    "audit_manifest_sha256": "9c4fe6a8c5cfcf0827edbeb41bc3fcfc8a1f28744bbfb62cb9bccb6fd71f3ff8",
+    "new_source_or_runtime_calls": 0
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "coroperf.native-function-observation/v1",
+  "issue": "https://github.com/golang/go/issues/69585",
+  "source_fidelity": {
+    "scope": "Main function only; package/import scaffolding added, not a byte-identical whole source program. Lexical comparison, no AST compiler check.",
+    "main_byte_equal": true,
+    "main_bytes": 205,
+    "main_sha256": "78ed4e93df01ea2b5db7696360bba243341800564edb9583a78f5c164d480ff0",
+    "entry_scaffolding_bytes": 63,
+    "whole_program_bytes": 268,
+    "whole_program_sha256": "b0b69fea974d54bccdca76b3e609173f0d9f93596fcc5651cac878ef91731854",
+    "source_lines": [
+      208,
+      215
+    ]
+  },
+  "runtime_scope": "One Go1.23.0 Linux/amd64 execution. Reporter header says1.23.0 Darwin/arm64 but environment says1.22.1. No claim of exact reporter-machine reproduction. System sleep executable version unmeasured.",
+  "original_runs": 1,
+  "build_driver_runs": 1,
+  "build_driver_exit": 0,
+  "build_driver_seconds": 2.8187280390411615,
+  "native_parent_exit": 0,
+  "native_parent_seconds": 0.11470284499228,
+  "stdout": "signal: killed\n",
+  "stderr_bytes": 0,
+  "supervisor_deadline_kill_reported": false,
+  "observation": "The unchanged100ms context and sleep5 main function printed the process-error text once. Upstream treats this error selection as expected semantics.",
+  "measurement_limits": "Whole parent wall time is not cancellation-to-signal, queue or CPU latency. Parent exit0 differs from child error. Child PID/status/reap/signal provenance and source-machine equivalence remain unverified.",
+  "cleanup_scope": "Producer reports build/native reaping and group absence; supervisor code, guard timeout and descendant census were not retained. No independent child cleanup or ownership proof.",
+  "capture": {
+    "produced": false,
+    "attempts": 0
+  },
+  "verified_resource_attribution": false,
+  "optimization_verified": false,
+  "selected_case_addition": false,
+  "original_frozen": true,
+  "no_replay": true,
+  "budget": {
+    "computed_native_finish_elapsed_seconds": 128.676872,
+    "computed_from_saved_start_plus_elapsed": true,
+    "original_post_write_seconds": 180.386551,
+    "original_final_seconds_reported": 184,
+    "original180_overrun_seconds": 4,
+    "early_readiness_after_source_seconds": 41.094031,
+    "readiness30_overrun_seconds": 11.094031,
+    "saved_audit_pre_manifest_seconds": 92.301194,
+    "saved_audit_final_seconds_reported": 108,
+    "audit90_overrun_seconds": 18
+  },
+  "independent_saved_only_audit": {
+    "payloads_checked": 315,
+    "build_cache_payloads_included": 294,
+    "audit_payloads": 1,
+    "audit_manifest_sha256": "d0443581836ceb748e41c4b7aa616ad1b43396b3a9c46196e7be1544cc4b8bf1",
+    "new_source_or_runtime_calls": 0
+  }
+}

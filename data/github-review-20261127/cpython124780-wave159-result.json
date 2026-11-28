@@ -1,0 +1,77 @@
+{
+  "schema": "coroperf.bounded-native-lifetime-observation/v1",
+  "issue": "https://github.com/python/cpython/issues/124780",
+  "source_fidelity": {
+    "byte_equal": true,
+    "ast_equal": true,
+    "bytes": 271,
+    "sha256": "b18c03d7ae75f46172cd8bb442707ccc1d92c8faa23bad1d5aad249c3e830283",
+    "source_lines": [
+      140,
+      152
+    ],
+    "entry_scaffolding": false,
+    "original_one_second_sleep_and_cross_thread_stop_preserved": true
+  },
+  "runtime_scope": "CPython3.12.3/Linux; source3.12/3.13 family on Windows. A disclosed platform variant, not Windows or3.13 reproduction. Exact source patch unspecified.",
+  "original_runs": 1,
+  "build_driver_runs": 0,
+  "native_parent_exit": -15,
+  "forced_termination": true,
+  "clean_completion": false,
+  "supervisor_exit_reported": 0,
+  "supervisor_source_retained": true,
+  "guard_seconds": 5,
+  "observation_elapsed_including_cleanup_seconds": 5.059069206006825,
+  "output_observations": [
+    {
+      "elapsed_seconds": 0.05042718886397779,
+      "output": "starting loop...\r\n",
+      "target_poll": null
+    },
+    {
+      "elapsed_seconds": 1.0507002740632743,
+      "output": "hang...\r\n",
+      "target_poll": null
+    }
+  ],
+  "alive_at_guard": true,
+  "signals": [
+    {
+      "signal": "SIGTERM",
+      "elapsed_seconds": 5.055762561969459
+    }
+  ],
+  "wait_reaped": true,
+  "process_group_exists_after_wait": false,
+  "observation": "Original output reached hang after direct loop.stop returned; process remained alive until the guard. This is consistent with the reported low-level cross-thread wakeup/lifetime symptom, without proving its cause.",
+  "measurement_limits": "PTY receive times include launch/read/poll delays and are not precise code-event or selector timing. Stdout and stderr were merged in owned PTY; console buffering differs from pipes. The printed hang label does not prove an infinite hang, blocked stop caller, background-thread stack, CPU cost or wakeup failure.",
+  "cleanup_scope": "Saved supervisor sends group SIGTERM, waits and probes group absence; exit-15 is forced termination, not clean completion. No independent descendant/thread inventory, FD ownership or all-group cleanup proof; raw monotonic endpoint values not retained.",
+  "capture": {
+    "produced": false,
+    "attempts": 0
+  },
+  "verified_resource_attribution": false,
+  "optimization_verified": false,
+  "selected_case_addition": false,
+  "original_frozen": true,
+  "no_replay": true,
+  "budget": {
+    "computed_cleanup_finish_elapsed_seconds": 118.070201,
+    "computed_from_saved_start_plus_elapsed": true,
+    "original_post_write_seconds": 163.430253,
+    "original_final_seconds_reported": 165,
+    "records150_overrun_seconds": 15,
+    "original180_overrun_seconds": 0,
+    "early_readiness_after_source_seconds": 18.100662,
+    "saved_audit_pre_manifest_seconds": 69.543728,
+    "saved_audit_final_seconds_reported": 73,
+    "audit90_overrun_seconds": 0
+  },
+  "independent_saved_only_audit": {
+    "payloads_checked": 16,
+    "audit_payloads": 1,
+    "audit_manifest_sha256": "90d72917cac7cef865345e56a11d625eba10aaca49176729bbb1141abd2cabbf",
+    "new_source_or_runtime_calls": 0
+  }
+}
