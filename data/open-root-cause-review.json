@@ -146,8 +146,12 @@
       "last_upstream_activity": "2026-11-23T09:20:01Z",
       "upstream_comment_count": 22,
       "preparation_result": {
-        "en": "The 0.33.0 revision 4ba787ec has 19 matching source selections. Four engineering checks pass for the launcher, selected metadata, task/thread/fork identity and persistence before blocked-process exit. These are collector checks, with zero incident executions. In an isolated check using the unchanged FutureWrapper source class, three completed submitting Tasks were linked to three later synchronous waits through the captured Future and response-closure identities. Baseline and profiled callback results agree. These controlled callbacks do not reproduce the engine stall or validate its cause.",
-        "zh-CN": "0.33.0 的固定 revision4ba787ec 匹配19个源码选择点。启动器、元数据、任务／线程／fork 身份及阻塞进程退出前落盘，共四项工程检查通过；原故障执行次数仍为零。 在使用未改动 FutureWrapper 源码类的独立组件检查中，通过记录的 Future 与响应闭包身份，将三个已结束的提交 Task 分别关联到之后的三次同步等待。开启采集前后的回调结果一致。回调输入为受控测试，不是原引擎停顿的复现或根因验证。"
+        "en": "The pinned 0.33.0 revision 4ba787ec has 19 matching source selections. Seven collector engineering checks pass, including real Runner-managed uvloop, preservation of an application Task factory, and durable Task creation history before a blocked process can exit. Original incident executions remain zero. In an isolated check using the unchanged FutureWrapper source class, three completed submitting Tasks were linked to three later synchronous waits through the captured Future and response-closure identities. Baseline and profiled callback results agree. These controlled callbacks do not reproduce the engine stall or validate its cause.",
+        "zh-CN": "固定的 0.33.0 revision 4ba787ec 匹配 19 个源码选择点。七项采集器工程检查通过，覆盖真实 Runner-managed uvloop、保留应用 Task factory，以及阻塞进程退出前的 Task 创建历史落盘；原故障执行次数仍为零。 在使用未改动 FutureWrapper 源码类的独立组件检查中，通过记录的 Future 与响应闭包身份，将三个已结束的提交 Task 分别关联到之后的三次同步等待。开启采集前后的回调结果一致。回调输入为受控测试，不是原引擎停顿的复现或根因验证。"
+      },
+      "input_gap": {
+        "en": "The selected H200/model/request failure or its per-rank worker/native traces. The source-only component and collector checks do not supply those incident traces.",
+        "zh-CN": "所选H200／模型／请求故障的复现环境，或各rank的worker／原生轨迹；源码组件与采集器检查不能替代原始故障轨迹。"
       }
     },
     {
@@ -157,12 +161,12 @@
       "language": "Node.js / Promise resources",
       "stage": "follow_up",
       "question": {
-        "en": "Which command or completion leaves the sequential database workflow waiting?",
-        "zh-CN": "哪条命令或完成事件让数据库顺序工作流一直等待？"
+        "en": "Are the original slow-draining queue and the later nonreturning commit the same failure?",
+        "zh-CN": "早期队列缓慢出队，与后来commit不返回，是否属于同一种故障？"
       },
       "known": {
-        "en": "The original report describes post-insert hangs; later reports discuss a growing queue. A 2026 maintainer comparison did not reproduce the original behavior. The page still requests a reproduction and investigation.",
-        "zh-CN": "原报告描述批量插入后的挂起，后续报告提到队列增长；维护者 2026 年的对照没有复现原症状，页面仍标记需要复现与调查。"
+        "en": "The original queue keeps draining slowly; a later report describes a commit that stops resolving. The2026 maintainer comparison did not reproduce either reported workflow.",
+        "zh-CN": "原始队列仍缓慢出队，后续跟帖描述commit不再完成；2026年维护者对照未复现这些报告中的工作流。"
       },
       "patch": {
         "en": "No repair PR is shown in Development. Bulk loading and transaction suggestions do not establish a repair for the original hang.",
@@ -185,8 +189,8 @@
         "zh-CN": "长讨论混有不同版本与报告者负载；2026 年测试不是已确认复现。仅 async-resource 祖先不能证明数据库延迟或命令所有权。"
       },
       "first_step": {
-        "en": "Obtain a reproducing input and exact package/server versions before reusing the maintainer comparison.",
-        "zh-CN": "先取得能复现的输入及精确客户端／服务端版本，再决定是否复用维护者对照。"
+        "en": "Obtain one failing reporter workflow before running or changing a database workload.",
+        "zh-CN": "先取得一套报告者失败工作流，再执行或修改数据库负载。"
       },
       "upstream_state": "open",
       "new_execution": false,
@@ -198,17 +202,27 @@
       "last_status_check": "2026-11-28T13:01:24+00:00",
       "status_check_method": "GitHub issue API",
       "last_upstream_activity": "2026-01-29T21:29:09Z",
-      "upstream_comment_count": 26
+      "upstream_comment_count": 26,
+      "source_review_result": {
+        "en": "The2017 reporter says the queue still drains slowly; the2019 report says commit stops resolving and supplies pseudocode only. The2026 maintainer comparison did not reproduce the behavior. These reports must not be combined into one confirmed permanent hang.",
+        "zh-CN": "2017年作者澄清队列仍缓慢出队；2019年跟帖称commit不再完成，但只给伪代码；2026年维护者对照未复现。不能把它们合并为一个已确认的永久挂起。"
+      },
+      "input_gap": {
+        "en": "A reproducing script with SQL/schema, producer scheduling, exact Node/mysql2 versions and server setup; the2019 follow-up names MySQL5.7.28 but omits the complete program.",
+        "zh-CN": "需要包含SQL／schema、生产者调度、精确Node／mysql2版本及服务端配置的复现脚本；2019年跟帖只提到MySQL5.7.28，未提供完整程序。"
+      },
+      "last_source_check": "2026-11-28T15:55:04+00:00",
+      "source_review_path": "data/open-issue-input-review-20261128.json"
     },
     {
       "id": "golang--go--54461",
       "reference": "Go / gopls #54461",
       "url": "https://github.com/golang/go/issues/54461",
       "language": "Go / stackful",
-      "stage": "status_check",
+      "stage": "follow_up",
       "question": {
-        "en": "Does command shutdown wait on a live child, inherited pipes, or bookkeeping?",
-        "zh-CN": "命令关闭究竟在等子进程、被继承的 pipe，还是清理记账？"
+        "en": "Why does the selected Windows go command remain unfinished at the one-minute debug watchdog?",
+        "zh-CN": "选定Windows go命令为何在一分钟debug watchdog触发时仍未完成？"
       },
       "known": {
         "en": "The captured issue body reports long command waits. The rendered page omits discussion despite a large comment count in the database, so current conclusions and repair status are unknown.",
@@ -235,8 +249,8 @@
         "zh-CN": "仅作补充状态核验，不计入首要定位队列；现有记录没有完整评论历史和原始可运行 fixture。"
       },
       "first_step": {
-        "en": "Read the missing discussion and locate an unresolved failing build first.",
-        "zh-CN": "先补齐讨论，找到仍未解决的具体失败构建。"
+        "en": "Capture the specific go child and process/pipe identities on the pinned Windows test before choosing a fix.",
+        "zh-CN": "在固定Windows测试上采集具体go子进程及进程／管道身份，再选择修复。"
       },
       "upstream_state": "open",
       "new_execution": false,
@@ -248,7 +262,17 @@
       "last_status_check": "2026-11-28T13:01:24+00:00",
       "status_check_method": "GitHub issue API",
       "last_upstream_activity": "2026-10-19T23:11:45Z",
-      "upstream_comment_count": 428
+      "upstream_comment_count": 428,
+      "source_review_result": {
+        "en": "Selected build8667481512311181857 uses Windows386, tools@ba933928 and go@e9466ba2. Its gopls log has six hanging-command reports and two aggregated goroutine profiles. The pinned runCmdContext starts a one-minute debug timer before cancellation handling; WaitDelay is already30s. The profiles include Process.Wait/WaitForSingleObject, but omit goroutine-to-PID/creation identity. This is not proof of a post-kill pipe hang or a single cause for the umbrella issue.",
+        "zh-CN": "选定build8667481512311181857为Windows386、tools@ba933928及go@e9466ba2；gopls日志有六次hanging-command报告及两份聚合goroutine profile。固定源码的一分钟debug timer在取消处理之前启动，WaitDelay已设30秒。profile含Process.Wait／WaitForSingleObject，却没有goroutine到PID／创建身份关联，不能据此确认kill后的管道挂起或整个聚合issue的单一根因。"
+      },
+      "input_gap": {
+        "en": "A matching Windows failure with process/handle and goroutine identity, or a complete local reproducer. The Linux host cannot execute this selected Windows CI failure unchanged.",
+        "zh-CN": "需要匹配Windows故障的进程／句柄与goroutine身份数据，或完整本地复现；当前Linux主机不能原样执行所选Windows CI故障。"
+      },
+      "last_source_check": "2026-11-28T15:55:04+00:00",
+      "source_review_path": "data/open-issue-input-review-20261128.json"
     },
     {
       "id": "grpc--grpc--38002",
@@ -308,6 +332,61 @@
       "offline_review_result": {
         "en": "Analyzed the original profiles: 3,515 C++ and 801 Java samples, matching the binary event headers; Java has 341 compiler-thread samples. Build flags, JIT symbols, application equivalence and callback identities remain missing. No local cause or repair is validated.",
         "zh-CN": "原始轨迹为 C++ 3,515、Java 801 条样本，与二进制事件头一致；Java 编译线程占 341 条。仍缺构建选项、JIT 符号、应用可比性及回调身份，未验证本地根因或修复。"
+      },
+      "input_gap": {
+        "en": "Matching binaries/build flags, application sources and load, completed RPC counts and Java JIT maps. Uploaded CPU profiles alone do not establish a repair or request ancestry.",
+        "zh-CN": "匹配的二进制／构建选项、应用源码与负载、实际完成RPC数及Java JIT map；现有CPU轨迹不能独立验证修复或恢复请求祖先。"
+      }
+    },
+    {
+      "id": "vllm-project--vllm--39392",
+      "reference": "vLLM #39392 · AWQ follow-up",
+      "url": "https://github.com/vllm-project/vllm/issues/39392#issuecomment-5026255257",
+      "language": "Python / asyncio + uvloop / GPU inference",
+      "stage": "candidate",
+      "upstream_state": "open",
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "last_source_check": "2026-11-28T15:55:04+00:00",
+      "question": {
+        "en": "Do repeated pad tokens appear before parsing, or do request/parser states become mixed?",
+        "zh-CN": "重复pad token在解析之前是否已出现，还是请求／parser状态发生了混用？"
+      },
+      "known": {
+        "en": "Selected the July20 vLLM0.25.1, RTX3090, cyankiwi AWQ26B follow-up. The original client template permits any10K+ character text; sequential calls succeed while concurrent tool calls are reported to collapse.",
+        "zh-CN": "本轮选择7月20日vLLM0.25.1、RTX3090、cyankiwi AWQ26B的跟帖配置。原调用模板允许任意1万字符以上文本；报告称串行正常、并发tool call出现pad输出。"
+      },
+      "patch": {
+        "en": "No exact repair found in the inspected discussion, timeline and targeted PR searches. The fixed image/vision overflow path is separate; a prior maintainer A100 run did not reproduce concurrent tool-call collapse.",
+        "zh-CN": "已查讨论、timeline及定向PR搜索未找到该并发故障的直接修复；已修复的图像／vision溢出路径需分开，维护者已有一次A100未复现报告。"
+      },
+      "coroperf_addition": {
+        "en": "Associate request Task creation with parser/engine instances and observations before and after parsing; identify the earliest corrupt boundary.",
+        "zh-CN": "把请求Task创建来源、parser／engine实例及解析前后观测关联起来，定位最早出现异常的边界。"
+      },
+      "required_evidence": {
+        "en": "Actual request IDs and input hashes, native Task identity, parser/engine instance lifetimes, raw token IDs, decode settings, cache behavior and parsed responses.",
+        "zh-CN": "实际request ID和输入哈希、原生Task身份、parser／engine实例寿命、原始token ID、解码设置、缓存行为及解析响应。"
+      },
+      "diagnosis_plan": {
+        "en": "First run the reported service parameters and client template. If collapse occurs, compare raw/parsed output and matched-input sequential/concurrent controls; do not infer a singleton-parser race merely from concurrency.",
+        "zh-CN": "先按所报服务参数和调用模板运行。若触发，再比较原始／解析输出及输入匹配的串行／并发对照；不能仅凭并发就认定单例parser竞争。"
+      },
+      "validation": {
+        "en": "Retain every response, versions, GPU, immutable checkpoint hash and source scope. Confirm the same output failure before testing a cause-specific change.",
+        "zh-CN": "保留每个响应、版本、GPU、固定checkpoint哈希和来源范围；先确认同类输出故障，再检验针对原因的修改。"
+      },
+      "limits": {
+        "en": "Local A100 differs from the reported RTX3090; earliest visible model history follows a squash after the report, so historical byte identity is unverified. The original payload is omitted. No local inference or root cause is verified yet.",
+        "zh-CN": "本机A100不同于报告中的RTX3090；模型历史在报告后被压缩，历史权重字节身份未证实，原始payload也未给出。尚未执行本地推理或确认根因。"
+      },
+      "first_step": {
+        "en": "Finish and verify the17.2GB checkpoint transfer, then run the finite sequential/concurrent recipe on one idle A100.",
+        "zh-CN": "完成17.2GB checkpoint传输与哈希核验，再在一张空闲A100上执行有限的串行／并发调用。"
+      },
+      "preparation_result": {
+        "en": "vLLM0.25.1, Torch2.11.0+cu130 and Transformers5.14.1 are installed; CUDA and real CLI imports pass. Seven collector checks pass, including real uvloop and Task creation persistence before a blocked process exits. Checkpoint transfer is in progress; these checks are not inference results.",
+        "zh-CN": "vLLM0.25.1、Torch2.11.0+cu130及Transformers5.14.1已安装，CUDA及真实CLI导入检查通过。七项采集器检查通过，含真实uvloop及阻塞退出前的Task创建落盘；checkpoint仍在传输，这些检查不是推理结果。"
       }
     },
     {
@@ -728,27 +807,17 @@
       "id": "vllm-project--vllm--49250",
       "reference": "vLLM #49250",
       "url": "https://github.com/vllm-project/vllm/issues/49250",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
       }
     },
     {
-      "id": "vllm-project--vllm--39392",
-      "reference": "vLLM #39392",
-      "url": "https://github.com/vllm-project/vllm/issues/39392",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
-      "reason": {
-        "en": "Concurrent tool-call failure remains unresolved in inspected sources. The original long prompt is omitted; a maintainer reports no reproduction on A100. Matching failing inputs/worker traces are needed before calling a local run a reproduction.",
-        "zh-CN": "已查来源中的并发 tool-call 故障仍未解决；原长 prompt 被省略，维护者报告 A100 未复现。需要匹配的失败输入／worker 轨迹，不能把任意本地运行称为原故障复现。"
-      }
-    },
-    {
       "id": "vllm-project--vllm--70408",
       "reference": "vLLM #70408",
       "url": "https://github.com/vllm-project/vllm/issues/70408",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -758,7 +827,7 @@
       "id": "vllm-project--vllm--66351",
       "reference": "vLLM #66351",
       "url": "https://github.com/vllm-project/vllm/issues/66351",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -768,7 +837,7 @@
       "id": "vllm-project--vllm--70104",
       "reference": "vLLM #70104",
       "url": "https://github.com/vllm-project/vllm/issues/70104",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -778,7 +847,7 @@
       "id": "vllm-project--vllm--57061",
       "reference": "vLLM #57061",
       "url": "https://github.com/vllm-project/vllm/issues/57061",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation. The follow-up snippet aborts before its first chunk and is also screened against #63952; its prose calls it post-registration.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。 另一个跟帖虽称 post-registration，但示例在首个 chunk 前 abort，该路径也已有 #63952。"
@@ -788,7 +857,7 @@
       "id": "vllm-project--vllm--57724",
       "reference": "vLLM #57724",
       "url": "https://github.com/vllm-project/vllm/issues/57724",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -798,7 +867,7 @@
       "id": "vllm-project--vllm--49237",
       "reference": "vLLM #49237",
       "url": "https://github.com/vllm-project/vllm/issues/49237",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -808,7 +877,7 @@
       "id": "vllm-project--vllm--70029",
       "reference": "vLLM #70029",
       "url": "https://github.com/vllm-project/vllm/issues/70029",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -818,7 +887,7 @@
       "id": "vllm-project--vllm--70287",
       "reference": "vLLM #70287",
       "url": "https://github.com/vllm-project/vllm/issues/70287",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -828,7 +897,7 @@
       "id": "vllm-project--vllm--50425",
       "reference": "vLLM #50425",
       "url": "https://github.com/vllm-project/vllm/issues/50425",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -838,7 +907,7 @@
       "id": "vllm-project--vllm--53130",
       "reference": "vLLM #53130",
       "url": "https://github.com/vllm-project/vllm/issues/53130",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -848,7 +917,7 @@
       "id": "vllm-project--vllm--53718",
       "reference": "vLLM #53718",
       "url": "https://github.com/vllm-project/vllm/issues/53718",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -858,7 +927,7 @@
       "id": "vllm-project--vllm--65938",
       "reference": "vLLM #65938",
       "url": "https://github.com/vllm-project/vllm/issues/65938",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "A proposed repair or a reported solution already exists in the inspected discussion/timeline. Not selected as a new root-cause target; this is not our repair validation.",
         "zh-CN": "已查讨论／timeline 中存在修复提案或已报告的解决结果，不作为新的根因目标；这不代表本地验证了该修复。"
@@ -868,7 +937,7 @@
       "id": "reactor--reactor-core--2352",
       "reference": "Reactor #2352",
       "url": "https://github.com/reactor/reactor-core/issues/2352",
-      "last_source_check": "2026-11-28T15:03:35+00:00",
+      "last_source_check": "2026-11-28T15:55:04+00:00",
       "reason": {
         "en": "Open PR #4347 explicitly proposes a repair for #2352 with cancellation handoff tests. Excluded from the no-repair queue; its tests and fix have not been independently validated here.",
         "zh-CN": "open PR #4347 明确修复 #2352，并报告 cancellation handoff 测试；从无修复提案队列移除，本地未独立验证该测试或补丁。"

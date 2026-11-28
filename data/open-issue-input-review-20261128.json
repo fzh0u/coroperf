@@ -1,0 +1,63 @@
+{
+  "checked_at": "2026-11-28T15:55:04+00:00",
+  "root_cause_confirmed": false,
+  "new_target_inference_runs": 0,
+  "go_build": "https://ci.chromium.org/b/8667481512311181857",
+  "go_log": "https://logs.chromium.org/logs/golang/buildbucket/cr-buildbucket/8667481512311181857/+/u/step/33/log/2?format=raw",
+  "go_source": "https://github.com/golang/tools/blob/ba933928/internal/gocommand/invoke.go",
+  "mysql_source": "https://github.com/sidorares/node-mysql2/issues/695",
+  "source_files": [
+    {
+      "file": "perf-out/open-issue-debug/go-54461/source/latest-gopls-ci.log",
+      "sha256": "cb248148aeb324984c86a581e17979adb07df573bd55af7a4856dbbe3a3172df"
+    },
+    {
+      "file": "perf-out/open-issue-debug/go-54461/source/invoke-ba933928.go",
+      "sha256": "6aa4c34f5f35bd06a676f7afaaa2837358912860313ca9fd241d5ba7e861611f"
+    },
+    {
+      "file": "perf-out/open-issue-debug/mysql2-695/source/issue-page.html",
+      "sha256": "3579384b8056eb4f29114d18f7530d7e89d3d023d4708a573f12e10ea1bd5c13"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "vllm-project--vllm--41530",
+      "source_review_result": null,
+      "input_gap": {
+        "en": "The selected H200/model/request failure or its per-rank worker/native traces. The source-only component and collector checks do not supply those incident traces.",
+        "zh-CN": "所选H200／模型／请求故障的复现环境，或各rank的worker／原生轨迹；源码组件与采集器检查不能替代原始故障轨迹。"
+      }
+    },
+    {
+      "id": "sidorares--node-mysql2--695",
+      "source_review_result": {
+        "en": "The2017 reporter says the queue still drains slowly; the2019 report says commit stops resolving and supplies pseudocode only. The2026 maintainer comparison did not reproduce the behavior. These reports must not be combined into one confirmed permanent hang.",
+        "zh-CN": "2017年作者澄清队列仍缓慢出队；2019年跟帖称commit不再完成，但只给伪代码；2026年维护者对照未复现。不能把它们合并为一个已确认的永久挂起。"
+      },
+      "input_gap": {
+        "en": "A reproducing script with SQL/schema, producer scheduling, exact Node/mysql2 versions and server setup; the2019 follow-up names MySQL5.7.28 but omits the complete program.",
+        "zh-CN": "需要包含SQL／schema、生产者调度、精确Node／mysql2版本及服务端配置的复现脚本；2019年跟帖只提到MySQL5.7.28，未提供完整程序。"
+      }
+    },
+    {
+      "id": "golang--go--54461",
+      "source_review_result": {
+        "en": "Selected build8667481512311181857 uses Windows386, tools@ba933928 and go@e9466ba2. Its gopls log has six hanging-command reports and two aggregated goroutine profiles. The pinned runCmdContext starts a one-minute debug timer before cancellation handling; WaitDelay is already30s. The profiles include Process.Wait/WaitForSingleObject, but omit goroutine-to-PID/creation identity. This is not proof of a post-kill pipe hang or a single cause for the umbrella issue.",
+        "zh-CN": "选定build8667481512311181857为Windows386、tools@ba933928及go@e9466ba2；gopls日志有六次hanging-command报告及两份聚合goroutine profile。固定源码的一分钟debug timer在取消处理之前启动，WaitDelay已设30秒。profile含Process.Wait／WaitForSingleObject，却没有goroutine到PID／创建身份关联，不能据此确认kill后的管道挂起或整个聚合issue的单一根因。"
+      },
+      "input_gap": {
+        "en": "A matching Windows failure with process/handle and goroutine identity, or a complete local reproducer. The Linux host cannot execute this selected Windows CI failure unchanged.",
+        "zh-CN": "需要匹配Windows故障的进程／句柄与goroutine身份数据，或完整本地复现；当前Linux主机不能原样执行所选Windows CI故障。"
+      }
+    },
+    {
+      "id": "grpc--grpc--38002",
+      "source_review_result": null,
+      "input_gap": {
+        "en": "Matching binaries/build flags, application sources and load, completed RPC counts and Java JIT maps. Uploaded CPU profiles alone do not establish a repair or request ancestry.",
+        "zh-CN": "匹配的二进制／构建选项、应用源码与负载、实际完成RPC数及Java JIT map；现有CPU轨迹不能独立验证修复或恢复请求祖先。"
+      }
+    }
+  ]
+}

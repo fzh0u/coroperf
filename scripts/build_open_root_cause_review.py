@@ -32,6 +32,7 @@ def render(data, language):
                   if row.get('investigation_path') else '')
         status = (tr('Skipped at user request', '按用户要求跳过') if row.get('skip_reason') == 'user_request' else
                   tr('Cause verified locally', '本地根因已验证') if row['stage'] == 'diagnosed' else
+                  tr('Failing input / environment needed', '需要失败输入／对应环境') if row.get('input_gap') else
                   tr('Status check pending', '先核验状态') if row['stage'] == 'status_check' else
                   tr('Diagnosis pending', '待定位验证'))
         fields = [('known', 'Existing evidence', '已有证据'),
@@ -57,6 +58,13 @@ def render(data, language):
             details += f'<dt>{tr("Preparation and collector checks", "准备与采集检查")}</dt><dd>{e(row["preparation_result"][language])}</dd>'
         if row.get('offline_review_result'):
             details += f'<dt>{tr("Reporter profile analysis", "报告者轨迹分析")}</dt><dd>{e(row["offline_review_result"][language])}</dd>'
+        if row.get('source_review_result'):
+            details += f'<dt>{tr("Source review", "来源复核")}</dt><dd>{e(row["source_review_result"][language])}</dd>'
+        if row.get('input_gap'):
+            details += f'<dt>{tr("Input needed to continue diagnosis", "继续定位所需输入")}</dt><dd>{e(row["input_gap"][language])}</dd>'
+        if row.get('source_review_path'):
+            review_link = ('../' if zh else '') + row['source_review_path']
+            details += f'<dt>{tr("Review data", "复核数据")}</dt><dd><a href="{e(review_link)}">{tr("Evidence and source hashes", "证据与来源哈希")}</a></dd>'
         if evidence:
             details += f'<dt>{tr("Measured diagnosis result", "定位实测结果")}</dt><dd>{e(evidence[language])}</dd>'
         else:
@@ -69,9 +77,10 @@ def render(data, language):
                     f'<td><span class="review-status">{status}</span><p>{e(row["first_step"][language])}</p></td></tr>')
     title = 'Open Issues'
     skipped = sum(row.get('skip_reason') == 'user_request' for row in data['candidates'])
-    pending = sum(row['stage'] == 'status_check' and not row.get('skip_reason') for row in data['candidates'])
+    pending = sum(row['stage'] == 'status_check' and not row.get('skip_reason') and not row.get('input_gap') for row in data['candidates'])
+    input_gaps = sum(bool(row.get('input_gap')) and not row.get('skip_reason') and row['stage'] != 'diagnosed' for row in data['candidates'])
     diagnosed = sum(row['stage'] == 'diagnosed' for row in data['candidates'])
-    description = tr(f'{diagnosed} locally verified causes; {len(rows) - pending - diagnosed - skipped} diagnosis candidates; {pending} awaiting status checks; {skipped} skipped at user request.', f'{diagnosed} 个本地已验证根因，{len(rows) - pending - diagnosed - skipped} 个定位候选，{pending} 个先核验状态，{skipped} 个按用户要求跳过。')
+    description = tr(f'{diagnosed} locally verified causes; {len(rows) - pending - diagnosed - skipped - input_gaps} diagnosis candidates; {input_gaps} need failing inputs/environments; {pending} awaiting status checks; {skipped} skipped at user request.', f'{diagnosed} 个本地已验证根因，{len(rows) - pending - diagnosed - skipped - input_gaps} 个可继续定位候选，{input_gaps} 个需要失败输入／对应环境，{pending} 个先核验状态，{skipped} 个按用户要求跳过。')
     prefix = '../' if zh else ''
     screening = data.get('latest_screening')
     screening_html = ''
