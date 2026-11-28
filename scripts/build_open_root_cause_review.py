@@ -30,7 +30,8 @@ def render(data, language):
         target = row.get('investigation_path', row['url'])
         source = (f'<small><a href="{e(row["url"])}">{tr("Upstream issue", "上游 issue")}</a></small>'
                   if row.get('investigation_path') else '')
-        status = (tr('Cause verified locally', '本地根因已验证') if row['stage'] == 'diagnosed' else
+        status = (tr('Skipped at user request', '按用户要求跳过') if row.get('skip_reason') == 'user_request' else
+                  tr('Cause verified locally', '本地根因已验证') if row['stage'] == 'diagnosed' else
                   tr('Status check pending', '先核验状态') if row['stage'] == 'status_check' else
                   tr('Diagnosis pending', '待定位验证'))
         fields = [('known', 'Existing evidence', '已有证据'),
@@ -63,9 +64,10 @@ def render(data, language):
                     f'<details><summary>{tr("Evidence and validation plan", "展开证据与验证计划")}</summary><dl>{details}</dl></details></td>'
                     f'<td><span class="review-status">{status}</span><p>{e(row["first_step"][language])}</p></td></tr>')
     title = 'Open Issues'
-    pending = sum(row['stage'] == 'status_check' for row in data['candidates'])
+    skipped = sum(row.get('skip_reason') == 'user_request' for row in data['candidates'])
+    pending = sum(row['stage'] == 'status_check' and not row.get('skip_reason') for row in data['candidates'])
     diagnosed = sum(row['stage'] == 'diagnosed' for row in data['candidates'])
-    description = tr(f'{diagnosed} locally verified causes; {len(rows) - pending - diagnosed} diagnosis candidates; {pending} awaiting status checks.', f'{diagnosed} 个本地已验证根因，{len(rows) - pending - diagnosed} 个定位候选，{pending} 个先核验状态。')
+    description = tr(f'{diagnosed} locally verified causes; {len(rows) - pending - diagnosed - skipped} diagnosis candidates; {pending} awaiting status checks; {skipped} skipped at user request.', f'{diagnosed} 个本地已验证根因，{len(rows) - pending - diagnosed - skipped} 个定位候选，{pending} 个先核验状态，{skipped} 个按用户要求跳过。')
     prefix = '../' if zh else ''
     protocol = data['diagnosis_protocol']
     steps = ''.join(f'<li>{e(step[language])}</li>' for step in protocol['steps'])

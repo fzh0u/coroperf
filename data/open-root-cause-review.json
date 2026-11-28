@@ -147,111 +147,6 @@
       "upstream_comment_count": 22
     },
     {
-      "id": "vllm-project--vllm-ascend--23391",
-      "reference": "vLLM-Ascend #23391",
-      "url": "https://github.com/vllm-project/vllm-ascend/issues/23391",
-      "language": "Python / native workers / Ascend NPU",
-      "stage": "candidate",
-      "question": {
-        "en": "Which rank or transfer initiates the decode-wide stall?",
-        "zh-CN": "哪个 rank 或传输首先引发 decode 侧整体停顿？"
-      },
-      "known": {
-        "en": "A November 26 report records multiple decode DP ranks losing progress together, followed by device-event synchronization timeout. Prefill remains healthy.",
-        "zh-CN": "11 月 26 日报告记录 decode 侧多个 DP rank 同时失去进展，随后设备事件同步超时，而 prefill 侧仍正常。"
-      },
-      "patch": {
-        "en": "The inspected primary page remains in Backlog with no repair proposal or linked development change visible. Targeted PR search found no matching fix; this does not establish repository-wide absence.",
-        "zh-CN": "所读主页面仍为 Backlog，可见活动未出现修复方案或关联开发改动；定向 PR 搜索未发现匹配修复，不代表已穷尽整个仓库。"
-      },
-      "coroperf_addition": {
-        "en": "Join request/transfer histories to worker and rank generations and device completion events to separate the first blocked operation from cascading waits.",
-        "zh-CN": "将请求／传输历史接到 worker 与 rank 代次和设备完成事件，区分最初阻塞的操作与后续连锁等待。"
-      },
-      "required_evidence": {
-        "en": "Decode request, KV transfer and batch identities; process/rank generations; synchronization and device completion; cross-process timing. Actual work units must not be assumed to be coroutines.",
-        "zh-CN": "decode 请求、KV transfer 与 batch 身份，进程／rank 代次，同步与设备完成事件，跨进程时间；不能假定所有工作单元都是协程。"
-      },
-      "validation": {
-        "en": "Retain the reported deployment and compare recoverable versus persistent stalls. Establish the first missing completion before designing and validating a causal repair.",
-        "zh-CN": "保留所报部署，对比可自行恢复与持续停顿的轨迹；先查明第一个缺失完成事件，再设计并验证针对原因的修复。"
-      },
-      "limits": {
-        "en": "The original setup is a multi-node Ascend A3 deployment. Required NPU observations and reproduction access are unestablished; there is no local runtime result.",
-        "zh-CN": "原配置为多节点 Ascend A3 部署；尚未建立所需 NPU 观察与复现环境，没有本地运行结果。"
-      },
-      "first_step": {
-        "en": "Obtain the original workload and per-rank traces, and confirm access to a matching Ascend deployment.",
-        "zh-CN": "先取得原负载与逐 rank 轨迹，并确认可使用匹配的 Ascend 部署。"
-      },
-      "upstream_state": "open",
-      "new_execution": false,
-      "root_cause_confirmed": false,
-      "fix_screen": "no_causal_fix_identified_in_inspected_material",
-      "sources": [
-        "https://github.com/vllm-project/vllm-ascend/issues/23391"
-      ],
-      "investigation_path": "investigations/vllm-ascend-23391.html",
-      "diagnosis_plan": {
-        "en": "Distinguish a missing KV-transfer completion, device synchronization stall, and a peer rank waiting on the first stalled rank. Ordering and rank identity must identify the initiator.",
-        "zh-CN": "区分 KV 传输缺失完成、设备同步停顿，以及其他 rank 对首个停顿 rank 的连锁等待；用事件顺序和 rank 身份确定起点。"
-      },
-      "last_status_check": "2026-11-28T13:01:23+00:00",
-      "status_check_method": "GitHub issue API",
-      "last_upstream_activity": "2026-11-26T08:43:24Z",
-      "upstream_comment_count": 0
-    },
-    {
-      "id": "stackexchange--stackexchange.redis--3240",
-      "reference": "StackExchange.Redis #3240",
-      "url": "https://github.com/seredis/StackExchange.Redis/issues/3240",
-      "language": ".NET / async state machines",
-      "stage": "follow_up",
-      "question": {
-        "en": "Why does the subscription handshake stop in ConnectedEstablishing?",
-        "zh-CN": "订阅连接握手为何停在 ConnectedEstablishing？"
-      },
-      "known": {
-        "en": "One CI run stalled against a fake in-process replica. The issue explains why that state consumes the connect timeout, but leaves client versus test-server scheduling unresolved; repeated local attempts did not reproduce it.",
-        "zh-CN": "一次 CI 在进程内模拟 replica 上停住。报告已解释该状态为何耗尽连接超时，但客户端还是模拟服务端调度造成停顿尚未确定，多次本地尝试未复现。"
-      },
-      "patch": {
-        "en": "Two referenced commits change test discovery/setup; the report does not establish them as a repair of the stalled handshake. No repair PR is shown in Development.",
-        "zh-CN": "两个引用提交涉及测试发现／准备，报告没有证明它们修复握手停顿；Development 未列修复 PR。"
-      },
-      "coroperf_addition": {
-        "en": "Connect handshake and response-processing Tasks to one connection generation and determine which pending response or continuation prevents completion.",
-        "zh-CN": "把握手、响应处理 Task 关联到同一连接代次，找出哪个未完成响应或 continuation 阻止结束。"
-      },
-      "required_evidence": {
-        "en": "Task tokens across resumes; interactive versus subscription connection identity; message/response and pipe ownership; fake-server dispatch; completion times.",
-        "zh-CN": "跨恢复的 Task token、interactive／subscription 连接身份、消息／响应及 pipe 所有权、模拟服务端派发和完成时间。"
-      },
-      "validation": {
-        "en": "Capture the original in-process test and compare successful and stalled connection generations. Locate the earliest missing response/dispatch; distinguish a fake-server fault from a client defect before a repair claim.",
-        "zh-CN": "采集原进程内测试，对比正常与停住的连接代次，定位最早缺失的响应／派发，先区分模拟服务端与客户端问题，再谈修复。"
-      },
-      "limits": {
-        "en": "A real Redis replica is not an equivalent reproduction. Task creation does not establish message or pipe ownership; resource observers and the rare failing schedule are still needed.",
-        "zh-CN": "真实 Redis replica 不能替代这个复现。Task 创建关系不证明消息或 pipe 所有权，仍需资源观察及原始失败时序。"
-      },
-      "first_step": {
-        "en": "Recover the exact CI revision, test and logs; preserve the pub/sub path that the later discovery test bypassed.",
-        "zh-CN": "先取得精确 CI revision、测试和日志，保留后来 discovery 测试绕开的 pub/sub 路径。"
-      },
-      "upstream_state": "open",
-      "new_execution": false,
-      "root_cause_confirmed": false,
-      "diagnosis_plan": {
-        "en": "Distinguish a fake-server dispatch/response gap from client response parsing or a continuation that never runs. Match the exact message and connection generation before assigning ownership.",
-        "zh-CN": "区分模拟服务端未派发／未响应、客户端未解析响应，以及 continuation 未运行；先匹配具体消息和连接代次，再判定责任。"
-      },
-      "last_status_check": "2026-11-28T13:01:24+00:00",
-      "status_check_method": "GitHub issue API",
-      "last_upstream_activity": "2026-09-17T12:15:59Z",
-      "upstream_comment_count": 0
-    },
-    {
       "id": "sidorares--node-mysql2--695",
       "reference": "node-mysql2 #695",
       "url": "https://github.com/sidorares/node-mysql2/issues/695",
@@ -460,6 +355,123 @@
       "status_check_method": "GitHub issue API",
       "last_upstream_activity": "2026-07-14T01:39:19Z",
       "upstream_comment_count": 8
+    },
+    {
+      "id": "vllm-project--vllm-ascend--23391",
+      "reference": "vLLM-Ascend #23391",
+      "url": "https://github.com/vllm-project/vllm-ascend/issues/23391",
+      "language": "Python / native workers / Ascend NPU",
+      "stage": "candidate",
+      "question": {
+        "en": "Which rank or transfer initiates the decode-wide stall?",
+        "zh-CN": "哪个 rank 或传输首先引发 decode 侧整体停顿？"
+      },
+      "known": {
+        "en": "A November 26 report records multiple decode DP ranks losing progress together, followed by device-event synchronization timeout. Prefill remains healthy.",
+        "zh-CN": "11 月 26 日报告记录 decode 侧多个 DP rank 同时失去进展，随后设备事件同步超时，而 prefill 侧仍正常。"
+      },
+      "patch": {
+        "en": "The inspected primary page remains in Backlog with no repair proposal or linked development change visible. Targeted PR search found no matching fix; this does not establish repository-wide absence.",
+        "zh-CN": "所读主页面仍为 Backlog，可见活动未出现修复方案或关联开发改动；定向 PR 搜索未发现匹配修复，不代表已穷尽整个仓库。"
+      },
+      "coroperf_addition": {
+        "en": "Join request/transfer histories to worker and rank generations and device completion events to separate the first blocked operation from cascading waits.",
+        "zh-CN": "将请求／传输历史接到 worker 与 rank 代次和设备完成事件，区分最初阻塞的操作与后续连锁等待。"
+      },
+      "required_evidence": {
+        "en": "Decode request, KV transfer and batch identities; process/rank generations; synchronization and device completion; cross-process timing. Actual work units must not be assumed to be coroutines.",
+        "zh-CN": "decode 请求、KV transfer 与 batch 身份，进程／rank 代次，同步与设备完成事件，跨进程时间；不能假定所有工作单元都是协程。"
+      },
+      "validation": {
+        "en": "Retain the reported deployment and compare recoverable versus persistent stalls. Establish the first missing completion before designing and validating a causal repair.",
+        "zh-CN": "保留所报部署，对比可自行恢复与持续停顿的轨迹；先查明第一个缺失完成事件，再设计并验证针对原因的修复。"
+      },
+      "limits": {
+        "en": "The original setup is a multi-node Ascend A3 deployment. Required NPU observations and reproduction access are unestablished; there is no local runtime result.",
+        "zh-CN": "原配置为多节点 Ascend A3 部署；尚未建立所需 NPU 观察与复现环境，没有本地运行结果。"
+      },
+      "first_step": {
+        "en": "Skipped at the user’s request; retain records without resuming investigation automatically.",
+        "zh-CN": "按用户要求跳过，保留记录，不自动恢复调查。"
+      },
+      "upstream_state": "open",
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "fix_screen": "no_causal_fix_identified_in_inspected_material",
+      "sources": [
+        "https://github.com/vllm-project/vllm-ascend/issues/23391"
+      ],
+      "investigation_path": "investigations/vllm-ascend-23391.html",
+      "diagnosis_plan": {
+        "en": "Distinguish a missing KV-transfer completion, device synchronization stall, and a peer rank waiting on the first stalled rank. Ordering and rank identity must identify the initiator.",
+        "zh-CN": "区分 KV 传输缺失完成、设备同步停顿，以及其他 rank 对首个停顿 rank 的连锁等待；用事件顺序和 rank 身份确定起点。"
+      },
+      "last_status_check": "2026-11-28T13:01:23+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-11-26T08:43:24Z",
+      "upstream_comment_count": 0,
+      "skip_reason": "user_request",
+      "skipped_at": "2026-11-28T14:21:03+00:00",
+      "diagnosis_result": {
+        "en": "Skipped at the user’s request after hardware review. The reported four-node Ascend A3 environment is unavailable locally; no target execution or CoroPerf capture was performed.",
+        "zh-CN": "按用户要求，在核对硬件条件后跳过；本机缺少原例的四节点 Ascend A3 环境，未执行目标或采集 CoroPerf。"
+      }
+    },
+    {
+      "id": "stackexchange--stackexchange.redis--3240",
+      "reference": "StackExchange.Redis #3240",
+      "url": "https://github.com/seredis/StackExchange.Redis/issues/3240",
+      "language": ".NET / async state machines",
+      "stage": "follow_up",
+      "question": {
+        "en": "Why does the subscription handshake stop in ConnectedEstablishing?",
+        "zh-CN": "订阅连接握手为何停在 ConnectedEstablishing？"
+      },
+      "known": {
+        "en": "One CI run stalled against a fake in-process replica. The issue explains why that state consumes the connect timeout, but leaves client versus test-server scheduling unresolved; repeated local attempts did not reproduce it.",
+        "zh-CN": "一次 CI 在进程内模拟 replica 上停住。报告已解释该状态为何耗尽连接超时，但客户端还是模拟服务端调度造成停顿尚未确定，多次本地尝试未复现。"
+      },
+      "patch": {
+        "en": "Two referenced commits change test discovery/setup; the report does not establish them as a repair of the stalled handshake. No repair PR is shown in Development.",
+        "zh-CN": "两个引用提交涉及测试发现／准备，报告没有证明它们修复握手停顿；Development 未列修复 PR。"
+      },
+      "coroperf_addition": {
+        "en": "Connect handshake and response-processing Tasks to one connection generation and determine which pending response or continuation prevents completion.",
+        "zh-CN": "把握手、响应处理 Task 关联到同一连接代次，找出哪个未完成响应或 continuation 阻止结束。"
+      },
+      "required_evidence": {
+        "en": "Task tokens across resumes; interactive versus subscription connection identity; message/response and pipe ownership; fake-server dispatch; completion times.",
+        "zh-CN": "跨恢复的 Task token、interactive／subscription 连接身份、消息／响应及 pipe 所有权、模拟服务端派发和完成时间。"
+      },
+      "validation": {
+        "en": "Capture the original in-process test and compare successful and stalled connection generations. Locate the earliest missing response/dispatch; distinguish a fake-server fault from a client defect before a repair claim.",
+        "zh-CN": "采集原进程内测试，对比正常与停住的连接代次，定位最早缺失的响应／派发，先区分模拟服务端与客户端问题，再谈修复。"
+      },
+      "limits": {
+        "en": "A real Redis replica is not an equivalent reproduction. Task creation does not establish message or pipe ownership; resource observers and the rare failing schedule are still needed.",
+        "zh-CN": "真实 Redis replica 不能替代这个复现。Task 创建关系不证明消息或 pipe 所有权，仍需资源观察及原始失败时序。"
+      },
+      "first_step": {
+        "en": "Skipped at the user’s request; retain records without resuming investigation automatically.",
+        "zh-CN": "按用户要求跳过，保留记录，不自动恢复调查。"
+      },
+      "upstream_state": "open",
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "diagnosis_plan": {
+        "en": "Distinguish a fake-server dispatch/response gap from client response parsing or a continuation that never runs. Match the exact message and connection generation before assigning ownership.",
+        "zh-CN": "区分模拟服务端未派发／未响应、客户端未解析响应，以及 continuation 未运行；先匹配具体消息和连接代次，再判定责任。"
+      },
+      "last_status_check": "2026-11-28T13:01:24+00:00",
+      "status_check_method": "GitHub issue API",
+      "last_upstream_activity": "2026-09-17T12:15:59Z",
+      "upstream_comment_count": 0,
+      "skip_reason": "user_request",
+      "skipped_at": "2026-11-28T14:21:03+00:00",
+      "diagnosis_result": {
+        "en": "Skipped at the user’s request after source recovery, dependency restore and a preparation build. No original test or CoroPerf capture was executed; no cause is confirmed.",
+        "zh-CN": "按用户要求，在找回源码、恢复依赖和完成预构建后跳过；未运行原测试或采集 CoroPerf，未确认根因。"
+      }
     }
   ],
   "not_primary": [

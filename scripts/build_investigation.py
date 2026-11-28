@@ -74,6 +74,8 @@ def render(case, language):
     slug = case.get('slug', 'asio-1720')
     title = text(case['title']) if case.get('title') else tr('Asio #1720: locating the missing write completion', 'Asio #1720：定位丢失的 write 完成事件')
     description = tr('Investigation created; reproduction, diagnosis and repair are pending.', '已建立调查案例；复现、诊断和修复结果待完成。')
+    if case.get('skip_reason') == 'user_request':
+        description = tr('Skipped at the user’s request; retained for reference. No local cause or repair is verified.', '按用户要求跳过，保留资料；未验证本地根因或修复。')
     hypotheses = ''.join(f'<tr><th scope="row">{e(h["id"])} · {text(h["claim"])}</th><td>{text(h["distinguish"])}</td></tr>' for h in case['hypotheses'])
     relations = ''.join(f'<li>{text(row)}</li>' for row in case['required_relations'])
     comparisons = ''.join(f'<li>{text(row)}</li>' for row in case['comparisons'])

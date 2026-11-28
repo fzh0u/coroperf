@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#772f26">
-  <meta name="description" content="已建立调查案例；复现、诊断和修复结果待完成。">
+  <meta name="description" content="按用户要求跳过，保留资料；未验证本地根因或修复。">
   <title>vLLM-Ascend #23391：区分首个阻塞 rank 与连锁等待 · coroPerf</title>
   <link rel="alternate" hreflang="en" href="../../investigations/vllm-ascend-23391.html">
   <link rel="icon" type="image/png" href="../../assets/coroperf-pony.png">
@@ -40,7 +40,7 @@
   </header>
   <main id="main"><article class="wrap research open-review">
       <section class="block"><a href="../open-issues.html">返回待分析 Issue</a>
-        <h1>vLLM-Ascend #23391：区分首个阻塞 rank 与连锁等待</h1><p>已建立调查案例；复现、诊断和修复结果待完成。</p><p>候选依据已检查的公开 issue 与可见讨论建立；尚未执行本地复现、采集 CoroPerf 轨迹或验证修复。所读材料未发现根因修复，不代表已穷尽整个仓库。</p>
+        <h1>vLLM-Ascend #23391：区分首个阻塞 rank 与连锁等待</h1><p>按用户要求跳过，保留资料；未验证本地根因或修复。</p><p>候选依据已检查的公开 issue 与可见讨论建立；尚未执行本地复现、采集 CoroPerf 轨迹或验证修复。所读材料未发现根因修复，不代表已穷尽整个仓库。</p>
         <p><a href="https://github.com/vllm-project/vllm-ascend/issues/23391">上游 issue</a> · <a href="../../data/investigations/vllm-ascend-23391.json">案例记录</a></p>
       </section>
       <section class="block"><h2>问题与已有证据</h2><p class="section-copy">11 月 26 日报告记录 decode 侧多个 DP rank 同时失去进展，随后设备事件同步超时，而 prefill 侧仍正常。</p><p class="section-copy">所读主页面仍为 Backlog，可见活动未出现修复方案或关联开发改动；定向 PR 搜索未发现匹配修复，不代表已穷尽整个仓库。</p></section>
@@ -50,7 +50,7 @@
       </section>
       <section class="block"><h2>身份与事件链</h2><ul><li>decode 请求、KV transfer 与 batch 身份，进程／rank 代次，同步与设备完成事件，跨进程时间；不能假定所有工作单元都是协程。</li></ul><p>将请求／传输历史接到 worker 与 rank 代次和设备完成事件，区分最初阻塞的操作与后续连锁等待。</p></section>
       <section class="block"><h2>复现与对照</h2><ol><li>先取得原负载与逐 rank 轨迹，并确认可使用匹配的 Ascend 部署。</li><li>保留所报部署，对比可自行恢复与持续停顿的轨迹；先查明第一个缺失完成事件，再设计并验证针对原因的修复。</li><li>以同一批采集观察比较普通诊断与 CoroPerf；建立第一个缺失进展事件后，再验证针对原因的修复。</li></ol></section>
-      <section class="block"><h2>下一步与当前边界</h2><p class="section-copy">先取得原负载与逐 rank 轨迹，并确认可使用匹配的 Ascend 部署。</p><p>原配置为多节点 Ascend A3 部署；尚未建立所需 NPU 观察与复现环境，没有本地运行结果。</p></section>
+      <section class="block"><h2>下一步与当前边界</h2><p class="section-copy">按用户要求，在核对硬件条件后跳过；本机缺少原例的四节点 Ascend A3 环境，未执行目标或采集 CoroPerf。</p><p>原配置为多节点 Ascend A3 部署；尚未建立所需 NPU 观察与复现环境，没有本地运行结果。</p></section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · 协程证据图谱</span><a href="#main">返回顶部 ↑</a></div></footer>
 </body>

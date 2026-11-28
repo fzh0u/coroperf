@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#772f26">
-  <meta name="description" content="Investigation created; reproduction, diagnosis and repair are pending.">
+  <meta name="description" content="Skipped at the user’s request; retained for reference. No local cause or repair is verified.">
   <title>vLLM-Ascend #23391: separating the first blocked rank from cascading waits · coroPerf</title>
   <link rel="alternate" hreflang="zh-CN" href="../zh-cn/investigations/vllm-ascend-23391.html">
   <link rel="icon" type="image/png" href="../assets/coroperf-pony.png">
@@ -40,7 +40,7 @@
   </header>
   <main id="main"><article class="wrap research open-review">
       <section class="block"><a href="../open-issues.html">Back to open investigations</a>
-        <h1>vLLM-Ascend #23391: separating the first blocked rank from cascading waits</h1><p>Investigation created; reproduction, diagnosis and repair are pending.</p><p>Candidate based on the inspected public issue and visible discussion. No local reproduction, captured CoroPerf trace or fix validation has been performed. No causal fix was identified in the inspected material; this is not an exhaustive repository-wide absence claim.</p>
+        <h1>vLLM-Ascend #23391: separating the first blocked rank from cascading waits</h1><p>Skipped at the user’s request; retained for reference. No local cause or repair is verified.</p><p>Candidate based on the inspected public issue and visible discussion. No local reproduction, captured CoroPerf trace or fix validation has been performed. No causal fix was identified in the inspected material; this is not an exhaustive repository-wide absence claim.</p>
         <p><a href="https://github.com/vllm-project/vllm-ascend/issues/23391">Upstream issue</a> · <a href="../data/investigations/vllm-ascend-23391.json">Case record</a></p>
       </section>
       <section class="block"><h2>Observed problem and existing evidence</h2><p class="section-copy">A November 26 report records multiple decode DP ranks losing progress together, followed by device-event synchronization timeout. Prefill remains healthy.</p><p class="section-copy">The inspected primary page remains in Backlog with no repair proposal or linked development change visible. Targeted PR search found no matching fix; this does not establish repository-wide absence.</p></section>
@@ -50,7 +50,7 @@
       </section>
       <section class="block"><h2>Identity and event chain</h2><ul><li>Decode request, KV transfer and batch identities; process/rank generations; synchronization and device completion; cross-process timing. Actual work units must not be assumed to be coroutines.</li></ul><p>Join request/transfer histories to worker and rank generations and device completion events to separate the first blocked operation from cascading waits.</p></section>
       <section class="block"><h2>Reproduction and controls</h2><ol><li>Obtain the original workload and per-rank traces, and confirm access to a matching Ascend deployment.</li><li>Retain the reported deployment and compare recoverable versus persistent stalls. Establish the first missing completion before designing and validating a causal repair.</li><li>Compare the same captured observations using ordinary diagnostics and CoroPerf. Test a cause-specific repair only after the first missing progress event is established.</li></ol></section>
-      <section class="block"><h2>Next action and limits</h2><p class="section-copy">Obtain the original workload and per-rank traces, and confirm access to a matching Ascend deployment.</p><p>The original setup is a multi-node Ascend A3 deployment. Required NPU observations and reproduction access are unestablished; there is no local runtime result.</p></section>
+      <section class="block"><h2>Next action and limits</h2><p class="section-copy">Skipped at the user’s request after hardware review. The reported four-node Ascend A3 environment is unavailable locally; no target execution or CoroPerf capture was performed.</p><p>The original setup is a multi-node Ascend A3 deployment. Required NPU observations and reproduction access are unestablished; there is no local runtime result.</p></section>
     </article></main>
   <footer class="site-footer"><div class="wrap"><span>coroPerf · Coroutine Evidence Atlas</span><a href="#main">Back to top ↑</a></div></footer>
 </body>
