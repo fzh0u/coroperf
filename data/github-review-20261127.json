@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T10:58:34+00:00",
+  "updated_at": "2026-11-28T11:05:52+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -3858,6 +3858,53 @@
         "optimization_verified": false
       },
       "gate_order": "13 metadata files; exact1143/title before primary; extra code/recipe aliases and1147 metadata after primary before setup.1147 hits foreignAsio/Prometheus IDs or numerical/hash metadata, not this workload; no related body opened."
+    },
+    "cloudflare--pingora--143": {
+      "id": "cloudflare--pingora--143",
+      "repo": "cloudflare/pingora",
+      "number": 143,
+      "url": "https://github.com/cloudflare/pingora/issues/143",
+      "title": "Why is it that a CPU running at full capacity only has less than 2000RPS when I test throughput on Linux x86 system?",
+      "sources": [
+        "https://github.com/cloudflare/pingora/issues/143"
+      ],
+      "status": "external_environment_required",
+      "reason": "Real low-throughput/high-CPU and later scaling observations are reported; author identifies initial debug compilation and reports higher release throughput. Exact original source revision,hardware,Rust/dependency identities,upstream/client configuration and complete runner are missing. Live HTTP server/load is outside this case allowance; no substitute or readiness/target launched.",
+      "reason_zh": "来源有真实低吞吐/高CPU及后续扩展性观察；作者承认初始使用debug构建并报告release吞吐提高。缺原源码版本、硬件、Rust/依赖身份、上下游及完整执行配置；本轮不允许liveHTTP服务/负载，未替代原例或启动readiness/目标。",
+      "source_completeness": {
+        "body": "382-line primary archived; original description is empty.",
+        "comments": "All returned substantive setup/build/scaling comments158–311 and stale closure read; fullAPI completeness unverified.",
+        "version": "Linuxx86 per title; exactPingora/Rust/OS/CPU versions absent.",
+        "scope": "One143primary. Quickstart,relatedEnvoy19103,otherPingora sources and code not opened; automatic search expansion includes frozen372/Discussion376 only as exposure."
+      },
+      "upstream_evidence": {
+        "observation": "Initial title reports under2000RPS at fullCPU. Author acknowledges debug mode,then reports release oneCPU2.2W RPS. Later echo scaling lists Pingora7,9000/12,4000/17,0000 RPS for1/2/3threads and nginx9,8000/18,1000/22,1000 for1/2/3workers.",
+        "counterevidence": "Maintainer says numbers depend on hardware/OS and synthetic results do not directly indicate real performance. Debug-to-release result is not a controlled local speedup; later echo differs from the initialproxy setup.",
+        "unknown": "Whichstage consumes CPU,accept/loadbalance/queue distribution,exact build/input and normalized scaling efficiency remain unmeasured locally.",
+        "resolution_scope": "Initial build-mode explanation is already known. Maintainer accepts later numbers; stale not-planned closure is not a scheduler patch or performancevalidation."
+      },
+      "coroperf_applicability": {
+        "assessment": "Request/task/worker-cost attribution could distinguish build cost from queue/accept imbalance; no first-root-cause credit.",
+        "assessment_zh": "请求/task/worker开销归因可区分构建开销与队列/accept不均；不计首次根因。",
+        "required_identity": "Join request/connection generations,Tokio task poll intervals,runtime worker/nativeTID,accept/queue/upstream operation ownership; creation stack alone does not identify executor or CPUowner.",
+        "required_identity_zh": "桥接请求/连接代次、Tokio任务poll区间、runtimeworker/原生TID及accept/队列/上游操作归属；创建栈不等于执行者或CPU所有者。",
+        "native_baseline": "Exact unchanged original build/input plus nativeCPU,throughput,latency and perworker distribution before collector comparison; none executed.",
+        "native_baseline_zh": "需未改原构建/输入及原生CPU、吞吐、延迟、worker分布基线，再比较collector；本轮未执行。",
+        "limits": "RPS is not CPUcost or coroutinecount; proxy and echo workloads differ. Do not turn source release advice into a newbuild or fabricate HTTP workload. Existingcollector support for Pingora/Tokio identity remains unverified.",
+        "limits_zh": "RPS不是CPU开销或协程数，proxy与echo负载不同；不可把release建议当成本轮新构建或制造HTTP负载；collector对Pingora/Tokio身份支持未核实。"
+      },
+      "open_issues_advice": {
+        "disposition": "not_primary",
+        "reason": "Initial issue already has debug-build explanation; remaining generic scaling question lacks a scoped unexplained failure and exactfixture.",
+        "reason_zh": "初始问题已有debug构建解释，剩余泛化扩展性问题缺明确未解释故障及准确原环境。",
+        "validation": "No execution,cause/fix validation,collector capability check,diagnosis timing or speedup measurement."
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "382-line primary archived; original description is empty. All returned substantive setup/build/scaling comments158–311 and stale closure read; fullAPI completeness unverified. Linuxx86 per title; exactPingora/Rust/OS/CPU versions absent. One143primary. Quickstart,relatedEnvoy19103,otherPingora sources and code not opened; automatic search expansion includes frozen372/Discussion376 only as exposure.",
+        "boundaries": "作者初始CPU满而<2000RPS真实报告保留，随后承认debug构建并报告release oneCPU“2.2W”；不是本轮受控speedup。后续echo线程1/2/3与nginxworker1/2/3来源数列保留原“7,9000”等记法，不不明单位归一化或把proxy/echo同协议；硬件/OS/上游/client/build缺，skipped，无匹配原例或基线，不造HTTP负载或因release建议运行新构建。维护者提示synthetic不代表真实prod，初因已有build-mode解释，后扩展问题缺具体未解失败；stale notplannedclosure不是scheduler patch/gain。需request/connection代次、Tokio poll、worker/nativeTID、accept/queue/upstream真实owner，creator非执行CPU owner，RPS非CPU或Task数；原生CPU/throughput/latency/perworker分布在前，collector Pingora/Tokio支持未验。382行初body空，158–311设置/build/scaling及staleclosure读、API未知；Quickstart/Envoy19103未开，372/actualDiscussion376仅自动搜索暴露无显式body/setup/旧源重开。",
+        "time_budget": "原dispatch11:01:00.138217Z/source67.861783超60约7.862、内90/facts102.846907/post102.846988/records115.524630/final117.861783–118.861783，120/150/180/reserve35满足；全部研究phase0/handles[]/SLOT2unused。"
+      }
     },
     "cloudflare--pingora--227": {
       "id": "cloudflare--pingora--227",
@@ -26542,6 +26589,51 @@
         "time_budget": "Source:69s (+9 over60); record write:146.441093s; pre-manifest:157.437352s; final whole-second:162s. Records150 exceeded at seal/final; total180 retained. All readiness/native/capture0; no slot requested."
       }
     },
+    "vllm-project--vllm--53960": {
+      "id": "vllm-project--vllm--53960",
+      "repo": "vllm-project/vllm",
+      "number": 53960,
+      "url": "https://github.com/vllm-project/vllm/issues/53960",
+      "title": "[Bug]: VLLM_PLE_CPU_OFFLOAD deadlocks at kernel warmup on single GPU (TP=1) - Qwen3.8-Flash-Next on GB10/sm_121",
+      "sources": [
+        "https://github.com/vllm-project/vllm/issues/53960"
+      ],
+      "status": "external_environment_required",
+      "reason": "Reported single-GPU startup stalls have explicit model/image/build/hardware and traces, but the matching large-model GPU deployment is unprepared and startup takes about15minutes, outside this bounded case budget. No model download, service, readiness or target was started. Visible discussion already identifies absent uniproc offload-worker startup and a corresponding patch; not a first-root-cause candidate.",
+      "reason_zh": "单GPU启动停顿报告有模型／镜像／构建／硬件与轨迹，但匹配大模型GPU部署未准备，启动约15分钟超出本例时限；未下载模型、启动服务、就绪或目标。可见讨论已有uniproc未启动offload worker的解释及对应补丁，不计首次根因候选。",
+      "source_completeness": {
+        "body": "Primary reports1031lines; full rendered object archived, returned text ends444. Body137–193, visible comments215–414 and later partial comment read.",
+        "comments": "Later discussion after444 unavailable; API/full history unknown. Source claims of upstream patch/working configs not independently verified.",
+        "version": "Original8e685d198/imageqwen38-flash-next/GB10sm121/aarch64/TP1/modelopt_fp4/model135.2GB; second report sm120/x86/discrete differs and is not the same fixture.",
+        "scope": "One primary only. Gist,53899/95dc96d/53896/51340/53908, implementation and deployments not opened.62123 metadata gate only."
+      },
+      "upstream_evidence": {
+        "observation": "Warmup stalls while a connector thread waits in Queue.get; source reports3/3 and5/5 boots, with distinct eager and hardware configurations.",
+        "counterevidence": "Later discussion distinguishes the waiting connector thread from an offload worker process never spawned on the uniproc path, and reports a multiproc workaround and patch53899/95dc96d. Subsequent OOM, IPC environment and short-conv/copy stages are distinct from the original missing-worker hang.",
+        "unknown": "No matching local startup trace, complete later discussion, independent patch/release verification, collector coverage or overhead. Source active-thread labels and repeated stacks do not measure physicalCPU.",
+        "resolution_scope": "Open header does not erase an existing mechanism and repair history. Primary original startup cause already explained; later failures must not be counted as the same unresolved first cause or as evidence the original patch failed."
+      },
+      "coroperf_applicability": {
+        "assessment": "Conditional validation of startup ownership and a missing worker dependency; existing root/fix excludes first-root-cause admission.",
+        "required_identity": "Engine/executor/process generations; connector thread versus offload worker process; warmup batch/request, queue/IPC and ready/spawn milestones; device progress/nativeTID. Warmup batches are not serving requests.",
+        "native_baseline": "Original startup logs, process tree and worker-ready evidence with nativeCPU/device timeline before any additional creation-history benefit; no baseline executed.",
+        "limits": "Creation history alone cannot prove a process never spawned without startup/event coverage. No GPU/model/runtime/observer substitutions, memory/permission configuration changes or live service. Source throughput/configuration changes are not local repair or speedup proof.",
+        "assessment_zh": "有条件验证启动归属及缺失worker依赖；已有根因／补丁，不计首次根因。",
+        "required_identity_zh": "engine／executor／进程代次、connector线程与offload worker进程、warmup batch／request、queue／IPC及spawn／ready里程碑、设备进展和原生TID；warmup不是服务请求。",
+        "native_baseline_zh": "先保留原启动日志、进程树、worker-ready及原生CPU／设备时序，再评估创建历史增量；本轮未执行。",
+        "limits_zh": "仅创建历史无完整启动／事件覆盖不能证明从未spawn；不换GPU／模型／运行时／观察器、不改内存／权限或运行服务；来源吞吐与配置变化不作本地修复／提速证据。"
+      },
+      "open_issues_advice": {
+        "disposition": "not_primary",
+        "reason": "Visible original failure already has cause and patch; later incomplete subcases need separate evidence."
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Primary reports1031lines; full rendered object archived, returned text ends444. Body137–193, visible comments215–414 and later partial comment read. Later discussion after444 unavailable; API/full history unknown. Source claims of upstream patch/working configs not independently verified. Original8e685d198/imageqwen38-flash-next/GB10sm121/aarch64/TP1/modelopt_fp4/model135.2GB; second report sm120/x86/discrete differs and is not the same fixture. One primary only. Gist,53899/95dc96d/53896/51340/53908, implementation and deployments not opened.62123 metadata gate only.",
+        "boundaries": "真实TP1/PLE offload启动hang有snapshot8e685d198、镜像/modeloptFP4/模型135.2GB/GB10sm121aarch64/driver580.142/完整配置及栈；原匹配环境未准备且约15min启动，不在180s内，不下载模型/启服务/查SDK或改GPU/量化/内存/权限。线程Queue.get不证明offload worker进程已启动；可见257–298已说明uniproc缺spawn_ple_offload/waitready，53899/95dc96d修复及mp绕行存在，不列firstrootcause/no-fix。后续OOM、IPC环境、shortconv/copy另分阶段，不把更换eager/model/ctx/swap等组合当原patch对照。333作者纠正80.28GiB原数测在worker未spawn，不能证明完整offload功能生效；不同checkpoint/内存池及后续来源吞吐不作本地gain。需engine/executor/进程代次、connector线程与offload进程、warmupbatch/queue/IPC及spawn/ready/device/TID桥；warmup非服务请求，creation单独不能证never-spawn，需完整启动覆盖/原生进程树、CPU/device基线。1031行页面但返回止444，137–193及可见214–414/后partial读，333等显示截断后只读已存bytes补全、不再fetch；后文/API未知记incomplete1。gist/53899/53896/51340/53908/实现未开，sourcepatchclaims不当release验证，62123只metadata。",
+        "time_budget": "原dispatch11:01:29.614130Z/source即时归档23.334642（非HTTP时延，后续saved-tail读取无新fetch）/facts-postwrite81.748048/独立final107.127641，60/90/120/150/180/reserve35内；之后仅saved-source记录展开，不重置/重启source或target。所有研究phase0/handles[]/SLOT1unused。"
+      }
+    },
     "vllm-project--vllm--56172": {
       "status": "external_environment_required",
       "execution_status": "skipped",
@@ -26998,13 +27090,13 @@
     }
   },
   "counts": {
-    "external_environment_required": 565,
+    "external_environment_required": 567,
     "excluded_after_review": 98,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 81,
-  "new_review_count": 679,
+  "new_review_count": 681,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",
