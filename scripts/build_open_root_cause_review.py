@@ -16,13 +16,16 @@ def render(data, language):
     def text(value):
         return e(value[language])
     title = tr('Open issues for root-cause investigation', '待逐项分析的 Open Issue')
-    description = tr('Three unresolved leads, one status check, and the evidence needed to investigate them with CoroPerf.',
-                     '三个根因待确认的候选、一个状态核验项，以及 CoroPerf 需要补齐的证据。')
     primary = [r for r in data['candidates'] if r['stage'] == 'candidate']
+    description = tr(f'{len(primary)} popular-framework leads without an identified causal fix in inspected material, plus earlier follow-ups.',
+                     f'{len(primary)} 个所读材料未发现根因修复的热门框架候选，以及原有跟进条目。')
+    stages = {'candidate': tr('Primary candidate', '首要候选'),
+              'follow_up': tr('Earlier follow-up', '后续跟进'),
+              'status_check': tr('Status check first', '先核验状态')}
     corpus = data['corpus']
     rows = []
     for n, row in enumerate(data['candidates'], 1):
-        stage = tr('Candidate', '主要候选') if row['stage'] == 'candidate' else tr('Status check first', '先核验状态')
+        stage = stages[row['stage']]
         rows.append(f'<tr><th scope="row"><a href="#{e(row["id"])}">{n}. {e(row["reference"])}</a>'
                     f'<small>{e(row["language"])}</small></th><td>{text(row["question"])}</td><td>{stage}</td></tr>')
     fields = [('known', 'Existing evidence', '已有证据'), ('patch', 'Repair status in inspected material', '所读材料中的修复状态'),
@@ -41,12 +44,13 @@ def render(data, language):
         if n < len(data['candidates']):
             nxt = data['candidates'][n]
             steps.append(f'<a href="#{e(nxt["id"])}">{tr("Next issue", "下一个 issue")}</a>')
-        stage = tr('Root cause unconfirmed', '根因尚未确证') if row['stage'] == 'candidate' else tr('Discussion incomplete', '讨论尚未完整核验')
+        stage = stages[row['stage']]
+        upstream = e(row.get('upstream_state', 'unconfirmed').title())
         detail = (f'<p><a href="{e(row["investigation_path"])}">{tr("Open the investigation case", "查看独立案例与验证计划")}</a></p>'
                   if row.get('investigation_path') else '')
         cards.append(f'<section class="block review-card" id="{e(row["id"])}">'
                      f'<h2>{n}. {e(row["reference"])}</h2><h3>{text(row["question"])}</h3>'
-                     f'<p class="review-meta">{e(row["language"])} · Open · {stage}</p>'
+                     f'<p class="review-meta">{e(row["language"])} · {upstream} · {stage}</p>'
                      f'<p><a href="{e(row["url"])}">{tr("Read the upstream issue", "阅读上游 issue")}</a></p>'
                      f'{detail}<dl>{items}</dl><nav class="review-steps" aria-label="{tr("Issue review order", "逐项审阅顺序")}">{"".join(steps)}</nav></section>')
     excluded = ''.join(f'<tr><th scope="row"><a href="{e(r["url"])}">{e(r["reference"])}</a></th><td>{text(r["reason"])}</td></tr>'
@@ -58,10 +62,11 @@ def render(data, language):
         <h1>{title}</h1><p>{description}</p>
         <p class="review-meta">{tr('Reviewed', '核验日期')} {e(data['reviewed_at'][:10])} · {tr('No new executions', '本轮未执行复现')}</p>
         <p>{text(data['criteria'])}</p>
+        <p>{text(data['priority_note'])}</p>
         <p>{text(data['scope'])}</p>
         <p>{tr('Saved discovery snapshot', '已保存的搜索快照')}：{corpus['discovery_entries']} {tr('entries', '条')}，
            {corpus['open_in_saved_discovery']} Open；{tr('existing review decisions', '已有审阅结论')} {corpus['review_decisions']}。
-           {tr('The three leads do not add verified cases.', '三个候选不增加已验证案例数。')}</p>
+           {tr('Investigation leads do not add verified cases.', '调查候选不增加已验证案例数。')}</p>
         <div class="actions"><a class="button" href="#{e(primary[0]['id'])}">{tr('Review the first issue', '从第一个开始过')}</a>
           <a href="{prefix}data/open-root-cause-review.json">{tr('Download review data', '下载审阅记录')}</a>
           <a href="discovery.html">{tr('Search database', '搜索数据库')}</a></div>
@@ -71,7 +76,7 @@ def render(data, language):
         <p class="section-copy">{text(data['workflow'])}</p>
       </section>
       {''.join(cards)}
-      <section class="block"><h2>{tr('Other open issues screened out of the primary queue', '仍 Open，但不列入主要候选的条目')}</h2>
+      <section class="block"><h2>{tr('Existing fixes and other reasons for exclusion', '已有修复及其他不列为首要候选的原因')}</h2>
         <p class="section-copy">{tr('Open does not mean no patch, no explanation, or a currently reproducible defect.', 'Open 不等于没有补丁、没有解释，也不等于当前版本仍能复现。')}</p>
         <div class="review-scroll"><table><thead><tr><th>Issue</th><th>{tr('Reason', '原因')}</th></tr></thead><tbody>{excluded}</tbody></table></div>
       </section>

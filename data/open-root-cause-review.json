@@ -1,9 +1,9 @@
 {
   "schema": "coroperf.open-root-cause-review/v1",
-  "reviewed_at": "2026-11-28T02:20:54.586839+00:00",
+  "reviewed_at": "2026-11-28T09:59:48.105030+00:00",
   "scope": {
-    "en": "Targeted review of existing database entries, not an exhaustive list of every unresolved issue. Upstream observations use rendered primary pages, some cached; complete API history and a repository-wide patch search were not available.",
-    "zh-CN": "从现有数据库定向筛选，不代表所有未解决 issue。上游核验依据所返回的主页面，部分为缓存；未取得完整 API 历史，也未作仓库级穷尽补丁搜索。"
+    "en": "Targeted review of the existing database plus public framework issues, not an exhaustive unresolved-issue list. Upstream observations use rendered primary pages, some cached. Visible issue activity and targeted PR searches do not establish repository-wide absence of a fix.",
+    "zh-CN": "从现有数据库与公开 framework issue 定向筛选，不代表全部未解决问题。上游核验依据返回的主页面，部分为缓存；可见活动与定向 PR 搜索不等于已穷尽仓库中的修复。"
   },
   "corpus": {
     "discovery_entries": 1559,
@@ -27,8 +27,8 @@
     ]
   },
   "criteria": {
-    "en": "Prefer an observed open incident, no confirmed repair in inspected material, an unresolved causal link, and a concrete observation CoroPerf could add. Existing hypotheses, partial results and workarounds are retained explicitly. Native resource observations may be required. No new reproduction or root-cause result was produced in this review.",
-    "zh-CN": "优先选择已观察为 open、所读材料未确认修复、因果链仍有缺口且 CoroPerf 有具体证据可补的事故。已有假设、阶段性结果与缓解均保留说明，必要时需增加原生资源观察。本轮没有新增复现或根因结果。"
+    "en": "Primary candidates must have an unresolved causal question and no demonstrated fix for that exact failure in the inspected material. An existing patch, including an unmerged patch, removes an item from the first-root-cause queue. Timeouts, restarts and untested suggestions are not causal repairs. All proposed CoroPerf gains remain unverified.",
+    "zh-CN": "首要候选须仍有未解决的因果问题，且所读材料未展示针对该失败的有效修复。已有补丁（包括未合并补丁）退出首次根因发现队列；超时、重启和未测试建议不算根因修复。所有 CoroPerf 新增诊断收益均待验证。"
   },
   "workflow": {
     "en": "Review one issue at a time: confirm status and original inputs; reproduce with ordinary diagnostics; identify the missing identity/history relation; collect the necessary evidence; test competing causes; validate a repair against the original regression.",
@@ -36,11 +36,103 @@
   },
   "candidates": [
     {
+      "id": "vllm-project--vllm--41530",
+      "reference": "vLLM #41530",
+      "url": "https://github.com/vllm-project/vllm/issues/41530",
+      "language": "Python / native workers / GPU",
+      "stage": "candidate",
+      "question": {
+        "en": "Which execution stops making progress before the sample_tokens RPC times out?",
+        "zh-CN": "sample_tokens RPC 超时之前，哪段执行首先停止进展？"
+      },
+      "known": {
+        "en": "Workers become unresponsive without an exception. A recent report still describes silent stalls on 0.33.0; the discussion contains distinct failure modes that must be separated.",
+        "zh-CN": "worker 无异常地失去响应；最近的 0.33.0 报告仍有静默停顿，讨论中混有不同失败模式，需要分开处理。"
+      },
+      "patch": {
+        "en": "Upstream describes #58779 as bounding the wait, not eliminating the stall. Disabling adaptive verification is a suggested diagnostic direction, not a confirmed fix for the selected failure. No causal repair was identified in the inspected discussion and targeted PR search.",
+        "zh-CN": "上游说明 #58779 限制等待时间，但没有消除底层停顿。禁用 adaptive verification 是待检验方向，不是所选失败的已确认修复。本轮讨论与定向 PR 搜索未发现针对该停顿的已验证修复。"
+      },
+      "coroperf_addition": {
+        "en": "Connect initiating request and batch histories to the specific RPC, worker generation and rank; identify the earliest missing progress event.",
+        "zh-CN": "把发起请求、batch 历史接到具体 RPC、worker 代次与 rank，定位最早缺失的进展事件。"
+      },
+      "required_evidence": {
+        "en": "Request/batch/RPC identities; process and rank generations; native worker stacks; device-event or collective progress; ordered dispatch and completion. These bridges need implementation and validation.",
+        "zh-CN": "request／batch／RPC 身份、进程和 rank 代次、原生 worker 栈、设备事件或 collective 进展、派发与完成次序；这些关联仍需实现和验证。"
+      },
+      "validation": {
+        "en": "Select one silent-worker report and preserve its exact build, model and load. Compare healthy and stalled runs before a cause-specific repair; separate other exception and timeout-only cases.",
+        "zh-CN": "选定一条静默 worker 报告，保留精确构建、模型与负载；比较正常／停顿轨迹，再验证针对原因的修复，分开处理异常退出与仅超时的其他子案例。"
+      },
+      "limits": {
+        "en": "Requires the selected multi-GPU/model environment. Coroutine ancestry alone cannot prove a CUDA or collective deadlock; no local reproduction, overhead or repair result is available.",
+        "zh-CN": "需要所选报告对应的多 GPU／模型环境；协程祖先本身不能证明 CUDA 或 collective 死锁，目前没有本地复现、开销或修复结果。"
+      },
+      "first_step": {
+        "en": "Recover one reporter configuration, workload inputs and native traces; establish that the same silent stall still reproduces.",
+        "zh-CN": "先取得一位报告者的配置、负载输入与原生轨迹，确认同一种静默停顿仍可复现。"
+      },
+      "upstream_state": "open",
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "fix_screen": "no_causal_fix_identified_in_inspected_material",
+      "sources": [
+        "https://github.com/vllm-project/vllm/issues/41530"
+      ]
+    },
+    {
+      "id": "vllm-project--vllm-ascend--23391",
+      "reference": "vLLM-Ascend #23391",
+      "url": "https://github.com/vllm-project/vllm-ascend/issues/23391",
+      "language": "Python / native workers / Ascend NPU",
+      "stage": "candidate",
+      "question": {
+        "en": "Which rank or transfer initiates the decode-wide stall?",
+        "zh-CN": "哪个 rank 或传输首先引发 decode 侧整体停顿？"
+      },
+      "known": {
+        "en": "A November 26 report records multiple decode DP ranks losing progress together, followed by device-event synchronization timeout. Prefill remains healthy.",
+        "zh-CN": "11 月 26 日报告记录 decode 侧多个 DP rank 同时失去进展，随后设备事件同步超时，而 prefill 侧仍正常。"
+      },
+      "patch": {
+        "en": "The inspected primary page remains in Backlog with no repair proposal or linked development change visible. Targeted PR search found no matching fix; this does not establish repository-wide absence.",
+        "zh-CN": "所读主页面仍为 Backlog，可见活动未出现修复方案或关联开发改动；定向 PR 搜索未发现匹配修复，不代表已穷尽整个仓库。"
+      },
+      "coroperf_addition": {
+        "en": "Join request/transfer histories to worker and rank generations and device completion events to separate the first blocked operation from cascading waits.",
+        "zh-CN": "将请求／传输历史接到 worker 与 rank 代次和设备完成事件，区分最初阻塞的操作与后续连锁等待。"
+      },
+      "required_evidence": {
+        "en": "Decode request, KV transfer and batch identities; process/rank generations; synchronization and device completion; cross-process timing. Actual work units must not be assumed to be coroutines.",
+        "zh-CN": "decode 请求、KV transfer 与 batch 身份，进程／rank 代次，同步与设备完成事件，跨进程时间；不能假定所有工作单元都是协程。"
+      },
+      "validation": {
+        "en": "Retain the reported deployment and compare recoverable versus persistent stalls. Establish the first missing completion before designing and validating a causal repair.",
+        "zh-CN": "保留所报部署，对比可自行恢复与持续停顿的轨迹；先查明第一个缺失完成事件，再设计并验证针对原因的修复。"
+      },
+      "limits": {
+        "en": "The original setup is a multi-node Ascend A3 deployment. Required NPU observations and reproduction access are unestablished; there is no local runtime result.",
+        "zh-CN": "原配置为多节点 Ascend A3 部署；尚未建立所需 NPU 观察与复现环境，没有本地运行结果。"
+      },
+      "first_step": {
+        "en": "Obtain the original workload and per-rank traces, and confirm access to a matching Ascend deployment.",
+        "zh-CN": "先取得原负载与逐 rank 轨迹，并确认可使用匹配的 Ascend 部署。"
+      },
+      "upstream_state": "backlog",
+      "new_execution": false,
+      "root_cause_confirmed": false,
+      "fix_screen": "no_causal_fix_identified_in_inspected_material",
+      "sources": [
+        "https://github.com/vllm-project/vllm-ascend/issues/23391"
+      ]
+    },
+    {
       "id": "chriskohlhoff--asio--1720",
       "reference": "Asio #1720",
       "url": "https://github.com/chriskohlhoff/asio/issues/1720",
       "language": "C++ / stackless",
-      "stage": "candidate",
+      "stage": "follow_up",
       "question": {
         "en": "Which event stops the last socket-write operation from completing?",
         "zh-CN": "最后一次 socket write 为什么不再完成？"
@@ -84,7 +176,7 @@
       "reference": "StackExchange.Redis #3240",
       "url": "https://github.com/seredis/StackExchange.Redis/issues/3240",
       "language": ".NET / async state machines",
-      "stage": "candidate",
+      "stage": "follow_up",
       "question": {
         "en": "Why does the subscription handshake stop in ConnectedEstablishing?",
         "zh-CN": "订阅连接握手为何停在 ConnectedEstablishing？"
@@ -126,7 +218,7 @@
       "reference": "node-mysql2 #695",
       "url": "https://github.com/sidorares/node-mysql2/issues/695",
       "language": "Node.js / Promise resources",
-      "stage": "candidate",
+      "stage": "follow_up",
       "question": {
         "en": "Which command or completion leaves the sequential database workflow waiting?",
         "zh-CN": "哪条命令或完成事件让数据库顺序工作流一直等待？"
@@ -269,12 +361,39 @@
         "en": "The reporter supplies timeout clues and a terminate-on-timeout application workaround. No confirmed library repair is shown; this is not an issue with no existing result.",
         "zh-CN": "报告者已有 timeout 线索及超时后 terminate 的应用缓解；页面未展示已确认库修复，但不属于没有任何已有结果的 issue。"
       }
+    },
+    {
+      "id": "langchain-ai--langgraph--8302",
+      "reference": "LangGraph #8302",
+      "url": "https://github.com/langchain-ai/langgraph/issues/8302",
+      "reason": {
+        "en": "Repair PR #8313 already exists. Its administrative closure does not make this an unpatched first-root-cause opportunity.",
+        "zh-CN": "已有修复 PR #8313，虽因未获 issue 指派自动关闭，仍是已有补丁，不能作为我们的首次根因发现。"
+      }
+    },
+    {
+      "id": "langchain-ai--langgraph--9678",
+      "reference": "LangGraph #9678",
+      "url": "https://github.com/langchain-ai/langgraph/issues/9678",
+      "reason": {
+        "en": "The discussion already explains unsettled gather siblings and reports a locally tested fix; exclude from new unpatched root-cause targets.",
+        "zh-CN": "上游已解释 gather 未收拢 sibling 的根因，并报告本地修复验证；不列为新的无 fix 根因候选。"
+      }
+    },
+    {
+      "id": "encode--httpx--3782",
+      "reference": "HTTPX #3782",
+      "url": "https://github.com/encode/httpx/issues/3782",
+      "reason": {
+        "en": "HTTPcore PRs #1113/#1116 address the original double-cancel case. A distinct fully-read cleanup gap remains discussed; the whole issue cannot be labeled as having no fix.",
+        "zh-CN": "原 double-cancel 场景已有 HTTPcore PR #1113／#1116 与验证；另有 fully-read 清理缺口讨论，不能将整个 issue 宣称为没有 fix。"
+      }
     }
   ],
   "publication": {
-    "status": "failed",
-    "attempted_at": "2026-11-28T02:23:02.904577+00:00",
-    "reason": "Git fetch could not resolve github.com; no new commit was pushed and GitHub Pages deployment is unverified."
+    "status": "pending",
+    "target": "https://fzh0u.github.io/coroperf/zh-cn/open-issues.html",
+    "note": "Current popular-framework review update is awaiting Git publication."
   },
   "synchronized_at": "2026-11-28T03:04:27.851942+00:00",
   "synchronization": {
@@ -282,5 +401,9 @@
     "search_finished_at": "2026-11-28T00:11:14+00:00",
     "local_review_refresh": "2026-11-28T03:02:54.761602+00:00",
     "remote_fetch": "Unavailable: github.com DNS resolution failed; this is the latest already-fetched origin/main, not a newly verified remote head."
+  },
+  "priority_note": {
+    "en": "Prioritize the two popular-framework leads below. Earlier Asio, Redis and mysql2 entries remain follow-ups; Go requires a status check. No new verified case or execution is claimed.",
+    "zh-CN": "优先审阅下面两个热门框架候选；原 Asio、Redis、mysql2 条目保留为后续跟进，Go 先核验状态。本次未增加验证案例或执行结果。"
   }
 }
