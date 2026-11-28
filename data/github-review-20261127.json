@@ -1,6 +1,6 @@
 {
   "schema": "coroperf.github-review-batch/v1",
-  "updated_at": "2026-11-28T10:45:13+00:00",
+  "updated_at": "2026-11-28T10:51:08+00:00",
   "scope": "Public GitHub Issues and Discussions; targeted reads and saved search windows, not exhaustive ranking.",
   "applicability_scope": "Conditional entries list runtime/resource relationships to verify; actual collector coverage and diagnostic value require execution evidence.",
   "publication": "This batch is saved locally; its online publication is unverified. A separate scheduled push lists this supplemental batch as pending.",
@@ -10216,6 +10216,53 @@
         "original_environment": "Original primary: Ubuntu22.04, Linux5.15.0-153-generic x86_64, 8vCPU IntelXeonSkylake, Go1.27.1 or listed affected1.26 versions, CGO_ENABLED0; standard library only. FUSE/cgo/third-party application are explicitly unnecessary for the supplied original.",
         "time_budget": "Original dispatch03:23:34Z; first primary completed72s, beyond60s target; remainder completed approximately87s. Records136.767223s within150s/180s. No Go command, readiness, build, target, FIFO creation, server, supervisor or capture.",
         "boundaries": "Affected original toolchain readiness was not established; known Go1.23 metadata is not an affected-version baseline or a global availability verdict. The later workspace tool-path inventory is filename/permission metadata only, not a newly prepared original or permission to reopen a stopped/held workload."
+      }
+    },
+    "golang--go--81847": {
+      "id": "golang--go--81847",
+      "repo": "golang/go",
+      "number": 81847,
+      "url": "https://github.com/golang/go/issues/81847",
+      "title": "runtime: GOEXPERIMENT=simd alone slows async preemption program-wide on AVX-512 hardware",
+      "sources": [
+        "https://github.com/golang/go/issues/81847"
+      ],
+      "status": "external_environment_required",
+      "reason": "An actual scalar-benchmark slowdown with GOEXPERIMENT=simd is reported, with full scalar source and paired count10 benchmark commands. One negative hardware readiness check found Intel XeonPlatinum8368Q versus original AMD Ryzen9 9950X3D; matching CPU/build fixture was not established. No version/platform/CPU-feature substitution, build or benchmark executed.",
+      "reason_zh": "来源报告GOEXPERIMENT=simd下真实标量基准退化，提供完整标量源码及count10配对命令。一次硬件readiness检查得到Intel XeonPlatinum8368Q，与原AMD Ryzen9 9950X3D不同，未建立匹配CPU/构建环境；未替换版本/平台/CPU特性，未构建或运行基准。",
+      "source_completeness": {
+        "body": "Full returned body144–240 read; main.go and bench_test.go/pairedcommands complete.",
+        "comments": "Visible activity through538 read;4 items collapsed389–391; full API/history unknown.",
+        "version": "go1.27.1 linux/amd64 and go1.28-devel_2ca679b1f1;GOAMD64=v1;AMD Ryzen9 9950X3D.",
+        "scope": "One primary583lines archived. Related code, CLs, commits, bot-related issues and external repos not opened."
+      },
+      "upstream_evidence": {
+        "observation": "Author scalar benchmark814.2ns/op baseline versus2838.0ns/op SIMD(+248.56%,n10);asyncpreemptoff888.5ns/op. Similar gotip result. No simd package imported. Source points to wider preemption register-state handling.",
+        "counterevidence": "asyncpreemptoff is an upstream diagnostic control, not proof of a single underlying CPU/kernel cause. Maintainers discuss wide-state activation/lazy switching; no local measurements made.",
+        "unknown": "Actual preemption frequency, per-event save/restore cost, CPU frequency/kernel effects and mechanism contributions remain unmeasured locally. Collapsed4items and fix-release applicability not verified.",
+        "resolution_scope": "Visible completed closureNov18 references203fdf2, followedNov22 by maintainer report that it was reverted. Nov23 CL866014/866025 and commit29d9d66 are visible. Existing patch history is established; successful released mitigation is not verified by this read."
+      },
+      "coroperf_applicability": {
+        "assessment": "Scheduler/preemption overhead attribution case; native baseline required before causal or optimization claims.",
+        "assessment_zh": "调度/抢占开销归因案例；因果或优化结论须先有原生基线。",
+        "required_identity": "Join goroutine generation,G/P/M/nativeTID and preemption signal-entry/return to per-event runtime cost and native CPU counters; separate benchmark iteration from preemption and process-wide vector-state effects. Creator stack does not own runtime overhead.",
+        "required_identity_zh": "桥接goroutine代次、G/P/M/原生TID及抢占信号进入/返回与单次runtime耗时和原生CPU计数；区分基准迭代、抢占事件及进程级向量状态影响；创建栈不自动拥有runtime开销。",
+        "native_baseline": "Unchanged paired benchmark(count10), exact CPU/toolchain/flags and native preemption counts/cost/counters first; no baseline executed.",
+        "native_baseline_zh": "先以匹配CPU/工具链/标志执行未改count10配对基准并采原生抢占次数/开销/计数；本轮未执行基线。",
+        "limits": "ns/op is wall benchmark cost, not per-preemption CPU attribution. asyncpreemptoff changes scheduling. Do not alter feature masks, workload, count, observer, SDK or save/restore code. Existing collector signal-boundary/register-state support unverified. No memory-safety/GC/security reproduction or related issue execution occurred.",
+        "limits_zh": "ns/op不是单次抢占CPU归属；asyncpreemptoff会改变调度。不可改特性mask、负载、count、观察器、SDK或保存恢复代码；collector对信号边界/寄存器状态支持未核实；未执行内存安全/GC/安全复现或关联issue。"
+      },
+      "open_issues_advice": {
+        "disposition": "not_primary",
+        "reason": "Specific runtime mechanism and multiple corresponding patches already discussed; this is not a first-root-cause candidate. Revert/rework means released optimization remains unverified.",
+        "reason_zh": "已有具体runtime机制解释及多项对应补丁，不列首次根因候选；回滚/重做意味着发布版本优化仍未核实。",
+        "validation": "No original run, cause/fix validation, diagnosis timing or speedup measured."
+      },
+      "source_status": "skipped",
+      "assessment": {
+        "source_scope": "Full returned body144–240 read; main.go and bench_test.go/pairedcommands complete. Visible activity through538 read;4 items collapsed389–391; full API/history unknown. go1.27.1 linux/amd64 and go1.28-devel_2ca679b1f1;GOAMD64=v1;AMD Ryzen9 9950X3D. One primary583lines archived. Related code, CLs, commits, bot-related issues and external repos not opened.",
+        "boundaries": "完整标量main.go／bench_test.go与count10配对命令承认，未导入simd包也报告GOEXPERIMENT=simd全程序退化；814.2对2838ns/op与关asyncpreempt888.5只是来源结果，不是本地或单次抢占CPU成本。原Go1.27.1及devel2ca679b1f1/Linuxamd64/GOAMD64v1/AMD9950X3D，与一次硬件检查IntelXeonPlatinum8368Q不同，matchingfixture未建立后skipped，未探SDK／CPUflags清单、build、benchmark、改特性mask或补保存恢复代码。asyncpreemptoff诊断对照改变调度，不能单独证明每个CPU／kernel／频率机制；原生抢占次数/单次cost/CPU counters在前，goroutine/G-P-M/TID及signal entry-return归属在后，creator栈不自动拥有runtime开销。需collector signal/register-state观察点，支持／开销未知。正文144–240及活动到538读、4项折叠/API未知；Nov18 closure203fdf2随后Nov22报告revert，Nov23新CL866014/866025及29d9d66已有patchhistory，非首次rootcause/no-fix候选，未验releasegain。不打开关联代码/CL/其他安全或GCcase、不执行第三方服务或故障。",
+        "time_budget": "原dispatch10:47:26.238101Z；primary归档约41.762s，source54.761899/readiness55.254112（primary归档后13.492213）/facts100.495820/post100.495913/records115.952155/final117.761899–118.761899；source60/90/facts120/records150/total180/reserve35满足。readiness1/hardwaremetadata1同pass，其他研究phase0、handles[]、SLOT2unused。"
       }
     },
     "golang--go--82146": {
@@ -26853,13 +26900,13 @@
     }
   },
   "counts": {
-    "external_environment_required": 563,
+    "external_environment_required": 564,
     "excluded_after_review": 97,
     "component_reproduced": 16,
     "verified_case": 1
   },
   "repositories_reviewed": 81,
-  "new_review_count": 676,
+  "new_review_count": 677,
   "amended_review_ids": [
     "agronholm--anyio--1274",
     "dotnet--runtime--132094",
